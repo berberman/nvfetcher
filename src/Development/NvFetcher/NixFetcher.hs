@@ -1,27 +1,21 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 
 module Development.NvFetcher.NixFetcher
   ( NixFetcher (..),
     Prefetch (..),
+    ToNixExpr (..),
     prefetchRule,
-    prefetchGitHub,
-    prefetchPypi,
-    prefetchGitHubRelease,
-    prefetchUrl,
+    pypiFetcher,
+    gitHubReleaseFetcher,
+    urlFetcher,
+    prefetch,
   )
 where
 
@@ -32,39 +26,7 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import Development.NvFetcher.Types
 import Development.Shake
-import Development.Shake.Classes
-import GHC.Generics (Generic)
 import NeatInterpolation (trimming)
-
---------------------------------------------------------------------------------
-
-data NixFetcher (k :: Prefetch)
-  = FetchFromGitHub
-      { fetchGitHubOwner :: Text,
-        fetchGitHubRepo :: Text,
-        fetchGitHubRev :: Version,
-        sha256 :: MapPrefetch k
-      }
-  | FetchUrl {fetchUrl :: Text, sha256 :: MapPrefetch k}
-  deriving (Typeable, Generic)
-
-data Prefetch = Fresh | Prefetched
-
-type family MapPrefetch (k :: Prefetch) where
-  MapPrefetch Fresh = ()
-  MapPrefetch Prefetched = SHA256
-
-type instance RuleResult (NixFetcher Fresh) = NixFetcher Prefetched
-
-deriving instance Show (MapPrefetch k) => Show (NixFetcher k)
-
-deriving instance Eq (MapPrefetch k) => Eq (NixFetcher k)
-
-deriving instance Hashable (MapPrefetch k) => Hashable (NixFetcher k)
-
-deriving instance Binary (MapPrefetch k) => Binary (NixFetcher k)
-
-deriving instance NFData (MapPrefetch k) => NFData (NixFetcher k)
 
 --------------------------------------------------------------------------------
 
@@ -75,7 +37,8 @@ instance ToNixExpr (NixFetcher Fresh) where
   toNixExpr = nixFetcher "lib.fakeSha256"
 
 instance ToNixExpr (NixFetcher Prefetched) where
-  toNixExpr f = nixFetcher (coerce $ sha256 f) f
+  -- add quotation marks
+  toNixExpr f = nixFetcher (T.pack $ show $ T.unpack $ coerce $ sha256 f) f
 
 nixFetcher :: Text -> NixFetcher k -> Text
 nixFetcher sha256 = \case
@@ -113,18 +76,17 @@ prefetchRule = void $
 
 --------------------------------------------------------------------------------
 
-prefetchGitHub :: (Text, Text) -> Version -> Action (NixFetcher Prefetched)
-prefetchGitHub (owner, repo) ver = askOracle @(NixFetcher Fresh) $ FetchFromGitHub owner repo ver ()
-
-prefetchPypi :: Text -> Version -> Action (NixFetcher Prefetched)
-prefetchPypi pypi (coerce -> ver) =
+pypiFetcher :: Text -> Version -> NixFetcher Fresh
+pypiFetcher pypi (coerce -> ver) =
   let h = T.cons (T.head pypi) ""
-   in askOracle @(NixFetcher Fresh) $ FetchUrl [trimming|mirror://pypi/$h/$pypi/$pypi-$ver.tar.gz|] ()
+   in FetchUrl [trimming|mirror://pypi/$h/$pypi/$pypi-$ver.tar.gz|] ()
 
-prefetchGitHubRelease :: (Text, Text) -> Text -> Version -> Action (NixFetcher Prefetched)
-prefetchGitHubRelease (owner, repo) fp (coerce -> ver) =
-  askOracle @(NixFetcher Fresh) $
-    FetchUrl [trimming|https://github.com/$owner/$repo/releases/download/$ver/$fp|] ()
+gitHubReleaseFetcher :: (Text, Text) -> Text -> Version -> NixFetcher Fresh
+gitHubReleaseFetcher (owner, repo) fp (coerce -> ver) =
+  FetchUrl [trimming|https://github.com/$owner/$repo/releases/download/$ver/$fp|] ()
 
-prefetchUrl :: Text -> Action (NixFetcher Prefetched)
-prefetchUrl = askOracle @(NixFetcher Fresh) . flip FetchUrl ()
+urlFetcher :: Text -> NixFetcher Fresh
+urlFetcher = flip FetchUrl ()
+
+prefetch :: NixFetcher Fresh -> Action (NixFetcher Prefetched)
+prefetch = askOracle

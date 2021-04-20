@@ -23,6 +23,8 @@ common common-options
   build-depends:
     , aeson
     , base                >=4.8 && <5
+    , containers
+    , free
     , neat-interpolation
     , shake
     , text
@@ -42,4 +44,5 @@ library
     Development.NvFetcher
     Development.NvFetcher.NixFetcher
     Development.NvFetcher.Nvchecker
+    Development.NvFetcher.PackageSet
     Development.NvFetcher.Types
