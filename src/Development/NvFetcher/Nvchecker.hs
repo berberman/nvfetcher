@@ -7,7 +7,7 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 
-module Development.NvFetcher.Shake.Nvchecker
+module Development.NvFetcher.Nvchecker
   ( VersionSource (..),
     nvcheckerRule,
     latestGitHubVersion,
@@ -29,6 +29,8 @@ import Development.Shake.Classes
 import GHC.Generics (Generic)
 import NeatInterpolation (trimming)
 
+--------------------------------------------------------------------------------
+
 data VersionSource
   = GitHub {owner :: Text, repo :: Text}
   | Pypi {pypi :: Text}
@@ -39,13 +41,21 @@ data VersionSource
 
 type instance RuleResult VersionSource = Version
 
+newtype NvcheckerResult = NvcheckerResult Version
+
+instance A.FromJSON NvcheckerResult where
+  parseJSON = A.withObject "NvcheckerResult" $ \o ->
+    NvcheckerResult <$> o A..: "version"
+
+--------------------------------------------------------------------------------
+
 nvcheckerRule :: Rules ()
 nvcheckerRule = void $
   addOracle $ \q -> withTempFile $ \config -> do
     writeFile' config $ T.unpack $ genNvConfig "pkg" q
     need [config]
     (CmdTime t, Stdout out) <- cmd $ "nvchecker --logger json -c " <> config
-    putInfo $ "Running nvchecker for " <> show q <> " took " <> show t <> "s"
+    putInfo $ "Finishing running nvchecker for " <> show q <> ", took " <> show t <> "s"
     case A.decode @NvcheckerResult out of
       Just x -> pure $ coerce x
       Nothing -> fail $ "Unable to run nvchecker with: " <> show q
@@ -57,35 +67,35 @@ nvcheckerRule = void $
               source = "github"
               github = "$owner/$repo"
               use_latest_release = true
-            |]
+        |]
       Aur {..} ->
         [trimming|
               [$srcName]
               source = "aur"
               archpkg = "$aur"
               strip_release = true
-            |]
+        |]
       ArchLinux {..} ->
         [trimming|
               [$srcName]
               source = "archpkg"
               archpkg = "$archpkg"
               strip_release = true
-            |]
+        |]
       Pypi {..} ->
         [trimming|
               [$srcName]
               source = "pypi"
               pypi = "$pypi"
-            |]
+        |]
       Manual {..} ->
         [trimming|
               [$srcName]
               source = "manual"
               manual = "$manual"
-            |]
+        |]
 
-newtype NvcheckerResult = NvcheckerResult Version
+--------------------------------------------------------------------------------
 
 latestGitHubVersion :: Text -> Text -> Action Version
 latestGitHubVersion owner repo = askOracle GitHub {..}
@@ -101,7 +111,3 @@ latestArchLinuxVersion archpkg = askOracle ArchLinux {..}
 
 manualVersion :: Text -> Action Version
 manualVersion manual = askOracle Manual {..}
-
-instance A.FromJSON NvcheckerResult where
-  parseJSON = A.withObject "NvcheckerResult" $ \o ->
-    NvcheckerResult <$> o A..: "version"

@@ -2,6 +2,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -13,7 +14,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 
-module Development.NvFetcher.Shake.NixFetcher
+module Development.NvFetcher.NixFetcher
   ( NixFetcher (..),
     Prefetch (..),
     prefetchRule,
@@ -34,6 +35,8 @@ import Development.Shake
 import Development.Shake.Classes
 import GHC.Generics (Generic)
 import NeatInterpolation (trimming)
+
+--------------------------------------------------------------------------------
 
 data NixFetcher (k :: Prefetch)
   = FetchFromGitHub
@@ -63,21 +66,21 @@ deriving instance Binary (MapPrefetch k) => Binary (NixFetcher k)
 
 deriving instance NFData (MapPrefetch k) => NFData (NixFetcher k)
 
-prefetchRule :: Rules ()
-prefetchRule = void $
-  addOracleCache $ \(f :: NixFetcher Fresh) -> do
-    (CmdTime t, Stdout (T.decodeUtf8 -> out)) <- command [] "nix-prefetch" [T.unpack (genNixExpr f)]
-    putInfo $ "Prefetching " <> show f <> " took " <> show t <> "s"
-    case (T.stripPrefix "sha256-" <=< lastMaybe . T.lines) out of
-      Just sha256 -> pure $ f {sha256 = SHA256 sha256}
-      _ -> fail $ "Unable to prefetch " <> show f
-  where
-    lastMaybe [] = Nothing
-    lastMaybe xs = Just $ last xs
-    sha256 = "lib.fakeSha256"
-    genNixExpr = \case
-      (FetchFromGitHub owner repo (coerce -> rev) _) ->
-        [trimming| 
+--------------------------------------------------------------------------------
+
+class ToNixExpr a where
+  toNixExpr :: a -> Text
+
+instance ToNixExpr (NixFetcher Fresh) where
+  toNixExpr = nixFetcher "lib.fakeSha256"
+
+instance ToNixExpr (NixFetcher Prefetched) where
+  toNixExpr f = nixFetcher (coerce $ sha256 f) f
+
+nixFetcher :: Text -> NixFetcher k -> Text
+nixFetcher sha256 = \case
+  (FetchFromGitHub owner repo (coerce -> rev) _) ->
+    [trimming| 
           fetchFromGitHub {
             owner = "$owner";
             repo = "$repo";
@@ -85,14 +88,30 @@ prefetchRule = void $
             fetchSubmodules = true;
             sha256 = $sha256;
           }
-        |]
-      (FetchUrl url _) ->
-        [trimming|
+    |]
+  (FetchUrl url _) ->
+    [trimming|
           fetchurl {
             sha256 = $sha256;
             url = "$url";
           }
-        |]
+    |]
+
+--------------------------------------------------------------------------------
+
+prefetchRule :: Rules ()
+prefetchRule = void $
+  addOracleCache $ \(f :: NixFetcher Fresh) -> do
+    (CmdTime t, Stdout (T.decodeUtf8 -> out)) <- command [] "nix-prefetch" [T.unpack (toNixExpr f)]
+    putInfo $ "Finishing prefetching " <> show f <> ", took " <> show t <> "s"
+    case (T.stripPrefix "sha256-" <=< lastMaybe . T.lines) out of
+      Just sha256 -> pure $ f {sha256 = SHA256 sha256}
+      _ -> fail $ "Unable to prefetch " <> show f
+  where
+    lastMaybe [] = Nothing
+    lastMaybe xs = Just $ last xs
+
+--------------------------------------------------------------------------------
 
 prefetchGitHub :: (Text, Text) -> Version -> Action (NixFetcher Prefetched)
 prefetchGitHub (owner, repo) ver = askOracle @(NixFetcher Fresh) $ FetchFromGitHub owner repo ver ()

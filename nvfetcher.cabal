@@ -9,7 +9,7 @@ license-file:    LICENSE
 author:          berberman
 maintainer:      berberman <berberman.yandex.com>
 copyright:       2021 berberman
-category:        Distribution
+category:        Development
 build-type:      Simple
 extra-doc-files:
   CHANGELOG.md
@@ -40,6 +40,6 @@ library
   hs-source-dirs:  src
   exposed-modules:
     Development.NvFetcher
-    Development.NvFetcher.Shake.NixFetcher
-    Development.NvFetcher.Shake.Nvchecker
+    Development.NvFetcher.NixFetcher
+    Development.NvFetcher.Nvchecker
     Development.NvFetcher.Types
