@@ -25,13 +25,30 @@ instance Functor PackageSetF where
 
 type PackageSet = Free PackageSetF
 
-package :: PackageName -> VersionSource -> (Version -> NixFetcher Fresh) -> PackageSet ()
+package ::
+  -- | package name
+  PackageName ->
+  -- | version source
+  VersionSource ->
+  -- | fetcher
+  (Version -> NixFetcher Fresh) ->
+  PackageSet ()
 package name src fe = liftF $ NewPackage name src fe ()
 
-pypiPackage :: PackageName -> Text -> PackageSet ()
+pypiPackage ::
+  -- | package name
+  PackageName ->
+  -- | pypi name
+  Text ->
+  PackageSet ()
 pypiPackage name pypi = package name (Pypi pypi) $ pypiFetcher pypi
 
-gitHubPackage :: PackageName -> (Text, Text) -> PackageSet ()
+gitHubPackage ::
+  -- | package name
+  PackageName ->
+  -- | owner and repo
+  (Text, Text) ->
+  PackageSet ()
 gitHubPackage name (owner, repo) = package name (GitHub owner repo) $ gitHubFetcher (owner, repo)
 
 embedAction :: Action a -> PackageSet a
