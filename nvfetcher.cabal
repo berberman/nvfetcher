@@ -1,0 +1,45 @@
+cabal-version:   2.4
+name:            nvfetcher
+version:         0.1.0.0
+synopsis:        Prefetch packages
+homepage:        https://github.com/berberman/nvfetcher
+bug-reports:     https://github.com/berberman/nvfetcher/issues
+license:         MIT
+license-file:    LICENSE
+author:          berberman
+maintainer:      berberman <berberman.yandex.com>
+copyright:       2021 berberman
+category:        Distribution
+build-type:      Simple
+extra-doc-files:
+  CHANGELOG.md
+  README.md
+
+source-repository head
+  type:     git
+  location: https://github.com/berberman/nvfetcher.git
+
+common common-options
+  build-depends:
+    , aeson
+    , base                >=4.8 && <5
+    , neat-interpolation
+    , shake
+    , text
+
+  ghc-options:
+    -Wall -Wcompat -Widentities -Wincomplete-uni-patterns
+    -Wincomplete-record-updates -Wredundant-constraints
+    -fhide-source-paths -Wno-name-shadowing
+    -Wno-unticked-promoted-constructors
+
+  default-language: Haskell2010
+
+library
+  import:          common-options
+  hs-source-dirs:  src
+  exposed-modules:
+    Development.NvFetcher
+    Development.NvFetcher.Shake.NixFetcher
+    Development.NvFetcher.Shake.Nvchecker
+    Development.NvFetcher.Types
