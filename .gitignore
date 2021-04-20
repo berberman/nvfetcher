@@ -54,3 +54,4 @@ TAGS
 .DS_Store
 
 .shake
+sources.nix

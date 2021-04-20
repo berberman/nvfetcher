@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
@@ -17,17 +18,20 @@ module Development.NvFetcher
   )
 where
 
+import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, readMVar)
+import Control.Monad (unless)
 import Data.Coerce (coerce)
+import Data.Maybe (fromJust)
 import qualified Data.Set as Set
+import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Text.IO as T
 import Development.NvFetcher.NixFetcher
 import Development.NvFetcher.Nvchecker
 import Development.NvFetcher.PackageSet
 import Development.NvFetcher.Types
 import Development.Shake
 import NeatInterpolation (trimming)
-
---------------------------------------------------------------------------------
 
 data Args = Args
   { argShakeOptions :: ShakeOptions,
@@ -39,14 +43,48 @@ defaultArgs :: Args
 defaultArgs = Args shakeOptions "sources.nix" $ pure ()
 
 defaultMain :: Args -> PackageSet () -> IO ()
-defaultMain Args {..} pkgSet =
-  shakeArgs argShakeOptions {shakeFiles = "_make", shakeProgress = progressSimple} $ do
-    phony "clean" $ removeFilesAfter "_make" ["//*"] >> removeFilesAfter "." [argOutputFilePath]
-    argRules
-    nvfetcherRules
-    action $ do
-      pkgs <- runPackageSet pkgSet
-      generateNixSources argOutputFilePath $ Set.toList pkgs
+defaultMain Args {..} pkgSet = do
+  var <- newMVar mempty
+  shakeArgs
+    argShakeOptions
+      { shakeProgress = progressSimple,
+        shakeExtra = addShakeExtra (GitCommitMessage var) mempty
+      }
+    $ do
+      phony "clean" $ removeFilesAfter ".shake" ["//*"] >> removeFilesAfter "." [argOutputFilePath]
+      argRules
+      nvfetcherRules
+      action $ do
+        pkgs <- runPackageSet pkgSet
+        generateNixSources argOutputFilePath $ Set.toList pkgs
+        setCommitMessageWhenInGitHubEnv
+
+--------------------------------------------------------------------------------
+newtype GitCommitMessage = GitCommitMessage (MVar [Text])
+
+appendGitCommitMessageLine :: Text -> Action ()
+appendGitCommitMessageLine x = do
+  GitCommitMessage var <- fromJust <$> getShakeExtra @GitCommitMessage
+  liftIO $ modifyMVar_ var (pure . (++ [x]))
+
+getGitCommitMessage :: Action Text
+getGitCommitMessage = do
+  GitCommitMessage var <- fromJust <$> getShakeExtra @GitCommitMessage
+  liftIO $ T.unlines <$> readMVar var
+
+setCommitMessageWhenInGitHubEnv :: Action ()
+setCommitMessageWhenInGitHubEnv = do
+  msg <- getGitCommitMessage
+  getEnv "GITHUB_ENV" >>= \case
+    Just env ->
+      liftIO $ do
+        appendFile env "COMMIT_MSG<<EOF\n"
+        T.appendFile env msg
+        appendFile env "\nEOF\n"
+    _ -> do
+      putInfo "Not in GitHub Env"
+  unless (T.null msg) $
+    putInfo $ T.unpack msg
 
 --------------------------------------------------------------------------------
 
@@ -59,10 +97,14 @@ generateNixSources :: FilePath -> [Package] -> Action ()
 generateNixSources fp pkgs = do
   body <- genBody
   writeFileChanged fp $ T.unpack $ srouces $ T.unlines body
+  produces [fp]
   where
     single Package {..} = do
-      version <- askVersion pversion
+      (NvcheckerResult version mOld) <- askNvchecker pversion
       prefetched <- prefetch $ pfetcher version
+      case mOld of
+        Just old -> appendGitCommitMessageLine (pname <> ": " <> coerce old <> " → " <> coerce version)
+        _ -> pure ()
       pure (pname, version, prefetched)
     genOne (name, coerce @Version -> ver, toNixExpr -> srcP) =
       [trimming|

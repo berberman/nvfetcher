@@ -4,6 +4,7 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -37,7 +38,17 @@ data VersionSource
   | Manual {manual :: Text}
   deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
 
-type instance RuleResult VersionSource = Version
+data NvcheckerResult = NvcheckerResult
+  { nvNow :: Version,
+    nvOld :: Maybe Version
+  }
+  deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
+
+instance A.FromJSON NvcheckerResult where
+  parseJSON = A.withObject "NvcheckerResult" $ \o ->
+    NvcheckerResult <$> o A..: "version" <*> pure Nothing
+
+type instance RuleResult VersionSource = NvcheckerResult
 
 data NixFetcher (k :: Prefetch)
   = FetchFromGitHub

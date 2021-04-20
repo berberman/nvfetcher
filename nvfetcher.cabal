@@ -23,6 +23,8 @@ common common-options
   build-depends:
     , aeson
     , base                >=4.8 && <5
+    , binary
+    , bytestring
     , containers
     , free
     , neat-interpolation

@@ -3,6 +3,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
@@ -12,6 +13,7 @@ module Development.NvFetcher.NixFetcher
     Prefetch (..),
     ToNixExpr (..),
     prefetchRule,
+    gitHubFetcher,
     pypiFetcher,
     gitHubReleaseFetcher,
     urlFetcher,
@@ -34,14 +36,14 @@ class ToNixExpr a where
   toNixExpr :: a -> Text
 
 instance ToNixExpr (NixFetcher Fresh) where
-  toNixExpr = nixFetcher "lib.fakeSha256"
+  toNixExpr = buildNixFetcher "lib.fakeSha256"
 
 instance ToNixExpr (NixFetcher Prefetched) where
   -- add quotation marks
-  toNixExpr f = nixFetcher (T.pack $ show $ T.unpack $ coerce $ sha256 f) f
+  toNixExpr f = buildNixFetcher (T.pack $ show $ T.unpack $ coerce $ sha256 f) f
 
-nixFetcher :: Text -> NixFetcher k -> Text
-nixFetcher sha256 = \case
+buildNixFetcher :: Text -> NixFetcher k -> Text
+buildNixFetcher sha256 = \case
   (FetchFromGitHub owner repo (coerce -> rev) _) ->
     [trimming| 
           fetchFromGitHub {
@@ -65,7 +67,7 @@ nixFetcher sha256 = \case
 prefetchRule :: Rules ()
 prefetchRule = void $
   addOracleCache $ \(f :: NixFetcher Fresh) -> do
-    (CmdTime t, Stdout (T.decodeUtf8 -> out)) <- command [] "nix-prefetch" [T.unpack (toNixExpr f)]
+    (CmdTime t, Stdout (T.decodeUtf8 -> out)) <- quietly $ command [] "nix-prefetch" [T.unpack (toNixExpr f)]
     putInfo $ "Finishing prefetching " <> show f <> ", took " <> show t <> "s"
     case (T.stripPrefix "sha256-" <=< lastMaybe . T.lines) out of
       Just sha256 -> pure $ f {sha256 = SHA256 sha256}
@@ -75,6 +77,11 @@ prefetchRule = void $
     lastMaybe xs = Just $ last xs
 
 --------------------------------------------------------------------------------
+
+gitHubFetcher :: (Text, Text) -> Version -> NixFetcher Fresh
+gitHubFetcher (gitHubOwner, gitHubRepo) gitHubRev = FetchFromGitHub {..}
+  where
+    sha256 = ()
 
 pypiFetcher :: Text -> Version -> NixFetcher Fresh
 pypiFetcher pypi (coerce -> ver) =

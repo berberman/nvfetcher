@@ -9,6 +9,7 @@ module Development.NvFetcher.PackageSet where
 import Control.Monad.Free
 import Data.Set (Set)
 import qualified Data.Set as Set
+import Data.Text (Text)
 import Development.NvFetcher.NixFetcher
 import Development.NvFetcher.Types
 import Development.Shake (Action)
@@ -24,8 +25,14 @@ instance Functor PackageSetF where
 
 type PackageSet = Free PackageSetF
 
-newPackage :: PackageName -> VersionSource -> (Version -> NixFetcher Fresh) -> PackageSet ()
-newPackage name src fe = liftF $ NewPackage name src fe ()
+package :: PackageName -> VersionSource -> (Version -> NixFetcher Fresh) -> PackageSet ()
+package name src fe = liftF $ NewPackage name src fe ()
+
+pypiPackage :: PackageName -> Text -> PackageSet ()
+pypiPackage name pypi = package name (Pypi pypi) $ pypiFetcher pypi
+
+gitHubPackage :: PackageName -> (Text, Text) -> PackageSet ()
+gitHubPackage name (owner, repo) = package name (GitHub owner repo) $ gitHubFetcher (owner, repo)
 
 embedAction :: Action a -> PackageSet a
 embedAction action = liftF $ EmbedAction action id
