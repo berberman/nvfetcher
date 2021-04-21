@@ -86,7 +86,7 @@ buildNixFetcher sha256 = \case
 pypiUrl :: Text -> Version -> Text
 pypiUrl pypi (coerce -> ver) =
   let h = T.cons (T.head pypi) ""
-   in [trimming|mirror://pypi/$h/$pypi/$pypi-$ver.tar.gz|]
+   in [trimming|https://pypi.io/packages/source/$h/$pypi/$pypi-$ver.tar.gz|]
 
 --------------------------------------------------------------------------------
 
