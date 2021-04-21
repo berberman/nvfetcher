@@ -15,6 +15,7 @@ module Development.NvFetcher
     Args (..),
     defaultArgs,
     defaultMain,
+    generateNixSources,
   )
 where
 
@@ -72,6 +73,7 @@ getGitCommitMessage = do
   GitCommitMessage var <- fromJust <$> getShakeExtra @GitCommitMessage
   liftIO $ T.unlines <$> readMVar var
 
+-- | If we are in github actions, write the commit message into $COMMIT_MSG
 setCommitMessageWhenInGitHubEnv :: Action ()
 setCommitMessageWhenInGitHubEnv = do
   msg <- getGitCommitMessage
@@ -81,10 +83,7 @@ setCommitMessageWhenInGitHubEnv = do
         appendFile env "COMMIT_MSG<<EOF\n"
         T.appendFile env msg
         appendFile env "\nEOF\n"
-    _ -> do
-      putInfo "Not in GitHub Env"
-  unless (T.null msg) $
-    putInfo $ T.unpack msg
+    _ -> putInfo "Not in GitHub Env"
 
 --------------------------------------------------------------------------------
 
@@ -96,15 +95,22 @@ nvfetcherRules = do
 generateNixSources :: FilePath -> [Package] -> Action ()
 generateNixSources fp pkgs = do
   body <- genBody
+  getGitCommitMessage >>= \msg ->
+    unless (T.null msg) $
+      putInfo $ T.unpack msg
   writeFileChanged fp $ T.unpack $ srouces $ T.unlines body
   produces [fp]
   where
     single Package {..} = do
       (NvcheckerResult version mOld) <- askNvchecker pversion
       prefetched <- prefetch $ pfetcher version
-      case mOld of
-        Just old -> appendGitCommitMessageLine (pname <> ": " <> coerce old <> " → " <> coerce version)
-        _ -> pure ()
+      appendGitCommitMessageLine
+        ( pname <> ": " <> case mOld of
+            Just old -> coerce old
+            _ -> "∅"
+            <> " → "
+            <> coerce version
+        )
       pure (pname, version, prefetched)
     genOne (name, coerce @Version -> ver, toNixExpr -> srcP) =
       [trimming|
