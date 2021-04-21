@@ -58,9 +58,9 @@ class ToPrefetchCommand a where
 
 instance ToPrefetchCommand (NixFetcher Fresh) where
   toPrefetchCommand = \case
-    g@FetchGit {..} -> do
+    FetchGit {..} -> do
       let parser = A.withObject "nix-prefetch-git" $ \o -> SHA256 <$> o A..: "sha256"
-      (CmdTime t, Stdout (A.parseMaybe parser <=< A.decode -> out)) <-
+      (CmdTime t, Stdout (A.parseMaybe parser <=< A.decode -> out), CmdLine c) <-
         command [EchoStderr False] "nix-prefetch-git" $
           [T.unpack furl]
             <> ["--rev", T.unpack $ coerce rev]
@@ -68,16 +68,16 @@ instance ToPrefetchCommand (NixFetcher Fresh) where
             <> ["--branch-name " <> T.unpack b | b <- maybeToList branch]
             <> ["--deepClone" | deepClone]
             <> ["--leave-dotGit" | leaveDotGit]
-      putInfo $ "Finishing prefetching, took " <> show t <> "s"
+      putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
       case out of
         Just x -> pure x
-        _ -> fail $ "Failed to prefetch: " <> show g
-    g@FetchUrl {..} -> do
-      (CmdTime t, Stdout (T.decodeUtf8 -> out)) <- command [EchoStderr False] "nix-prefetch-url" [T.unpack furl]
-      putInfo $ "Finishing prefetching, took " <> show t <> "s"
+        _ -> fail "Failed to parse output from nix-prefetch-git"
+    FetchUrl {..} -> do
+      (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <- command [EchoStderr False] "nix-prefetch-url" [T.unpack furl]
+      putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
       case takeWhile (not . T.null) $ reverse $ T.lines out of
         [x] -> pure $ coerce x
-        _ -> fail $ "Failed to prefetch: " <> show g
+        _ -> fail "Failed to parse output from nix-prefetch-url"
 
 buildNixFetcher :: Text -> NixFetcher k -> Text
 buildNixFetcher sha256 = \case

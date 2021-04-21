@@ -27,12 +27,12 @@ nvcheckerRule :: Rules ()
 nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile $ \config -> do
   writeFile' config $ T.unpack $ genNvConfig "pkg" q
   need [config]
-  (CmdTime t, Stdout (T.lines . T.decodeUtf8 -> out)) <- cmd $ "nvchecker --logger json -c " <> config
-  putInfo $ "Finishing running nvchecker, took " <> show t <> "s"
+  (CmdTime t, Stdout (T.lines . T.decodeUtf8 -> out), CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
+  putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
   let result = catMaybes $ A.decodeStrict . T.encodeUtf8 <$> out
   now <- case result of
     [x] -> pure x
-    _ -> fail $ "Unable to run nvchecker with: " <> show q
+    _ -> fail "Failed to parse output from nvchecker"
   pure $ case old of
     Just lastRun
       | cachedResult <- decode' lastRun ->

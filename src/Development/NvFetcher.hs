@@ -40,7 +40,14 @@ data Args = Args
   }
 
 defaultArgs :: Args
-defaultArgs = Args shakeOptions "sources.nix" $ pure ()
+defaultArgs =
+  Args
+    shakeOptions
+      { shakeThreads = 0, -- expanded to number of processors
+        shakeTimings = True -- print timing
+      }
+    "sources.nix"
+    $ pure ()
 
 defaultMain :: Args -> PackageSet () -> IO ()
 defaultMain args packageSet = defaultMainWith args [] $ const $ pure packageSet
