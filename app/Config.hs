@@ -30,14 +30,21 @@ versionSourceCodec :: TomlCodec VersionSource
 versionSourceCodec =
   Toml.dimatch
     ( \case
-        GitHub {..} -> Just $ owner <> "/" <> repo
+        GitHubRelease {..} -> Just $ owner <> "/" <> repo
         _ -> Nothing
     )
     ( \x -> case T.split (== '/') x of
-        [owner, repo] -> GitHub {..}
+        [owner, repo] -> GitHubRelease {..}
         _ -> error "parse error on src.github"
     )
     (Toml.text "src.github")
+    <|> Toml.dimatch
+      ( \case
+          Git {..} -> Just vurl
+          _ -> Nothing
+      )
+      Git
+      (Toml.text "src.git")
     <|> Toml.dimatch
       ( \case
           Pypi {..} -> Just pypi

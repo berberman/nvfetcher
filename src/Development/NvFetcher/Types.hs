@@ -32,7 +32,8 @@ newtype SHA256 = SHA256 Text
   deriving anyclass (Hashable, Binary, NFData)
 
 data VersionSource
-  = GitHub {owner :: Text, repo :: Text}
+  = GitHubRelease {owner :: Text, repo :: Text}
+  | Git {vurl :: Text}
   | Pypi {pypi :: Text}
   | ArchLinux {archpkg :: Text}
   | Aur {aur :: Text}

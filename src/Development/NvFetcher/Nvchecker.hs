@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE ViewPatterns #-}
 
 module Development.NvFetcher.Nvchecker
   ( VersionSource (..),
@@ -15,7 +15,9 @@ import qualified Data.Aeson as A
 import Data.Binary
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as LBS
+import Data.Maybe (catMaybes)
 import qualified Data.Text as T
+import qualified Data.Text.Encoding as T
 import Development.NvFetcher.Types
 import Development.Shake
 import Development.Shake.Rule
@@ -25,11 +27,12 @@ nvcheckerRule :: Rules ()
 nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile $ \config -> do
   writeFile' config $ T.unpack $ genNvConfig "pkg" q
   need [config]
-  (CmdTime t, Stdout out) <- cmd $ "nvchecker --logger json -c " <> config
+  (CmdTime t, Stdout (T.lines . T.decodeUtf8 -> out)) <- cmd $ "nvchecker --logger json -c " <> config
   putInfo $ "Finishing running nvchecker, took " <> show t <> "s"
-  now <- case A.decode @NvcheckerResult out of
-    Just x -> pure x
-    Nothing -> fail $ "Unable to run nvchecker with: " <> show q
+  let result = catMaybes $ A.decodeStrict . T.encodeUtf8 <$> out
+  now <- case result of
+    [x] -> pure x
+    _ -> fail $ "Unable to run nvchecker with: " <> show q
   pure $ case old of
     Just lastRun
       | cachedResult <- decode' lastRun ->
@@ -43,12 +46,19 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile 
     encode' = BS.concat . LBS.toChunks . encode
     decode' = decode . LBS.fromChunks . pure
     genNvConfig srcName = \case
-      GitHub {..} ->
+      GitHubRelease {..} ->
         [trimming|
               [$srcName]
               source = "github"
               github = "$owner/$repo"
               use_latest_release = true
+        |]
+      Git {..} ->
+        [trimming|
+              [$srcName]
+              source = "git"
+              git = "$vurl"
+              use_commit = true
         |]
       Aur {..} ->
         [trimming|

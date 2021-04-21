@@ -59,7 +59,7 @@ gitHubPackage ::
   -- | owner and repo
   (Text, Text) ->
   PackageSet ()
-gitHubPackage name (owner, repo) = package name (GitHub owner repo) $ gitHubFetcher (owner, repo)
+gitHubPackage name (owner, repo) = package name (GitHubRelease owner repo) $ gitHubFetcher (owner, repo)
 
 embedAction :: Action a -> PackageSet a
 embedAction action = liftF $ EmbedAction action id
