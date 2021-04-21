@@ -12,14 +12,28 @@
         let
           hpkgs = super.haskellPackages;
           nvfetcher = hpkgs.callCabal2nix "nvfetcher" ./. { };
+          nvfetcher-bin = with super;
+            lib.overrideDerivation (haskell.lib.justStaticExecutables nvfetcher)
+            (drv: {
+              nativeBuildInputs = drv.nativeBuildInputs ++ [ makeWrapper ];
+              postInstall = ''
+                EXE=${lib.makeBinPath [ nvchecker nix-prefetch-git ]}
+                wrapProgram $out/bin/nvfetcher \
+                  --prefix PATH : "$out/bin:$EXE"
+              '';
+            });
         in with super;
         with haskell.lib; {
-          inherit nvfetcher;
-          nvfetcher-dev =
-            addBuildTools nvfetcher [ haskell-language-server cabal-install ];
+          inherit nvfetcher nvfetcher-bin;
+          nvfetcher-dev = addBuildTools nvfetcher [
+            haskell-language-server
+            cabal-install
+            nvchecker
+            nix-prefetch-git
+          ];
         };
-      defaultPackage.x86_64-linux = nvfetcher;
-      devShell.x86_64-linux = (nvfetcher-dev.envFunc { }).overrideAttrs
-        (old: { buildInputs = old.buildInputs ++ [ nvchecker nix-prefetch ]; });
+      defaultPackage.x86_64-linux = nvfetcher-bin;
+      devShell.x86_64-linux = nvfetcher-dev.envFunc { };
+
     };
 }

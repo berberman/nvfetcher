@@ -52,14 +52,12 @@ instance A.FromJSON NvcheckerResult where
 type instance RuleResult VersionSource = NvcheckerResult
 
 data NixFetcher (k :: Prefetch)
-  = FetchFromGitHub
-      { fgitHubOwner :: Text,
-        fgitHubRepo :: Text,
-        fgitHubRev :: Version,
+  = FetchGit
+      { furl :: Text,
+        rev :: Version,
         sha256 :: MapPrefetch k
       }
   | FetchUrl {furl :: Text, sha256 :: MapPrefetch k}
-  | FetchPypi {fpypi :: Text, fpypiV :: Version, sha256 :: MapPrefetch k}
   deriving (Typeable, Generic)
 
 data Prefetch = Fresh | Prefetched

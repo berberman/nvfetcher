@@ -67,13 +67,11 @@ versionSourceCodec =
       Aur
       (Toml.text "src.manual")
 
--- | The serialization is unsound!!! Use it only for deserialization
+-- | Use it only for deserialization!!!
 fetcherCodec :: TomlCodec (Version -> NixFetcher Fresh)
 fetcherCodec =
   Toml.dimatch
-    ( \f -> case f "$ver" of
-        FetchFromGitHub {..} -> Just $ fgitHubOwner <> "/" <> fgitHubRepo <> ":" <> coerce fgitHubRev
-        _ -> Nothing
+    ( const Nothing -- serialization is unsupported
     )
     ( \t v -> case T.split (== '/') t of
         [owner, rest] -> case T.split (== ':') rest of
@@ -85,17 +83,27 @@ fetcherCodec =
     )
     (Toml.text "fetch.github")
     <|> Toml.dimatch
-      ( \f -> case f "$ver" of
-          FetchPypi {..} -> Just $ fpypi <> ":" <> coerce fpypiV
-          _ -> Nothing
+      ( const Nothing -- serialization is unsupported
       )
       ( \t v -> case T.split (== ':') t of
-          [fpypi, coerce . T.replace "$ver" (coerce v) -> v] ->
-            pypiFetcher fpypi v
+          [fpypi, coerce . T.replace "$ver" (coerce v) -> v'] ->
+            pypiFetcher fpypi v'
           [fpypi] -> pypiFetcher fpypi v
           _ -> error "parse error on fetch.pypi"
       )
       (Toml.text "fetch.pypi")
+    <|> Toml.dimatch
+      ( \f -> case f "$ver" of
+          FetchGit {..} -> Just $ furl <> ":" <> coerce rev
+          _ -> Nothing
+      )
+      ( \t v -> case T.split (== ':') t of
+          [furl, coerce . T.replace "$ver" (coerce v) -> v'] ->
+            gitFetcher furl v'
+          [furl] -> gitFetcher furl $ coerce v
+          _ -> error "parse error on fetch.git"
+      )
+      (Toml.text "fetch.git")
     <|> Toml.dimatch
       ( \f -> case f "$ver" of
           FetchUrl {..} -> Just furl
