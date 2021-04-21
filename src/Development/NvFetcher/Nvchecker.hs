@@ -32,13 +32,13 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile 
     Nothing -> fail $ "Unable to run nvchecker with: " <> show q
   -- Try to delegate nvtake's work, i.e. saving the last version to produce changelog
   -- Not sure if this works
-  case old of
+  pure $ case old of
     Just lastRun
       | cachedResult <- decode' lastRun ->
         if cachedResult == nvNow now
-          then pure $ RunResult ChangedRecomputeSame lastRun now
-          else pure $ RunResult ChangedRecomputeDiff (encode' $ nvNow now) now {nvOld = Just cachedResult}
-    Nothing -> pure $ RunResult ChangedRecomputeDiff (encode' $ nvNow now) now
+          then RunResult ChangedRecomputeSame lastRun now {nvOld = Just cachedResult}
+          else RunResult ChangedRecomputeDiff (encode' $ nvNow now) now {nvOld = Just cachedResult}
+    Nothing -> RunResult ChangedRecomputeDiff (encode' $ nvNow now) now
   where
     encode' :: Binary a => a -> BS.ByteString
     encode' = BS.concat . LBS.toChunks . encode
@@ -55,7 +55,7 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile 
         [trimming|
               [$srcName]
               source = "aur"
-              archpkg = "$aur"
+              aur = "$aur"
               strip_release = true
         |]
       ArchLinux {..} ->

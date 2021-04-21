@@ -11,16 +11,14 @@ module Development.NvFetcher
     module Development.NvFetcher.Nvchecker,
     module Development.NvFetcher.PackageSet,
     module Development.NvFetcher.Types,
-    nvfetcherRules,
     Args (..),
     defaultArgs,
     defaultMain,
-    generateNixSources,
+    defaultMainWith,
   )
 where
 
 import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, readMVar)
-import Control.Monad (unless)
 import Data.Coerce (coerce)
 import Data.Maybe (fromJust)
 import qualified Data.Set as Set
@@ -33,6 +31,7 @@ import Development.NvFetcher.PackageSet
 import Development.NvFetcher.Types
 import Development.Shake
 import NeatInterpolation (trimming)
+import System.Console.GetOpt (OptDescr)
 
 data Args = Args
   { argShakeOptions :: ShakeOptions,
@@ -44,21 +43,36 @@ defaultArgs :: Args
 defaultArgs = Args shakeOptions "sources.nix" $ pure ()
 
 defaultMain :: Args -> PackageSet () -> IO ()
-defaultMain Args {..} pkgSet = do
+defaultMain args packageSet = defaultMainWith args [] $ const $ pure packageSet
+
+defaultMainWith :: Args -> [OptDescr (Either String a)] -> ([a] -> IO (PackageSet ())) -> IO ()
+defaultMainWith args@Args {..} flags f = do
   var <- newMVar mempty
-  shakeArgs
+  shakeArgsWith
     argShakeOptions
       { shakeProgress = progressSimple,
         shakeExtra = addShakeExtra (GitCommitMessage var) mempty
       }
-    $ do
-      phony "clean" $ removeFilesAfter ".shake" ["//*"] >> removeFilesAfter "." [argOutputFilePath]
-      argRules
-      nvfetcherRules
-      action $ do
-        pkgs <- runPackageSet pkgSet
-        generateNixSources argOutputFilePath $ Set.toList pkgs
-        setCommitMessageWhenInGitHubEnv
+    flags
+    $ \flagValues argValues -> case argValues of
+      [] -> pure Nothing
+      files -> do
+        packageSet <- f flagValues
+        pure $ Just $ want files >> mainRules args packageSet
+
+mainRules :: Args -> PackageSet () -> Rules ()
+mainRules Args {..} packageSet = do
+  "clean" ~> do
+    removeFilesAfter ".shake" ["//*"]
+    removeFilesAfter "." [argOutputFilePath]
+
+  "build" ~> do
+    pkgs <- runPackageSet packageSet
+    generateNixSources argOutputFilePath $ Set.toList pkgs
+    setCommitMessageWhenInGitHubEnv
+
+  argRules
+  nvfetcherRules
 
 --------------------------------------------------------------------------------
 newtype GitCommitMessage = GitCommitMessage (MVar [Text])
@@ -83,7 +97,7 @@ setCommitMessageWhenInGitHubEnv = do
         appendFile env "COMMIT_MSG<<EOF\n"
         T.appendFile env msg
         appendFile env "\nEOF\n"
-    _ -> putInfo "Not in GitHub Env"
+    _ -> pure ()
 
 --------------------------------------------------------------------------------
 
@@ -96,21 +110,24 @@ generateNixSources :: FilePath -> [Package] -> Action ()
 generateNixSources fp pkgs = do
   body <- genBody
   getGitCommitMessage >>= \msg ->
-    unless (T.null msg) $
-      putInfo $ T.unpack msg
+    if T.null msg
+      then putInfo "Up to date"
+      else do
+        putInfo "Changes:"
+        putInfo $ T.unpack msg
   writeFileChanged fp $ T.unpack $ srouces $ T.unlines body
-  produces [fp]
+  putInfo $ "Generate " <> fp
   where
     single Package {..} = do
       (NvcheckerResult version mOld) <- askNvchecker pversion
       prefetched <- prefetch $ pfetcher version
-      appendGitCommitMessageLine
-        ( pname <> ": " <> case mOld of
-            Just old -> coerce old
-            _ -> "∅"
-            <> " → "
-            <> coerce version
-        )
+      case mOld of
+        Nothing ->
+          appendGitCommitMessageLine (pname <> ": ∅ → " <> coerce version)
+        Just old
+          | old /= version ->
+            appendGitCommitMessageLine (pname <> ": " <> coerce old <> " → " <> coerce version)
+        _ -> pure ()
       pure (pname, version, prefetched)
     genOne (name, coerce @Version -> ver, toNixExpr -> srcP) =
       [trimming|

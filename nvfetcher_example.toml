@@ -1,0 +1,14 @@
+[[package]]
+name = "feeluown-core"
+src.pypi = "feeluown"
+fetch.pypi = "feeluown"
+
+[[package]]
+name = "qliveplayer"
+src.github = "IsoaSFlus/QLivePlayer"
+fetch.github = "IsoaSFlus/QLivePlayer"
+
+[[package]]
+name = "fcitx5-pinyin-zhwiki"
+src.aur = "fcitx5-pinyin-zhwiki"
+fetch.url = "https://github.com/felixonmars/fcitx5-pinyin-zhwiki/releases/download/0.2.2/zhwiki-$ver.dict"

@@ -48,3 +48,14 @@ library
     Development.NvFetcher.Nvchecker
     Development.NvFetcher.PackageSet
     Development.NvFetcher.Types
+
+executable nvfetcher
+  import:         common-options
+  hs-source-dirs: app
+  main-is:        Main.hs
+  other-modules:  Config
+  build-depends:
+    , nvfetcher
+    , tomland
+
+  ghc-options:    -threaded -rtsopts -with-rtsopts=-N

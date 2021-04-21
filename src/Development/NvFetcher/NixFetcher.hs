@@ -61,6 +61,14 @@ buildNixFetcher sha256 = \case
             url = "$url";
           }
     |]
+  (FetchPypi pypi (coerce -> ver) _) ->
+    let h = T.cons (T.head pypi) ""
+     in [trimming|
+          fetchurl {
+            sha256 = $sha256;
+            url = "mirror://pypi/$h/$pypi/$pypi-$ver.tar.gz";
+          }
+    |]
 
 --------------------------------------------------------------------------------
 
@@ -79,14 +87,14 @@ prefetchRule = void $
 --------------------------------------------------------------------------------
 
 gitHubFetcher :: (Text, Text) -> Version -> NixFetcher Fresh
-gitHubFetcher (gitHubOwner, gitHubRepo) gitHubRev = FetchFromGitHub {..}
+gitHubFetcher (fgitHubOwner, fgitHubRepo) fgitHubRev = FetchFromGitHub {..}
   where
     sha256 = ()
 
 pypiFetcher :: Text -> Version -> NixFetcher Fresh
-pypiFetcher pypi (coerce -> ver) =
-  let h = T.cons (T.head pypi) ""
-   in FetchUrl [trimming|mirror://pypi/$h/$pypi/$pypi-$ver.tar.gz|] ()
+pypiFetcher fpypi fpypiV = FetchPypi {..}
+  where
+    sha256 = ()
 
 gitHubReleaseFetcher :: (Text, Text) -> Text -> Version -> NixFetcher Fresh
 gitHubReleaseFetcher (owner, repo) fp (coerce -> ver) =

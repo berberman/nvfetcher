@@ -5,6 +5,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -52,12 +53,13 @@ type instance RuleResult VersionSource = NvcheckerResult
 
 data NixFetcher (k :: Prefetch)
   = FetchFromGitHub
-      { gitHubOwner :: Text,
-        gitHubRepo :: Text,
-        gitHubRev :: Version,
+      { fgitHubOwner :: Text,
+        fgitHubRepo :: Text,
+        fgitHubRev :: Version,
         sha256 :: MapPrefetch k
       }
-  | FetchUrl {url :: Text, sha256 :: MapPrefetch k}
+  | FetchUrl {furl :: Text, sha256 :: MapPrefetch k}
+  | FetchPypi {fpypi :: Text, fpypiV :: Version, sha256 :: MapPrefetch k}
   deriving (Typeable, Generic)
 
 data Prefetch = Fresh | Prefetched
@@ -87,7 +89,7 @@ data Package = Package
   }
 
 instance Show Package where
-  show x = "Package{name = " <> T.unpack (pname x) <> "}"
+  show Package {..} = "Package {name = " <> T.unpack pname <> ", version = " <> show pversion <> ", fetcher = {..}" <> "}"
 
 instance Eq Package where
   (==) = (==) `on` pname

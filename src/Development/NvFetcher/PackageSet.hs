@@ -3,8 +3,18 @@
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
-module Development.NvFetcher.PackageSet where
+module Development.NvFetcher.PackageSet
+  ( PackageSet,
+    package,
+    pypiPackage,
+    gitHubPackage,
+    embedAction,
+    purePackageSet,
+    runPackageSet,
+  )
+where
 
 import Control.Monad.Free
 import Data.Set (Set)
@@ -53,6 +63,9 @@ gitHubPackage name (owner, repo) = package name (GitHub owner repo) $ gitHubFetc
 
 embedAction :: Action a -> PackageSet a
 embedAction action = liftF $ EmbedAction action id
+
+purePackageSet :: [Package] -> PackageSet ()
+purePackageSet = mapM_ (\Package {..} -> package pname pversion pfetcher)
 
 runPackageSet :: PackageSet a -> Action (Set Package)
 runPackageSet = \case
