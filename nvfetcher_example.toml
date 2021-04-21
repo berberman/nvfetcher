@@ -1,14 +1,21 @@
-[[package]]
-name = "feeluown-core"
-src.pypi = "feeluown"
-fetch.pypi = "feeluown"
+# [[package]]
+# name = "feeluown-core"
+# src.pypi = "feeluown"
+# fetch.pypi = "feeluown"
 
-[[package]]
-name = "qliveplayer"
-src.github = "IsoaSFlus/QLivePlayer"
-fetch.github = "IsoaSFlus/QLivePlayer"
+# [[package]]
+# name = "qliveplayer"
+# src.github = "IsoaSFlus/QLivePlayer"
+# fetch.github = "IsoaSFlus/QLivePlayer"
 
 [[package]]
 name = "fcitx5-pinyin-zhwiki"
 src.aur = "fcitx5-pinyin-zhwiki"
+# $ver can be used in fetch.url
 fetch.url = "https://github.com/felixonmars/fcitx5-pinyin-zhwiki/releases/download/0.2.2/zhwiki-$ver.dict"
+
+# [[package]]
+# name = "apple-emoji"
+# # a fake version
+# src.manual = "0.0.0.20200413"
+# fetch.url = "https://github.com/samuelngs/apple-emoji-linux/releases/download/latest/AppleColorEmoji.ttf"

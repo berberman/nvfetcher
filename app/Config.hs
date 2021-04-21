@@ -64,7 +64,7 @@ versionSourceCodec =
           Manual {..} -> Just manual
           _ -> Nothing
       )
-      Aur
+      Manual
       (Toml.text "src.manual")
 
 -- | Use it only for deserialization!!!

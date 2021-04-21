@@ -25,18 +25,17 @@ nvcheckerRule :: Rules ()
 nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile $ \config -> do
   writeFile' config $ T.unpack $ genNvConfig "pkg" q
   need [config]
-  (CmdTime t, Stdout out) <- quietly $ cmd $ "nvchecker --logger json -c " <> config
-  putInfo $ "Finishing running nvchecker for " <> show q <> ", took " <> show t <> "s"
+  (CmdTime t, Stdout out) <- cmd $ "nvchecker --logger json -c " <> config
+  putInfo $ "Finishing running nvchecker, took " <> show t <> "s"
   now <- case A.decode @NvcheckerResult out of
     Just x -> pure x
     Nothing -> fail $ "Unable to run nvchecker with: " <> show q
-  -- Try to delegate nvtake's work, i.e. saving the last version to produce changelog
-  -- Not sure if this works
   pure $ case old of
     Just lastRun
       | cachedResult <- decode' lastRun ->
         if cachedResult == nvNow now
-          then RunResult ChangedRecomputeSame lastRun now {nvOld = Just cachedResult}
+          then -- try to get the version in last run from store, filling it into 'now'
+            RunResult ChangedRecomputeSame lastRun now {nvOld = Just cachedResult}
           else RunResult ChangedRecomputeDiff (encode' $ nvNow now) now {nvOld = Just cachedResult}
     Nothing -> RunResult ChangedRecomputeDiff (encode' $ nvNow now) now
   where

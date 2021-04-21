@@ -41,6 +41,7 @@ data VersionSource
 
 data NvcheckerResult = NvcheckerResult
   { nvNow :: Version,
+    -- | nvchecker doesn't give this value, but shake restores it from last run
     nvOld :: Maybe Version
   }
   deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
@@ -55,6 +56,10 @@ data NixFetcher (k :: Prefetch)
   = FetchGit
       { furl :: Text,
         rev :: Version,
+        branch :: Maybe Text,
+        deepClone :: Bool,
+        fetchSubmodules :: Bool,
+        leaveDotGit :: Bool,
         sha256 :: MapPrefetch k
       }
   | FetchUrl {furl :: Text, sha256 :: MapPrefetch k}
