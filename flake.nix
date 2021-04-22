@@ -11,7 +11,9 @@
       overlay = self: super:
         let
           hpkgs = super.haskellPackages;
+          # Added to haskellPackages, so we can use it as a haskell library in ghcWithPackages
           nvfetcher = hpkgs.callCabal2nix "nvfetcher" ./. { };
+          # Exposed to top-level nixpkgs, as an nvfetcher executable 
           nvfetcher-bin = with super;
             lib.overrideDerivation (haskell.lib.justStaticExecutables nvfetcher)
             (drv: {
@@ -22,18 +24,19 @@
                   --prefix PATH : "$out/bin:$EXE"
               '';
             });
-        in with super;
-        with haskell.lib; {
-          inherit nvfetcher nvfetcher-bin;
-          nvfetcher-dev = addBuildTools nvfetcher [
-            haskell-language-server
-            cabal-install
-            nvchecker
-            nix-prefetch-git
-          ];
+        in {
+          haskellPackages = super.haskellPackages.override
+            (old: { overrides = hself: hsuper: { inherit nvfetcher; }; });
+          nvfetcher = nvfetcher-bin;
         };
-      defaultPackage.x86_64-linux = nvfetcher-bin;
-      devShell.x86_64-linux = nvfetcher-dev.envFunc { };
+      defaultPackage.x86_64-linux = nvfetcher;
+      devShell.x86_64-linux = with haskell.lib;
+        (addBuildTools (haskellPackages.nvfetcher) [
+          haskell-language-server
+          cabal-install
+          nvchecker
+          nix-prefetch-git
+        ]).envFunc { };
 
     };
 }
