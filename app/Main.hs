@@ -1,25 +1,35 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
 
 module Main where
 
 import Config
+import Control.Monad (void)
 import Development.NvFetcher
 import System.Console.GetOpt
 import qualified Toml
 
-newtype ConfigPath = ConfigPath FilePath deriving (Show)
+data CLIArgs = CLIArgs
+  { configPath :: FilePath,
+    outputPath :: FilePath
+  }
+  deriving (Show)
 
-flags :: [OptDescr (Either String ConfigPath)]
-flags = [Option ['c'] ["config"] (ReqArg (Right . ConfigPath) "FILE") "Path to nvfetcher config"]
+defaultCLIArgs :: CLIArgs
+defaultCLIArgs = CLIArgs "nvfetcher.toml" "sources.nix"
+
+flags :: [OptDescr (Either String (CLIArgs -> CLIArgs))]
+flags =
+  [ Option ['c'] ["config"] (ReqArg (\s -> Right $ \o -> o {configPath = s}) "FILE") "Path to nvfetcher config",
+    Option ['o'] ["output"] (ReqArg (\s -> Right $ \o -> o {outputPath = s}) "FILE") "Path to output nix file"
+  ]
 
 main :: IO ()
-main = defaultMainWith defaultArgs flags $ \flagValues -> do
-  let fp = case flagValues of
-        [ConfigPath fp] -> fp
-        _ -> "nvfetcher.toml"
-
-  e <- Toml.decodeFileEither nvfetcherConfigCodec fp
-  case e of
-    Left e -> error $ "Failed to parse config: " <> show e
-    Right (getPackages -> x) -> pure (purePackageSet x)
+main = void $
+  defaultMainWith flags $ \flagValues -> do
+    let CLIArgs {..} = foldl (flip id) defaultCLIArgs flagValues
+    e <- Toml.decodeFileEither nvfetcherConfigCodec configPath
+    case e of
+      Left e -> error $ "Failed to parse config: " <> show e
+      Right (getPackages -> x) -> pure (defaultArgs {argOutputFilePath = outputPath}, purePackageSet x)

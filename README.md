@@ -65,9 +65,15 @@ No matter which way you use it in, CLI options are inherited from shake with two
 
 > Running `nvfetcher` without any target has no effect!
 
+> You can specify `-j` to enable parallelism
+
 ### CLI
 
 To run nvfetcher as a CLI program, you'll need to provide package sources defined in TOML.
+
+Two available CLI options:
+* `-c` (`--config`) - path to the TOML configuration file
+* `-o` (`--output`) - path to the output nix file
 
 A *package* consists of three parts:
 * a name - `name = pkg_name`

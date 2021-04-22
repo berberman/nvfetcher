@@ -19,6 +19,7 @@ module Development.NvFetcher
 where
 
 import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, readMVar)
+import Control.Monad (void)
 import Data.Coerce (coerce)
 import Data.Maybe (fromJust)
 import qualified Data.Set as Set
@@ -34,7 +35,7 @@ import NeatInterpolation (trimming)
 import System.Console.GetOpt (OptDescr)
 
 data Args = Args
-  { argShakeOptions :: ShakeOptions,
+  { argShakeOptions :: ShakeOptions -> ShakeOptions,
     argOutputFilePath :: FilePath,
     argRules :: Rules ()
   }
@@ -42,30 +43,38 @@ data Args = Args
 defaultArgs :: Args
 defaultArgs =
   Args
-    shakeOptions
-      { shakeThreads = 0, -- expanded to number of processors
-        shakeTimings = True -- print timing
-      }
+    ( \x ->
+        x
+          { shakeTimings = True,
+            shakeProgress = progressSimple
+          }
+    )
     "sources.nix"
     $ pure ()
 
 defaultMain :: Args -> PackageSet () -> IO ()
-defaultMain args packageSet = defaultMainWith args [] $ const $ pure packageSet
+defaultMain args packageSet = void $ defaultMainWith [] $ const $pure (args, packageSet)
 
-defaultMainWith :: Args -> [OptDescr (Either String a)] -> ([a] -> IO (PackageSet ())) -> IO ()
-defaultMainWith args@Args {..} flags f = do
+-- | Returns changelog
+defaultMainWith :: [OptDescr (Either String a)] -> ([a] -> IO (Args, PackageSet ())) -> IO [Text]
+defaultMainWith flags f = do
   var <- newMVar mempty
-  shakeArgsWith
-    argShakeOptions
-      { shakeProgress = progressSimple,
-        shakeExtra = addShakeExtra (GitCommitMessage var) mempty
-      }
+  shakeArgsOptionsWith
+    shakeOptions
     flags
-    $ \flagValues argValues -> case argValues of
+    $ \opts flagValues argValues -> case argValues of
       [] -> pure Nothing
       files -> do
-        packageSet <- f flagValues
-        pure $ Just $ want files >> mainRules args packageSet
+        (args@Args {..}, packageSet) <- f flagValues
+        let opts' = argShakeOptions opts
+        pure $
+          Just
+            ( opts'
+                { shakeExtra = addShakeExtra (GitCommitMessage var) (shakeExtra opts')
+                },
+              want files >> mainRules args packageSet
+            )
+  readMVar var
 
 mainRules :: Args -> PackageSet () -> Rules ()
 mainRules Args {..} packageSet = do
