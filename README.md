@@ -84,6 +84,7 @@ A *package* consists of three parts:
   * `src.archpkg = archlinux_pkg_name` -- the latest version of an archlinux package
   * `src.aur = aur_pkg_name` -- the latest version of an aur package
   * `src.manual = v` -- a fixed version, which never updates
+  * `src.repology = project:repo` -- the latest version from repology
 * a nix fetcher function, how to fetch the package given the version number. `$ver` is available, which will be set to the result of nvchecker.
   * `fetch.github = owner/repo` or `owner/repo:rev` (default to `$ver` if no `rev` specified)
   * `fetch.pypi = pypi_name` or `pypi_name:ver` (default to `$ver` if no `ver` specified)

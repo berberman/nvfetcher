@@ -38,6 +38,7 @@ data VersionSource
   | ArchLinux {archpkg :: Text}
   | Aur {aur :: Text}
   | Manual {manual :: Text}
+  | Repology {repology :: Text, repo :: Text}
   deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
 
 data NvcheckerResult = NvcheckerResult

@@ -86,6 +86,13 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile 
               source = "manual"
               manual = "$manual"
         |]
+      Repology{..} ->
+        [trimming|
+              [$srcName]
+              source = "repology"
+              repology = "$repology"
+              repo = "$repo"
+        |]
 
 askNvchecker :: VersionSource -> Action NvcheckerResult
 askNvchecker = apply1

@@ -73,6 +73,16 @@ versionSourceCodec =
       )
       Manual
       (Toml.text "src.manual")
+    <|> Toml.dimatch
+      ( \case
+          Repology {..} -> Just $ repology <> ":" <> repo
+          _ -> Nothing
+      )
+      ( \t -> case T.split (== ':') t of
+          [repology, repo] -> Repology {..}
+          _ -> error "parse error on src.repology"
+      )
+      (Toml.text "src.repology")
 
 -- | Use it only for deserialization!!!
 fetcherCodec :: TomlCodec (Version -> NixFetcher Fresh)
