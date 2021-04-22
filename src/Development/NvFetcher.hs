@@ -1,5 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
@@ -11,21 +9,22 @@ module Development.NvFetcher
     module Development.NvFetcher.Nvchecker,
     module Development.NvFetcher.PackageSet,
     module Development.NvFetcher.Types,
+    nvfetcherRules,
+    generateNixSources,
     Args (..),
     defaultArgs,
     defaultMain,
     defaultMainWith,
+    VersionChange (..),
+    getVersionChanges,
   )
 where
 
 import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, readMVar)
-import Control.Monad (void)
 import Data.Coerce (coerce)
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, fromMaybe)
 import qualified Data.Set as Set
-import Data.Text (Text)
 import qualified Data.Text as T
-import qualified Data.Text.IO as T
 import Development.NvFetcher.NixFetcher
 import Development.NvFetcher.Nvchecker
 import Development.NvFetcher.PackageSet
@@ -37,7 +36,8 @@ import System.Console.GetOpt (OptDescr)
 data Args = Args
   { argShakeOptions :: ShakeOptions -> ShakeOptions,
     argOutputFilePath :: FilePath,
-    argRules :: Rules ()
+    argRules :: Rules (),
+    argActionAferBuild :: Action ()
   }
 
 defaultArgs :: Args
@@ -50,13 +50,14 @@ defaultArgs =
           }
     )
     "sources.nix"
-    $ pure ()
+    (pure ())
+    (pure ())
 
 defaultMain :: Args -> PackageSet () -> IO ()
-defaultMain args packageSet = void $ defaultMainWith [] $ const $pure (args, packageSet)
+defaultMain args packageSet = defaultMainWith [] $ const $pure (args, packageSet)
 
 -- | Returns changelog
-defaultMainWith :: [OptDescr (Either String a)] -> ([a] -> IO (Args, PackageSet ())) -> IO [Text]
+defaultMainWith :: [OptDescr (Either String a)] -> ([a] -> IO (Args, PackageSet ())) -> IO ()
 defaultMainWith flags f = do
   var <- newMVar mempty
   shakeArgsOptionsWith
@@ -70,11 +71,10 @@ defaultMainWith flags f = do
         pure $
           Just
             ( opts'
-                { shakeExtra = addShakeExtra (GitCommitMessage var) (shakeExtra opts')
+                { shakeExtra = addShakeExtra (VersionChanges var) (shakeExtra opts')
                 },
               want files >> mainRules args packageSet
             )
-  readMVar var
 
 mainRules :: Args -> PackageSet () -> Rules ()
 mainRules Args {..} packageSet = do
@@ -85,35 +85,35 @@ mainRules Args {..} packageSet = do
   "build" ~> do
     pkgs <- runPackageSet packageSet
     generateNixSources argOutputFilePath $ Set.toList pkgs
-    setCommitMessageWhenInGitHubEnv
+    argActionAferBuild
 
   argRules
   nvfetcherRules
 
 --------------------------------------------------------------------------------
-newtype GitCommitMessage = GitCommitMessage (MVar [Text])
 
-appendGitCommitMessageLine :: Text -> Action ()
-appendGitCommitMessageLine x = do
-  GitCommitMessage var <- fromJust <$> getShakeExtra @GitCommitMessage
-  liftIO $ modifyMVar_ var (pure . (++ [x]))
+data VersionChange = VersionChange
+  { vcName :: PackageName,
+    vcOld :: Maybe Version,
+    vcNew :: Version
+  }
+  deriving (Eq)
 
-getGitCommitMessage :: Action Text
-getGitCommitMessage = do
-  GitCommitMessage var <- fromJust <$> getShakeExtra @GitCommitMessage
-  liftIO $ T.unlines <$> readMVar var
+instance Show VersionChange where
+  show VersionChange {..} =
+    T.unpack $ vcName <> ": " <> fromMaybe "∅" (coerce vcOld) <> " → " <> coerce vcNew
 
--- | If we are in github actions, write the commit message into $COMMIT_MSG
-setCommitMessageWhenInGitHubEnv :: Action ()
-setCommitMessageWhenInGitHubEnv = do
-  msg <- getGitCommitMessage
-  getEnv "GITHUB_ENV" >>= \case
-    Just env ->
-      liftIO $ do
-        appendFile env "COMMIT_MSG<<EOF\n"
-        T.appendFile env $ "Auto update:\n" <> if T.null msg then "Internal changes" else msg
-        appendFile env "\nEOF\n"
-    _ -> pure ()
+newtype VersionChanges = VersionChanges (MVar [VersionChange])
+
+recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()
+recordVersionChange vcName vcOld vcNew = do
+  VersionChanges var <- fromJust <$> getShakeExtra @VersionChanges
+  liftIO $ modifyMVar_ var (pure . (++ [VersionChange {..}]))
+
+getVersionChanges :: Action [VersionChange]
+getVersionChanges = do
+  VersionChanges var <- fromJust <$> getShakeExtra @VersionChanges
+  liftIO $ readMVar var
 
 --------------------------------------------------------------------------------
 
@@ -125,12 +125,12 @@ nvfetcherRules = do
 generateNixSources :: FilePath -> [Package] -> Action ()
 generateNixSources fp pkgs = do
   body <- fmap genOne <$> actions
-  getGitCommitMessage >>= \msg ->
-    if T.null msg
+  getVersionChanges >>= \changes ->
+    if null changes
       then putInfo "Up to date"
       else do
         putInfo "Changes:"
-        putInfo $ T.unpack msg
+        putInfo $ unlines $ show <$> changes
   writeFileChanged fp $ T.unpack $ srouces $ T.unlines body
   putInfo $ "Generate " <> fp
   where
@@ -139,10 +139,10 @@ generateNixSources fp pkgs = do
       prefetched <- prefetch $ pfetcher version
       case mOld of
         Nothing ->
-          appendGitCommitMessageLine (pname <> ": ∅ → " <> coerce version)
+          recordVersionChange pname Nothing version
         Just old
           | old /= version ->
-            appendGitCommitMessageLine (pname <> ": " <> coerce old <> " → " <> coerce version)
+            recordVersionChange pname (Just old) version
         _ -> pure ()
       pure (pname, version, prefetched)
     genOne (name, coerce @Version -> ver, toNixExpr -> srcP) =
