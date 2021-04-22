@@ -111,7 +111,7 @@ setCommitMessageWhenInGitHubEnv = do
     Just env ->
       liftIO $ do
         appendFile env "COMMIT_MSG<<EOF\n"
-        T.appendFile env msg
+        T.appendFile env $ "Auto update:\n" <> if T.null msg then "Internal changes" else msg
         appendFile env "\nEOF\n"
     _ -> pure ()
 
