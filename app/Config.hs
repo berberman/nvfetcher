@@ -30,14 +30,21 @@ versionSourceCodec :: TomlCodec VersionSource
 versionSourceCodec =
   Toml.dimatch
     ( \case
-        GitHubRelease {..} -> Just $ owner <> "/" <> repo
+        GitHubRelease {..} -> Just GitHubRelease {..}
         _ -> Nothing
     )
-    ( \x -> case T.split (== '/') x of
-        [owner, repo] -> GitHubRelease {..}
-        _ -> error "parse error on src.github"
+    id
+    ( Toml.textBy
+        ( \case
+            GitHubRelease {..} -> owner <> "/" <> repo
+            _ -> error "impossible"
+        )
+        ( \x -> case T.split (== '/') x of
+            [owner, repo] -> Right GitHubRelease {..}
+            _ -> Left "unexpected github srouce: it should be something like [owner]/[repo]"
+        )
+        "src.github"
     )
-    (Toml.text "src.github")
     <|> Toml.dimatch
       ( \case
           Git {..} -> Just vurl
@@ -75,57 +82,58 @@ versionSourceCodec =
       (Toml.text "src.manual")
     <|> Toml.dimatch
       ( \case
-          Repology {..} -> Just $ repology <> ":" <> repo
+          Repology {..} -> Just Repology {..}
           _ -> Nothing
       )
-      ( \t -> case T.split (== ':') t of
-          [repology, repo] -> Repology {..}
-          _ -> error "parse error on src.repology"
+      id
+      ( Toml.textBy
+          ( \case
+              Repology {..} -> repology <> ":" <> repo
+              _ -> error "impossible"
+          )
+          ( \t -> case T.split (== ':') t of
+              [repology, repo] -> Right Repology {..}
+              _ -> Left "unexpected repology source: it should be something like [project]:[repo]"
+          )
+          "src.repology"
       )
-      (Toml.text "src.repology")
+
+unsupportError :: a
+unsupportError = error "serialization of fetchers is unsupported"
 
 -- | Use it only for deserialization!!!
 fetcherCodec :: TomlCodec (Version -> NixFetcher Fresh)
 fetcherCodec =
-  Toml.dimatch
-    ( const Nothing -- serialization is unsupported
-    )
-    ( \t v -> case T.split (== '/') t of
+  Toml.textBy
+    unsupportError
+    ( \t -> case T.split (== '/') t of
         [owner, rest] -> case T.split (== ':') rest of
-          [repo, coerce . T.replace "$ver" (coerce v) -> v'] ->
-            gitHubFetcher (owner, repo) v'
-          [repo] -> gitHubFetcher (owner, repo) v
-          _ -> error "parse error on fetch.github (A)"
-        _ -> error "parse error on fetch.github (B)"
+          [repo, rawV] ->
+            Right $ \(coerce -> realV) -> gitHubFetcher (owner, repo) $ coerce $ T.replace "$ver" rawV realV
+          [repo] -> Right $ gitHubFetcher (owner, repo)
+          _ -> Left "unexpected github fetcher: it should be something like [owner]/[repo] or [owner]/[repo]:[ver]"
+        _ -> Left "unexpected github fetcher: it should be something like [owner]/[repo] or [owner]/[repo]:[ver]"
     )
-    (Toml.text "fetch.github")
-    <|> Toml.dimatch
-      ( const Nothing -- serialization is unsupported
+    "fetch.github"
+    <|> Toml.textBy
+      unsupportError
+      ( \t -> case T.split (== ':') t of
+          [fpypi, rawV] ->
+            Right $ \(coerce -> realV) -> pypiFetcher fpypi $ coerce $ T.replace "$ver" rawV realV
+          [fpypi] -> Right $ pypiFetcher fpypi
+          _ -> Left "unexpected pypi fetcher: it should be something like [pypi] or [pypi]:[ver]"
       )
-      ( \t v -> case T.split (== ':') t of
-          [fpypi, coerce . T.replace "$ver" (coerce v) -> v'] ->
-            pypiFetcher fpypi v'
-          [fpypi] -> pypiFetcher fpypi v
-          _ -> error "parse error on fetch.pypi"
+      "fetch.pypi"
+    <|> Toml.textBy
+      unsupportError
+      ( \t -> case T.split (== ':') t of
+          [furl, rawV] ->
+            Right $ \(coerce -> realV) -> gitFetcher furl $ coerce $ T.replace "$ver" rawV realV
+          [furl] -> Right $ gitFetcher furl
+          _ -> Left "unexpected git fetcher: it should be something like [git_url] or [git_url]:[ver]"
       )
-      (Toml.text "fetch.pypi")
-    <|> Toml.dimatch
-      ( \f -> case f "$ver" of
-          FetchGit {..} -> Just $ furl <> ":" <> coerce rev
-          _ -> Nothing
-      )
-      ( \t v -> case T.split (== ':') t of
-          [furl, coerce . T.replace "$ver" (coerce v) -> v'] ->
-            gitFetcher furl v'
-          [furl] -> gitFetcher furl $ coerce v
-          _ -> error "parse error on fetch.git"
-      )
-      (Toml.text "fetch.git")
-    <|> Toml.dimatch
-      ( \f -> case f "$ver" of
-          FetchUrl {..} -> Just furl
-          _ -> Nothing
-      )
-      ( \t v -> FetchUrl (T.replace "$ver" (coerce v) t) ()
-      )
-      (Toml.text "fetch.url")
+      "fetch.git"
+    <|> Toml.textBy
+      unsupportError
+      (\t -> Right $ \(coerce -> v) -> urlFetcher $ T.replace "$ver" v t)
+      "fetch.url"

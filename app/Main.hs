@@ -6,6 +6,7 @@ module Main where
 
 import Config
 import Control.Monad (void)
+import qualified Data.Text as T
 import Development.NvFetcher
 import System.Console.GetOpt
 import qualified Toml
@@ -31,5 +32,5 @@ main = void $
     let CLIArgs {..} = foldl (flip id) defaultCLIArgs flagValues
     e <- Toml.decodeFileEither nvfetcherConfigCodec configPath
     case e of
-      Left e -> error $ "Failed to parse config: " <> show e
+      Left e -> error $ T.unpack $ Toml.prettyTomlDecodeErrors e
       Right (getPackages -> x) -> pure (defaultArgs {argOutputFilePath = outputPath}, purePackageSet x)
