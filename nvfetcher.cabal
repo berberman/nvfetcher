@@ -57,5 +57,6 @@ executable nvfetcher
   build-depends:
     , nvfetcher
     , tomland
+    , validation-selective
 
   ghc-options:    -threaded -rtsopts -with-rtsopts=-N

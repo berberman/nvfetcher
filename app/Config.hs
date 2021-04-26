@@ -8,23 +8,22 @@ module Config where
 
 import Control.Applicative ((<|>))
 import Data.Coerce (coerce)
+import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.Text as T
 import Development.NvFetcher
-import Toml (TomlCodec, (.=))
+import Toml (TOML, TomlCodec, (.=))
 import qualified Toml
+import Validation (validationToEither)
 
-newtype NvFetcherConfig = NvFetcherConfig {getPackages :: [Package]}
-  deriving (Show)
-
-nvfetcherConfigCodec :: TomlCodec NvFetcherConfig
-nvfetcherConfigCodec = NvFetcherConfig <$> Toml.list packageCodec "package" .= getPackages
-
-packageCodec :: TomlCodec Package
-packageCodec =
-  Package
-    <$> Toml.diwrap (Toml.text "name") .= pname
-      <*> versionSourceCodec .= pversion
-      <*> fetcherCodec .= pfetcher
+parseConfig :: TOML -> Either [Toml.TomlDecodeError] [Package]
+parseConfig toml = go tables [] []
+  where
+    go (Left errs : xs) se sp = go xs (se <> errs) sp
+    go (Right x : xs) se sp = go xs se (x : sp)
+    go [] [] sp = Right sp
+    go [] se _ = Left se
+    tables = [fmap (uncurry (Package k)) $ validationToEither $ Toml.runTomlCodec iCodec v | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml]
+    iCodec = (,) <$> versionSourceCodec .= fst <*> fetcherCodec .= snd
 
 versionSourceCodec :: TomlCodec VersionSource
 versionSourceCodec =

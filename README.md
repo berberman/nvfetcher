@@ -11,13 +11,11 @@ For example, given configuration file:
 
 ```toml
 # nvfetcher.toml
-[[package]]
-name = "feeluown-core"
+[feeluown-core]
 src.pypi = "feeluown"
 fetch.pypi = "feeluown"
 
-[[package]]
-name = "qliveplayer"
+[qliveplayer]
 src.github = "IsoaSFlus/QLivePlayer"
 fetch.github = "IsoaSFlus/QLivePlayer"
 ```
@@ -75,8 +73,8 @@ Two available CLI options:
 * `-c` (`--config`) - path to the TOML configuration file
 * `-o` (`--output`) - path to the output nix file
 
-A *package* consists of three parts:
-* a name - `name = pkg_name`
+Each *package* corresponds to a TOML table, whose name is encoded as table key;
+there are two pairs in each table:
 * a nvchecker configuration, how to track version updates
   * `src.github = owner/repo` - the latest gituhb release
   * `src.pypi = pypi_name` - the latest pypi release
@@ -91,7 +89,7 @@ A *package* consists of three parts:
   * `fetch.git = git_url` or `git_url:rev` (default to `$ver` if no `rev` specified)
   * `fetch.url = url`
 
-Each *package* has three such fields - the entire of nvfetcher configuration is a list of packages in TOML. You can find an example of the configuration file, see [`nvfetcher_example.toml`](nvfetcher_example.toml).
+You can find an example of the configuration file, see [`nvfetcher_example.toml`](nvfetcher_example.toml).
 
 ## Haskell library
 
@@ -114,43 +112,13 @@ As you can see, packages are declared in `PackageSet ()`, an embedded DSL specia
 
 ### Define a package
 
-```haskell
-data Package = Package
-  { pname :: PackageName,
-    pversion :: VersionSource,
-    pfetcher :: Version -> NixFetcher Fresh
-  }
-
-data VersionSource
-  = GitHubRelease {owner :: Text, repo :: Text}
-  | Git {vurl :: Text}
-  | Pypi {pypi :: Text}
-  | ArchLinux {archpkg :: Text}
-  | Aur {aur :: Text}
-  | Manual {manual :: Text}
-
-data NixFetcher (k :: Prefetch)
-  = FetchGit
-      { furl :: Text,
-        rev :: Version,
-        branch :: Maybe Text,
-        deepClone :: Bool,
-        fetchSubmodules :: Bool,
-        leaveDotGit :: Bool,
-        sha256 :: MapPrefetch k
-      }
-  | FetchUrl {furl :: Text, sha256 :: MapPrefetch k}
-```
-
 Data types all you need to define a package:
 * `PackageName`: a synonym of `Text`, name of the package
 * `VersionSource`, wired to nvchecker, how to track package's version
 * `NixFetcher`, wired to nix-prefetch-{git,url}, how to fetch the package given the version
+* `PackageSet`, a free monad under the hood
 
-### Package set
-
-`PackageSet` is a free monad under the hood, whereas you only need to concern the following functions,
-which are enough to create `PackageSet`:
+Functions to construct `PackageSet`:
 
 ```haskell
 package ::
@@ -177,4 +145,4 @@ gitHubPackage ::
   PackageSet ()
 ```
 
-Since `PackageSet` is a monad, you can concatenation packages using do notaion, like the example shown above.
+Since `PackageSet` is a monad, you are able to concatenation definitions through do notaion, like the example shown above.
