@@ -37,7 +37,7 @@ data Args = Args
   { argShakeOptions :: ShakeOptions -> ShakeOptions,
     argOutputFilePath :: FilePath,
     argRules :: Rules (),
-    argActionAferBuild :: Action ()
+    argActionAfterBuild :: Action ()
   }
 
 defaultArgs :: Args
@@ -56,7 +56,6 @@ defaultArgs =
 defaultMain :: Args -> PackageSet () -> IO ()
 defaultMain args packageSet = defaultMainWith [] $ const $pure (args, packageSet)
 
--- | Returns changelog
 defaultMainWith :: [OptDescr (Either String a)] -> ([a] -> IO (Args, PackageSet ())) -> IO ()
 defaultMainWith flags f = do
   var <- newMVar mempty
@@ -85,7 +84,7 @@ mainRules Args {..} packageSet = do
   "build" ~> do
     pkgs <- runPackageSet packageSet
     generateNixSources argOutputFilePath $ Set.toList pkgs
-    argActionAferBuild
+    argActionAfterBuild
 
   argRules
   nvfetcherRules
