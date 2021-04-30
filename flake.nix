@@ -4,7 +4,7 @@
 
   outputs = { self, nixpkgs, flake-utils, ... }:
     with flake-utils.lib;
-    eachDefaultSystem (system:
+    eachSystem [ "x86_64-linux" ] (system:
       let
         pkgs = import nixpkgs {
           inherit system;
@@ -19,6 +19,7 @@
             nvchecker
             nix-prefetch-git
           ]).envFunc { };
+        packages.nvfetcher-lib = haskellPackages.nvfetcher;
       }) // {
         overlay = self: super:
           let
@@ -30,7 +31,8 @@
                 ];
               });
             # Added to haskellPackages, so we can use it as a haskell library in ghcWithPackages
-            nvfetcher = linkHaddockToHackage (hpkgs.callCabal2nix "nvfetcher" ./. { });
+            nvfetcher =
+              linkHaddockToHackage (hpkgs.callCabal2nix "nvfetcher" ./. { });
             # Exposed to top-level nixpkgs, as an nvfetcher executable 
             nvfetcher-bin = with super;
               lib.overrideDerivation

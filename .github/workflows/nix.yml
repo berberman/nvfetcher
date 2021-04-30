@@ -17,7 +17,7 @@ jobs:
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
     - name: Build and generate haddock
-      run: nix build
+      run: nix build .\#nvfetcher-lib
       
     - name: Deploy generated haddock to github pages
       uses: peaceiris/actions-gh-pages@v3
