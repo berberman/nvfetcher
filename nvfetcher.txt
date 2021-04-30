@@ -65,6 +65,7 @@ FetchUrl :: Text -> PrefetchResult k -> NixFetcher (k :: Prefetch)
 data Prefetch
 Fresh :: Prefetch
 Prefetched :: Prefetch
+type family PrefetchResult (k :: Prefetch)
 
 -- | Package name, used in generating nix expr
 type PackageName = Text
@@ -175,8 +176,12 @@ checkVersion :: VersionSource -> Action NvcheckerResult
 
 -- | <a>NixFetcher</a> is used to describe how to fetch package sources.
 --   
---   There are two types of fetchers overall: 1. <a>FetchGit</a> --
---   nix-prefetch-git 2. <a>FetchUrl</a> -- nix-prefetch-url
+--   There are two types of fetchers overall:
+--   
+--   <ol>
+--   <li><a>FetchGit</a> -- nix-prefetch-git</li>
+--   <li><a>FetchUrl</a> -- nix-prefetch-url</li>
+--   </ol>
 --   
 --   As you can see the type signature of <a>prefetch</a>: a fetcher will
 --   be filled with the fetch result (hash) after the prefetch.
@@ -204,6 +209,7 @@ Prefetched :: Prefetch
 -- | Types can be converted into nix expr
 class ToNixExpr a
 toNixExpr :: ToNixExpr a => a -> Text
+type family PrefetchResult (k :: Prefetch)
 
 -- | Rules of nix fetcher
 prefetchRule :: Rules ()
@@ -267,9 +273,7 @@ end :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFe
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
---   Example: &gt;&gt;&gt; define $ package "nvfetcher-git"
---   <a>sourceGit</a> "nvfetcher" <a>fetchGitHub</a> ("berberman",
---   "nvfetcher")
+--   Example:
 define :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r) => PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
