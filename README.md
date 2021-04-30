@@ -1,5 +1,9 @@
 # nvfetcher
 
+[![Hackage](https://img.shields.io/hackage/v/nvfetcher.svg?logo=haskell)](https://hackage.haskell.org/package/nvfetcher)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![nix](https://github.com/berberman/nvfetcher/actions/workflows/nix.yml/badge.svg)](https://github.com/berberman/nvfetcher/actions/workflows/nix.yml)
+
 nvfetcher is a build system built on top of [shake](https://www.shakebuild.com/),
 integrating [nvchecker](https://github.com/lilydjwg/nvchecker).
 It's very simple -- the system produces only one artifact as the result of build.
@@ -7,7 +11,7 @@ nvfetcher cli program accepts a TOML file as config, which defines a set of pack
 
 ## Overview
 
-For example, given configuration file:
+For example, given the following configuration file:
 
 ```toml
 # nvfetcher.toml
@@ -53,6 +57,14 @@ We tell nvfetcher how to get the latest version number of packages and how to fe
 and nvfetcher will help us keep their version and prefetched SHA256 sums up-to-date, stored in `sources.nix`.
 Shake will help us handle necessary rebuilds -- we check versions of packages during each run, but only prefetch them when needed.
 
+## Live examples
+
+How to use the generated sources file? Here are some examples:
+
+* My [flakes repo](https://github.com/berberman/flakes)
+
+* Nick Cao's [flakes repo](https://gitlab.com/NickCao/flakes/-/tree/master/pkgs)
+
 ## Usage
 
 Basically, there are two ways to use nvfetcher, where the difference is how we provide package sources definitions to it. 
@@ -61,7 +73,7 @@ No matter which way you use it in, CLI options are inherited from shake with two
 * `nvfetcher build` - our main purpose, creating `sources.nix`
 * `nvfetcher clean` - clean up cache and remove `sources.nix`
 
-> Running `nvfetcher` without any target has no effect!
+> nvfetcher uses `build` as the target if no specified
 
 > You can specify `-j` to enable parallelism
 
@@ -91,58 +103,17 @@ there are two pairs in each table:
 
 You can find an example of the configuration file, see [`nvfetcher_example.toml`](nvfetcher_example.toml).
 
-## Haskell library
+### Haskell library
 
-nvfetcher itsetlf is a Haskell library as well, whereas the CLI program is just a trivial wrapper of the library. You can create a Haskell program depending on it directly, creating an entry point. In this case, we can define packages in Haskell language, getting rid of TOML constraints. Let's create a Haskell script `Main.hs`:
+nvfetcher itsetlf is a Haskell library as well, whereas the CLI program is just a trivial wrapper of the library. You can create a Haskell program depending on it directly, creating an entry point. In this case, we can define packages in Haskell language, getting rid of TOML constraints.
 
-```haskell
-import Development.NvFetcher
+You can find an example of using nvfetcher in the library way, see [`Main_example.hs`](Main_example.hs).
 
-main :: IO ()
-main = defaultMain defaultArgs packageSet
+## Documentation
 
-packageSet :: PackageSet ()
-packageSet = do
-  pypiPackage "feeluown-core" "feeluown"
-  gitHubPackage "qliveplayer" ("IsoaSFlus", "QLivePlayer")
-```
+For details of the library, documentation of released versions is available on [Hackage](https://hackage.haskell.org/package/nvfetcher),
+and of master is on our [github pages](https://nvfetcher.berberman.space).
 
-`runghc Main.hs build` will create `sources.nix` identical to the initial one. 
-As you can see, packages are declared in `PackageSet ()`, an embedded DSL specialize in our case.
+## Contributing
 
-### Define a package
-
-Data types all you need to define a package:
-* `PackageName`: a synonym of `Text`, name of the package
-* `VersionSource`, wired to nvchecker, how to track package's version
-* `NixFetcher`, wired to nix-prefetch-{git,url}, how to fetch the package given the version
-* `PackageSet`, a free monad under the hood
-
-Functions to construct `PackageSet`:
-
-```haskell
-package ::
-  -- | package name
-  PackageName ->
-  -- | version source
-  VersionSource ->
-  -- | fetcher
-  (Version -> NixFetcher Fresh) ->
-  PackageSet ()
-
-pypiPackage ::
-  -- | package name
-  PackageName ->
-  -- | pypi name
-  Text ->
-  PackageSet ()
-
-gitHubPackage ::
-  -- | package name
-  PackageName ->
-  -- | owner and repo
-  (Text, Text) ->
-  PackageSet ()
-```
-
-Since `PackageSet` is a monad, you are able to concatenation definitions through do notaion, like the example shown above.
+Issues and PRs are always welcome. **\_(:з」∠)\_**
