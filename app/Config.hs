@@ -7,10 +7,10 @@
 module Config where
 
 import Control.Applicative ((<|>))
-import Data.Coerce (coerce)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.Text as T
 import NvFetcher
+import NvFetcher.NixFetcher
 import Toml (TOML, TomlCodec, (.=))
 import qualified Toml
 import Validation (validationToEither)
