@@ -38,7 +38,8 @@ data Args = Args
   { argShakeOptions :: ShakeOptions -> ShakeOptions,
     argOutputFilePath :: FilePath,
     argRules :: Rules (),
-    argActionAfterBuild :: Action ()
+    argActionAfterBuild :: Action (),
+    argActionAfterClean :: Action ()
   }
 
 -- | Default arguments of 'defaultMain'
@@ -52,6 +53,7 @@ defaultArgs =
           }
     )
     "sources.nix"
+    (pure ())
     (pure ())
     (pure ())
 
@@ -84,6 +86,7 @@ mainRules Args {..} packageSet = do
   "clean" ~> do
     removeFilesAfter ".shake" ["//*"]
     removeFilesAfter "." [argOutputFilePath]
+    argActionAfterClean
 
   "build" ~> do
     pkgs <- runPackageSet packageSet

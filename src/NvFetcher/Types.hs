@@ -10,6 +10,13 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
+-- | Copyright: (c) 2021 berberman
+-- SPDX-License-Identifier: MIT
+-- Maintainer: berberman <berberman@yandex.com>
+-- Stability: experimental
+-- Portability: portable
+--
+-- Types used in this program.
 module NvFetcher.Types
   ( -- * Common types
     Version (..),
@@ -115,7 +122,11 @@ type PackageName = Text
 -- | How to create package source fetcher given a version
 type PackageFetcher = Version -> NixFetcher Fresh
 
--- | A package is defined with its name, how to track its version, and how to fetch it as we have version
+-- | A package is defined with:
+--
+-- 1. its name
+-- 2. how to track its version
+-- 3. how to fetch it as we have the version
 data Package = Package
   { pname :: PackageName,
     pversion :: VersionSource,

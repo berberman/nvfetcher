@@ -4,6 +4,19 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
 
+-- | Copyright: (c) 2021 berberman
+-- SPDX-License-Identifier: MIT
+-- Maintainer: berberman <berberman@yandex.com>
+-- Stability: experimental
+-- Portability: portable
+--
+-- [nvchecker](https://github.com/lilydjwg/nvchecker) is a program checking new versions of packages.
+-- We encode the checking process into shake build system, generating configuration of nvchecker and calling it externally.
+-- Now we call nvchecker for each 'VersionSource', which seems not to be efficient, but it's tolerable when running in parallel.
+--
+-- Meanwhile, we lose the capabilities of tracking version updates, i.e. normally nvchecker will help us maintain a list of old versions,
+-- so that we are able to know which package's version is updated in this run. Fortunately, we can reimplement this using shake database,
+-- see 'nvcheckerRule' for details.
 module NvFetcher.Nvchecker
   ( -- * Types
     VersionSource (..),

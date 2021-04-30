@@ -11,6 +11,15 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
+-- | Copyright: (c) 2021 berberman
+-- SPDX-License-Identifier: MIT
+-- Maintainer: berberman <berberman@yandex.com>
+-- Stability: experimental
+-- Portability: portable
+--
+-- This module mainly contains two things: 'PackageSet' and 'PkgDSL'.
+-- NvFetcher accepts the former one -- a set of packages to produce nix sources expr;
+-- the later one is used to construct a single package.
 module NvFetcher.PackageSet
   ( -- * Package set
     PackageSet,
@@ -151,6 +160,10 @@ instance PkgDSL PackageSet where
     p <- e
     newPackage (proj p) (proj p) (proj p)
 
+-- | 'PkgDSL' version of 'newPackage'
+--
+-- Example:
+-- >>> define $ package "nvfetcher-git" `sourceGit` "nvfetcher" `fetchGitHub` ("berberman", "nvfetcher")
 define ::
   ( Member PackageName r,
     Member VersionSource r,

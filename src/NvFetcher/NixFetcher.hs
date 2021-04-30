@@ -8,6 +8,20 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
+-- | Copyright: (c) 2021 berberman
+-- SPDX-License-Identifier: MIT
+-- Maintainer: berberman <berberman@yandex.com>
+-- Stability: experimental
+-- Portability: portable
+--
+-- 'NixFetcher' is used to describe how to fetch package sources.
+--
+-- There are two types of fetchers overall:
+-- 1. 'FetchGit' -- nix-prefetch-git
+-- 2. 'FetchUrl' -- nix-prefetch-url
+--
+-- As you can see the type signature of 'prefetch':
+-- a fetcher will be filled with the fetch result (hash) after the prefetch.
 module NvFetcher.NixFetcher
   ( -- * Types
     NixFetcher (..),
@@ -124,6 +138,10 @@ prefetchRule = void $
     sha256 <- toPrefetchCommand f
     pure $ f {sha256 = sha256}
 
+-- | Run nix fetcher
+prefetch :: NixFetcher Fresh -> Action (NixFetcher Prefetched)
+prefetch = askOracle
+
 --------------------------------------------------------------------------------
 
 -- | Create a fetcher from git url
@@ -155,7 +173,3 @@ gitHubReleaseFetcher (owner, repo) fp (coerce -> ver) =
 -- | Create a fetcher from url
 urlFetcher :: Text -> NixFetcher Fresh
 urlFetcher = flip FetchUrl ()
-
--- | Run nix fetcher
-prefetch :: NixFetcher Fresh -> Action (NixFetcher Prefetched)
-prefetch = askOracle
