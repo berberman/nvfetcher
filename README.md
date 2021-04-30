@@ -103,13 +103,13 @@ there are two pairs in each table:
 
 You can find an example of the configuration file, see [`nvfetcher_example.toml`](nvfetcher_example.toml).
 
-## Haskell library
+### Haskell library
 
 nvfetcher itsetlf is a Haskell library as well, whereas the CLI program is just a trivial wrapper of the library. You can create a Haskell program depending on it directly, creating an entry point. In this case, we can define packages in Haskell language, getting rid of TOML constraints.
 
-You can find an example of using nvfetcher in library way, see [`Main_example.hs`](Main_example.hs).
+You can find an example of using nvfetcher in the library way, see [`Main_example.hs`](Main_example.hs).
 
 ### Documentation
 
 For details of the library, documentation of released versions is available on [Hackage](https://hackage.haskell.org/package/nvfetcher),
-and of master is on [github pages](https://nvfetcher.berberman.space).
+and of master is on our [github pages](https://nvfetcher.berberman.space).
