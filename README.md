@@ -109,7 +109,11 @@ nvfetcher itsetlf is a Haskell library as well, whereas the CLI program is just 
 
 You can find an example of using nvfetcher in the library way, see [`Main_example.hs`](Main_example.hs).
 
-### Documentation
+## Documentation
 
 For details of the library, documentation of released versions is available on [Hackage](https://hackage.haskell.org/package/nvfetcher),
 and of master is on our [github pages](https://nvfetcher.berberman.space).
+
+## Contributing
+
+Issues and PRs are always welcome. **\_(:з」∠)\_**
