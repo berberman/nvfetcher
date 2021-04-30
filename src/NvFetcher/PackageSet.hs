@@ -20,6 +20,8 @@
 -- This module mainly contains two things: 'PackageSet' and 'PkgDSL'.
 -- NvFetcher accepts the former one -- a set of packages to produce nix sources expr;
 -- the later one is used to construct a single package.
+--
+-- There are many combinators for defining packages. See the documentation of 'define' for example.
 module NvFetcher.PackageSet
   ( -- * Package set
     PackageSet,
@@ -29,13 +31,15 @@ module NvFetcher.PackageSet
     runPackageSet,
 
     -- * Package DSL
+
+    -- ** Primitives
     PkgDSL (..),
     define,
     package,
     src,
     fetch,
 
-    -- ** One-stop shops
+    -- ** Two-in-one functions
     fromGitHub,
     fromPypi,
 
@@ -59,10 +63,12 @@ module NvFetcher.PackageSet
     Prod (..),
     Member (..),
     NotElem,
+    coerce,
   )
 where
 
 import Control.Monad.Free
+import Data.Coerce (coerce)
 import Data.Kind (Constraint, Type)
 import Data.Set (Set)
 import qualified Data.Set as Set
@@ -83,7 +89,7 @@ instance Functor PackageSetF where
   fmap f (NewPackage name src fe g) = NewPackage name src fe $ f g
   fmap f (EmbedAction action g) = EmbedAction action $ f <$> g
 
--- | Package set is a free monad equipped with two capabilities:
+-- | Package set is a monad equipped with two capabilities:
 --
 -- 1. Carry defined packages
 -- 2. Run shake actions
@@ -131,7 +137,7 @@ instance {-# OVERLAPPING #-} NotElem x xs => Member x (x ': xs) where
 instance Member x xs => Member x (_y ': xs) where
   proj (Cons _ r) = proj r
 
-instance TypeError (ShowType x :<>: 'Text " is not defined") => Member x '[] where
+instance TypeError (ShowType x :<>: 'Text " is undefined") => Member x '[] where
   proj = undefined
 
 -- | Constraint for producing error messages
@@ -163,8 +169,10 @@ instance PkgDSL PackageSet where
 -- | 'PkgDSL' version of 'newPackage'
 --
 -- Example:
-
--- >>> define $ package "nvfetcher-git" `sourceGit` "nvfetcher" `fetchGitHub` ("berberman", "nvfetcher")
+--
+-- @
+-- define $ package "nvfetcher-git" `sourceGit` "nvfetcher" `fetchGitHub` ("berberman", "nvfetcher")
+-- @
 define ::
   ( Member PackageName r,
     Member VersionSource r,

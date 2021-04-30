@@ -60,3 +60,18 @@ executable nvfetcher
     , validation-selective
 
   ghc-options:    -threaded -rtsopts -with-rtsopts=-N
+
+flag build-example
+  description: Build example executable
+  manual:      True
+  default:     False
+
+executable example
+  import:        common-options
+
+  if !flag(build-example)
+    buildable: False
+
+  main-is:       Main_example.hs
+  build-depends: nvfetcher
+  ghc-options:   -threaded -rtsopts -with-rtsopts=-N

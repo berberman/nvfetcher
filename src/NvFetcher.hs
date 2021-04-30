@@ -4,9 +4,42 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
+-- | Copyright: (c) 2021 berberman
+-- SPDX-License-Identifier: MIT
+-- Maintainer: berberman <berberman@yandex.com>
+-- Stability: experimental
+-- Portability: portable
+--
+-- The main module of nvfetcher. If you want to create CLI program with it, it's enough to import only this module.
+--
+-- Example:
+--
+-- @
+-- module Main where
+--
+-- import NvFetcher
+--
+-- main :: IO ()
+-- main = defaultMain defaultArgs packageSet
+--
+-- packageSet :: PackageSet ()
+-- packageSet = do
+--   define $ package "feeluown-core" `fromPypi` "feeluown"
+--   define $ package "qliveplayer" `fromGitHub` ("IsoaSFlus", "QLivePlayer")
+-- @
+--
+-- You can find more examples of packages in @Main_example.hs@.
+--
+-- Running the created program:
+--
+-- * @main@ -- abbreviation of @main build@
+-- * @main build@ -- build nix sources expr from given @packageSet@
+-- * @main clean@ -- delete .shake dir and generated nix file
+-- * @main -j@ -- build with parallelism
+--
+-- All shake options are inherited.
 module NvFetcher
-  ( module NvFetcher.NixFetcher,
-    module NvFetcher.Nvchecker,
+  ( -- | Re-export DSL things
     module NvFetcher.PackageSet,
     module NvFetcher.Types,
     nvfetcherRules,
@@ -21,7 +54,6 @@ module NvFetcher
 where
 
 import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, readMVar)
-import Data.Coerce (coerce)
 import Data.Maybe (fromJust, fromMaybe)
 import qualified Data.Set as Set
 import qualified Data.Text as T
@@ -35,14 +67,21 @@ import System.Console.GetOpt (OptDescr)
 
 -- | Arguments for running nvfetcher
 data Args = Args
-  { argShakeOptions :: ShakeOptions -> ShakeOptions,
+  { -- | tweak shake options
+    argShakeOptions :: ShakeOptions -> ShakeOptions,
+    -- | Output file path
     argOutputFilePath :: FilePath,
+    -- | Custom rules
     argRules :: Rules (),
+    -- | Action run after build rule
     argActionAfterBuild :: Action (),
+    -- | Action run after clean rule
     argActionAfterClean :: Action ()
   }
 
 -- | Default arguments of 'defaultMain'
+--
+-- Output file path is @sources.nix@.
 defaultArgs :: Args
 defaultArgs =
   Args
@@ -68,21 +107,21 @@ defaultMainWith flags f = do
   shakeArgsOptionsWith
     shakeOptions
     flags
-    $ \opts flagValues argValues -> case argValues of
-      [] -> pure Nothing
-      files -> do
-        (args@Args {..}, packageSet) <- f flagValues
-        let opts' = argShakeOptions opts
-        pure $
-          Just
-            ( opts'
-                { shakeExtra = addShakeExtra (VersionChanges var) (shakeExtra opts')
-                },
-              want files >> mainRules args packageSet
-            )
+    $ \opts flagValues argValues -> do
+      (args@Args {..}, packageSet) <- f flagValues
+      let opts' =
+            let old = argShakeOptions opts
+             in old {shakeExtra = addShakeExtra (VersionChanges var) (shakeExtra old)}
+          rules = mainRules args packageSet
+      pure $
+        Just $ case argValues of
+          [] -> (opts', want ["build"] >> rules)
+          files -> (opts', want files >> rules)
 
 mainRules :: Args -> PackageSet () -> Rules ()
 mainRules Args {..} packageSet = do
+  addHelpSuffix "It's important to keep .shake dir if you want to get correct version changes"
+
   "clean" ~> do
     removeFilesAfter ".shake" ["//*"]
     removeFilesAfter "." [argOutputFilePath]
@@ -98,7 +137,13 @@ mainRules Args {..} packageSet = do
 
 --------------------------------------------------------------------------------
 
--- | Record version changes between runs, relying on shake database
+-- | Version change of a package
+--
+-- >>> VersionChange "foo" Nothing "2.3.3"
+-- foo: ∅ → 2.3.3
+--
+-- >>> VersionChange "bar" (Just "2.2.2") "2.3.3"
+-- bar: 2.2.2 → 2.3.3
 data VersionChange = VersionChange
   { vcName :: PackageName,
     vcOld :: Maybe Version,
@@ -117,7 +162,9 @@ recordVersionChange vcName vcOld vcNew = do
   VersionChanges var <- fromJust <$> getShakeExtra @VersionChanges
   liftIO $ modifyMVar_ var (pure . (++ [VersionChange {..}]))
 
--- | Get version changes. Use this function in 'argActionAfterBuild' to produce external changelog
+-- | Get version changes since the last run, relying on shake database.
+--
+-- Use this function in 'argActionAfterBuild' to produce external changelog
 getVersionChanges :: Action [VersionChange]
 getVersionChanges = do
   VersionChanges var <- fromJust <$> getShakeExtra @VersionChanges

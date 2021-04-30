@@ -101,6 +101,7 @@ data NixFetcher (k :: Prefetch)
 -- | Prefetch status
 data Prefetch = Fresh | Prefetched
 
+-- | Prefetched fetchers hold hashes
 type family PrefetchResult (k :: Prefetch) where
   PrefetchResult Fresh = ()
   PrefetchResult Prefetched = SHA256
