@@ -65,6 +65,8 @@ FetchUrl :: Text -> PrefetchResult k -> NixFetcher (k :: Prefetch)
 data Prefetch
 Fresh :: Prefetch
 Prefetched :: Prefetch
+
+-- | Prefetched fetchers hold hashes
 type family PrefetchResult (k :: Prefetch)
 
 -- | Package name, used in generating nix expr
@@ -209,6 +211,8 @@ Prefetched :: Prefetch
 -- | Types can be converted into nix expr
 class ToNixExpr a
 toNixExpr :: ToNixExpr a => a -> Text
+
+-- | Prefetched fetchers hold hashes
 type family PrefetchResult (k :: Prefetch)
 
 -- | Rules of nix fetcher
@@ -241,9 +245,12 @@ instance NvFetcher.NixFetcher.ToNixExpr NvFetcher.Types.Version
 --   <a>PkgDSL</a>. NvFetcher accepts the former one -- a set of packages
 --   to produce nix sources expr; the later one is used to construct a
 --   single package.
+--   
+--   There are many combinators for defining packages. See the
+--   documentation of <a>define</a> for example.
 module NvFetcher.PackageSet
 
--- | Package set is a free monad equipped with two capabilities:
+-- | Package set is a monad equipped with two capabilities:
 --   
 --   <ol>
 --   <li>Carry defined packages</li>
@@ -274,6 +281,10 @@ end :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFe
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
 --   Example:
+--   
+--   <pre>
+--   define $ package "nvfetcher-git" <a>sourceGit</a> "nvfetcher" <a>fetchGitHub</a> ("berberman", "nvfetcher")
+--   </pre>
 define :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r) => PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
@@ -338,12 +349,59 @@ proj :: Member a r => Prod r -> a
 
 -- | Constraint for producing error messages
 type family NotElem (x :: Type) (xs :: [Type]) :: Constraint
+
+-- | The function <tt>coerce</tt> allows you to safely convert between
+--   values of types that have the same representation with no run-time
+--   overhead. In the simplest case you can use it instead of a newtype
+--   constructor, to go from the newtype's concrete type to the abstract
+--   type. But it also works in more complicated settings, e.g. converting
+--   a list of newtypes to a list of concrete types.
+--   
+--   This function is runtime-representation polymorphic, but the
+--   <tt>RuntimeRep</tt> type argument is marked as <tt>Inferred</tt>,
+--   meaning that it is not available for visible type application. This
+--   means the typechecker will accept <tt>coerce @Int @Age 42</tt>.
+coerce :: forall (k :: RuntimeRep) (a :: TYPE k) (b :: TYPE k). Coercible a b => a -> b
 instance NvFetcher.PackageSet.PkgDSL NvFetcher.PackageSet.PackageSet
 instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.Member x (x : xs)
 instance NvFetcher.PackageSet.Member x xs => NvFetcher.PackageSet.Member x (_y : xs)
 instance (TypeError ...) => NvFetcher.PackageSet.Member x '[]
 instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
 
+
+-- | The main module of nvfetcher. If you want to create CLI program with
+--   it, it's enough to import only this module.
+--   
+--   Example:
+--   
+--   <pre>
+--   module Main where
+--   
+--   import NvFetcher
+--   
+--   main :: IO ()
+--   main = defaultMain defaultArgs packageSet
+--   
+--   packageSet :: PackageSet ()
+--   packageSet = do
+--     define $ package "feeluown-core" <a>fromPypi</a> "feeluown"
+--     define $ package "qliveplayer" <a>fromGitHub</a> (<a>IsoaSFlus</a>, <a>QLivePlayer</a>)
+--   </pre>
+--   
+--   You can find more examples of packages in <tt>Main_example.hs</tt>.
+--   
+--   Running the created program:
+--   
+--   <ul>
+--   <li><tt>main</tt> -- abbreviation of <tt>main build</tt></li>
+--   <li><tt>main build</tt> -- build nix sources expr from given
+--   <tt>packageSet</tt></li>
+--   <li><tt>main clean</tt> -- delete .shake dir and generated nix
+--   file</li>
+--   <li><tt>main -j</tt> -- build with parallelism</li>
+--   </ul>
+--   
+--   All shake options are inherited.
 module NvFetcher
 
 -- | Rules of nvfetcher
@@ -356,13 +414,25 @@ generateNixSources :: FilePath -> [Package] -> Action ()
 -- | Arguments for running nvfetcher
 data Args
 Args :: (ShakeOptions -> ShakeOptions) -> FilePath -> Rules () -> Action () -> Action () -> Args
+
+-- | tweak shake options
 [argShakeOptions] :: Args -> ShakeOptions -> ShakeOptions
+
+-- | Output file path
 [argOutputFilePath] :: Args -> FilePath
+
+-- | Custom rules
 [argRules] :: Args -> Rules ()
+
+-- | Action run after build rule
 [argActionAfterBuild] :: Args -> Action ()
+
+-- | Action run after clean rule
 [argActionAfterClean] :: Args -> Action ()
 
 -- | Default arguments of <a>defaultMain</a>
+--   
+--   Output file path is <tt>sources.nix</tt>.
 defaultArgs :: Args
 
 -- | Entry point of nvfetcher
@@ -371,15 +441,27 @@ defaultMain :: Args -> PackageSet () -> IO ()
 -- | Like <a>defaultMain</a> but allows to define custom cli flags
 defaultMainWith :: [OptDescr (Either String a)] -> ([a] -> IO (Args, PackageSet ())) -> IO ()
 
--- | Record version changes between runs, relying on shake database
+-- | Version change of a package
+--   
+--   <pre>
+--   &gt;&gt;&gt; VersionChange "foo" Nothing "2.3.3"
+--   foo: ∅ → 2.3.3
+--   </pre>
+--   
+--   <pre>
+--   &gt;&gt;&gt; VersionChange "bar" (Just "2.2.2") "2.3.3"
+--   bar: 2.2.2 → 2.3.3
+--   </pre>
 data VersionChange
 VersionChange :: PackageName -> Maybe Version -> Version -> VersionChange
 [vcName] :: VersionChange -> PackageName
 [vcOld] :: VersionChange -> Maybe Version
 [vcNew] :: VersionChange -> Version
 
--- | Get version changes. Use this function in <a>argActionAfterBuild</a>
---   to produce external changelog
+-- | Get version changes since the last run, relying on shake database.
+--   
+--   Use this function in <a>argActionAfterBuild</a> to produce external
+--   changelog
 getVersionChanges :: Action [VersionChange]
 instance GHC.Classes.Eq NvFetcher.VersionChange
 instance GHC.Show.Show NvFetcher.VersionChange
