@@ -45,6 +45,11 @@ module Development.NvFetcher.PackageSet
     fetchPypi,
     fetchGit,
     fetchUrl,
+
+    -- * Miscellaneous
+    Prod (..),
+    Member (..),
+    NotElem,
   )
 where
 
@@ -102,10 +107,12 @@ runPackageSet = \case
 
 --------------------------------------------------------------------------------
 
+-- | Simple HList
 data Prod (r :: [Type]) where
   Nil :: Prod '[]
   Cons :: !x -> Prod xs -> Prod (x ': xs)
 
+-- | Project elements from 'Prod'
 class Member (a :: Type) (r :: [Type]) where
   proj :: Prod r -> a
 
@@ -118,6 +125,7 @@ instance Member x xs => Member x (_y ': xs) where
 instance TypeError (ShowType x :<>: 'Text " is not defined") => Member x '[] where
   proj = undefined
 
+-- | Constraint for producing error messages
 type family NotElem (x :: Type) (xs :: [Type]) :: Constraint where
   NotElem x (x ': xs) = TypeError (ShowType x :<>: 'Text " is defined more than one times")
   NotElem x (_ ': xs) = NotElem x xs

@@ -23,8 +23,14 @@
         overlay = self: super:
           let
             hpkgs = super.haskellPackages;
+            linkHaddockToHackage = drv:
+              super.haskell.lib.overrideCabal drv (drv: {
+                haddockFlags = [
+                  "--html-location='https://hackage.haskell.org/package/$pkg-$version/docs'"
+                ];
+              });
             # Added to haskellPackages, so we can use it as a haskell library in ghcWithPackages
-            nvfetcher = hpkgs.callCabal2nix "nvfetcher" ./. { };
+            nvfetcher = linkHaddockToHackage (hpkgs.callCabal2nix "nvfetcher" ./. { });
             # Exposed to top-level nixpkgs, as an nvfetcher executable 
             nvfetcher-bin = with super;
               lib.overrideDerivation

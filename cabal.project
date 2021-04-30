@@ -1,0 +1,8 @@
+packages: .
+
+package nvfetcher
+  documentation: True
+  haddock-html: True
+  haddock-hoogle: True
+  haddock-internal: True
+

@@ -33,6 +33,7 @@ import Development.Shake
 import NeatInterpolation (trimming)
 import System.Console.GetOpt (OptDescr)
 
+-- | Arguments for running nvfetcher
 data Args = Args
   { argShakeOptions :: ShakeOptions -> ShakeOptions,
     argOutputFilePath :: FilePath,
@@ -40,6 +41,7 @@ data Args = Args
     argActionAfterBuild :: Action ()
   }
 
+-- | Default arguments of 'defaultMain'
 defaultArgs :: Args
 defaultArgs =
   Args
@@ -53,9 +55,11 @@ defaultArgs =
     (pure ())
     (pure ())
 
+-- | Entry point of nvfetcher
 defaultMain :: Args -> PackageSet () -> IO ()
 defaultMain args packageSet = defaultMainWith [] $ const $pure (args, packageSet)
 
+-- | Like 'defaultMain' but allows to define custom cli flags
 defaultMainWith :: [OptDescr (Either String a)] -> ([a] -> IO (Args, PackageSet ())) -> IO ()
 defaultMainWith flags f = do
   var <- newMVar mempty
@@ -91,6 +95,7 @@ mainRules Args {..} packageSet = do
 
 --------------------------------------------------------------------------------
 
+-- | Record version changes between runs, relying on shake database
 data VersionChange = VersionChange
   { vcName :: PackageName,
     vcOld :: Maybe Version,
@@ -109,6 +114,7 @@ recordVersionChange vcName vcOld vcNew = do
   VersionChanges var <- fromJust <$> getShakeExtra @VersionChanges
   liftIO $ modifyMVar_ var (pure . (++ [VersionChange {..}]))
 
+-- | Get version changes. Use this function in 'argActionAfterBuild' to produce external changelog
 getVersionChanges :: Action [VersionChange]
 getVersionChanges = do
   VersionChanges var <- fromJust <$> getShakeExtra @VersionChanges
@@ -116,11 +122,13 @@ getVersionChanges = do
 
 --------------------------------------------------------------------------------
 
+-- | Rules of nvfetcher
 nvfetcherRules :: Rules ()
 nvfetcherRules = do
   nvcheckerRule
   prefetchRule
 
+-- | Main action, given a set of packages, generating nix sources expr in a file
 generateNixSources :: FilePath -> [Package] -> Action ()
 generateNixSources fp pkgs = do
   body <- fmap genOne <$> actions
