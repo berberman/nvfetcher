@@ -11,7 +11,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Development.NvFetcher.PackageSet
+module NvFetcher.PackageSet
   ( -- * Package set
     PackageSet,
     newPackage,
@@ -26,11 +26,11 @@ module Development.NvFetcher.PackageSet
     src,
     fetch,
 
-    -- * One-stop shops
+    -- ** One-stop shops
     fromGitHub,
     fromPypi,
 
-    -- * Version sources
+    -- ** Version sources
     sourceGitHub,
     sourceGit,
     sourcePypi,
@@ -39,14 +39,14 @@ module Development.NvFetcher.PackageSet
     sourceManual,
     sourceRepology,
 
-    -- * Fetchers
+    -- ** Fetchers
     fetchGitHub,
     fetchGitHubRelease,
     fetchPypi,
     fetchGit,
     fetchUrl,
 
-    -- * Miscellaneous
+    -- ** Miscellaneous
     Prod (..),
     Member (..),
     NotElem,
@@ -58,10 +58,10 @@ import Data.Kind (Constraint, Type)
 import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.Text (Text)
-import Development.NvFetcher.NixFetcher
-import Development.NvFetcher.Types
 import Development.Shake (Action)
 import GHC.TypeLits
+import NvFetcher.NixFetcher
+import NvFetcher.Types
 
 --------------------------------------------------------------------------------
 
@@ -99,7 +99,7 @@ purePackageSet :: [Package] -> PackageSet ()
 purePackageSet = mapM_ (\Package {..} -> newPackage pname pversion pfetcher)
 
 -- | Run package set into a set of packages, carried by 'Action'
-runPackageSet :: PackageSet a -> Action (Set Package)
+runPackageSet :: PackageSet () -> Action (Set Package)
 runPackageSet = \case
   Free (NewPackage name src fe g) -> (Package name src fe `Set.insert`) <$> runPackageSet g
   Free (EmbedAction action g) -> action >>= runPackageSet . g

@@ -8,17 +8,22 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
-module Development.NvFetcher.NixFetcher
-  ( NixFetcher (..),
+module NvFetcher.NixFetcher
+  ( -- * Types
+    NixFetcher (..),
     Prefetch (..),
     ToNixExpr (..),
+
+    -- * Rules
     prefetchRule,
+    prefetch,
+
+    -- * Functions
     gitHubFetcher,
     pypiFetcher,
     gitHubReleaseFetcher,
     gitFetcher,
     urlFetcher,
-    prefetch,
   )
 where
 
@@ -30,9 +35,9 @@ import Data.Maybe (maybeToList)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
-import Development.NvFetcher.Types
 import Development.Shake
 import NeatInterpolation (trimming)
+import NvFetcher.Types
 
 --------------------------------------------------------------------------------
 

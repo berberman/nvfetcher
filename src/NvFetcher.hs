@@ -4,11 +4,11 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
-module Development.NvFetcher
-  ( module Development.NvFetcher.NixFetcher,
-    module Development.NvFetcher.Nvchecker,
-    module Development.NvFetcher.PackageSet,
-    module Development.NvFetcher.Types,
+module NvFetcher
+  ( module NvFetcher.NixFetcher,
+    module NvFetcher.Nvchecker,
+    module NvFetcher.PackageSet,
+    module NvFetcher.Types,
     nvfetcherRules,
     generateNixSources,
     Args (..),
@@ -25,12 +25,12 @@ import Data.Coerce (coerce)
 import Data.Maybe (fromJust, fromMaybe)
 import qualified Data.Set as Set
 import qualified Data.Text as T
-import Development.NvFetcher.NixFetcher
-import Development.NvFetcher.Nvchecker
-import Development.NvFetcher.PackageSet
-import Development.NvFetcher.Types
 import Development.Shake
 import NeatInterpolation (trimming)
+import NvFetcher.NixFetcher
+import NvFetcher.Nvchecker
+import NvFetcher.PackageSet
+import NvFetcher.Types
 import System.Console.GetOpt (OptDescr)
 
 -- | Arguments for running nvfetcher

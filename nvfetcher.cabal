@@ -9,7 +9,7 @@ license-file:    LICENSE
 author:          berberman
 maintainer:      berberman <berberman.yandex.com>
 copyright:       2021 berberman
-category:        Development
+category:        Nix
 build-type:      Simple
 extra-doc-files:
   CHANGELOG.md
@@ -43,11 +43,11 @@ library
   import:          common-options
   hs-source-dirs:  src
   exposed-modules:
-    Development.NvFetcher
-    Development.NvFetcher.NixFetcher
-    Development.NvFetcher.Nvchecker
-    Development.NvFetcher.PackageSet
-    Development.NvFetcher.Types
+    NvFetcher
+    NvFetcher.NixFetcher
+    NvFetcher.Nvchecker
+    NvFetcher.PackageSet
+    NvFetcher.Types
 
 executable nvfetcher
   import:         common-options

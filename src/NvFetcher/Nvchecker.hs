@@ -4,8 +4,12 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
 
-module Development.NvFetcher.Nvchecker
-  ( VersionSource (..),
+module NvFetcher.Nvchecker
+  ( -- * Types
+    VersionSource (..),
+    NvcheckerResult (..),
+
+    -- * Rules
     nvcheckerRule,
     checkVersion,
   )
@@ -18,10 +22,10 @@ import qualified Data.ByteString.Lazy as LBS
 import Data.Maybe (catMaybes)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
-import Development.NvFetcher.Types
 import Development.Shake
 import Development.Shake.Rule
 import NeatInterpolation (trimming)
+import NvFetcher.Types
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()

@@ -10,7 +10,7 @@ import Control.Applicative ((<|>))
 import Data.Coerce (coerce)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.Text as T
-import Development.NvFetcher
+import NvFetcher
 import Toml (TOML, TomlCodec, (.=))
 import qualified Toml
 import Validation (validationToEither)

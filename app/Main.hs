@@ -8,7 +8,7 @@ import Config
 import Control.Monad (void)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
-import Development.NvFetcher
+import NvFetcher
 import System.Console.GetOpt
 import qualified Toml
 

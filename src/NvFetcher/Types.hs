@@ -10,7 +10,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Development.NvFetcher.Types
+module NvFetcher.Types
   ( -- * Common types
     Version (..),
     SHA256 (..),
@@ -76,8 +76,7 @@ instance A.FromJSON NvcheckerResult where
 
 type instance RuleResult VersionSource = NvcheckerResult
 
--- | Package fetcher
--- if the package is prefetched, then we can obtain the SHA256
+-- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: Prefetch)
   = FetchGit
       { furl :: Text,
@@ -86,29 +85,29 @@ data NixFetcher (k :: Prefetch)
         deepClone :: Bool,
         fetchSubmodules :: Bool,
         leaveDotGit :: Bool,
-        sha256 :: MapPrefetch k
+        sha256 :: PrefetchResult k
       }
-  | FetchUrl {furl :: Text, sha256 :: MapPrefetch k}
+  | FetchUrl {furl :: Text, sha256 :: PrefetchResult k}
   deriving (Typeable, Generic)
 
 -- | Prefetch status
 data Prefetch = Fresh | Prefetched
 
-type family MapPrefetch (k :: Prefetch) where
-  MapPrefetch Fresh = ()
-  MapPrefetch Prefetched = SHA256
+type family PrefetchResult (k :: Prefetch) where
+  PrefetchResult Fresh = ()
+  PrefetchResult Prefetched = SHA256
 
 type instance RuleResult (NixFetcher Fresh) = NixFetcher Prefetched
 
-deriving instance Show (MapPrefetch k) => Show (NixFetcher k)
+deriving instance Show (PrefetchResult k) => Show (NixFetcher k)
 
-deriving instance Eq (MapPrefetch k) => Eq (NixFetcher k)
+deriving instance Eq (PrefetchResult k) => Eq (NixFetcher k)
 
-deriving instance Hashable (MapPrefetch k) => Hashable (NixFetcher k)
+deriving instance Hashable (PrefetchResult k) => Hashable (NixFetcher k)
 
-deriving instance Binary (MapPrefetch k) => Binary (NixFetcher k)
+deriving instance Binary (PrefetchResult k) => Binary (NixFetcher k)
 
-deriving instance NFData (MapPrefetch k) => NFData (NixFetcher k)
+deriving instance NFData (PrefetchResult k) => NFData (NixFetcher k)
 
 -- | Package name, used in generating nix expr
 type PackageName = Text
