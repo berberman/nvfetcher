@@ -17,6 +17,7 @@
 -- 'NixFetcher' is used to describe how to fetch package sources.
 --
 -- There are two types of fetchers overall:
+--
 -- 1. 'FetchGit' -- nix-prefetch-git
 -- 2. 'FetchUrl' -- nix-prefetch-url
 --
@@ -27,6 +28,7 @@ module NvFetcher.NixFetcher
     NixFetcher (..),
     Prefetch (..),
     ToNixExpr (..),
+    PrefetchResult,
 
     -- * Rules
     prefetchRule,

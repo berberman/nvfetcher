@@ -163,6 +163,7 @@ instance PkgDSL PackageSet where
 -- | 'PkgDSL' version of 'newPackage'
 --
 -- Example:
+
 -- >>> define $ package "nvfetcher-git" `sourceGit` "nvfetcher" `fetchGitHub` ("berberman", "nvfetcher")
 define ::
   ( Member PackageName r,

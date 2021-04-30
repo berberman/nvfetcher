@@ -29,6 +29,7 @@ module NvFetcher.Types
     -- * Nix fetcher types
     NixFetcher (..),
     Prefetch (..),
+    PrefetchResult,
 
     -- * Package types
     PackageName,
