@@ -134,7 +134,7 @@ generateNixSources fp pkgs = do
   putInfo $ "Generate " <> fp
   where
     single Package {..} = do
-      (NvcheckerResult version mOld) <- askNvchecker pversion
+      (NvcheckerResult version mOld) <- checkVersion pversion
       prefetched <- prefetch $ pfetcher version
       case mOld of
         Nothing ->

@@ -10,7 +10,25 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Development.NvFetcher.Types where
+module Development.NvFetcher.Types
+  ( -- * Common types
+    Version (..),
+    SHA256 (..),
+
+    -- * Nvchecker types
+    VersionSource (..),
+    NvcheckerResult (..),
+
+    -- * Nix fetcher types
+    NixFetcher (..),
+    Prefetch (..),
+
+    -- * Package types
+    PackageName,
+    PackageFetcher,
+    Package (..),
+  )
+where
 
 import qualified Data.Aeson as A
 import Data.Function (on)
@@ -21,16 +39,19 @@ import Development.Shake
 import Development.Shake.Classes
 import GHC.Generics (Generic)
 
+-- | Package version
 newtype Version = Version Text
   deriving newtype (Eq, Show, Ord, IsString, Semigroup, Monoid, A.FromJSON, A.ToJSON)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
+-- | SHA 256 sum
 newtype SHA256 = SHA256 Text
   deriving newtype (Show, Eq)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
+-- | The input of nvchecker
 data VersionSource
   = GitHubRelease {owner :: Text, repo :: Text}
   | Git {vurl :: Text}
@@ -41,6 +62,7 @@ data VersionSource
   | Repology {repology :: Text, repo :: Text}
   deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
 
+-- | The result of running nvchecker
 data NvcheckerResult = NvcheckerResult
   { nvNow :: Version,
     -- | nvchecker doesn't give this value, but shake restores it from last run
@@ -54,6 +76,8 @@ instance A.FromJSON NvcheckerResult where
 
 type instance RuleResult VersionSource = NvcheckerResult
 
+-- | Package fetcher
+-- if the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: Prefetch)
   = FetchGit
       { furl :: Text,
@@ -67,6 +91,7 @@ data NixFetcher (k :: Prefetch)
   | FetchUrl {furl :: Text, sha256 :: MapPrefetch k}
   deriving (Typeable, Generic)
 
+-- | Prefetch status
 data Prefetch = Fresh | Prefetched
 
 type family MapPrefetch (k :: Prefetch) where
@@ -85,12 +110,17 @@ deriving instance Binary (MapPrefetch k) => Binary (NixFetcher k)
 
 deriving instance NFData (MapPrefetch k) => NFData (NixFetcher k)
 
+-- | Package name, used in generating nix expr
 type PackageName = Text
 
+-- | How to create package source fetcher given a version
+type PackageFetcher = Version -> NixFetcher Fresh
+
+-- | A package is defined with its name, how to track its version, and how to fetch it as we have version
 data Package = Package
   { pname :: PackageName,
     pversion :: VersionSource,
-    pfetcher :: Version -> NixFetcher Fresh
+    pfetcher :: PackageFetcher
   }
 
 instance Show Package where

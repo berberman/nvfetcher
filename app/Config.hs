@@ -101,7 +101,7 @@ unsupportError :: a
 unsupportError = error "serialization of fetchers is unsupported"
 
 -- | Use it only for deserialization!!!
-fetcherCodec :: TomlCodec (Version -> NixFetcher Fresh)
+fetcherCodec :: TomlCodec PackageFetcher
 fetcherCodec =
   Toml.textBy
     unsupportError

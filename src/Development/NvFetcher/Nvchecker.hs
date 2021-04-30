@@ -7,7 +7,7 @@
 module Development.NvFetcher.Nvchecker
   ( VersionSource (..),
     nvcheckerRule,
-    askNvchecker,
+    checkVersion,
   )
 where
 
@@ -23,6 +23,7 @@ import Development.Shake
 import Development.Shake.Rule
 import NeatInterpolation (trimming)
 
+-- | Rules of nvchecker
 nvcheckerRule :: Rules ()
 nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile $ \config -> do
   writeFile' config $ T.unpack $ genNvConfig "pkg" q
@@ -86,7 +87,7 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile 
               source = "manual"
               manual = "$manual"
         |]
-      Repology{..} ->
+      Repology {..} ->
         [trimming|
               [$srcName]
               source = "repology"
@@ -94,5 +95,6 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile 
               repo = "$repo"
         |]
 
-askNvchecker :: VersionSource -> Action NvcheckerResult
-askNvchecker = apply1
+-- | Run nvchecker
+checkVersion :: VersionSource -> Action NvcheckerResult
+checkVersion = apply1

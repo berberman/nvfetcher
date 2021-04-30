@@ -36,6 +36,7 @@ import NeatInterpolation (trimming)
 
 --------------------------------------------------------------------------------
 
+-- | Types can be converted into nix expr
 class ToNixExpr a where
   toNixExpr :: a -> Text
 
@@ -53,31 +54,28 @@ instance ToNixExpr Bool where
 instance ToNixExpr Version where
   toNixExpr = coerce
 
-class ToPrefetchCommand a where
-  toPrefetchCommand :: a -> Action SHA256
-
-instance ToPrefetchCommand (NixFetcher Fresh) where
-  toPrefetchCommand = \case
-    FetchGit {..} -> do
-      let parser = A.withObject "nix-prefetch-git" $ \o -> SHA256 <$> o A..: "sha256"
-      (CmdTime t, Stdout (A.parseMaybe parser <=< A.decode -> out), CmdLine c) <-
-        command [EchoStderr False] "nix-prefetch-git" $
-          [T.unpack furl]
-            <> ["--rev", T.unpack $ coerce rev]
-            <> ["--fetch-submodules" | fetchSubmodules]
-            <> ["--branch-name " <> T.unpack b | b <- maybeToList branch]
-            <> ["--deepClone" | deepClone]
-            <> ["--leave-dotGit" | leaveDotGit]
-      putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
-      case out of
-        Just x -> pure x
-        _ -> fail "Failed to parse output from nix-prefetch-git"
-    FetchUrl {..} -> do
-      (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <- command [EchoStderr False] "nix-prefetch-url" [T.unpack furl]
-      putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
-      case takeWhile (not . T.null) $ reverse $ T.lines out of
-        [x] -> pure $ coerce x
-        _ -> fail "Failed to parse output from nix-prefetch-url"
+toPrefetchCommand :: NixFetcher Fresh -> Action SHA256
+toPrefetchCommand = \case
+  FetchGit {..} -> do
+    let parser = A.withObject "nix-prefetch-git" $ \o -> SHA256 <$> o A..: "sha256"
+    (CmdTime t, Stdout (A.parseMaybe parser <=< A.decode -> out), CmdLine c) <-
+      command [EchoStderr False] "nix-prefetch-git" $
+        [T.unpack furl]
+          <> ["--rev", T.unpack $ coerce rev]
+          <> ["--fetch-submodules" | fetchSubmodules]
+          <> ["--branch-name " <> T.unpack b | b <- maybeToList branch]
+          <> ["--deepClone" | deepClone]
+          <> ["--leave-dotGit" | leaveDotGit]
+    putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
+    case out of
+      Just x -> pure x
+      _ -> fail "Failed to parse output from nix-prefetch-git"
+  FetchUrl {..} -> do
+    (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <- command [EchoStderr False] "nix-prefetch-url" [T.unpack furl]
+    putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
+    case takeWhile (not . T.null) $ reverse $ T.lines out of
+      [x] -> pure $ coerce x
+      _ -> fail "Failed to parse output from nix-prefetch-url"
 
 buildNixFetcher :: Text -> NixFetcher k -> Text
 buildNixFetcher sha256 = \case
@@ -114,6 +112,7 @@ pypiUrl pypi (coerce -> ver) =
 
 --------------------------------------------------------------------------------
 
+-- | Rules of nix fetcher
 prefetchRule :: Rules ()
 prefetchRule = void $
   addOracleCache $ \(f :: NixFetcher Fresh) -> do
@@ -122,22 +121,36 @@ prefetchRule = void $
 
 --------------------------------------------------------------------------------
 
-gitFetcher :: Text -> Version -> NixFetcher Fresh
+-- | Create a fetcher from git url
+gitFetcher :: Text -> PackageFetcher
 gitFetcher furl rev = FetchGit furl rev Nothing False False False ()
 
-gitHubFetcher :: (Text, Text) -> Version -> NixFetcher Fresh
+-- | Create a fetcher from github repo
+gitHubFetcher ::
+  -- | owner and repo
+  (Text, Text) ->
+  PackageFetcher
 gitHubFetcher (owner, repo) = gitFetcher [trimming|https://github.com/$owner/$repo|]
 
-pypiFetcher :: Text -> Version -> NixFetcher Fresh
+-- | Create a fetcher from pypi
+pypiFetcher :: Text -> PackageFetcher
 pypiFetcher p v = urlFetcher $ pypiUrl p v
 
-gitHubReleaseFetcher :: (Text, Text) -> Text -> Version -> NixFetcher Fresh
+-- | Create a fetcher from github release
+gitHubReleaseFetcher ::
+  -- | owner and repo
+  (Text, Text) ->
+  -- | file name
+  Text ->
+  PackageFetcher
 gitHubReleaseFetcher (owner, repo) fp (coerce -> ver) =
   urlFetcher
     [trimming|https://github.com/$owner/$repo/releases/download/$ver/$fp|]
 
+-- | Create a fetcher from url
 urlFetcher :: Text -> NixFetcher Fresh
 urlFetcher = flip FetchUrl ()
 
+-- | Run nix fetcher
 prefetch :: NixFetcher Fresh -> Action (NixFetcher Prefetched)
 prefetch = askOracle
