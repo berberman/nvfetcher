@@ -81,9 +81,11 @@ No matter which way you use it in, CLI options are inherited from shake with two
 
 To run nvfetcher as a CLI program, you'll need to provide package sources defined in TOML.
 
-Two available CLI options:
+Aavailable CLI options:
 * `-c` (`--config`) - path to the TOML configuration file
 * `-o` (`--output`) - path to the output nix file
+* `-v` (`--version`) - print nvfetcher version
+* `-l` (`--log`) - path to log file, where nvfetcher dumps the version changes 
 
 Each *package* corresponds to a TOML table, whose name is encoded as table key;
 there are two pairs in each table:

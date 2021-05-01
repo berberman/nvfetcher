@@ -439,7 +439,7 @@ defaultArgs :: Args
 defaultMain :: Args -> PackageSet () -> IO ()
 
 -- | Like <a>defaultMain</a> but allows to define custom cli flags
-defaultMainWith :: [OptDescr (Either String a)] -> ([a] -> IO (Args, PackageSet ())) -> IO ()
+defaultMainWith :: [OptDescr (Either String a)] -> ([a] -> IO (Maybe (Args, PackageSet ()))) -> IO ()
 
 -- | Version change of a package
 --   
