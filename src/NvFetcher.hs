@@ -54,6 +54,7 @@ module NvFetcher
 where
 
 import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, readMVar)
+import Control.Monad.Trans.Maybe
 import Data.Maybe (fromJust, fromMaybe)
 import qualified Data.Set as Set
 import qualified Data.Text as T
@@ -98,25 +99,29 @@ defaultArgs =
 
 -- | Entry point of nvfetcher
 defaultMain :: Args -> PackageSet () -> IO ()
-defaultMain args packageSet = defaultMainWith [] $ const $pure (args, packageSet)
+defaultMain args packageSet = defaultMainWith [] $ const $ pure $ pure (args, packageSet)
 
 -- | Like 'defaultMain' but allows to define custom cli flags
-defaultMainWith :: [OptDescr (Either String a)] -> ([a] -> IO (Args, PackageSet ())) -> IO ()
+defaultMainWith ::
+  -- | Custom flags
+  [OptDescr (Either String a)] ->
+  -- | Continuation, the build system won't run if it returns Nothing
+  ([a] -> IO (Maybe (Args, PackageSet ()))) ->
+  IO ()
 defaultMainWith flags f = do
   var <- newMVar mempty
   shakeArgsOptionsWith
     shakeOptions
     flags
-    $ \opts flagValues argValues -> do
-      (args@Args {..}, packageSet) <- f flagValues
+    $ \opts flagValues argValues -> runMaybeT $ do
+      (args@Args {..}, packageSet) <- MaybeT $ f flagValues
       let opts' =
             let old = argShakeOptions opts
              in old {shakeExtra = addShakeExtra (VersionChanges var) (shakeExtra old)}
           rules = mainRules args packageSet
-      pure $
-        Just $ case argValues of
-          [] -> (opts', want ["build"] >> rules)
-          files -> (opts', want files >> rules)
+      pure $ case argValues of
+        [] -> (opts', want ["build"] >> rules)
+        files -> (opts', want files >> rules)
 
 mainRules :: Args -> PackageSet () -> Rules ()
 mainRules Args {..} packageSet = do
