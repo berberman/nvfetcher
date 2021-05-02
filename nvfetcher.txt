@@ -82,6 +82,8 @@ type PackageFetcher = Version -> NixFetcher Fresh
 --   <li>how to track its version</li>
 --   <li>how to fetch it as we have the version</li>
 --   </ol>
+--   
+--   <i>Equality of packages is determined by only the name</i>
 data Package
 Package :: PackageName -> VersionSource -> PackageFetcher -> Package
 [pname] :: Package -> PackageName
@@ -250,6 +252,9 @@ instance NvFetcher.NixFetcher.ToNixExpr NvFetcher.Types.Version
 --   documentation of <a>define</a> for example.
 module NvFetcher.PackageSet
 
+-- | Atomic terms of package set
+data PackageSetF f
+
 -- | Package set is a monad equipped with two capabilities:
 --   
 --   <ol>
@@ -269,7 +274,10 @@ embedAction :: Action a -> PackageSet a
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
 
--- | Run package set into a set of packages, carried by <a>Action</a>
+-- | Run package set into a set of packages
+--   
+--   Throws exception as more then one packages with the same name are
+--   defined
 runPackageSet :: PackageSet () -> Action (Set Package)
 
 -- | A tagless final style DSL for constructing packages
