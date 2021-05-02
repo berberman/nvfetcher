@@ -129,6 +129,8 @@ type PackageFetcher = Version -> NixFetcher Fresh
 -- 1. its name
 -- 2. how to track its version
 -- 3. how to fetch it as we have the version
+--
+-- /Equality of packages is determined by only the name/
 data Package = Package
   { pname :: PackageName,
     pversion :: VersionSource,

@@ -24,6 +24,7 @@
 -- There are many combinators for defining packages. See the documentation of 'define' for example.
 module NvFetcher.PackageSet
   ( -- * Package set
+    PackageSetF,
     PackageSet,
     newPackage,
     embedAction,
@@ -80,13 +81,13 @@ import NvFetcher.Types
 
 --------------------------------------------------------------------------------
 
--- | This is trivial XD
+-- | Atomic terms of package set
 data PackageSetF f
-  = NewPackage !PackageName !VersionSource !PackageFetcher f
+  = NewPackage !Package f
   | forall a. EmbedAction !(Action a) (a -> f)
 
 instance Functor PackageSetF where
-  fmap f (NewPackage name src fe g) = NewPackage name src fe $ f g
+  fmap f (NewPackage p g) = NewPackage p $ f g
   fmap f (EmbedAction action g) = EmbedAction action $ f <$> g
 
 -- | Package set is a monad equipped with two capabilities:
@@ -103,7 +104,7 @@ newPackage ::
   VersionSource ->
   PackageFetcher ->
   PackageSet ()
-newPackage name source fetcher = liftF $ NewPackage name source fetcher ()
+newPackage name source fetcher = liftF $ NewPackage (Package name source fetcher) ()
 
 -- | Lift a shake 'Action' to package set
 embedAction :: Action a -> PackageSet a
@@ -111,12 +112,19 @@ embedAction action = liftF $ EmbedAction action id
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
-purePackageSet = mapM_ (\Package {..} -> newPackage pname pversion pfetcher)
+purePackageSet = mapM_ (liftF . flip NewPackage ())
 
--- | Run package set into a set of packages, carried by 'Action'
+-- | Run package set into a set of packages
+--
+-- Throws exception as more then one packages with the same name
+-- are defined
 runPackageSet :: PackageSet () -> Action (Set Package)
 runPackageSet = \case
-  Free (NewPackage name src fe g) -> (Package name src fe `Set.insert`) <$> runPackageSet g
+  Free (NewPackage p g) ->
+    runPackageSet g >>= \set ->
+      if Set.member p set
+        then fail $ "Duplicate package: " <> show p
+        else pure $ Set.insert p set
   Free (EmbedAction action g) -> action >>= runPackageSet . g
   Pure _ -> pure Set.empty
 
