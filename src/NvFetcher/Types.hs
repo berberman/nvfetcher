@@ -9,6 +9,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ViewPatterns #-}
 
 -- | Copyright: (c) 2021 berberman
 -- SPDX-License-Identifier: MIT
@@ -68,7 +69,7 @@ data VersionSource
   | Aur {aur :: Text}
   | Manual {manual :: Text}
   | Repology {repology :: Text, repo :: Text}
-  deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
+  deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 -- | The result of running nvchecker
 data NvcheckerResult = NvcheckerResult
@@ -112,6 +113,8 @@ deriving instance Show (PrefetchResult k) => Show (NixFetcher k)
 
 deriving instance Eq (PrefetchResult k) => Eq (NixFetcher k)
 
+deriving instance Ord (PrefetchResult k) => Ord (NixFetcher k)
+
 deriving instance Hashable (PrefetchResult k) => Hashable (NixFetcher k)
 
 deriving instance Binary (PrefetchResult k) => Binary (NixFetcher k)
@@ -130,18 +133,34 @@ type PackageFetcher = Version -> NixFetcher Fresh
 -- 2. how to track its version
 -- 3. how to fetch it as we have the version
 --
--- /Equality of packages is determined by only the name/
+-- /INVARIANT: 'Version' passed to 'PackageFetcher' MUST be used textually,/
+-- /i.e. can only be concatenated with other strings,/
+-- /in case we can't check the equality between fetcher functions./
 data Package = Package
   { pname :: PackageName,
     pversion :: VersionSource,
     pfetcher :: PackageFetcher
   }
 
+-- | @$ver@ is inaccurate here :(
+fake :: Package -> (PackageName, VersionSource, NixFetcher 'Fresh)
+fake Package {..} = (pname, pversion, pfetcher "$ver")
+
 instance Show Package where
-  show Package {..} = "Package {name = " <> T.unpack pname <> ", version = " <> show pversion <> ", fetcher = {..}" <> "}"
+  show (fake -> (p, v, f)) =
+    "Package {name = "
+      <> T.unpack p
+      <> ", version = "
+      <> show v
+      <> ", fetcher = "
+      <> show f
+      <> "}"
 
 instance Eq Package where
-  (==) = (==) `on` pname
+  (==) = (==) `on` fake
 
 instance Ord Package where
-  compare = compare `on` pname
+  compare = compare `on` fake
+
+instance Hashable Package where
+  hashWithSalt s = hashWithSalt s . fake

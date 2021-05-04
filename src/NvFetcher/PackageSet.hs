@@ -27,7 +27,6 @@ module NvFetcher.PackageSet
     PackageSetF,
     PackageSet,
     newPackage,
-    embedAction,
     purePackageSet,
     runPackageSet,
 
@@ -69,12 +68,13 @@ module NvFetcher.PackageSet
 where
 
 import Control.Monad.Free
+import Control.Monad.IO.Class
 import Data.Coerce (coerce)
 import Data.Kind (Constraint, Type)
-import Data.Set (Set)
-import qualified Data.Set as Set
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.Maybe (isJust)
 import Data.Text (Text)
-import Development.Shake (Action)
 import GHC.TypeLits
 import NvFetcher.NixFetcher
 import NvFetcher.Types
@@ -84,19 +84,23 @@ import NvFetcher.Types
 -- | Atomic terms of package set
 data PackageSetF f
   = NewPackage !Package f
-  | forall a. EmbedAction !(Action a) (a -> f)
+  | forall a. EmbedIO !(IO a) (a -> f)
 
 instance Functor PackageSetF where
   fmap f (NewPackage p g) = NewPackage p $ f g
-  fmap f (EmbedAction action g) = EmbedAction action $ f <$> g
+  fmap f (EmbedIO action g) = EmbedIO action $ f <$> g
 
 -- | Package set is a monad equipped with two capabilities:
 --
 -- 1. Carry defined packages
--- 2. Run shake actions
+-- 2. Run IO actions
 --
--- Consturct it using 'newPackage' and 'embedAction'
+-- Package set is evaluated be for shake runs.
+-- Use 'newPackage' to add a new package, 'liftIO' to run an IO action.
 type PackageSet = Free PackageSetF
+
+instance MonadIO PackageSet where
+  liftIO io = liftF $ EmbedIO io id
 
 -- | Add a package to package set
 newPackage ::
@@ -106,10 +110,6 @@ newPackage ::
   PackageSet ()
 newPackage name source fetcher = liftF $ NewPackage (Package name source fetcher) ()
 
--- | Lift a shake 'Action' to package set
-embedAction :: Action a -> PackageSet a
-embedAction action = liftF $ EmbedAction action id
-
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
 purePackageSet = mapM_ (liftF . flip NewPackage ())
@@ -118,15 +118,15 @@ purePackageSet = mapM_ (liftF . flip NewPackage ())
 --
 -- Throws exception as more then one packages with the same name
 -- are defined
-runPackageSet :: PackageSet () -> Action (Set Package)
+runPackageSet :: PackageSet () -> IO (Map PackageName Package)
 runPackageSet = \case
   Free (NewPackage p g) ->
-    runPackageSet g >>= \set ->
-      if Set.member p set
-        then fail $ "Duplicate package: " <> show p
-        else pure $ Set.insert p set
-  Free (EmbedAction action g) -> action >>= runPackageSet . g
-  Pure _ -> pure Set.empty
+    runPackageSet g >>= \m ->
+      if isJust (Map.lookup (pname p) m)
+        then fail $ "Duplicate package name: " <> show p
+        else pure $ Map.insert (pname p) p m
+  Free (EmbedIO action g) -> action >>= runPackageSet . g
+  Pure _ -> pure mempty
 
 --------------------------------------------------------------------------------
 

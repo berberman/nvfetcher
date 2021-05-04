@@ -55,10 +55,11 @@ where
 
 import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, readMVar)
 import Control.Monad.Trans.Maybe
+import qualified Data.Map.Strict as Map
 import Data.Maybe (fromJust, fromMaybe)
-import qualified Data.Set as Set
 import qualified Data.Text as T
 import Development.Shake
+import Development.Shake.Classes (hashWithSalt)
 import NeatInterpolation (trimming)
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
@@ -115,16 +116,23 @@ defaultMainWith flags f = do
     flags
     $ \opts flagValues argValues -> runMaybeT $ do
       (args@Args {..}, packageSet) <- MaybeT $ f flagValues
+      pkgs <- liftIO $ Map.elems <$> runPackageSet packageSet
       let opts' =
             let old = argShakeOptions opts
-             in old {shakeExtra = addShakeExtra (VersionChanges var) (shakeExtra old)}
-          rules = mainRules args packageSet
+             in old
+                  { shakeExtra = addShakeExtra (VersionChanges var) (shakeExtra old),
+                    -- rebuild everything if input packages have changed
+                    -- this may leads to prefetch packages repeatedly
+                    -- but input packages shouldn't be changed frequently
+                    shakeVersion = "pkgs" <> show (hashWithSalt 0 pkgs) <> "-" <> shakeVersion old
+                  }
+          rules = mainRules args pkgs
       pure $ case argValues of
         [] -> (opts', want ["build"] >> rules)
         files -> (opts', want files >> rules)
 
-mainRules :: Args -> PackageSet () -> Rules ()
-mainRules Args {..} packageSet = do
+mainRules :: Args -> [Package] -> Rules ()
+mainRules Args {..} pkgs = do
   addHelpSuffix "It's important to keep .shake dir if you want to get correct version changes"
 
   "clean" ~> do
@@ -133,8 +141,7 @@ mainRules Args {..} packageSet = do
     argActionAfterClean
 
   "build" ~> do
-    pkgs <- runPackageSet packageSet
-    generateNixSources argOutputFilePath $ Set.toList pkgs
+    generateNixSources argOutputFilePath pkgs
     argActionAfterBuild
 
   argRules
