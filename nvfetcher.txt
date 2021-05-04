@@ -83,7 +83,10 @@ type PackageFetcher = Version -> NixFetcher Fresh
 --   <li>how to fetch it as we have the version</li>
 --   </ol>
 --   
---   <i>Equality of packages is determined by only the name</i>
+--   <i>INVARIANT: <a>Version</a> passed to <a>PackageFetcher</a> MUST be
+--   used textually,</i> <i>i.e. can only be concatenated with other
+--   strings,</i> <i>in case we can't check the equality between fetcher
+--   functions.</i>
 data Package
 Package :: PackageName -> VersionSource -> PackageFetcher -> Package
 [pname] :: Package -> PackageName
@@ -111,6 +114,7 @@ instance Control.DeepSeq.NFData NvFetcher.Types.VersionSource
 instance Data.Binary.Class.Binary NvFetcher.Types.VersionSource
 instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSource
 instance GHC.Generics.Generic NvFetcher.Types.VersionSource
+instance GHC.Classes.Ord NvFetcher.Types.VersionSource
 instance GHC.Classes.Eq NvFetcher.Types.VersionSource
 instance GHC.Show.Show NvFetcher.Types.VersionSource
 instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerResult
@@ -122,12 +126,14 @@ instance GHC.Show.Show NvFetcher.Types.NvcheckerResult
 instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
 instance GHC.Show.Show (NvFetcher.Types.PrefetchResult k) => GHC.Show.Show (NvFetcher.Types.NixFetcher k)
 instance GHC.Classes.Eq (NvFetcher.Types.PrefetchResult k) => GHC.Classes.Eq (NvFetcher.Types.NixFetcher k)
+instance GHC.Classes.Ord (NvFetcher.Types.PrefetchResult k) => GHC.Classes.Ord (NvFetcher.Types.NixFetcher k)
 instance Data.Hashable.Class.Hashable (NvFetcher.Types.PrefetchResult k) => Data.Hashable.Class.Hashable (NvFetcher.Types.NixFetcher k)
 instance Data.Binary.Class.Binary (NvFetcher.Types.PrefetchResult k) => Data.Binary.Class.Binary (NvFetcher.Types.NixFetcher k)
 instance Control.DeepSeq.NFData (NvFetcher.Types.PrefetchResult k) => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
 instance GHC.Show.Show NvFetcher.Types.Package
 instance GHC.Classes.Eq NvFetcher.Types.Package
 instance GHC.Classes.Ord NvFetcher.Types.Package
+instance Data.Hashable.Class.Hashable NvFetcher.Types.Package
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerResult
 
 
@@ -259,17 +265,15 @@ data PackageSetF f
 --   
 --   <ol>
 --   <li>Carry defined packages</li>
---   <li>Run shake actions</li>
+--   <li>Run IO actions</li>
 --   </ol>
 --   
---   Consturct it using <a>newPackage</a> and <a>embedAction</a>
+--   Package set is evaluated be for shake runs. Use <a>newPackage</a> to
+--   add a new package, <a>liftIO</a> to run an IO action.
 type PackageSet = Free PackageSetF
 
 -- | Add a package to package set
 newPackage :: PackageName -> VersionSource -> PackageFetcher -> PackageSet ()
-
--- | Lift a shake <a>Action</a> to package set
-embedAction :: Action a -> PackageSet a
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -278,7 +282,7 @@ purePackageSet :: [Package] -> PackageSet ()
 --   
 --   Throws exception as more then one packages with the same name are
 --   defined
-runPackageSet :: PackageSet () -> Action (Set Package)
+runPackageSet :: PackageSet () -> IO (Map PackageName Package)
 
 -- | A tagless final style DSL for constructing packages
 class PkgDSL f
@@ -374,6 +378,7 @@ instance NvFetcher.PackageSet.PkgDSL NvFetcher.PackageSet.PackageSet
 instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.Member x (x : xs)
 instance NvFetcher.PackageSet.Member x xs => NvFetcher.PackageSet.Member x (_y : xs)
 instance (TypeError ...) => NvFetcher.PackageSet.Member x '[]
+instance Control.Monad.IO.Class.MonadIO NvFetcher.PackageSet.PackageSet
 instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
 
 
