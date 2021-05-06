@@ -352,12 +352,9 @@ fetchUrl :: PackageSet (Prod r) -> (Version -> Text) -> PackageSet (Prod (Packag
 
 -- | Simple HList
 data Prod (r :: [Type])
-[Nil] :: Prod '[]
-[Cons] :: !x -> Prod xs -> Prod (x : xs)
 
 -- | Project elements from <a>Prod</a>
 class Member (a :: Type) (r :: [Type])
-proj :: Member a r => Prod r -> a
 
 -- | Constraint for producing error messages
 type family NotElem (x :: Type) (xs :: [Type]) :: Constraint
@@ -374,6 +371,9 @@ type family NotElem (x :: Type) (xs :: [Type]) :: Constraint
 --   meaning that it is not available for visible type application. This
 --   means the typechecker will accept <tt>coerce @Int @Age 42</tt>.
 coerce :: forall (k :: RuntimeRep) (a :: TYPE k) (b :: TYPE k). Coercible a b => a -> b
+
+-- | Lift a computation from the <a>IO</a> monad.
+liftIO :: MonadIO m => IO a -> m a
 instance NvFetcher.PackageSet.PkgDSL NvFetcher.PackageSet.PackageSet
 instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.Member x (x : xs)
 instance NvFetcher.PackageSet.Member x xs => NvFetcher.PackageSet.Member x (_y : xs)
@@ -417,16 +417,13 @@ instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
 --   All shake options are inherited.
 module NvFetcher
 
--- | Rules of nvfetcher
-nvfetcherRules :: Rules ()
-
 -- | Main action, given a set of packages, generating nix sources expr in a
 --   file
 generateNixSources :: FilePath -> [Package] -> Action ()
 
 -- | Arguments for running nvfetcher
 data Args
-Args :: (ShakeOptions -> ShakeOptions) -> FilePath -> Rules () -> Action () -> Action () -> Args
+Args :: (ShakeOptions -> ShakeOptions) -> FilePath -> Rules () -> Action () -> Action () -> PackageSet () -> Args
 
 -- | tweak shake options
 [argShakeOptions] :: Args -> ShakeOptions -> ShakeOptions
@@ -443,16 +440,19 @@ Args :: (ShakeOptions -> ShakeOptions) -> FilePath -> Rules () -> Action () -> A
 -- | Action run after clean rule
 [argActionAfterClean] :: Args -> Action ()
 
--- | Default arguments of <a>defaultMain</a>
+-- | Input packages
+[argPackageSet] :: Args -> PackageSet ()
+
+-- | Default arguments of <tt>defaultMain</tt>
 --   
 --   Output file path is <tt>sources.nix</tt>.
 defaultArgs :: Args
 
 -- | Entry point of nvfetcher
-defaultMain :: Args -> PackageSet () -> IO ()
+runNvFetcher :: Args -> IO ()
 
--- | Like <a>defaultMain</a> but allows to define custom cli flags
-defaultMainWith :: [OptDescr (Either String a)] -> ([a] -> IO (Maybe (Args, PackageSet ()))) -> IO ()
+-- | Like <a>runNvFetcher</a> but allows to define custom cli flags
+runNvFetcherWith :: [OptDescr (Either String a)] -> ([a] -> IO (Maybe Args)) -> IO ()
 
 -- | Version change of a package
 --   
