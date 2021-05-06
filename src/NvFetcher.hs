@@ -42,12 +42,11 @@ module NvFetcher
   ( -- | Re-export DSL things
     module NvFetcher.PackageSet,
     module NvFetcher.Types,
-    nvfetcherRules,
     generateNixSources,
     Args (..),
     defaultArgs,
-    defaultMain,
-    defaultMainWith,
+    runNvFetcher,
+    runNvFetcherWith,
     VersionChange (..),
     getVersionChanges,
   )
@@ -78,7 +77,9 @@ data Args = Args
     -- | Action run after build rule
     argActionAfterBuild :: Action (),
     -- | Action run after clean rule
-    argActionAfterClean :: Action ()
+    argActionAfterClean :: Action (),
+    -- | Input packages
+    argPackageSet :: PackageSet ()
   }
 
 -- | Default arguments of 'defaultMain'
@@ -97,26 +98,27 @@ defaultArgs =
     (pure ())
     (pure ())
     (pure ())
+    (pure ())
 
 -- | Entry point of nvfetcher
-defaultMain :: Args -> PackageSet () -> IO ()
-defaultMain args packageSet = defaultMainWith [] $ const $ pure $ pure (args, packageSet)
+runNvFetcher :: Args -> IO ()
+runNvFetcher args = runNvFetcherWith [] $ const $ pure $ pure args
 
--- | Like 'defaultMain' but allows to define custom cli flags
-defaultMainWith ::
+-- | Like 'runNvFetcher' but allows to define custom cli flags
+runNvFetcherWith ::
   -- | Custom flags
   [OptDescr (Either String a)] ->
   -- | Continuation, the build system won't run if it returns Nothing
-  ([a] -> IO (Maybe (Args, PackageSet ()))) ->
+  ([a] -> IO (Maybe Args)) ->
   IO ()
-defaultMainWith flags f = do
+runNvFetcherWith flags f = do
   var <- newMVar mempty
   shakeArgsOptionsWith
     shakeOptions
     flags
     $ \opts flagValues argValues -> runMaybeT $ do
-      (args@Args {..}, packageSet) <- MaybeT $ f flagValues
-      pkgs <- liftIO $ Map.elems <$> runPackageSet packageSet
+      args@Args {..} <- MaybeT $ f flagValues
+      pkgs <- liftIO $ Map.elems <$> runPackageSet argPackageSet
       let opts' =
             let old = argShakeOptions opts
              in old
@@ -133,7 +135,8 @@ defaultMainWith flags f = do
 
 mainRules :: Args -> [Package] -> Rules ()
 mainRules Args {..} pkgs = do
-  addHelpSuffix "It's important to keep .shake dir if you want to get correct version changes"
+  addHelpSuffix "It's important to keep .shake dir if you want to get correct version changes and proper cache"
+  addHelpSuffix "Changing input packages will lead to a fully cleanup, requiring to rebuild everything next run"
 
   "clean" ~> do
     removeFilesAfter ".shake" ["//*"]

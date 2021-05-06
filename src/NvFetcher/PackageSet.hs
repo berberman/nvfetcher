@@ -60,10 +60,11 @@ module NvFetcher.PackageSet
     fetchUrl,
 
     -- ** Miscellaneous
-    Prod (..),
-    Member (..),
+    Prod,
+    Member,
     NotElem,
     coerce,
+    liftIO,
   )
 where
 
