@@ -41,6 +41,8 @@ VersionChange :: PackageName -> Maybe Version -> Version -> VersionChange
 [vcNew] :: VersionChange -> Version
 newtype WithPackageKey k
 WithPackageKey :: (k, PackageKey) -> WithPackageKey k
+data Core
+Core :: Core
 
 -- | The input of nvchecker
 data VersionSource
@@ -156,6 +158,13 @@ instance GHC.Generics.Generic NvFetcher.Types.PackageKey
 instance GHC.Classes.Ord NvFetcher.Types.PackageKey
 instance GHC.Show.Show NvFetcher.Types.PackageKey
 instance GHC.Classes.Eq NvFetcher.Types.PackageKey
+instance Control.DeepSeq.NFData NvFetcher.Types.Core
+instance Data.Binary.Class.Binary NvFetcher.Types.Core
+instance Data.Hashable.Class.Hashable NvFetcher.Types.Core
+instance GHC.Generics.Generic NvFetcher.Types.Core
+instance GHC.Classes.Ord NvFetcher.Types.Core
+instance GHC.Show.Show NvFetcher.Types.Core
+instance GHC.Classes.Eq NvFetcher.Types.Core
 instance Control.DeepSeq.NFData k => Control.DeepSeq.NFData (NvFetcher.Types.WithPackageKey k)
 instance Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.WithPackageKey k)
 instance Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.WithPackageKey k)
@@ -186,53 +195,6 @@ recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()
 
 -- | Get version changes since the last run, relying on shake database
 getVersionChanges :: Action [VersionChange]
-
-
--- | <a>nvchecker</a> is a program checking new versions of packages. We
---   encode the checking process into shake build system, generating
---   configuration of nvchecker and calling it externally. Now we call
---   nvchecker for each <a>VersionSource</a>, which seems not to be
---   efficient, but it's tolerable when running in parallel.
---   
---   Meanwhile, we lose the capabilities of tracking version updates, i.e.
---   normally nvchecker will help us maintain a list of old versions, so
---   that we are able to know which package's version is updated in this
---   run. Fortunately, we can reimplement this using shake database, see
---   <a>nvcheckerRule</a> for details.
-module NvFetcher.Nvchecker
-
--- | The input of nvchecker
-data VersionSource
-GitHubRelease :: Text -> Text -> VersionSource
-[owner] :: VersionSource -> Text
-[repo] :: VersionSource -> Text
-Git :: Text -> VersionSource
-[vurl] :: VersionSource -> Text
-Pypi :: Text -> VersionSource
-[pypi] :: VersionSource -> Text
-ArchLinux :: Text -> VersionSource
-[archpkg] :: VersionSource -> Text
-Aur :: Text -> VersionSource
-[aur] :: VersionSource -> Text
-Manual :: Text -> VersionSource
-[manual] :: VersionSource -> Text
-Repology :: Text -> Text -> VersionSource
-[repology] :: VersionSource -> Text
-[repo] :: VersionSource -> Text
-
--- | The result of running nvchecker
-data NvcheckerResult
-NvcheckerResult :: Version -> Maybe Version -> NvcheckerResult
-[nvNow] :: NvcheckerResult -> Version
-
--- | nvchecker doesn't give this value, but shake restores it from last run
-[nvOld] :: NvcheckerResult -> Maybe Version
-
--- | Rules of nvchecker
-nvcheckerRule :: Rules ()
-
--- | Run nvchecker
-checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult
 
 
 -- | <a>NixFetcher</a> is used to describe how to fetch package sources.
@@ -431,6 +393,57 @@ instance NvFetcher.PackageSet.Member x xs => NvFetcher.PackageSet.Member x (_y :
 instance (TypeError ...) => NvFetcher.PackageSet.Member x '[]
 instance Control.Monad.IO.Class.MonadIO NvFetcher.PackageSet.PackageSet
 instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
+
+module NvFetcher.Utils
+encode' :: Binary a => a -> ByteString
+decode' :: Binary a => ByteString -> a
+
+
+-- | <a>nvchecker</a> is a program checking new versions of packages. We
+--   encode the checking process into shake build system, generating
+--   configuration of nvchecker and calling it externally. Now we call
+--   nvchecker for each <a>VersionSource</a>, which seems not to be
+--   efficient, but it's tolerable when running in parallel.
+--   
+--   Meanwhile, we lose the capabilities of tracking version updates, i.e.
+--   normally nvchecker will help us maintain a list of old versions, so
+--   that we are able to know which package's version is updated in this
+--   run. Fortunately, we can reimplement this using shake database, see
+--   <a>nvcheckerRule</a> for details.
+module NvFetcher.Nvchecker
+
+-- | The input of nvchecker
+data VersionSource
+GitHubRelease :: Text -> Text -> VersionSource
+[owner] :: VersionSource -> Text
+[repo] :: VersionSource -> Text
+Git :: Text -> VersionSource
+[vurl] :: VersionSource -> Text
+Pypi :: Text -> VersionSource
+[pypi] :: VersionSource -> Text
+ArchLinux :: Text -> VersionSource
+[archpkg] :: VersionSource -> Text
+Aur :: Text -> VersionSource
+[aur] :: VersionSource -> Text
+Manual :: Text -> VersionSource
+[manual] :: VersionSource -> Text
+Repology :: Text -> Text -> VersionSource
+[repology] :: VersionSource -> Text
+[repo] :: VersionSource -> Text
+
+-- | The result of running nvchecker
+data NvcheckerResult
+NvcheckerResult :: Version -> Maybe Version -> NvcheckerResult
+[nvNow] :: NvcheckerResult -> Version
+
+-- | nvchecker doesn't give this value, but shake restores it from last run
+[nvOld] :: NvcheckerResult -> Maybe Version
+
+-- | Rules of nvchecker
+nvcheckerRule :: Rules ()
+
+-- | Run nvchecker
+checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult
 
 module NvFetcher.Core
 coreRules :: Rules ()

@@ -1,56 +1,92 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE LambdaCase #-}</span><span>
-</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE QuasiQuotes #-}</span><span>
-</span><span id="line-3"></span><span class="hs-pragma">{-# LANGUAGE RecordWildCards #-}</span><span>
-</span><span id="line-4"></span><span class="hs-pragma">{-# LANGUAGE TypeApplications #-}</span><span>
-</span><span id="line-5"></span><span class="hs-pragma">{-# LANGUAGE ViewPatterns #-}</span><span>
-</span><span id="line-6"></span><span>
-</span><span id="line-7"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">NvFetcher.Core</span><span>
-</span><span id="line-8"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="NvFetcher.Core.html#coreRules"><span class="hs-identifier">coreRules</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-9"></span><span>    </span><span class="annot"><a href="NvFetcher.Core.html#generateNixSourceExpr"><span class="hs-identifier">generateNixSourceExpr</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-10"></span><span>  </span><span class="hs-special">)</span><span>
-</span><span id="line-11"></span><span class="hs-keyword">where</span><span>
-</span><span id="line-12"></span><span>
-</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Control.Monad</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">void</span></span><span class="hs-special">)</span><span>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE DataKinds #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE LambdaCase #-}</span><span>
+</span><span id="line-3"></span><span class="hs-pragma">{-# LANGUAGE QuasiQuotes #-}</span><span>
+</span><span id="line-4"></span><span class="hs-pragma">{-# LANGUAGE RecordWildCards #-}</span><span>
+</span><span id="line-5"></span><span class="hs-pragma">{-# LANGUAGE TypeApplications #-}</span><span>
+</span><span id="line-6"></span><span class="hs-pragma">{-# LANGUAGE ViewPatterns #-}</span><span>
+</span><span id="line-7"></span><span>
+</span><span id="line-8"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">NvFetcher.Core</span><span>
+</span><span id="line-9"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="NvFetcher.Core.html#coreRules"><span class="hs-identifier">coreRules</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-10"></span><span>    </span><span class="annot"><a href="NvFetcher.Core.html#generateNixSourceExpr"><span class="hs-identifier">generateNixSourceExpr</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-11"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">where</span><span>
+</span><span id="line-13"></span><span>
 </span><span id="line-14"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Coerce</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">coerce</span></span><span class="hs-special">)</span><span>
-</span><span id="line-15"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Development.Shake</span></span><span>
-</span><span id="line-16"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">NeatInterpolation</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">trimming</span></span><span class="hs-special">)</span><span>
-</span><span id="line-17"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.NixFetcher.html"><span class="hs-identifier">NvFetcher.NixFetcher</span></a></span><span>
-</span><span id="line-18"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.Nvchecker.html"><span class="hs-identifier">NvFetcher.Nvchecker</span></a></span><span>
-</span><span id="line-19"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.ShakeExtras.html"><span class="hs-identifier">NvFetcher.ShakeExtras</span></a></span><span>
-</span><span id="line-20"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.Types.html"><span class="hs-identifier">NvFetcher.Types</span></a></span><span>
-</span><span id="line-21"></span><span>
-</span><span id="line-22"></span><span class="annot"><a href="NvFetcher.Core.html#coreRules"><span class="hs-identifier hs-type">coreRules</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Rules</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
-</span><span id="line-23"></span><span id="coreRules"><span class="annot"><span class="annottext">coreRules :: Rules ()
+</span><span id="line-15"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Text</span></span><span class="hs-special">)</span><span>
+</span><span id="line-16"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Development.Shake</span></span><span>
+</span><span id="line-17"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Development.Shake.Rule</span></span><span>
+</span><span id="line-18"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">NeatInterpolation</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">trimming</span></span><span class="hs-special">)</span><span>
+</span><span id="line-19"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.NixFetcher.html"><span class="hs-identifier">NvFetcher.NixFetcher</span></a></span><span>
+</span><span id="line-20"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.Nvchecker.html"><span class="hs-identifier">NvFetcher.Nvchecker</span></a></span><span>
+</span><span id="line-21"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.ShakeExtras.html"><span class="hs-identifier">NvFetcher.ShakeExtras</span></a></span><span>
+</span><span id="line-22"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.Types.html"><span class="hs-identifier">NvFetcher.Types</span></a></span><span>
+</span><span id="line-23"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.Utils.html"><span class="hs-identifier">NvFetcher.Utils</span></a></span><span>
+</span><span id="line-24"></span><span>
+</span><span id="line-25"></span><span class="annot"><a href="NvFetcher.Core.html#coreRules"><span class="hs-identifier hs-type">coreRules</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Rules</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-26"></span><span id="coreRules"><span class="annot"><span class="annottext">coreRules :: Rules ()
 </span><a href="NvFetcher.Core.html#coreRules"><span class="hs-identifier hs-var hs-var">coreRules</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-24"></span><span>  </span><span class="annot"><span class="annottext">Rules (PackageKey -&gt; Action Text) -&gt; Rules ()
-forall (f :: * -&gt; *) a. Functor f =&gt; f a -&gt; f ()
-</span><span class="hs-identifier hs-var">void</span></span><span> </span><span class="annot"><span class="annottext">(Rules (PackageKey -&gt; Action Text) -&gt; Rules ())
--&gt; Rules (PackageKey -&gt; Action Text) -&gt; Rules ()
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(PackageKey -&gt; Action Text) -&gt; Rules (PackageKey -&gt; Action Text)
-forall q a.
-(RuleResult q ~ a, ShakeValue q, ShakeValue a, Partial) =&gt;
-(q -&gt; Action a) -&gt; Rules (q -&gt; Action a)
-</span><span class="hs-identifier hs-var">addOracle</span></span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; Action Text
-</span><a href="#local-6989586621679157319"><span class="hs-identifier hs-var">run</span></a></span><span>
-</span><span id="line-25"></span><span>  </span><span class="annot"><span class="annottext">Rules ()
+</span><span id="line-27"></span><span>  </span><span class="annot"><span class="annottext">Rules ()
 </span><a href="NvFetcher.Nvchecker.html#nvcheckerRule"><span class="hs-identifier hs-var">nvcheckerRule</span></a></span><span>
-</span><span id="line-26"></span><span>  </span><span class="annot"><span class="annottext">Rules ()
+</span><span id="line-28"></span><span>  </span><span class="annot"><span class="annottext">Rules ()
 </span><a href="NvFetcher.NixFetcher.html#prefetchRule"><span class="hs-identifier hs-var">prefetchRule</span></a></span><span>
-</span><span id="line-27"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-28"></span><span>    </span><span id="local-6989586621679157319"><span class="annot"><span class="annottext">run :: PackageKey -&gt; Action Text
-</span><a href="#local-6989586621679157319"><span class="hs-identifier hs-var hs-var">run</span></a></span></span><span> </span><span id="local-6989586621679157316"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679157316"><span class="hs-identifier hs-var">key</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-29"></span><span>      </span><span class="annot"><span class="annottext">PackageKey -&gt; Action (Maybe Package)
+</span><span id="line-29"></span><span>  </span><span class="annot"><span class="annottext">BuiltinLint (WithPackageKey Core) NixExpr
+-&gt; BuiltinIdentity (WithPackageKey Core) NixExpr
+-&gt; BuiltinRun (WithPackageKey Core) NixExpr
+-&gt; Rules ()
+forall key value.
+(RuleResult key ~ value, ShakeValue key, Typeable value,
+ NFData value, Show value, Partial) =&gt;
+BuiltinLint key value
+-&gt; BuiltinIdentity key value -&gt; BuiltinRun key value -&gt; Rules ()
+</span><span class="hs-identifier hs-var">addBuiltinRule</span></span><span> </span><span class="annot"><span class="annottext">BuiltinLint (WithPackageKey Core) NixExpr
+forall key value. BuiltinLint key value
+</span><span class="hs-identifier hs-var">noLint</span></span><span> </span><span class="annot"><span class="annottext">BuiltinIdentity (WithPackageKey Core) NixExpr
+forall key value. BuiltinIdentity key value
+</span><span class="hs-identifier hs-var">noIdentity</span></span><span> </span><span class="annot"><span class="annottext">(BuiltinRun (WithPackageKey Core) NixExpr -&gt; Rules ())
+-&gt; BuiltinRun (WithPackageKey Core) NixExpr -&gt; Rules ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-type">WithPackageKey</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Core
+</span><a href="NvFetcher.Types.html#Core"><span class="hs-identifier hs-var">Core</span></a></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679160010"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679160010"><span class="hs-identifier hs-var">pkg</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span id="local-6989586621679160009"><span class="annot"><span class="annottext">Maybe ByteString
+</span><a href="#local-6989586621679160009"><span class="hs-identifier hs-var">mOld</span></a></span></span><span> </span><span id="local-6989586621679160008"><span class="annot"><span class="annottext">RunMode
+</span><a href="#local-6989586621679160008"><span class="hs-identifier hs-var">mode</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">RunMode
+</span><a href="#local-6989586621679160008"><span class="hs-identifier hs-var">mode</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-30"></span><span>    </span><span class="annot"><span class="annottext">RunMode
+</span><span class="hs-identifier hs-var">RunDependenciesSame</span></span><span>
+</span><span id="line-31"></span><span>      </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679160006"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679160006"><span class="hs-identifier hs-var">old</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Maybe ByteString
+</span><a href="#local-6989586621679160009"><span class="hs-identifier hs-var">mOld</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-32"></span><span>        </span><span class="hs-special">(</span><span id="local-6989586621679160005"><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679160005"><span class="hs-identifier hs-var">expr</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Version
+</span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; (NixExpr, Version)
+forall a. Binary a =&gt; ByteString -&gt; a
+</span><a href="NvFetcher.Utils.html#decode%27"><span class="hs-identifier hs-var">decode'</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679160006"><span class="hs-identifier hs-var">old</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-33"></span><span>        </span><span class="annot"><span class="annottext">RunResult NixExpr -&gt; Action (RunResult NixExpr)
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(RunResult NixExpr -&gt; Action (RunResult NixExpr))
+-&gt; RunResult NixExpr -&gt; Action (RunResult NixExpr)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">RunChanged -&gt; ByteString -&gt; NixExpr -&gt; RunResult NixExpr
+forall value. RunChanged -&gt; ByteString -&gt; value -&gt; RunResult value
+</span><span class="hs-identifier hs-var">RunResult</span></span><span> </span><span class="annot"><span class="annottext">RunChanged
+</span><span class="hs-identifier hs-var">ChangedNothing</span></span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679160006"><span class="hs-identifier hs-var">old</span></a></span><span> </span><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679160005"><span class="hs-identifier hs-var">expr</span></a></span><span>
+</span><span id="line-34"></span><span>    </span><span class="annot"><span class="annottext">RunMode
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-35"></span><span>      </span><span class="annot"><span class="annottext">PackageKey -&gt; Action (Maybe Package)
 </span><a href="NvFetcher.ShakeExtras.html#getPackageByKey"><span class="hs-identifier hs-var">getPackageByKey</span></a></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679157316"><span class="hs-identifier hs-var">key</span></a></span><span> </span><span class="annot"><span class="annottext">Action (Maybe Package)
--&gt; (Maybe Package -&gt; Action Text) -&gt; Action Text
+</span><a href="#local-6989586621679160010"><span class="hs-identifier hs-var">pkg</span></a></span><span> </span><span class="annot"><span class="annottext">Action (Maybe Package)
+-&gt; (Maybe Package -&gt; Action (RunResult NixExpr))
+-&gt; Action (RunResult NixExpr)
 forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
 </span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
-</span><span id="line-30"></span><span>        </span><span class="annot"><span class="annottext">Maybe Package
-</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Action Text
+</span><span id="line-36"></span><span>        </span><span class="annot"><span class="annottext">Maybe Package
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Action (RunResult NixExpr)
 forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; m a
-</span><span class="hs-identifier hs-var">fail</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action Text) -&gt; String -&gt; Action Text
+</span><span class="hs-identifier hs-var">fail</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action (RunResult NixExpr))
+-&gt; String -&gt; Action (RunResult NixExpr)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;Unkown package key: &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
@@ -58,90 +94,111 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; String
 forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679157316"><span class="hs-identifier hs-var">key</span></a></span><span>
-</span><span id="line-31"></span><span>        </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Package"><span class="hs-identifier hs-type">Package</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679157310"><span id="local-6989586621679157311"><span id="local-6989586621679157312"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679160010"><span class="hs-identifier hs-var">pkg</span></a></span><span>
+</span><span id="line-37"></span><span>        </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Package"><span class="hs-identifier hs-type">Package</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679159996"><span id="local-6989586621679159997"><span id="local-6989586621679159998"><span class="annot"><span class="annottext">NixExpr
 VersionSource
 PackageFetcher
 pfetcher :: Package -&gt; PackageFetcher
 pversion :: Package -&gt; VersionSource
-pname :: Package -&gt; Text
+pname :: Package -&gt; NixExpr
 pfetcher :: PackageFetcher
 pversion :: VersionSource
-pname :: Text
+pname :: NixExpr
 </span><a href="NvFetcher.Types.html#pfetcher"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-32"></span><span>          </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-type">NvcheckerResult</span></a></span><span> </span><span id="local-6989586621679157305"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679157305"><span class="hs-identifier hs-var">version</span></a></span></span><span> </span><span id="local-6989586621679157304"><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679157304"><span class="hs-identifier hs-var">mOld</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">VersionSource -&gt; PackageKey -&gt; Action NvcheckerResult
+</span><span id="line-38"></span><span>          </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-type">NvcheckerResult</span></a></span><span> </span><span id="local-6989586621679159991"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679159991"><span class="hs-identifier hs-var">version</span></a></span></span><span> </span><span id="local-6989586621679159990"><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679159990"><span class="hs-identifier hs-var">mOldV</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">VersionSource -&gt; PackageKey -&gt; Action NvcheckerResult
 </span><a href="NvFetcher.Nvchecker.html#checkVersion"><span class="hs-identifier hs-var">checkVersion</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679157311"><span class="hs-identifier hs-var">pversion</span></a></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679157316"><span class="hs-identifier hs-var">key</span></a></span><span>
-</span><span id="line-33"></span><span>          </span><span id="local-6989586621679157302"><span class="annot"><span class="annottext">NixFetcher 'Prefetched
-</span><a href="#local-6989586621679157302"><span class="hs-identifier hs-var">prefetched</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fresh -&gt; Action (NixFetcher 'Prefetched)
+</span><a href="#local-6989586621679159997"><span class="hs-identifier hs-var">pversion</span></a></span><span> </span><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679160010"><span class="hs-identifier hs-var">pkg</span></a></span><span>
+</span><span id="line-39"></span><span>          </span><span id="local-6989586621679159988"><span class="annot"><span class="annottext">NixFetcher 'Prefetched
+</span><a href="#local-6989586621679159988"><span class="hs-identifier hs-var">prefetched</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fresh -&gt; Action (NixFetcher 'Prefetched)
 </span><a href="NvFetcher.NixFetcher.html#prefetch"><span class="hs-identifier hs-var">prefetch</span></a></span><span> </span><span class="annot"><span class="annottext">(NixFetcher 'Fresh -&gt; Action (NixFetcher 'Prefetched))
 -&gt; NixFetcher 'Fresh -&gt; Action (NixFetcher 'Prefetched)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageFetcher
-</span><a href="#local-6989586621679157310"><span class="hs-identifier hs-var">pfetcher</span></a></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679157305"><span class="hs-identifier hs-var">version</span></a></span><span>
-</span><span id="line-34"></span><span>          </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679157304"><span class="hs-identifier hs-var">mOld</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-35"></span><span>            </span><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679159996"><span class="hs-identifier hs-var">pfetcher</span></a></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679159991"><span class="hs-identifier hs-var">version</span></a></span><span>
+</span><span id="line-40"></span><span>          </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679159990"><span class="hs-identifier hs-var">mOldV</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-41"></span><span>            </span><span class="annot"><span class="annottext">Maybe Version
 </span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
-</span><span id="line-36"></span><span>              </span><span class="annot"><span class="annottext">Text -&gt; Maybe Version -&gt; Version -&gt; Action ()
-</span><a href="NvFetcher.ShakeExtras.html#recordVersionChange"><span class="hs-identifier hs-var">recordVersionChange</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679157312"><span class="hs-identifier hs-var">pname</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Version
+</span><span id="line-42"></span><span>              </span><span class="annot"><span class="annottext">NixExpr -&gt; Maybe Version -&gt; Version -&gt; Action ()
+</span><a href="NvFetcher.ShakeExtras.html#recordVersionChange"><span class="hs-identifier hs-var">recordVersionChange</span></a></span><span> </span><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679159998"><span class="hs-identifier hs-var">pname</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Version
 forall a. Maybe a
 </span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679157305"><span class="hs-identifier hs-var">version</span></a></span><span>
-</span><span id="line-37"></span><span>            </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679157299"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679157299"><span class="hs-identifier hs-var">old</span></a></span></span><span>
-</span><span id="line-38"></span><span>              </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679157299"><span class="hs-identifier hs-var">old</span></a></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Version -&gt; Bool
+</span><a href="#local-6989586621679159991"><span class="hs-identifier hs-var">version</span></a></span><span>
+</span><span id="line-43"></span><span>            </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679159985"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679159985"><span class="hs-identifier hs-var">old</span></a></span></span><span>
+</span><span id="line-44"></span><span>              </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679159985"><span class="hs-identifier hs-var">old</span></a></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Version -&gt; Bool
 forall a. Eq a =&gt; a -&gt; a -&gt; Bool
 </span><span class="hs-operator hs-var">/=</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679157305"><span class="hs-identifier hs-var">version</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span>
-</span><span id="line-39"></span><span>                </span><span class="annot"><span class="annottext">Text -&gt; Maybe Version -&gt; Version -&gt; Action ()
-</span><a href="NvFetcher.ShakeExtras.html#recordVersionChange"><span class="hs-identifier hs-var">recordVersionChange</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679157312"><span class="hs-identifier hs-var">pname</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
+</span><a href="#local-6989586621679159991"><span class="hs-identifier hs-var">version</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-45"></span><span>                </span><span class="annot"><span class="annottext">NixExpr -&gt; Maybe Version -&gt; Version -&gt; Action ()
+</span><a href="NvFetcher.ShakeExtras.html#recordVersionChange"><span class="hs-identifier hs-var">recordVersionChange</span></a></span><span> </span><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679159998"><span class="hs-identifier hs-var">pname</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
 forall a. a -&gt; Maybe a
 </span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679157299"><span class="hs-identifier hs-var">old</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679157305"><span class="hs-identifier hs-var">version</span></a></span><span>
-</span><span id="line-40"></span><span>            </span><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679159985"><span class="hs-identifier hs-var">old</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679159991"><span class="hs-identifier hs-var">version</span></a></span><span>
+</span><span id="line-46"></span><span>            </span><span class="annot"><span class="annottext">Maybe Version
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">() -&gt; Action ()
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
-</span><span id="line-41"></span><span>          </span><span class="annot"><span class="annottext">Text -&gt; Action Text
+</span><span id="line-47"></span><span>          </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679159983"><span class="annot"><span class="annottext">result :: NixExpr
+</span><a href="#local-6989586621679159983"><span class="hs-identifier hs-var hs-var">result</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">NixExpr -&gt; Version -&gt; NixFetcher 'Prefetched -&gt; NixExpr
+</span><a href="NvFetcher.Core.html#gen"><span class="hs-identifier hs-var">gen</span></a></span><span> </span><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679159998"><span class="hs-identifier hs-var">pname</span></a></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679159991"><span class="hs-identifier hs-var">version</span></a></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Prefetched
+</span><a href="#local-6989586621679159988"><span class="hs-identifier hs-var">prefetched</span></a></span><span>
+</span><span id="line-48"></span><span>          </span><span class="annot"><span class="annottext">RunResult NixExpr -&gt; Action (RunResult NixExpr)
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
-</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Action Text) -&gt; Text -&gt; Action Text
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(RunResult NixExpr -&gt; Action (RunResult NixExpr))
+-&gt; RunResult NixExpr -&gt; Action (RunResult NixExpr)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(Text, Version, NixFetcher 'Prefetched) -&gt; Text
-forall a. ToNixExpr a =&gt; (Text, Version, a) -&gt; Text
-</span><a href="#local-6989586621679157297"><span class="hs-identifier hs-var">gen</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679157312"><span class="hs-identifier hs-var">pname</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679157305"><span class="hs-identifier hs-var">version</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Prefetched
-</span><a href="#local-6989586621679157302"><span class="hs-identifier hs-var">prefetched</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-42"></span><span>    </span><span id="local-6989586621679157297"><span class="annot"><span class="annottext">gen :: (Text, Version, a) -&gt; Text
-</span><a href="#local-6989586621679157297"><span class="hs-identifier hs-var hs-var">gen</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679157296"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679157296"><span class="hs-identifier hs-var">name</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">forall b. Coercible Version b =&gt; Version -&gt; b
-</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679157295"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679157295"><span class="hs-identifier hs-var">ver</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">a -&gt; Text
-forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixFetcher.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679157293"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679157293"><span class="hs-identifier hs-var">srcP</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-43"></span><span>      </span><span class="annot"><span class="">[trimming|
-      $name = {
-        pname = &quot;$name&quot;;
-        version = &quot;$ver&quot;;
-        src = $srcP;
-      };
-    |]</span></span><span>
-</span><span id="line-50"></span><span>
-</span><span id="line-51"></span><span class="annot"><a href="NvFetcher.Core.html#generateNixSourceExpr"><span class="hs-identifier hs-type">generateNixSourceExpr</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span>
-</span><span id="line-52"></span><span id="generateNixSourceExpr"><span class="annot"><span class="annottext">generateNixSourceExpr :: PackageKey -&gt; Action Text
-</span><a href="NvFetcher.Core.html#generateNixSourceExpr"><span class="hs-identifier hs-var hs-var">generateNixSourceExpr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; Action Text
-forall q a.
-(RuleResult q ~ a, ShakeValue q, ShakeValue a) =&gt;
-q -&gt; Action a
-</span><span class="hs-identifier hs-var">askOracle</span></span><span>
-</span><span id="line-53"></span></pre></body></html>
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">RunChanged -&gt; ByteString -&gt; NixExpr -&gt; RunResult NixExpr
+forall value. RunChanged -&gt; ByteString -&gt; value -&gt; RunResult value
+</span><span class="hs-identifier hs-var">RunResult</span></span><span> </span><span class="annot"><span class="annottext">RunChanged
+</span><span class="hs-identifier hs-var">ChangedRecomputeDiff</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(NixExpr, Version) -&gt; ByteString
+forall a. Binary a =&gt; a -&gt; ByteString
+</span><a href="NvFetcher.Utils.html#encode%27"><span class="hs-identifier hs-var">encode'</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679159983"><span class="hs-identifier hs-var">result</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679159991"><span class="hs-identifier hs-var">version</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679159983"><span class="hs-identifier hs-var">result</span></a></span><span>
+</span><span id="line-49"></span><span>
+</span><span id="line-50"></span><span class="annot"><a href="NvFetcher.Core.html#generateNixSourceExpr"><span class="hs-identifier hs-type">generateNixSourceExpr</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span>
+</span><span id="line-51"></span><span id="generateNixSourceExpr"><span class="annot"><span class="annottext">generateNixSourceExpr :: PackageKey -&gt; Action NixExpr
+</span><a href="NvFetcher.Core.html#generateNixSourceExpr"><span class="hs-identifier hs-var hs-var">generateNixSourceExpr</span></a></span></span><span> </span><span id="local-6989586621679159979"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679159979"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">WithPackageKey Core -&gt; Action NixExpr
+forall key value.
+(Partial, RuleResult key ~ value, ShakeValue key,
+ Typeable value) =&gt;
+key -&gt; Action value
+</span><span class="hs-identifier hs-var">apply1</span></span><span> </span><span class="annot"><span class="annottext">(WithPackageKey Core -&gt; Action NixExpr)
+-&gt; WithPackageKey Core -&gt; Action NixExpr
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(Core, PackageKey) -&gt; WithPackageKey Core
+forall k. (k, PackageKey) -&gt; WithPackageKey k
+</span><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-var">WithPackageKey</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Core
+</span><a href="NvFetcher.Types.html#Core"><span class="hs-identifier hs-var">Core</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679159979"><span class="hs-identifier hs-var">k</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-52"></span><span>
+</span><span id="line-53"></span><span class="annot"><a href="NvFetcher.Core.html#gen"><span class="hs-identifier hs-type">gen</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageName"><span class="hs-identifier hs-type">PackageName</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Prefetched"><span class="hs-identifier hs-type">Prefetched</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
+</span><span id="line-54"></span><span id="gen"><span class="annot"><span class="annottext">gen :: NixExpr -&gt; Version -&gt; NixFetcher 'Prefetched -&gt; NixExpr
+</span><a href="NvFetcher.Core.html#gen"><span class="hs-identifier hs-var hs-var">gen</span></a></span></span><span> </span><span id="local-6989586621679159976"><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679159976"><span class="hs-identifier hs-var">name</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; NixExpr
+</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679159975"><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679159975"><span class="hs-identifier hs-var">ver</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">NixFetcher 'Prefetched -&gt; NixExpr
+forall a. ToNixExpr a =&gt; a -&gt; NixExpr
+</span><a href="NvFetcher.NixFetcher.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679159973"><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679159973"><span class="hs-identifier hs-var">srcP</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-55"></span><span>  </span><span class="annot"><span class="">[trimming|
+  $name = {
+    pname = &quot;$name&quot;;
+    version = &quot;$ver&quot;;
+    src = $srcP;
+  };
+|]</span></span><span>
+</span><span id="line-62"></span></pre></body></html>
