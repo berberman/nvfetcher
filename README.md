@@ -116,6 +116,16 @@ You can find an example of using nvfetcher in the library way, see [`Main_exampl
 For details of the library, documentation of released versions is available on [Hackage](https://hackage.haskell.org/package/nvfetcher),
 and of master is on our [github pages](https://nvfetcher.berberman.space).
 
+## Limitations
+
+There is no way to check the equality over version sources and fetchers, so If you change either of them in a package,
+you will need to rebuild everything, i.e. run `nvfetcher clean` to remove shake databsae, to make sure that
+our build system works correctly. We could automate this process, for example,
+calculate the hash of the configuration file and bump `shakeVersion` to trigger the rebuild.
+However, this shouldn't happen frequently and we want to minimize the changes, so it's left for you to do it manually.
+
+> Adding or removing a package doesn't require such rebuild
+
 ## Contributing
 
 Issues and PRs are always welcome. **\_(:з」∠)\_**
