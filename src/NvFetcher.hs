@@ -39,30 +39,26 @@
 --
 -- All shake options are inherited.
 module NvFetcher
-  ( -- | Re-export DSL things
-    module NvFetcher.PackageSet,
+  ( module NvFetcher.PackageSet,
     module NvFetcher.Types,
-    generateNixSources,
+    module NvFetcher.ShakeExtras,
     Args (..),
     defaultArgs,
     runNvFetcher,
     runNvFetcherWith,
-    VersionChange (..),
-    getVersionChanges,
   )
 where
 
-import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, readMVar)
 import Control.Monad.Trans.Maybe
-import qualified Data.Map.Strict as Map
-import Data.Maybe (fromJust, fromMaybe)
+import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
-import Development.Shake.Classes (hashWithSalt)
 import NeatInterpolation (trimming)
+import NvFetcher.Core
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
 import NvFetcher.PackageSet
+import NvFetcher.ShakeExtras
 import NvFetcher.Types
 import System.Console.GetOpt (OptDescr)
 
@@ -112,29 +108,25 @@ runNvFetcherWith ::
   ([a] -> IO (Maybe Args)) ->
   IO ()
 runNvFetcherWith flags f = do
-  var <- newMVar mempty
   shakeArgsOptionsWith
     shakeOptions
     flags
     $ \opts flagValues argValues -> runMaybeT $ do
       args@Args {..} <- MaybeT $ f flagValues
-      pkgs <- liftIO $ Map.elems <$> runPackageSet argPackageSet
+      pkgs <- liftIO $ runPackageSet argPackageSet
+      shakeExtras <- liftIO $ initShakeExtras pkgs
       let opts' =
             let old = argShakeOptions opts
              in old
-                  { shakeExtra = addShakeExtra (VersionChanges var) (shakeExtra old),
-                    -- rebuild everything if input packages have changed
-                    -- this may leads to prefetch packages repeatedly
-                    -- but input packages shouldn't be changed frequently
-                    shakeVersion = "pkgs" <> show (hashWithSalt 0 pkgs) <> "-" <> shakeVersion old
+                  { shakeExtra = addShakeExtra shakeExtras (shakeExtra old)
                   }
-          rules = mainRules args pkgs
+          rules = mainRules args
       pure $ case argValues of
         [] -> (opts', want ["build"] >> rules)
         files -> (opts', want files >> rules)
 
-mainRules :: Args -> [Package] -> Rules ()
-mainRules Args {..} pkgs = do
+mainRules :: Args -> Rules ()
+mainRules Args {..} = do
   addHelpSuffix "It's important to keep .shake dir if you want to get correct version changes and proper cache"
   addHelpSuffix "Changing input packages will lead to a fully cleanup, requiring to rebuild everything next run"
 
@@ -144,93 +136,27 @@ mainRules Args {..} pkgs = do
     argActionAfterClean
 
   "build" ~> do
-    generateNixSources argOutputFilePath pkgs
+    allKeys <- getAllPackageKeys
+    body <- parallel $ generateNixSourceExpr <$> allKeys
+    getVersionChanges >>= \changes ->
+      if null changes
+        then putInfo "Up to date"
+        else do
+          putInfo "Changes:"
+          putInfo $ unlines $ show <$> changes
+    writeFileChanged argOutputFilePath $ T.unpack $ srouces $ T.unlines body
+    putInfo $ "Generate " <> argOutputFilePath
     argActionAfterBuild
 
   argRules
-  nvfetcherRules
+  coreRules
 
---------------------------------------------------------------------------------
-
--- | Version change of a package
---
--- >>> VersionChange "foo" Nothing "2.3.3"
--- foo: ∅ → 2.3.3
---
--- >>> VersionChange "bar" (Just "2.2.2") "2.3.3"
--- bar: 2.2.2 → 2.3.3
-data VersionChange = VersionChange
-  { vcName :: PackageName,
-    vcOld :: Maybe Version,
-    vcNew :: Version
-  }
-  deriving (Eq)
-
-instance Show VersionChange where
-  show VersionChange {..} =
-    T.unpack $ vcName <> ": " <> fromMaybe "∅" (coerce vcOld) <> " → " <> coerce vcNew
-
-newtype VersionChanges = VersionChanges (MVar [VersionChange])
-
-recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()
-recordVersionChange vcName vcOld vcNew = do
-  VersionChanges var <- fromJust <$> getShakeExtra @VersionChanges
-  liftIO $ modifyMVar_ var (pure . (++ [VersionChange {..}]))
-
--- | Get version changes since the last run, relying on shake database.
---
--- Use this function in 'argActionAfterBuild' to produce external changelog
-getVersionChanges :: Action [VersionChange]
-getVersionChanges = do
-  VersionChanges var <- fromJust <$> getShakeExtra @VersionChanges
-  liftIO $ readMVar var
-
---------------------------------------------------------------------------------
-
--- | Rules of nvfetcher
-nvfetcherRules :: Rules ()
-nvfetcherRules = do
-  nvcheckerRule
-  prefetchRule
-
--- | Main action, given a set of packages, generating nix sources expr in a file
-generateNixSources :: FilePath -> [Package] -> Action ()
-generateNixSources fp pkgs = do
-  body <- fmap genOne <$> actions
-  getVersionChanges >>= \changes ->
-    if null changes
-      then putInfo "Up to date"
-      else do
-        putInfo "Changes:"
-        putInfo $ unlines $ show <$> changes
-  writeFileChanged fp $ T.unpack $ srouces $ T.unlines body
-  putInfo $ "Generate " <> fp
-  where
-    single Package {..} = do
-      (NvcheckerResult version mOld) <- checkVersion pversion
-      prefetched <- prefetch $ pfetcher version
-      case mOld of
-        Nothing ->
-          recordVersionChange pname Nothing version
-        Just old
-          | old /= version ->
-            recordVersionChange pname (Just old) version
-        _ -> pure ()
-      pure (pname, version, prefetched)
-    genOne (name, coerce @Version -> ver, toNixExpr -> srcP) =
-      [trimming|
-        $name = {
-          pname = "$name";
-          version = "$ver";
-          src = $srcP;
-        };
-      |]
-    actions = parallel $ map single pkgs
-    srouces body =
-      [trimming|
-        # This file was generated by nvfetcher, please do not modify it manually.
-        { fetchgit, fetchurl }:
-        {
-          $body
-        }
-      |]
+srouces :: Text -> Text
+srouces body =
+  [trimming|
+    # This file was generated by nvfetcher, please do not modify it manually.
+    { fetchgit, fetchurl }:
+    {
+      $body
+    }
+  |]

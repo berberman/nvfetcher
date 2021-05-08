@@ -22,15 +22,16 @@ source-repository head
 common common-options
   build-depends:
     , aeson
-    , base                >=4.8 && <5
+    , base                  >=4.8 && <5
     , binary
     , bytestring
-    , containers
+    , extra
     , free
-    , transformers
     , neat-interpolation
     , shake
     , text
+    , transformers
+    , unordered-containers
 
   ghc-options:
     -Wall -Wcompat -Widentities -Wincomplete-uni-patterns
@@ -45,9 +46,11 @@ library
   hs-source-dirs:  src
   exposed-modules:
     NvFetcher
+    NvFetcher.Core
     NvFetcher.NixFetcher
     NvFetcher.Nvchecker
     NvFetcher.PackageSet
+    NvFetcher.ShakeExtras
     NvFetcher.Types
 
 executable nvfetcher

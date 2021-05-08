@@ -4,9 +4,11 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
@@ -22,6 +24,9 @@ module NvFetcher.Types
   ( -- * Common types
     Version (..),
     SHA256 (..),
+    NixExpr,
+    VersionChange (..),
+    WithPackageKey (..),
 
     -- * Nvchecker types
     VersionSource (..),
@@ -36,17 +41,21 @@ module NvFetcher.Types
     PackageName,
     PackageFetcher,
     Package (..),
+    PackageKey (..),
   )
 where
 
 import qualified Data.Aeson as A
-import Data.Function (on)
+import Data.Coerce (coerce)
+import Data.Maybe (fromMaybe)
 import Data.String (IsString)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
 import Development.Shake.Classes
 import GHC.Generics (Generic)
+
+--------------------------------------------------------------------------------
 
 -- | Package version
 newtype Version = Version Text
@@ -59,6 +68,29 @@ newtype SHA256 = SHA256 Text
   deriving newtype (Show, Eq)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
+
+-- | Version change of a package
+--
+-- >>> VersionChange "foo" Nothing "2.3.3"
+-- foo: ∅ → 2.3.3
+--
+-- >>> VersionChange "bar" (Just "2.2.2") "2.3.3"
+-- bar: 2.2.2 → 2.3.3
+data VersionChange = VersionChange
+  { vcName :: PackageName,
+    vcOld :: Maybe Version,
+    vcNew :: Version
+  }
+  deriving (Eq)
+
+instance Show VersionChange where
+  show VersionChange {..} =
+    T.unpack $ vcName <> ": " <> fromMaybe "∅" (coerce vcOld) <> " → " <> coerce vcNew
+
+-- | Nix expression
+type NixExpr = Text
+
+--------------------------------------------------------------------------------
 
 -- | The input of nvchecker
 data VersionSource
@@ -84,6 +116,8 @@ instance A.FromJSON NvcheckerResult where
     NvcheckerResult <$> o A..: "version" <*> pure Nothing
 
 type instance RuleResult VersionSource = NvcheckerResult
+
+--------------------------------------------------------------------------------
 
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: Prefetch)
@@ -121,6 +155,8 @@ deriving instance Binary (PrefetchResult k) => Binary (NixFetcher k)
 
 deriving instance NFData (PrefetchResult k) => NFData (NixFetcher k)
 
+--------------------------------------------------------------------------------
+
 -- | Package name, used in generating nix expr
 type PackageName = Text
 
@@ -142,25 +178,19 @@ data Package = Package
     pfetcher :: PackageFetcher
   }
 
--- | @$ver@ is inaccurate here :(
-fake :: Package -> (PackageName, VersionSource, NixFetcher 'Fresh)
-fake Package {..} = (pname, pversion, pfetcher "$ver")
+newtype PackageKey = PackageKey PackageName
+  deriving newtype (Eq, Show, Ord)
+  deriving stock (Typeable, Generic)
+  deriving anyclass (Hashable, Binary, NFData)
 
-instance Show Package where
-  show (fake -> (p, v, f)) =
-    "Package {name = "
-      <> T.unpack p
-      <> ", version = "
-      <> show v
-      <> ", fetcher = "
-      <> show f
-      <> "}"
+type instance RuleResult PackageKey = Text
 
-instance Eq Package where
-  (==) = (==) `on` fake
+--------------------------------------------------------------------------------
 
-instance Ord Package where
-  compare = compare `on` fake
+newtype WithPackageKey k = WithPackageKey (k, PackageKey)
+  deriving newtype (Eq, Hashable, Binary, NFData)
 
-instance Hashable Package where
-  hashWithSalt s = hashWithSalt s . fake
+instance Show k => Show (WithPackageKey k) where
+  show (WithPackageKey (k, n)) = show k <> " (" <> show n <> ")"
+
+type instance RuleResult (WithPackageKey k) = RuleResult k

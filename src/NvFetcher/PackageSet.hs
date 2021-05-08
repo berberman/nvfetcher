@@ -72,8 +72,7 @@ import Control.Monad.Free
 import Control.Monad.IO.Class
 import Data.Coerce (coerce)
 import Data.Kind (Constraint, Type)
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
+import Data.HashMap.Strict as HMap
 import Data.Maybe (isJust)
 import Data.Text (Text)
 import GHC.TypeLits
@@ -119,13 +118,13 @@ purePackageSet = mapM_ (liftF . flip NewPackage ())
 --
 -- Throws exception as more then one packages with the same name
 -- are defined
-runPackageSet :: PackageSet () -> IO (Map PackageName Package)
+runPackageSet :: PackageSet () -> IO (HashMap PackageKey Package)
 runPackageSet = \case
   Free (NewPackage p g) ->
     runPackageSet g >>= \m ->
-      if isJust (Map.lookup (pname p) m)
-        then fail $ "Duplicate package name: " <> show p
-        else pure $ Map.insert (pname p) p m
+      if isJust (HMap.lookup (PackageKey $ pname p) m)
+        then fail $ "Duplicate package name: " <> show (pname p)
+        else pure $ HMap.insert (PackageKey $ pname p) p m
   Free (EmbedIO action g) -> action >>= runPackageSet . g
   Pure _ -> pure mempty
 

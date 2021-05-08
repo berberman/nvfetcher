@@ -59,7 +59,7 @@ import NvFetcher.Types
 
 -- | Types can be converted into nix expr
 class ToNixExpr a where
-  toNixExpr :: a -> Text
+  toNixExpr :: a -> NixExpr
 
 instance ToNixExpr (NixFetcher Fresh) where
   toNixExpr = buildNixFetcher "lib.fakeSha256"
@@ -79,7 +79,7 @@ toPrefetchCommand :: NixFetcher Fresh -> Action SHA256
 toPrefetchCommand = \case
   FetchGit {..} -> do
     let parser = A.withObject "nix-prefetch-git" $ \o -> SHA256 <$> o A..: "sha256"
-    (CmdTime t, Stdout (A.parseMaybe parser <=< A.decode -> out), CmdLine c) <-
+    (CmdTime t, Stdout out, CmdLine c) <-
       command [EchoStderr False] "nix-prefetch-git" $
         [T.unpack furl]
           <> ["--rev", T.unpack $ coerce rev]
@@ -88,9 +88,10 @@ toPrefetchCommand = \case
           <> ["--deepClone" | deepClone]
           <> ["--leave-dotGit" | leaveDotGit]
     putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
-    case out of
+    let result = A.parseMaybe parser <=< A.decodeStrict $ out
+    case result of
       Just x -> pure x
-      _ -> fail "Failed to parse output from nix-prefetch-git"
+      _ -> fail $ "Failed to parse output from nix-prefetch-git: " <> T.unpack (T.decodeUtf8 out)
   FetchUrl {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <- command [EchoStderr False] "nix-prefetch-url" [T.unpack furl]
     putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"

@@ -32,33 +32,39 @@ import qualified Data.Aeson as A
 import Data.Binary
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as LBS
-import Data.Maybe (catMaybes)
+import Data.Maybe (mapMaybe)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import Development.Shake
 import Development.Shake.Rule
 import NeatInterpolation (trimming)
+import NvFetcher.ShakeExtras
 import NvFetcher.Types
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()
-nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile $ \config -> do
-  writeFile' config $ T.unpack $ genNvConfig "pkg" q
-  need [config]
-  (CmdTime t, Stdout (T.lines . T.decodeUtf8 -> out), CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
-  putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
-  let result = catMaybes $ A.decodeStrict . T.encodeUtf8 <$> out
-  now <- case result of
-    [x] -> pure x
-    _ -> fail "Failed to parse output from nvchecker"
-  pure $ case old of
-    Just lastRun
-      | cachedResult <- decode' lastRun ->
-        if cachedResult == nvNow now
-          then -- try to get the version in last run from store, filling it into 'now'
-            RunResult ChangedRecomputeSame lastRun now {nvOld = Just cachedResult}
-          else RunResult ChangedRecomputeDiff (encode' $ nvNow now) now {nvOld = Just cachedResult}
-    Nothing -> RunResult ChangedRecomputeDiff (encode' $ nvNow now) now
+nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (q, pkg)) old _mode ->
+  isPackageKeyTarget pkg >>= \case
+    False -> pure $ RunResult ChangedNothing mempty undefined -- cutoff
+    _ ->
+      withTempFile $ \config -> do
+        writeFile' config $ T.unpack $ genNvConfig "pkg" q
+        need [config]
+        (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
+        putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
+        let out' = T.decodeUtf8 out
+            result = mapMaybe (A.decodeStrict . T.encodeUtf8) (T.lines out')
+        now <- case result of
+          [x] -> pure x
+          _ -> fail $ "Failed to parse output from nvchecker: " <> T.unpack out'
+        pure $ case old of
+          Just lastRun
+            | cachedResult <- decode' lastRun ->
+              if cachedResult == nvNow now
+                then -- try to get the version in last run from store, filling it into 'now'
+                  RunResult ChangedRecomputeSame lastRun now {nvOld = Just cachedResult}
+                else RunResult ChangedRecomputeDiff (encode' $ nvNow now) now {nvOld = Just cachedResult}
+          Nothing -> RunResult ChangedRecomputeDiff (encode' $ nvNow now) now
   where
     encode' :: Binary a => a -> BS.ByteString
     encode' = BS.concat . LBS.toChunks . encode
@@ -113,5 +119,5 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \q old _mode -> withTempFile 
         |]
 
 -- | Run nvchecker
-checkVersion :: VersionSource -> Action NvcheckerResult
-checkVersion = apply1
+checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult
+checkVersion v k = apply1 $ WithPackageKey (v, k)
