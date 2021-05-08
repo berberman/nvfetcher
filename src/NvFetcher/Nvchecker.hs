@@ -29,10 +29,9 @@ module NvFetcher.Nvchecker
 where
 
 import qualified Data.Aeson as A
-import Data.Binary
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Lazy as LBS
+import Data.Coerce (coerce)
 import Data.Maybe (mapMaybe)
+import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import Development.Shake
@@ -40,12 +39,20 @@ import Development.Shake.Rule
 import NeatInterpolation (trimming)
 import NvFetcher.ShakeExtras
 import NvFetcher.Types
+import NvFetcher.Utils
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()
 nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (q, pkg)) old _mode ->
+  -- If the package was removed after the last run,
+  -- shake still runs the nvchecker rule for this package.
+  -- So we record a version change here, indicating that the package has been removed.
+  -- Ideally, this should be done in the core rule
   isPackageKeyTarget pkg >>= \case
-    False -> pure $ RunResult ChangedNothing mempty undefined -- cutoff
+    False -> do
+      let oldVer = decode' <$> old
+      recordVersionChange (coerce pkg) oldVer "∅"
+      pure $ RunResult ChangedRecomputeDiff mempty undefined -- skip running, returning a never consumed result
     _ ->
       withTempFile $ \config -> do
         writeFile' config $ T.unpack $ genNvConfig "pkg" q
@@ -65,58 +72,56 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (q, pkg)) ol
                   RunResult ChangedRecomputeSame lastRun now {nvOld = Just cachedResult}
                 else RunResult ChangedRecomputeDiff (encode' $ nvNow now) now {nvOld = Just cachedResult}
           Nothing -> RunResult ChangedRecomputeDiff (encode' $ nvNow now) now
-  where
-    encode' :: Binary a => a -> BS.ByteString
-    encode' = BS.concat . LBS.toChunks . encode
-    decode' = decode . LBS.fromChunks . pure
-    genNvConfig srcName = \case
-      GitHubRelease {..} ->
-        [trimming|
-              [$srcName]
-              source = "github"
-              github = "$owner/$repo"
-              use_latest_release = true
-        |]
-      Git {..} ->
-        [trimming|
-              [$srcName]
-              source = "git"
-              git = "$vurl"
-              use_commit = true
-        |]
-      Aur {..} ->
-        [trimming|
-              [$srcName]
-              source = "aur"
-              aur = "$aur"
-              strip_release = true
-        |]
-      ArchLinux {..} ->
-        [trimming|
-              [$srcName]
-              source = "archpkg"
-              archpkg = "$archpkg"
-              strip_release = true
-        |]
-      Pypi {..} ->
-        [trimming|
-              [$srcName]
-              source = "pypi"
-              pypi = "$pypi"
-        |]
-      Manual {..} ->
-        [trimming|
-              [$srcName]
-              source = "manual"
-              manual = "$manual"
-        |]
-      Repology {..} ->
-        [trimming|
-              [$srcName]
-              source = "repology"
-              repology = "$repology"
-              repo = "$repo"
-        |]
+
+genNvConfig :: Text -> VersionSource -> Text
+genNvConfig srcName = \case
+  GitHubRelease {..} ->
+    [trimming|
+          [$srcName]
+          source = "github"
+          github = "$owner/$repo"
+          use_latest_release = true
+    |]
+  Git {..} ->
+    [trimming|
+          [$srcName]
+          source = "git"
+          git = "$vurl"
+          use_commit = true
+    |]
+  Aur {..} ->
+    [trimming|
+          [$srcName]
+          source = "aur"
+          aur = "$aur"
+          strip_release = true
+    |]
+  ArchLinux {..} ->
+    [trimming|
+          [$srcName]
+          source = "archpkg"
+          archpkg = "$archpkg"
+          strip_release = true
+    |]
+  Pypi {..} ->
+    [trimming|
+          [$srcName]
+          source = "pypi"
+          pypi = "$pypi"
+    |]
+  Manual {..} ->
+    [trimming|
+          [$srcName]
+          source = "manual"
+          manual = "$manual"
+    |]
+  Repology {..} ->
+    [trimming|
+          [$srcName]
+          source = "repology"
+          repology = "$repology"
+          repo = "$repo"
+    |]
 
 -- | Run nvchecker
 checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult

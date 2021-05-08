@@ -52,6 +52,7 @@ library
     NvFetcher.PackageSet
     NvFetcher.ShakeExtras
     NvFetcher.Types
+    NvFetcher.Utils
 
 executable nvfetcher
   import:          common-options

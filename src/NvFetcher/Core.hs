@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
@@ -10,43 +11,51 @@ module NvFetcher.Core
   )
 where
 
-import Control.Monad (void)
 import Data.Coerce (coerce)
+import Data.Text (Text)
 import Development.Shake
+import Development.Shake.Rule
 import NeatInterpolation (trimming)
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
 import NvFetcher.ShakeExtras
 import NvFetcher.Types
+import NvFetcher.Utils
 
 coreRules :: Rules ()
 coreRules = do
-  void $ addOracle run
   nvcheckerRule
   prefetchRule
-  where
-    run key =
-      getPackageByKey key >>= \case
-        Nothing -> fail $ "Unkown package key: " <> show key
+  addBuiltinRule noLint noIdentity $ \(WithPackageKey (Core, pkg)) mOld mode -> case mode of
+    RunDependenciesSame
+      | Just old <- mOld,
+        (expr, _) <- decode' @(NixExpr, Version) old ->
+        pure $ RunResult ChangedNothing old expr
+    _ ->
+      getPackageByKey pkg >>= \case
+        Nothing -> fail $ "Unkown package key: " <> show pkg
         Just Package {..} -> do
-          (NvcheckerResult version mOld) <- checkVersion pversion key
+          (NvcheckerResult version mOldV) <- checkVersion pversion pkg
           prefetched <- prefetch $ pfetcher version
-          case mOld of
+          case mOldV of
             Nothing ->
               recordVersionChange pname Nothing version
             Just old
               | old /= version ->
                 recordVersionChange pname (Just old) version
             _ -> pure ()
-          pure $ gen (pname, version, prefetched)
-    gen (name, coerce @Version -> ver, toNixExpr -> srcP) =
-      [trimming|
-      $name = {
-        pname = "$name";
-        version = "$ver";
-        src = $srcP;
-      };
-    |]
+          let result = gen pname version prefetched
+          pure $ RunResult ChangedRecomputeDiff (encode' (result, version)) result
 
 generateNixSourceExpr :: PackageKey -> Action NixExpr
-generateNixSourceExpr = askOracle
+generateNixSourceExpr k = apply1 $ WithPackageKey (Core, k)
+
+gen :: PackageName -> Version -> NixFetcher Prefetched -> Text
+gen name (coerce -> ver) (toNixExpr -> srcP) =
+  [trimming|
+  $name = {
+    pname = "$name";
+    version = "$ver";
+    src = $srcP;
+  };
+|]

@@ -27,6 +27,7 @@ module NvFetcher.Types
     NixExpr,
     VersionChange (..),
     WithPackageKey (..),
+    Core (..),
 
     -- * Nvchecker types
     VersionSource (..),
@@ -183,7 +184,10 @@ newtype PackageKey = PackageKey PackageName
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
-type instance RuleResult PackageKey = Text
+data Core = Core
+  deriving (Eq, Show, Ord, Typeable, Generic, Hashable, Binary, NFData)
+
+type instance RuleResult Core = Text
 
 --------------------------------------------------------------------------------
 
