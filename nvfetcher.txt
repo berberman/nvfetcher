@@ -20,6 +20,28 @@ Version :: Text -> Version
 newtype SHA256
 SHA256 :: Text -> SHA256
 
+-- | Nix expression
+type NixExpr = Text
+
+-- | Version change of a package
+--   
+--   <pre>
+--   &gt;&gt;&gt; VersionChange "foo" Nothing "2.3.3"
+--   foo: ∅ → 2.3.3
+--   </pre>
+--   
+--   <pre>
+--   &gt;&gt;&gt; VersionChange "bar" (Just "2.2.2") "2.3.3"
+--   bar: 2.2.2 → 2.3.3
+--   </pre>
+data VersionChange
+VersionChange :: PackageName -> Maybe Version -> Version -> VersionChange
+[vcName] :: VersionChange -> PackageName
+[vcOld] :: VersionChange -> Maybe Version
+[vcNew] :: VersionChange -> Version
+newtype WithPackageKey k
+WithPackageKey :: (k, PackageKey) -> WithPackageKey k
+
 -- | The input of nvchecker
 data VersionSource
 GitHubRelease :: Text -> Text -> VersionSource
@@ -92,6 +114,8 @@ Package :: PackageName -> VersionSource -> PackageFetcher -> Package
 [pname] :: Package -> PackageName
 [pversion] :: Package -> VersionSource
 [pfetcher] :: Package -> PackageFetcher
+newtype PackageKey
+PackageKey :: PackageName -> PackageKey
 instance Control.DeepSeq.NFData NvFetcher.Types.Version
 instance Data.Binary.Class.Binary NvFetcher.Types.Version
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Version
@@ -124,17 +148,44 @@ instance GHC.Generics.Generic NvFetcher.Types.NvcheckerResult
 instance GHC.Classes.Eq NvFetcher.Types.NvcheckerResult
 instance GHC.Show.Show NvFetcher.Types.NvcheckerResult
 instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
+instance GHC.Classes.Eq NvFetcher.Types.VersionChange
+instance Control.DeepSeq.NFData NvFetcher.Types.PackageKey
+instance Data.Binary.Class.Binary NvFetcher.Types.PackageKey
+instance Data.Hashable.Class.Hashable NvFetcher.Types.PackageKey
+instance GHC.Generics.Generic NvFetcher.Types.PackageKey
+instance GHC.Classes.Ord NvFetcher.Types.PackageKey
+instance GHC.Show.Show NvFetcher.Types.PackageKey
+instance GHC.Classes.Eq NvFetcher.Types.PackageKey
+instance Control.DeepSeq.NFData k => Control.DeepSeq.NFData (NvFetcher.Types.WithPackageKey k)
+instance Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.WithPackageKey k)
+instance Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.WithPackageKey k)
+instance GHC.Classes.Eq k => GHC.Classes.Eq (NvFetcher.Types.WithPackageKey k)
 instance GHC.Show.Show (NvFetcher.Types.PrefetchResult k) => GHC.Show.Show (NvFetcher.Types.NixFetcher k)
 instance GHC.Classes.Eq (NvFetcher.Types.PrefetchResult k) => GHC.Classes.Eq (NvFetcher.Types.NixFetcher k)
 instance GHC.Classes.Ord (NvFetcher.Types.PrefetchResult k) => GHC.Classes.Ord (NvFetcher.Types.NixFetcher k)
 instance Data.Hashable.Class.Hashable (NvFetcher.Types.PrefetchResult k) => Data.Hashable.Class.Hashable (NvFetcher.Types.NixFetcher k)
 instance Data.Binary.Class.Binary (NvFetcher.Types.PrefetchResult k) => Data.Binary.Class.Binary (NvFetcher.Types.NixFetcher k)
 instance Control.DeepSeq.NFData (NvFetcher.Types.PrefetchResult k) => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
-instance GHC.Show.Show NvFetcher.Types.Package
-instance GHC.Classes.Eq NvFetcher.Types.Package
-instance GHC.Classes.Ord NvFetcher.Types.Package
-instance Data.Hashable.Class.Hashable NvFetcher.Types.Package
+instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
+instance GHC.Show.Show NvFetcher.Types.VersionChange
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerResult
+
+module NvFetcher.ShakeExtras
+data ShakeExtras
+ShakeExtras :: Var [VersionChange] -> HashMap PackageKey Package -> ShakeExtras
+[versionChanges] :: ShakeExtras -> Var [VersionChange]
+[targetPackages] :: ShakeExtras -> HashMap PackageKey Package
+getShakeExtras :: Action ShakeExtras
+initShakeExtras :: HashMap PackageKey Package -> IO ShakeExtras
+getAllPackageKeys :: Action [PackageKey]
+getPackageByKey :: PackageKey -> Action (Maybe Package)
+isPackageKeyTarget :: PackageKey -> Action Bool
+
+-- | Record version change of a package
+recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()
+
+-- | Get version changes since the last run, relying on shake database
+getVersionChanges :: Action [VersionChange]
 
 
 -- | <a>nvchecker</a> is a program checking new versions of packages. We
@@ -181,7 +232,7 @@ NvcheckerResult :: Version -> Maybe Version -> NvcheckerResult
 nvcheckerRule :: Rules ()
 
 -- | Run nvchecker
-checkVersion :: VersionSource -> Action NvcheckerResult
+checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult
 
 
 -- | <a>NixFetcher</a> is used to describe how to fetch package sources.
@@ -218,7 +269,7 @@ Prefetched :: Prefetch
 
 -- | Types can be converted into nix expr
 class ToNixExpr a
-toNixExpr :: ToNixExpr a => a -> Text
+toNixExpr :: ToNixExpr a => a -> NixExpr
 
 -- | Prefetched fetchers hold hashes
 type family PrefetchResult (k :: Prefetch)
@@ -282,7 +333,7 @@ purePackageSet :: [Package] -> PackageSet ()
 --   
 --   Throws exception as more then one packages with the same name are
 --   defined
-runPackageSet :: PackageSet () -> IO (Map PackageName Package)
+runPackageSet :: PackageSet () -> IO (HashMap PackageKey Package)
 
 -- | A tagless final style DSL for constructing packages
 class PkgDSL f
@@ -381,6 +432,10 @@ instance (TypeError ...) => NvFetcher.PackageSet.Member x '[]
 instance Control.Monad.IO.Class.MonadIO NvFetcher.PackageSet.PackageSet
 instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
 
+module NvFetcher.Core
+coreRules :: Rules ()
+generateNixSourceExpr :: PackageKey -> Action NixExpr
+
 
 -- | The main module of nvfetcher. If you want to create CLI program with
 --   it, it's enough to import only this module.
@@ -417,10 +472,6 @@ instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
 --   All shake options are inherited.
 module NvFetcher
 
--- | Main action, given a set of packages, generating nix sources expr in a
---   file
-generateNixSources :: FilePath -> [Package] -> Action ()
-
 -- | Arguments for running nvfetcher
 data Args
 Args :: (ShakeOptions -> ShakeOptions) -> FilePath -> Rules () -> Action () -> Action () -> PackageSet () -> Args
@@ -453,28 +504,3 @@ runNvFetcher :: Args -> IO ()
 
 -- | Like <a>runNvFetcher</a> but allows to define custom cli flags
 runNvFetcherWith :: [OptDescr (Either String a)] -> ([a] -> IO (Maybe Args)) -> IO ()
-
--- | Version change of a package
---   
---   <pre>
---   &gt;&gt;&gt; VersionChange "foo" Nothing "2.3.3"
---   foo: ∅ → 2.3.3
---   </pre>
---   
---   <pre>
---   &gt;&gt;&gt; VersionChange "bar" (Just "2.2.2") "2.3.3"
---   bar: 2.2.2 → 2.3.3
---   </pre>
-data VersionChange
-VersionChange :: PackageName -> Maybe Version -> Version -> VersionChange
-[vcName] :: VersionChange -> PackageName
-[vcOld] :: VersionChange -> Maybe Version
-[vcNew] :: VersionChange -> Version
-
--- | Get version changes since the last run, relying on shake database.
---   
---   Use this function in <a>argActionAfterBuild</a> to produce external
---   changelog
-getVersionChanges :: Action [VersionChange]
-instance GHC.Classes.Eq NvFetcher.VersionChange
-instance GHC.Show.Show NvFetcher.VersionChange
