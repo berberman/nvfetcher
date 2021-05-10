@@ -39,13 +39,13 @@
 </span><span id="line-39"></span><span class="hs-comment">--</span><span>
 </span><span id="line-40"></span><span class="hs-comment">-- All shake options are inherited.</span><span>
 </span><span id="line-41"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">NvFetcher</span><span>
-</span><span id="line-42"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="NvFetcher.PackageSet.html"><span class="hs-identifier">NvFetcher.PackageSet</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-43"></span><span>    </span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="NvFetcher.Types.html"><span class="hs-identifier">NvFetcher.Types</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-44"></span><span>    </span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="NvFetcher.ShakeExtras.html"><span class="hs-identifier">NvFetcher.ShakeExtras</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-45"></span><span>    </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier">Args</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
-</span><span id="line-46"></span><span>    </span><span class="annot"><a href="NvFetcher.html#defaultArgs"><span class="hs-identifier">defaultArgs</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-47"></span><span>    </span><span class="annot"><a href="NvFetcher.html#runNvFetcher"><span class="hs-identifier">runNvFetcher</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-48"></span><span>    </span><span class="annot"><a href="NvFetcher.html#runNvFetcherWith"><span class="hs-identifier">runNvFetcherWith</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-42"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier">Args</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-43"></span><span>    </span><span class="annot"><a href="NvFetcher.html#defaultArgs"><span class="hs-identifier">defaultArgs</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-44"></span><span>    </span><span class="annot"><a href="NvFetcher.html#runNvFetcher"><span class="hs-identifier">runNvFetcher</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-45"></span><span>    </span><span class="annot"><a href="NvFetcher.html#runNvFetcherWith"><span class="hs-identifier">runNvFetcherWith</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-46"></span><span>    </span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="NvFetcher.PackageSet.html"><span class="hs-identifier">NvFetcher.PackageSet</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-47"></span><span>    </span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="NvFetcher.Types.html"><span class="hs-identifier">NvFetcher.Types</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-48"></span><span>    </span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="NvFetcher.ShakeExtras.html"><span class="hs-identifier">NvFetcher.ShakeExtras</span></a></span><span class="hs-special">,</span><span>
 </span><span id="line-49"></span><span>  </span><span class="hs-special">)</span><span>
 </span><span id="line-50"></span><span class="hs-keyword">where</span><span>
 </span><span id="line-51"></span><span>
@@ -78,90 +78,88 @@
 </span><a href="NvFetcher.html#argActionAfterBuild"><span class="hs-identifier hs-var hs-var">argActionAfterBuild</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
 </span><span id="line-75"></span><span>    </span><span class="hs-comment">-- | Action run after clean rule</span><span>
 </span><span id="line-76"></span><span>    </span><span id="argActionAfterClean"><span class="annot"><span class="annottext">Args -&gt; Action ()
-</span><a href="NvFetcher.html#argActionAfterClean"><span class="hs-identifier hs-var hs-var">argActionAfterClean</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
-</span><span id="line-77"></span><span>    </span><span class="hs-comment">-- | Input packages</span><span>
-</span><span id="line-78"></span><span>    </span><span id="argPackageSet"><span class="annot"><span class="annottext">Args -&gt; PackageSet ()
-</span><a href="NvFetcher.html#argPackageSet"><span class="hs-identifier hs-var hs-var">argPackageSet</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.PackageSet.html#PackageSet"><span class="hs-identifier hs-type">PackageSet</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
-</span><span id="line-79"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-80"></span><span>
-</span><span id="line-81"></span><span class="hs-comment">-- | Default arguments of 'defaultMain'</span><span>
-</span><span id="line-82"></span><span class="hs-comment">--</span><span>
-</span><span id="line-83"></span><span class="hs-comment">-- Output file path is @sources.nix@.</span><span>
-</span><span id="line-84"></span><span class="annot"><a href="NvFetcher.html#defaultArgs"><span class="hs-identifier hs-type">defaultArgs</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span>
-</span><span id="line-85"></span><span id="defaultArgs"><span class="annot"><span class="annottext">defaultArgs :: Args
+</span><a href="NvFetcher.html#argActionAfterClean"><span class="hs-identifier hs-var hs-var">argActionAfterClean</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-77"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-78"></span><span>
+</span><span id="line-79"></span><span class="hs-comment">-- | Default arguments of 'defaultMain'</span><span>
+</span><span id="line-80"></span><span class="hs-comment">--</span><span>
+</span><span id="line-81"></span><span class="hs-comment">-- Output file path is @sources.nix@.</span><span>
+</span><span id="line-82"></span><span class="annot"><a href="NvFetcher.html#defaultArgs"><span class="hs-identifier hs-type">defaultArgs</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span>
+</span><span id="line-83"></span><span id="defaultArgs"><span class="annot"><span class="annottext">defaultArgs :: Args
 </span><a href="NvFetcher.html#defaultArgs"><span class="hs-identifier hs-var hs-var">defaultArgs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-86"></span><span>  </span><span class="annot"><span class="annottext">(ShakeOptions -&gt; ShakeOptions)
--&gt; FilePath
--&gt; Rules ()
--&gt; Action ()
--&gt; Action ()
--&gt; PackageSet ()
--&gt; Args
+</span><span id="line-84"></span><span>  </span><span class="annot"><span class="annottext">(ShakeOptions -&gt; ShakeOptions)
+-&gt; FilePath -&gt; Rules () -&gt; Action () -&gt; Action () -&gt; Args
 </span><a href="NvFetcher.html#Args"><span class="hs-identifier hs-var">Args</span></a></span><span>
-</span><span id="line-87"></span><span>    </span><span class="hs-special">(</span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679160234"><span class="annot"><span class="annottext">ShakeOptions
-</span><a href="#local-6989586621679160234"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
-</span><span id="line-88"></span><span>        </span><span class="annot"><span class="annottext">ShakeOptions
-</span><a href="#local-6989586621679160234"><span class="hs-identifier hs-var">x</span></a></span><span>
-</span><span id="line-89"></span><span>          </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">shakeTimings :: Bool
+</span><span id="line-85"></span><span>    </span><span class="hs-special">(</span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679160146"><span class="annot"><span class="annottext">ShakeOptions
+</span><a href="#local-6989586621679160146"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-86"></span><span>        </span><span class="annot"><span class="annottext">ShakeOptions
+</span><a href="#local-6989586621679160146"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-87"></span><span>          </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">shakeTimings :: Bool
 </span><span class="hs-identifier hs-var">shakeTimings</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span class="hs-special">,</span><span>
-</span><span id="line-90"></span><span>            </span><span class="annot"><span class="annottext">shakeProgress :: IO Progress -&gt; IO ()
+</span><span id="line-88"></span><span>            </span><span class="annot"><span class="annottext">shakeProgress :: IO Progress -&gt; IO ()
 </span><span class="hs-identifier hs-var">shakeProgress</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">IO Progress -&gt; IO ()
 </span><span class="hs-identifier hs-var">progressSimple</span></span><span>
-</span><span id="line-91"></span><span>          </span><span class="hs-special">}</span><span>
-</span><span id="line-92"></span><span>    </span><span class="hs-special">)</span><span>
-</span><span id="line-93"></span><span>    </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-89"></span><span>          </span><span class="hs-special">}</span><span>
+</span><span id="line-90"></span><span>    </span><span class="hs-special">)</span><span>
+</span><span id="line-91"></span><span>    </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;sources.nix&quot;</span></span><span>
-</span><span id="line-94"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="annottext">() -&gt; Rules ()
+</span><span id="line-92"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="annottext">() -&gt; Rules ()
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-95"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="annottext">() -&gt; Action ()
+</span><span id="line-93"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="annottext">() -&gt; Action ()
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-96"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="annottext">() -&gt; Action ()
+</span><span id="line-94"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="annottext">() -&gt; Action ()
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-97"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="annottext">() -&gt; PackageSet ()
-forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
-</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-98"></span><span>
-</span><span id="line-99"></span><span class="hs-comment">-- | Entry point of nvfetcher</span><span>
-</span><span id="line-100"></span><span class="annot"><a href="NvFetcher.html#runNvFetcher"><span class="hs-identifier hs-type">runNvFetcher</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
-</span><span id="line-101"></span><span id="runNvFetcher"><span class="annot"><span class="annottext">runNvFetcher :: Args -&gt; IO ()
-</span><a href="NvFetcher.html#runNvFetcher"><span class="hs-identifier hs-var hs-var">runNvFetcher</span></a></span></span><span> </span><span id="local-6989586621679160230"><span class="annot"><span class="annottext">Args
-</span><a href="#local-6989586621679160230"><span class="hs-identifier hs-var">args</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[OptDescr (Either FilePath Any)]
--&gt; ([Any] -&gt; IO (Maybe Args)) -&gt; IO ()
+</span><span id="line-95"></span><span>
+</span><span id="line-96"></span><span class="hs-comment">-- | Entry point of nvfetcher</span><span>
+</span><span id="line-97"></span><span class="annot"><a href="NvFetcher.html#runNvFetcher"><span class="hs-identifier hs-type">runNvFetcher</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.PackageSet.html#PackageSet"><span class="hs-identifier hs-type">PackageSet</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-98"></span><span id="runNvFetcher"><span class="annot"><span class="annottext">runNvFetcher :: Args -&gt; PackageSet () -&gt; IO ()
+</span><a href="NvFetcher.html#runNvFetcher"><span class="hs-identifier hs-var hs-var">runNvFetcher</span></a></span></span><span> </span><span id="local-6989586621679160142"><span class="annot"><span class="annottext">Args
+</span><a href="#local-6989586621679160142"><span class="hs-identifier hs-var">args</span></a></span></span><span> </span><span id="local-6989586621679160141"><span class="annot"><span class="annottext">PackageSet ()
+</span><a href="#local-6989586621679160141"><span class="hs-identifier hs-var">packageSet</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[OptDescr (Either FilePath Any)]
+-&gt; ([Any] -&gt; IO (Maybe (Args, PackageSet ()))) -&gt; IO ()
 forall a.
-[OptDescr (Either FilePath a)] -&gt; ([a] -&gt; IO (Maybe Args)) -&gt; IO ()
-</span><a href="NvFetcher.html#runNvFetcherWith"><span class="hs-identifier hs-var">runNvFetcherWith</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">(([Any] -&gt; IO (Maybe Args)) -&gt; IO ())
--&gt; ([Any] -&gt; IO (Maybe Args)) -&gt; IO ()
+[OptDescr (Either FilePath a)]
+-&gt; ([a] -&gt; IO (Maybe (Args, PackageSet ()))) -&gt; IO ()
+</span><a href="NvFetcher.html#runNvFetcherWith"><span class="hs-identifier hs-var">runNvFetcherWith</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">(([Any] -&gt; IO (Maybe (Args, PackageSet ()))) -&gt; IO ())
+-&gt; ([Any] -&gt; IO (Maybe (Args, PackageSet ()))) -&gt; IO ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">IO (Maybe Args) -&gt; [Any] -&gt; IO (Maybe Args)
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">IO (Maybe (Args, PackageSet ()))
+-&gt; [Any] -&gt; IO (Maybe (Args, PackageSet ()))
 forall a b. a -&gt; b -&gt; a
-</span><span class="hs-identifier hs-var">const</span></span><span> </span><span class="annot"><span class="annottext">(IO (Maybe Args) -&gt; [Any] -&gt; IO (Maybe Args))
--&gt; IO (Maybe Args) -&gt; [Any] -&gt; IO (Maybe Args)
+</span><span class="hs-identifier hs-var">const</span></span><span> </span><span class="annot"><span class="annottext">(IO (Maybe (Args, PackageSet ()))
+ -&gt; [Any] -&gt; IO (Maybe (Args, PackageSet ())))
+-&gt; IO (Maybe (Args, PackageSet ()))
+-&gt; [Any]
+-&gt; IO (Maybe (Args, PackageSet ()))
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Maybe Args -&gt; IO (Maybe Args)
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Maybe (Args, PackageSet ()) -&gt; IO (Maybe (Args, PackageSet ()))
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
-</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Maybe Args -&gt; IO (Maybe Args)) -&gt; Maybe Args -&gt; IO (Maybe Args)
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Maybe (Args, PackageSet ()) -&gt; IO (Maybe (Args, PackageSet ())))
+-&gt; Maybe (Args, PackageSet ()) -&gt; IO (Maybe (Args, PackageSet ()))
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Args -&gt; Maybe Args
-forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
-</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">Args
-</span><a href="#local-6989586621679160230"><span class="hs-identifier hs-var">args</span></a></span><span>
-</span><span id="line-102"></span><span>
-</span><span id="line-103"></span><span class="hs-comment">-- | Like 'runNvFetcher' but allows to define custom cli flags</span><span>
-</span><span id="line-104"></span><span id="local-6989586621679160287"><span class="annot"><a href="NvFetcher.html#runNvFetcherWith"><span class="hs-identifier hs-type">runNvFetcherWith</span></a></span><span> </span><span class="hs-glyph">::</span><span>
-</span><span id="line-105"></span><span>  </span><span class="hs-comment">-- | Custom flags</span><span>
-</span><span id="line-106"></span><span>  </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">OptDescr</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Either</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="annot"><a href="#local-6989586621679160287"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span>
-</span><span id="line-107"></span><span>  </span><span class="hs-comment">-- | Continuation, the build system won't run if it returns Nothing</span><span>
-</span><span id="line-108"></span><span>  </span><span class="hs-special">(</span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679160287"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
-</span><span id="line-109"></span><span>  </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span></span><span>
-</span><span id="line-110"></span><span id="runNvFetcherWith"><span class="annot"><span class="annottext">runNvFetcherWith :: [OptDescr (Either FilePath a)] -&gt; ([a] -&gt; IO (Maybe Args)) -&gt; IO ()
-</span><a href="NvFetcher.html#runNvFetcherWith"><span class="hs-identifier hs-var hs-var">runNvFetcherWith</span></a></span></span><span> </span><span id="local-6989586621679160227"><span class="annot"><span class="annottext">[OptDescr (Either FilePath a)]
-</span><a href="#local-6989586621679160227"><span class="hs-identifier hs-var">flags</span></a></span></span><span> </span><span id="local-6989586621679160226"><span class="annot"><span class="annottext">[a] -&gt; IO (Maybe Args)
-</span><a href="#local-6989586621679160226"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-111"></span><span>  </span><span class="annot"><span class="annottext">ShakeOptions
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(Args, PackageSet ()) -&gt; Maybe (Args, PackageSet ())
+forall a. a -&gt; Maybe a
+</span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Args
+</span><a href="#local-6989586621679160142"><span class="hs-identifier hs-var">args</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">PackageSet ()
+</span><a href="#local-6989586621679160141"><span class="hs-identifier hs-var">packageSet</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-99"></span><span>
+</span><span id="line-100"></span><span class="hs-comment">-- | Like 'runNvFetcher' but allows to define custom cli flags</span><span>
+</span><span id="line-101"></span><span id="local-6989586621679160198"><span class="annot"><a href="NvFetcher.html#runNvFetcherWith"><span class="hs-identifier hs-type">runNvFetcherWith</span></a></span><span> </span><span class="hs-glyph">::</span><span>
+</span><span id="line-102"></span><span>  </span><span class="hs-comment">-- | Custom flags</span><span>
+</span><span id="line-103"></span><span>  </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">OptDescr</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Either</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="annot"><a href="#local-6989586621679160198"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-104"></span><span>  </span><span class="hs-comment">-- | Continuation, the build system won't run if it returns Nothing</span><span>
+</span><span id="line-105"></span><span>  </span><span class="hs-special">(</span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679160198"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="NvFetcher.PackageSet.html#PackageSet"><span class="hs-identifier hs-type">PackageSet</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-106"></span><span>  </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span></span><span>
+</span><span id="line-107"></span><span id="runNvFetcherWith"><span class="annot"><span class="annottext">runNvFetcherWith :: [OptDescr (Either FilePath a)]
+-&gt; ([a] -&gt; IO (Maybe (Args, PackageSet ()))) -&gt; IO ()
+</span><a href="NvFetcher.html#runNvFetcherWith"><span class="hs-identifier hs-var hs-var">runNvFetcherWith</span></a></span></span><span> </span><span id="local-6989586621679160138"><span class="annot"><span class="annottext">[OptDescr (Either FilePath a)]
+</span><a href="#local-6989586621679160138"><span class="hs-identifier hs-var">flags</span></a></span></span><span> </span><span id="local-6989586621679160137"><span class="annot"><span class="annottext">[a] -&gt; IO (Maybe (Args, PackageSet ()))
+</span><a href="#local-6989586621679160137"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-108"></span><span>  </span><span class="annot"><span class="annottext">ShakeOptions
 -&gt; [OptDescr (Either FilePath a)]
 -&gt; (ShakeOptions
     -&gt; [a] -&gt; [FilePath] -&gt; IO (Maybe (ShakeOptions, Rules ())))
@@ -173,21 +171,21 @@ ShakeOptions
     -&gt; [a] -&gt; [FilePath] -&gt; IO (Maybe (ShakeOptions, Rules ())))
 -&gt; IO ()
 </span><span class="hs-identifier hs-var">shakeArgsOptionsWith</span></span><span>
-</span><span id="line-112"></span><span>    </span><span class="annot"><span class="annottext">ShakeOptions
+</span><span id="line-109"></span><span>    </span><span class="annot"><span class="annottext">ShakeOptions
 </span><span class="hs-identifier hs-var">shakeOptions</span></span><span>
-</span><span id="line-113"></span><span>    </span><span class="annot"><span class="annottext">[OptDescr (Either FilePath a)]
-</span><a href="#local-6989586621679160227"><span class="hs-identifier hs-var">flags</span></a></span><span>
-</span><span id="line-114"></span><span>    </span><span class="annot"><span class="annottext">((ShakeOptions
+</span><span id="line-110"></span><span>    </span><span class="annot"><span class="annottext">[OptDescr (Either FilePath a)]
+</span><a href="#local-6989586621679160138"><span class="hs-identifier hs-var">flags</span></a></span><span>
+</span><span id="line-111"></span><span>    </span><span class="annot"><span class="annottext">((ShakeOptions
   -&gt; [a] -&gt; [FilePath] -&gt; IO (Maybe (ShakeOptions, Rules ())))
  -&gt; IO ())
 -&gt; (ShakeOptions
     -&gt; [a] -&gt; [FilePath] -&gt; IO (Maybe (ShakeOptions, Rules ())))
 -&gt; IO ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679160223"><span class="annot"><span class="annottext">ShakeOptions
-</span><a href="#local-6989586621679160223"><span class="hs-identifier hs-var">opts</span></a></span></span><span> </span><span id="local-6989586621679160222"><span class="annot"><span class="annottext">[a]
-</span><a href="#local-6989586621679160222"><span class="hs-identifier hs-var">flagValues</span></a></span></span><span> </span><span id="local-6989586621679160221"><span class="annot"><span class="annottext">[FilePath]
-</span><a href="#local-6989586621679160221"><span class="hs-identifier hs-var">argValues</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">MaybeT IO (ShakeOptions, Rules ())
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679160134"><span class="annot"><span class="annottext">ShakeOptions
+</span><a href="#local-6989586621679160134"><span class="hs-identifier hs-var">opts</span></a></span></span><span> </span><span id="local-6989586621679160133"><span class="annot"><span class="annottext">[a]
+</span><a href="#local-6989586621679160133"><span class="hs-identifier hs-var">flagValues</span></a></span></span><span> </span><span id="local-6989586621679160132"><span class="annot"><span class="annottext">[FilePath]
+</span><a href="#local-6989586621679160132"><span class="hs-identifier hs-var">argValues</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">MaybeT IO (ShakeOptions, Rules ())
 -&gt; IO (Maybe (ShakeOptions, Rules ()))
 forall (m :: * -&gt; *) a. MaybeT m a -&gt; m (Maybe a)
 </span><span class="hs-identifier hs-var hs-var">runMaybeT</span></span><span> </span><span class="annot"><span class="annottext">(MaybeT IO (ShakeOptions, Rules ())
@@ -196,34 +194,34 @@ forall (m :: * -&gt; *) a. MaybeT m a -&gt; m (Maybe a)
 -&gt; IO (Maybe (ShakeOptions, Rules ()))
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-115"></span><span>      </span><span id="local-6989586621679160219"><span class="annot"><span class="annottext">args :: Args
-</span><a href="#local-6989586621679160219"><span class="hs-identifier hs-var">args</span></a></span></span><span class="hs-glyph">@</span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679160213"><span id="local-6989586621679160214"><span id="local-6989586621679160215"><span id="local-6989586621679160216"><span id="local-6989586621679160217"><span id="local-6989586621679160218"><span class="annot"><span class="annottext">FilePath
-PackageSet ()
+</span><span id="line-112"></span><span>      </span><span class="hs-special">(</span><span id="local-6989586621679160130"><span class="annot"><span class="annottext">args :: Args
+</span><a href="#local-6989586621679160130"><span class="hs-identifier hs-var">args</span></a></span></span><span class="hs-glyph">@</span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679160125"><span id="local-6989586621679160126"><span id="local-6989586621679160127"><span id="local-6989586621679160128"><span id="local-6989586621679160129"><span class="annot"><span class="annottext">FilePath
 Rules ()
 Action ()
 ShakeOptions -&gt; ShakeOptions
-argPackageSet :: PackageSet ()
 argActionAfterClean :: Action ()
 argActionAfterBuild :: Action ()
 argRules :: Rules ()
 argOutputFilePath :: FilePath
 argShakeOptions :: ShakeOptions -&gt; ShakeOptions
-argPackageSet :: Args -&gt; PackageSet ()
 argActionAfterClean :: Args -&gt; Action ()
 argActionAfterBuild :: Args -&gt; Action ()
 argRules :: Args -&gt; Rules ()
 argOutputFilePath :: Args -&gt; FilePath
 argShakeOptions :: Args -&gt; ShakeOptions -&gt; ShakeOptions
-</span><a href="#local-6989586621679160213"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (Maybe Args) -&gt; MaybeT IO Args
+</span><a href="#local-6989586621679160125"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span></span><span class="hs-special">}</span><span class="hs-special">,</span><span> </span><span id="local-6989586621679160124"><span class="annot"><span class="annottext">PackageSet ()
+</span><a href="#local-6989586621679160124"><span class="hs-identifier hs-var">packageSet</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (Maybe (Args, PackageSet ())) -&gt; MaybeT IO (Args, PackageSet ())
 forall (m :: * -&gt; *) a. m (Maybe a) -&gt; MaybeT m a
-</span><span class="hs-identifier hs-var">MaybeT</span></span><span> </span><span class="annot"><span class="annottext">(IO (Maybe Args) -&gt; MaybeT IO Args)
--&gt; IO (Maybe Args) -&gt; MaybeT IO Args
+</span><span class="hs-identifier hs-var">MaybeT</span></span><span> </span><span class="annot"><span class="annottext">(IO (Maybe (Args, PackageSet ()))
+ -&gt; MaybeT IO (Args, PackageSet ()))
+-&gt; IO (Maybe (Args, PackageSet ()))
+-&gt; MaybeT IO (Args, PackageSet ())
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[a] -&gt; IO (Maybe Args)
-</span><a href="#local-6989586621679160226"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">[a]
-</span><a href="#local-6989586621679160222"><span class="hs-identifier hs-var">flagValues</span></a></span><span>
-</span><span id="line-116"></span><span>      </span><span id="local-6989586621679160211"><span class="annot"><span class="annottext">HashMap PackageKey Package
-</span><a href="#local-6989586621679160211"><span class="hs-identifier hs-var">pkgs</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (HashMap PackageKey Package)
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[a] -&gt; IO (Maybe (Args, PackageSet ()))
+</span><a href="#local-6989586621679160137"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">[a]
+</span><a href="#local-6989586621679160133"><span class="hs-identifier hs-var">flagValues</span></a></span><span>
+</span><span id="line-113"></span><span>      </span><span id="local-6989586621679160122"><span class="annot"><span class="annottext">HashMap PackageKey Package
+</span><a href="#local-6989586621679160122"><span class="hs-identifier hs-var">pkgs</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (HashMap PackageKey Package)
 -&gt; MaybeT IO (HashMap PackageKey Package)
 forall (m :: * -&gt; *) a. MonadIO m =&gt; IO a -&gt; m a
 </span><span class="hs-identifier hs-var">liftIO</span></span><span> </span><span class="annot"><span class="annottext">(IO (HashMap PackageKey Package)
@@ -233,114 +231,111 @@ forall (m :: * -&gt; *) a. MonadIO m =&gt; IO a -&gt; m a
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageSet () -&gt; IO (HashMap PackageKey Package)
 </span><a href="NvFetcher.PackageSet.html#runPackageSet"><span class="hs-identifier hs-var">runPackageSet</span></a></span><span> </span><span class="annot"><span class="annottext">PackageSet ()
-</span><a href="#local-6989586621679160213"><span class="hs-identifier hs-var">argPackageSet</span></a></span><span>
-</span><span id="line-117"></span><span>      </span><span id="local-6989586621679160208"><span class="annot"><span class="annottext">ShakeExtras
-</span><a href="#local-6989586621679160208"><span class="hs-identifier hs-var">shakeExtras</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO ShakeExtras -&gt; MaybeT IO ShakeExtras
+</span><a href="#local-6989586621679160124"><span class="hs-identifier hs-var">packageSet</span></a></span><span>
+</span><span id="line-114"></span><span>      </span><span id="local-6989586621679160119"><span class="annot"><span class="annottext">ShakeExtras
+</span><a href="#local-6989586621679160119"><span class="hs-identifier hs-var">shakeExtras</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO ShakeExtras -&gt; MaybeT IO ShakeExtras
 forall (m :: * -&gt; *) a. MonadIO m =&gt; IO a -&gt; m a
 </span><span class="hs-identifier hs-var">liftIO</span></span><span> </span><span class="annot"><span class="annottext">(IO ShakeExtras -&gt; MaybeT IO ShakeExtras)
 -&gt; IO ShakeExtras -&gt; MaybeT IO ShakeExtras
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">HashMap PackageKey Package -&gt; IO ShakeExtras
 </span><a href="NvFetcher.ShakeExtras.html#initShakeExtras"><span class="hs-identifier hs-var">initShakeExtras</span></a></span><span> </span><span class="annot"><span class="annottext">HashMap PackageKey Package
-</span><a href="#local-6989586621679160211"><span class="hs-identifier hs-var">pkgs</span></a></span><span>
-</span><span id="line-118"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679160206"><span class="annot"><span class="annottext">opts' :: ShakeOptions
-</span><a href="#local-6989586621679160206"><span class="hs-identifier hs-var hs-var">opts'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-119"></span><span>            </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679160205"><span class="annot"><span class="annottext">old :: ShakeOptions
-</span><a href="#local-6989586621679160205"><span class="hs-identifier hs-var hs-var">old</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ShakeOptions -&gt; ShakeOptions
-</span><a href="#local-6989586621679160218"><span class="hs-identifier hs-var">argShakeOptions</span></a></span><span> </span><span class="annot"><span class="annottext">ShakeOptions
-</span><a href="#local-6989586621679160223"><span class="hs-identifier hs-var">opts</span></a></span><span>
-</span><span id="line-120"></span><span>             </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">ShakeOptions
-</span><a href="#local-6989586621679160205"><span class="hs-identifier hs-var">old</span></a></span><span>
-</span><span id="line-121"></span><span>                  </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">shakeExtra :: HashMap TypeRep Dynamic
+</span><a href="#local-6989586621679160122"><span class="hs-identifier hs-var">pkgs</span></a></span><span>
+</span><span id="line-115"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679160117"><span class="annot"><span class="annottext">opts' :: ShakeOptions
+</span><a href="#local-6989586621679160117"><span class="hs-identifier hs-var hs-var">opts'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-116"></span><span>            </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679160116"><span class="annot"><span class="annottext">old :: ShakeOptions
+</span><a href="#local-6989586621679160116"><span class="hs-identifier hs-var hs-var">old</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ShakeOptions -&gt; ShakeOptions
+</span><a href="#local-6989586621679160129"><span class="hs-identifier hs-var">argShakeOptions</span></a></span><span> </span><span class="annot"><span class="annottext">ShakeOptions
+</span><a href="#local-6989586621679160134"><span class="hs-identifier hs-var">opts</span></a></span><span>
+</span><span id="line-117"></span><span>             </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">ShakeOptions
+</span><a href="#local-6989586621679160116"><span class="hs-identifier hs-var">old</span></a></span><span>
+</span><span id="line-118"></span><span>                  </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">shakeExtra :: HashMap TypeRep Dynamic
 </span><span class="hs-identifier hs-var">shakeExtra</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ShakeExtras -&gt; HashMap TypeRep Dynamic -&gt; HashMap TypeRep Dynamic
 forall a.
 Typeable a =&gt;
 a -&gt; HashMap TypeRep Dynamic -&gt; HashMap TypeRep Dynamic
 </span><span class="hs-identifier hs-var">addShakeExtra</span></span><span> </span><span class="annot"><span class="annottext">ShakeExtras
-</span><a href="#local-6989586621679160208"><span class="hs-identifier hs-var">shakeExtras</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ShakeOptions -&gt; HashMap TypeRep Dynamic
+</span><a href="#local-6989586621679160119"><span class="hs-identifier hs-var">shakeExtras</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ShakeOptions -&gt; HashMap TypeRep Dynamic
 </span><span class="hs-identifier hs-var hs-var">shakeExtra</span></span><span> </span><span class="annot"><span class="annottext">ShakeOptions
-</span><a href="#local-6989586621679160205"><span class="hs-identifier hs-var">old</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-122"></span><span>                  </span><span class="hs-special">}</span><span>
-</span><span id="line-123"></span><span>          </span><span id="local-6989586621679160202"><span class="annot"><span class="annottext">rules :: Rules ()
-</span><a href="#local-6989586621679160202"><span class="hs-identifier hs-var hs-var">rules</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Args -&gt; Rules ()
+</span><a href="#local-6989586621679160116"><span class="hs-identifier hs-var">old</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-119"></span><span>                  </span><span class="hs-special">}</span><span>
+</span><span id="line-120"></span><span>          </span><span id="local-6989586621679160113"><span class="annot"><span class="annottext">rules :: Rules ()
+</span><a href="#local-6989586621679160113"><span class="hs-identifier hs-var hs-var">rules</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Args -&gt; Rules ()
 </span><a href="NvFetcher.html#mainRules"><span class="hs-identifier hs-var">mainRules</span></a></span><span> </span><span class="annot"><span class="annottext">Args
-</span><a href="#local-6989586621679160219"><span class="hs-identifier hs-var">args</span></a></span><span>
-</span><span id="line-124"></span><span>      </span><span class="annot"><span class="annottext">(ShakeOptions, Rules ()) -&gt; MaybeT IO (ShakeOptions, Rules ())
+</span><a href="#local-6989586621679160130"><span class="hs-identifier hs-var">args</span></a></span><span>
+</span><span id="line-121"></span><span>      </span><span class="annot"><span class="annottext">(ShakeOptions, Rules ()) -&gt; MaybeT IO (ShakeOptions, Rules ())
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">((ShakeOptions, Rules ()) -&gt; MaybeT IO (ShakeOptions, Rules ()))
 -&gt; (ShakeOptions, Rules ()) -&gt; MaybeT IO (ShakeOptions, Rules ())
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">[FilePath]
-</span><a href="#local-6989586621679160221"><span class="hs-identifier hs-var">argValues</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-125"></span><span>        </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ShakeOptions
-</span><a href="#local-6989586621679160206"><span class="hs-identifier hs-var">opts'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Partial =&gt; [FilePath] -&gt; Rules ()
+</span><a href="#local-6989586621679160132"><span class="hs-identifier hs-var">argValues</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-122"></span><span>        </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ShakeOptions
+</span><a href="#local-6989586621679160117"><span class="hs-identifier hs-var">opts'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Partial =&gt; [FilePath] -&gt; Rules ()
 [FilePath] -&gt; Rules ()
 </span><span class="hs-identifier hs-var">want</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;build&quot;</span></span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">Rules () -&gt; Rules () -&gt; Rules ()
 forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; m b -&gt; m b
 </span><span class="hs-operator hs-var">&gt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Rules ()
-</span><a href="#local-6989586621679160202"><span class="hs-identifier hs-var">rules</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-126"></span><span>        </span><span id="local-6989586621679160199"><span class="annot"><span class="annottext">[FilePath]
-</span><a href="#local-6989586621679160199"><span class="hs-identifier hs-var">files</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ShakeOptions
-</span><a href="#local-6989586621679160206"><span class="hs-identifier hs-var">opts'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Partial =&gt; [FilePath] -&gt; Rules ()
+</span><a href="#local-6989586621679160113"><span class="hs-identifier hs-var">rules</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-123"></span><span>        </span><span id="local-6989586621679160110"><span class="annot"><span class="annottext">[FilePath]
+</span><a href="#local-6989586621679160110"><span class="hs-identifier hs-var">files</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ShakeOptions
+</span><a href="#local-6989586621679160117"><span class="hs-identifier hs-var">opts'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Partial =&gt; [FilePath] -&gt; Rules ()
 [FilePath] -&gt; Rules ()
 </span><span class="hs-identifier hs-var">want</span></span><span> </span><span class="annot"><span class="annottext">[FilePath]
-</span><a href="#local-6989586621679160199"><span class="hs-identifier hs-var">files</span></a></span><span> </span><span class="annot"><span class="annottext">Rules () -&gt; Rules () -&gt; Rules ()
+</span><a href="#local-6989586621679160110"><span class="hs-identifier hs-var">files</span></a></span><span> </span><span class="annot"><span class="annottext">Rules () -&gt; Rules () -&gt; Rules ()
 forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; m b -&gt; m b
 </span><span class="hs-operator hs-var">&gt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Rules ()
-</span><a href="#local-6989586621679160202"><span class="hs-identifier hs-var">rules</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-127"></span><span>
-</span><span id="line-128"></span><span class="annot"><a href="NvFetcher.html#mainRules"><span class="hs-identifier hs-type">mainRules</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Rules</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
-</span><span id="line-129"></span><span id="mainRules"><span class="annot"><span class="annottext">mainRules :: Args -&gt; Rules ()
-</span><a href="NvFetcher.html#mainRules"><span class="hs-identifier hs-var hs-var">mainRules</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679160193"><span id="local-6989586621679160194"><span id="local-6989586621679160195"><span id="local-6989586621679160196"><span id="local-6989586621679160197"><span id="local-6989586621679160198"><span class="annot"><span class="annottext">FilePath
-PackageSet ()
+</span><a href="#local-6989586621679160113"><span class="hs-identifier hs-var">rules</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-124"></span><span>
+</span><span id="line-125"></span><span class="annot"><a href="NvFetcher.html#mainRules"><span class="hs-identifier hs-type">mainRules</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Rules</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-126"></span><span id="mainRules"><span class="annot"><span class="annottext">mainRules :: Args -&gt; Rules ()
+</span><a href="NvFetcher.html#mainRules"><span class="hs-identifier hs-var hs-var">mainRules</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.html#Args"><span class="hs-identifier hs-type">Args</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679160105"><span id="local-6989586621679160106"><span id="local-6989586621679160107"><span id="local-6989586621679160108"><span id="local-6989586621679160109"><span class="annot"><span class="annottext">FilePath
 Rules ()
 Action ()
 ShakeOptions -&gt; ShakeOptions
-argPackageSet :: PackageSet ()
 argActionAfterClean :: Action ()
 argActionAfterBuild :: Action ()
 argRules :: Rules ()
 argOutputFilePath :: FilePath
 argShakeOptions :: ShakeOptions -&gt; ShakeOptions
-argPackageSet :: Args -&gt; PackageSet ()
 argActionAfterClean :: Args -&gt; Action ()
 argActionAfterBuild :: Args -&gt; Action ()
 argRules :: Args -&gt; Rules ()
 argOutputFilePath :: Args -&gt; FilePath
 argShakeOptions :: Args -&gt; ShakeOptions -&gt; ShakeOptions
-</span><a href="#local-6989586621679160193"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-130"></span><span>  </span><span class="annot"><span class="annottext">FilePath -&gt; Rules ()
+</span><a href="#local-6989586621679160105"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-127"></span><span>  </span><span class="annot"><span class="annottext">FilePath -&gt; Rules ()
 </span><span class="hs-identifier hs-var">addHelpSuffix</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;It's important to keep .shake dir if you want to get correct version changes and proper cache&quot;</span></span><span>
-</span><span id="line-131"></span><span>  </span><span class="annot"><span class="annottext">FilePath -&gt; Rules ()
+</span><span id="line-128"></span><span>  </span><span class="annot"><span class="annottext">FilePath -&gt; Rules ()
 </span><span class="hs-identifier hs-var">addHelpSuffix</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Changing input packages will lead to a fully cleanup, requiring to rebuild everything next run&quot;</span></span><span>
-</span><span id="line-132"></span><span>
-</span><span id="line-133"></span><span>  </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-129"></span><span>
+</span><span id="line-130"></span><span>  </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;clean&quot;</span></span><span> </span><span class="annot"><span class="annottext">Partial =&gt; FilePath -&gt; Action () -&gt; Rules ()
 FilePath -&gt; Action () -&gt; Rules ()
 </span><span class="hs-operator hs-var">~&gt;</span></span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-134"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; [FilePath] -&gt; Action ()
+</span><span id="line-131"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; [FilePath] -&gt; Action ()
 </span><span class="hs-identifier hs-var">removeFilesAfter</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;.shake&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;//*&quot;</span></span><span class="hs-special">]</span><span>
-</span><span id="line-135"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; [FilePath] -&gt; Action ()
+</span><span id="line-132"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; [FilePath] -&gt; Action ()
 </span><span class="hs-identifier hs-var">removeFilesAfter</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;.&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679160197"><span class="hs-identifier hs-var">argOutputFilePath</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-136"></span><span>    </span><span class="annot"><span class="annottext">Action ()
-</span><a href="#local-6989586621679160194"><span class="hs-identifier hs-var">argActionAfterClean</span></a></span><span>
-</span><span id="line-137"></span><span>
-</span><span id="line-138"></span><span>  </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679160108"><span class="hs-identifier hs-var">argOutputFilePath</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-133"></span><span>    </span><span class="annot"><span class="annottext">Action ()
+</span><a href="#local-6989586621679160105"><span class="hs-identifier hs-var">argActionAfterClean</span></a></span><span>
+</span><span id="line-134"></span><span>
+</span><span id="line-135"></span><span>  </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;build&quot;</span></span><span> </span><span class="annot"><span class="annottext">Partial =&gt; FilePath -&gt; Action () -&gt; Rules ()
 FilePath -&gt; Action () -&gt; Rules ()
 </span><span class="hs-operator hs-var">~&gt;</span></span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-139"></span><span>    </span><span id="local-6989586621679160189"><span class="annot"><span class="annottext">[PackageKey]
-</span><a href="#local-6989586621679160189"><span class="hs-identifier hs-var">allKeys</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Action [PackageKey]
+</span><span id="line-136"></span><span>    </span><span id="local-6989586621679160101"><span class="annot"><span class="annottext">[PackageKey]
+</span><a href="#local-6989586621679160101"><span class="hs-identifier hs-var">allKeys</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Action [PackageKey]
 </span><a href="NvFetcher.ShakeExtras.html#getAllPackageKeys"><span class="hs-identifier hs-var">getAllPackageKeys</span></a></span><span>
-</span><span id="line-140"></span><span>    </span><span id="local-6989586621679160187"><span class="annot"><span class="annottext">[NixExpr]
-</span><a href="#local-6989586621679160187"><span class="hs-identifier hs-var">body</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[Action NixExpr] -&gt; Action [NixExpr]
+</span><span id="line-137"></span><span>    </span><span id="local-6989586621679160099"><span class="annot"><span class="annottext">[NixExpr]
+</span><a href="#local-6989586621679160099"><span class="hs-identifier hs-var">body</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[Action NixExpr] -&gt; Action [NixExpr]
 forall a. [Action a] -&gt; Action [a]
 </span><span class="hs-identifier hs-var">parallel</span></span><span> </span><span class="annot"><span class="annottext">([Action NixExpr] -&gt; Action [NixExpr])
 -&gt; [Action NixExpr] -&gt; Action [NixExpr]
@@ -349,25 +344,25 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><a href="NvFetcher.Core.html#generateNixSourceExpr"><span class="hs-identifier hs-var">generateNixSourceExpr</span></a></span><span> </span><span class="annot"><span class="annottext">(PackageKey -&gt; Action NixExpr) -&gt; [PackageKey] -&gt; [Action NixExpr]
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">[PackageKey]
-</span><a href="#local-6989586621679160189"><span class="hs-identifier hs-var">allKeys</span></a></span><span>
-</span><span id="line-141"></span><span>    </span><span class="annot"><span class="annottext">Action [VersionChange]
+</span><a href="#local-6989586621679160101"><span class="hs-identifier hs-var">allKeys</span></a></span><span>
+</span><span id="line-138"></span><span>    </span><span class="annot"><span class="annottext">Action [VersionChange]
 </span><a href="NvFetcher.ShakeExtras.html#getVersionChanges"><span class="hs-identifier hs-var">getVersionChanges</span></a></span><span> </span><span class="annot"><span class="annottext">Action [VersionChange]
 -&gt; ([VersionChange] -&gt; Action ()) -&gt; Action ()
 forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
-</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679160182"><span class="annot"><span class="annottext">[VersionChange]
-</span><a href="#local-6989586621679160182"><span class="hs-identifier hs-var">changes</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
-</span><span id="line-142"></span><span>      </span><span class="hs-keyword">if</span><span> </span><span class="annot"><span class="annottext">[VersionChange] -&gt; Bool
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679160094"><span class="annot"><span class="annottext">[VersionChange]
+</span><a href="#local-6989586621679160094"><span class="hs-identifier hs-var">changes</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-139"></span><span>      </span><span class="hs-keyword">if</span><span> </span><span class="annot"><span class="annottext">[VersionChange] -&gt; Bool
 forall (t :: * -&gt; *) a. Foldable t =&gt; t a -&gt; Bool
 </span><span class="hs-identifier hs-var">null</span></span><span> </span><span class="annot"><span class="annottext">[VersionChange]
-</span><a href="#local-6989586621679160182"><span class="hs-identifier hs-var">changes</span></a></span><span>
-</span><span id="line-143"></span><span>        </span><span class="hs-keyword">then</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Action ()
+</span><a href="#local-6989586621679160094"><span class="hs-identifier hs-var">changes</span></a></span><span>
+</span><span id="line-140"></span><span>        </span><span class="hs-keyword">then</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Action ()
 </span><span class="hs-identifier hs-var">putInfo</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Up to date&quot;</span></span><span>
-</span><span id="line-144"></span><span>        </span><span class="hs-keyword">else</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-145"></span><span>          </span><span class="annot"><span class="annottext">FilePath -&gt; Action ()
+</span><span id="line-141"></span><span>        </span><span class="hs-keyword">else</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-142"></span><span>          </span><span class="annot"><span class="annottext">FilePath -&gt; Action ()
 </span><span class="hs-identifier hs-var">putInfo</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Changes:&quot;</span></span><span>
-</span><span id="line-146"></span><span>          </span><span class="annot"><span class="annottext">FilePath -&gt; Action ()
+</span><span id="line-143"></span><span>          </span><span class="annot"><span class="annottext">FilePath -&gt; Action ()
 </span><span class="hs-identifier hs-var">putInfo</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action ()) -&gt; FilePath -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[FilePath] -&gt; FilePath
@@ -378,13 +373,13 @@ forall a. Show a =&gt; a -&gt; FilePath
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">(VersionChange -&gt; FilePath) -&gt; [VersionChange] -&gt; [FilePath]
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">[VersionChange]
-</span><a href="#local-6989586621679160182"><span class="hs-identifier hs-var">changes</span></a></span><span>
-</span><span id="line-147"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; Action ()
+</span><a href="#local-6989586621679160094"><span class="hs-identifier hs-var">changes</span></a></span><span>
+</span><span id="line-144"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; Action ()
 forall (m :: * -&gt; *).
 (MonadIO m, Partial) =&gt;
 FilePath -&gt; FilePath -&gt; m ()
 </span><span class="hs-identifier hs-var">writeFileChanged</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679160197"><span class="hs-identifier hs-var">argOutputFilePath</span></a></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action ()) -&gt; FilePath -&gt; Action ()
+</span><a href="#local-6989586621679160108"><span class="hs-identifier hs-var">argOutputFilePath</span></a></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action ()) -&gt; FilePath -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">NixExpr -&gt; FilePath
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">(NixExpr -&gt; FilePath) -&gt; NixExpr -&gt; FilePath
@@ -394,32 +389,32 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[NixExpr] -&gt; NixExpr
 </span><span class="hs-identifier hs-var">T.unlines</span></span><span> </span><span class="annot"><span class="annottext">[NixExpr]
-</span><a href="#local-6989586621679160187"><span class="hs-identifier hs-var">body</span></a></span><span>
-</span><span id="line-148"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; Action ()
+</span><a href="#local-6989586621679160099"><span class="hs-identifier hs-var">body</span></a></span><span>
+</span><span id="line-145"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; Action ()
 </span><span class="hs-identifier hs-var">putInfo</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action ()) -&gt; FilePath -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Generate &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679160197"><span class="hs-identifier hs-var">argOutputFilePath</span></a></span><span>
-</span><span id="line-149"></span><span>    </span><span class="annot"><span class="annottext">Action ()
-</span><a href="#local-6989586621679160195"><span class="hs-identifier hs-var">argActionAfterBuild</span></a></span><span>
-</span><span id="line-150"></span><span>
-</span><span id="line-151"></span><span>  </span><span class="annot"><span class="annottext">Rules ()
-</span><a href="#local-6989586621679160196"><span class="hs-identifier hs-var">argRules</span></a></span><span>
-</span><span id="line-152"></span><span>  </span><span class="annot"><span class="annottext">Rules ()
+</span><a href="#local-6989586621679160108"><span class="hs-identifier hs-var">argOutputFilePath</span></a></span><span>
+</span><span id="line-146"></span><span>    </span><span class="annot"><span class="annottext">Action ()
+</span><a href="#local-6989586621679160106"><span class="hs-identifier hs-var">argActionAfterBuild</span></a></span><span>
+</span><span id="line-147"></span><span>
+</span><span id="line-148"></span><span>  </span><span class="annot"><span class="annottext">Rules ()
+</span><a href="#local-6989586621679160107"><span class="hs-identifier hs-var">argRules</span></a></span><span>
+</span><span id="line-149"></span><span>  </span><span class="annot"><span class="annottext">Rules ()
 </span><a href="NvFetcher.Core.html#coreRules"><span class="hs-identifier hs-var">coreRules</span></a></span><span>
-</span><span id="line-153"></span><span>
-</span><span id="line-154"></span><span class="annot"><a href="NvFetcher.html#srouces"><span class="hs-identifier hs-type">srouces</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
-</span><span id="line-155"></span><span id="srouces"><span class="annot"><span class="annottext">srouces :: NixExpr -&gt; NixExpr
-</span><a href="NvFetcher.html#srouces"><span class="hs-identifier hs-var hs-var">srouces</span></a></span></span><span> </span><span id="local-6989586621679160172"><span class="annot"><span class="annottext">NixExpr
-</span><a href="#local-6989586621679160172"><span class="hs-identifier hs-var">body</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-156"></span><span>  </span><span class="annot"><span class="">[trimming|
+</span><span id="line-150"></span><span>
+</span><span id="line-151"></span><span class="annot"><a href="NvFetcher.html#srouces"><span class="hs-identifier hs-type">srouces</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
+</span><span id="line-152"></span><span id="srouces"><span class="annot"><span class="annottext">srouces :: NixExpr -&gt; NixExpr
+</span><a href="NvFetcher.html#srouces"><span class="hs-identifier hs-var hs-var">srouces</span></a></span></span><span> </span><span id="local-6989586621679160084"><span class="annot"><span class="annottext">NixExpr
+</span><a href="#local-6989586621679160084"><span class="hs-identifier hs-var">body</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-153"></span><span>  </span><span class="annot"><span class="">[trimming|
     # This file was generated by nvfetcher, please do not modify it manually.
     { fetchgit, fetchurl }:
     {
       $body
     }
   |]</span></span><span>
-</span><span id="line-163"></span></pre></body></html>
+</span><span id="line-160"></span></pre></body></html>

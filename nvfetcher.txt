@@ -2,9 +2,9 @@
 -- See Hoogle, http://www.haskell.org/hoogle/
 
 
--- | Prefetch packages
+-- | Generate nix sources expr for the latest version of packages
 --   
---   Prefetch packages
+--   Please see README
 @package nvfetcher
 @version 0.1.0.0
 
@@ -39,8 +39,12 @@ VersionChange :: PackageName -> Maybe Version -> Version -> VersionChange
 [vcName] :: VersionChange -> PackageName
 [vcOld] :: VersionChange -> Maybe Version
 [vcNew] :: VersionChange -> Version
+
+-- | Decorate a rule's key with <a>PackageKey</a>
 newtype WithPackageKey k
 WithPackageKey :: (k, PackageKey) -> WithPackageKey k
+
+-- | The key type of nvfetcher rule. See <a>NvFetcher.Core</a>
 data Core
 Core :: Core
 
@@ -116,6 +120,9 @@ Package :: PackageName -> VersionSource -> PackageFetcher -> Package
 [pname] :: Package -> PackageName
 [pversion] :: Package -> VersionSource
 [pfetcher] :: Package -> PackageFetcher
+
+-- | Package key is the name of a package. We use this type to index
+--   packages.
 newtype PackageKey
 PackageKey :: PackageName -> PackageKey
 instance Control.DeepSeq.NFData NvFetcher.Types.Version
@@ -179,21 +186,35 @@ instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
 instance GHC.Show.Show NvFetcher.Types.VersionChange
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerResult
 
+
+-- | This module is about global information we use in rules.
 module NvFetcher.ShakeExtras
+
+-- | Values we use during the build. It's stored in <a>shakeExtra</a>
 data ShakeExtras
 ShakeExtras :: Var [VersionChange] -> HashMap PackageKey Package -> ShakeExtras
 [versionChanges] :: ShakeExtras -> Var [VersionChange]
 [targetPackages] :: ShakeExtras -> HashMap PackageKey Package
-getShakeExtras :: Action ShakeExtras
+
+-- | Create an empty <a>ShakeExtras</a> from packages to build
 initShakeExtras :: HashMap PackageKey Package -> IO ShakeExtras
+
+-- | Get our values from shake
+getShakeExtras :: Action ShakeExtras
+
+-- | Find a package given its key
+lookupPackage :: PackageKey -> Action (Maybe Package)
+
+-- | Get keys of all packages to build
 getAllPackageKeys :: Action [PackageKey]
-getPackageByKey :: PackageKey -> Action (Maybe Package)
+
+-- | Check if we need build this package
 isPackageKeyTarget :: PackageKey -> Action Bool
 
 -- | Record version change of a package
 recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()
 
--- | Get version changes since the last run, relying on shake database
+-- | Get version changes since the last run
 getVersionChanges :: Action [VersionChange]
 
 
@@ -394,10 +415,6 @@ instance (TypeError ...) => NvFetcher.PackageSet.Member x '[]
 instance Control.Monad.IO.Class.MonadIO NvFetcher.PackageSet.PackageSet
 instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
 
-module NvFetcher.Utils
-encode' :: Binary a => a -> ByteString
-decode' :: Binary a => ByteString -> a
-
 
 -- | <a>nvchecker</a> is a program checking new versions of packages. We
 --   encode the checking process into shake build system, generating
@@ -445,8 +462,21 @@ nvcheckerRule :: Rules ()
 -- | Run nvchecker
 checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult
 
+
 module NvFetcher.Core
+
+-- | The core rule of nvchecker. nvchecker rule and prefetch rule are wired
+--   here.
 coreRules :: Rules ()
+
+-- | Run the core rule. Given a package key, run nvchecker and then
+--   prefetch it, resulting a nix source snippet like:
+--   
+--   @<tt> feeluown-core = { pname = "feeluown-core"; version = "3.7.7";
+--   src = fetchurl { sha256 =
+--   "06d3j39ff9znqxkhp9ly81lcgajkhg30hyqxy2809yn23xixg3x2"; url =
+--   "<a>https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";</a>
+--   }; }; </tt>@
 generateNixSourceExpr :: PackageKey -> Action NixExpr
 
 
@@ -487,7 +517,7 @@ module NvFetcher
 
 -- | Arguments for running nvfetcher
 data Args
-Args :: (ShakeOptions -> ShakeOptions) -> FilePath -> Rules () -> Action () -> Action () -> PackageSet () -> Args
+Args :: (ShakeOptions -> ShakeOptions) -> FilePath -> Rules () -> Action () -> Action () -> Args
 
 -- | tweak shake options
 [argShakeOptions] :: Args -> ShakeOptions -> ShakeOptions
@@ -504,16 +534,13 @@ Args :: (ShakeOptions -> ShakeOptions) -> FilePath -> Rules () -> Action () -> A
 -- | Action run after clean rule
 [argActionAfterClean] :: Args -> Action ()
 
--- | Input packages
-[argPackageSet] :: Args -> PackageSet ()
-
 -- | Default arguments of <tt>defaultMain</tt>
 --   
 --   Output file path is <tt>sources.nix</tt>.
 defaultArgs :: Args
 
 -- | Entry point of nvfetcher
-runNvFetcher :: Args -> IO ()
+runNvFetcher :: Args -> PackageSet () -> IO ()
 
 -- | Like <a>runNvFetcher</a> but allows to define custom cli flags
-runNvFetcherWith :: [OptDescr (Either String a)] -> ([a] -> IO (Maybe Args)) -> IO ()
+runNvFetcherWith :: [OptDescr (Either String a)] -> ([a] -> IO (Maybe (Args, PackageSet ()))) -> IO ()
