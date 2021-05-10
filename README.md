@@ -4,9 +4,10 @@
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![nix](https://github.com/berberman/nvfetcher/actions/workflows/nix.yml/badge.svg)](https://github.com/berberman/nvfetcher/actions/workflows/nix.yml)
 
-nvfetcher is a build system built on top of [shake](https://www.shakebuild.com/),
+nvfetcher is a tool to automate packages updates in flakes repos. It's built on top of [shake](https://www.shakebuild.com/),
 integrating [nvchecker](https://github.com/lilydjwg/nvchecker).
-It's very simple -- the system produces only one artifact as the result of build.
+It's very simple -- most complicated works are done by nvchecker, nvfetcher just wires it with prefetch tools,
+producing only one artifact as the result of build.
 nvfetcher cli program accepts a TOML file as config, which defines a set of package sources to run.
 
 ## Overview
@@ -122,7 +123,7 @@ There is no way to check the equality over version sources and fetchers, so If y
 you will need to rebuild everything, i.e. run `nvfetcher clean` to remove shake databsae, to make sure that
 our build system works correctly. We could automate this process, for example,
 calculate the hash of the configuration file and bump `shakeVersion` to trigger the rebuild.
-However, this shouldn't happen frequently and we want to minimize the changes, so it's left for you to do it manually.
+However, this shouldn't happen frequently and we want to minimize the changes, so it's left for you to do manually.
 
 > Adding or removing a package doesn't require such rebuild
 
