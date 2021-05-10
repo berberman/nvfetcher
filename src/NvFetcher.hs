@@ -39,13 +39,13 @@
 --
 -- All shake options are inherited.
 module NvFetcher
-  ( module NvFetcher.PackageSet,
-    module NvFetcher.Types,
-    module NvFetcher.ShakeExtras,
-    Args (..),
+  ( Args (..),
     defaultArgs,
     runNvFetcher,
     runNvFetcherWith,
+    module NvFetcher.PackageSet,
+    module NvFetcher.Types,
+    module NvFetcher.ShakeExtras,
   )
 where
 
@@ -73,9 +73,7 @@ data Args = Args
     -- | Action run after build rule
     argActionAfterBuild :: Action (),
     -- | Action run after clean rule
-    argActionAfterClean :: Action (),
-    -- | Input packages
-    argPackageSet :: PackageSet ()
+    argActionAfterClean :: Action ()
   }
 
 -- | Default arguments of 'defaultMain'
@@ -94,26 +92,25 @@ defaultArgs =
     (pure ())
     (pure ())
     (pure ())
-    (pure ())
 
 -- | Entry point of nvfetcher
-runNvFetcher :: Args -> IO ()
-runNvFetcher args = runNvFetcherWith [] $ const $ pure $ pure args
+runNvFetcher :: Args -> PackageSet () -> IO ()
+runNvFetcher args packageSet = runNvFetcherWith [] $ const $ pure $ Just (args, packageSet)
 
 -- | Like 'runNvFetcher' but allows to define custom cli flags
 runNvFetcherWith ::
   -- | Custom flags
   [OptDescr (Either String a)] ->
   -- | Continuation, the build system won't run if it returns Nothing
-  ([a] -> IO (Maybe Args)) ->
+  ([a] -> IO (Maybe (Args, PackageSet ()))) ->
   IO ()
 runNvFetcherWith flags f = do
   shakeArgsOptionsWith
     shakeOptions
     flags
     $ \opts flagValues argValues -> runMaybeT $ do
-      args@Args {..} <- MaybeT $ f flagValues
-      pkgs <- liftIO $ runPackageSet argPackageSet
+      (args@Args {..}, packageSet) <- MaybeT $ f flagValues
+      pkgs <- liftIO $ runPackageSet packageSet
       shakeExtras <- liftIO $ initShakeExtras pkgs
       let opts' =
             let old = argShakeOptions opts

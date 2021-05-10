@@ -179,18 +179,22 @@ data Package = Package
     pfetcher :: PackageFetcher
   }
 
+-- | Package key is the name of a package.
+-- We use this type to index packages.
 newtype PackageKey = PackageKey PackageName
   deriving newtype (Eq, Show, Ord)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
+-- | The key type of nvfetcher rule. See "NvFetcher.Core"
 data Core = Core
   deriving (Eq, Show, Ord, Typeable, Generic, Hashable, Binary, NFData)
 
-type instance RuleResult Core = Text
+type instance RuleResult Core = NixExpr
 
 --------------------------------------------------------------------------------
 
+-- | Decorate a rule's key with 'PackageKey'
 newtype WithPackageKey k = WithPackageKey (k, PackageKey)
   deriving newtype (Eq, Hashable, Binary, NFData)
 

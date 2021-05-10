@@ -75,8 +75,8 @@ instance ToNixExpr Bool where
 instance ToNixExpr Version where
   toNixExpr = coerce
 
-toPrefetchCommand :: NixFetcher Fresh -> Action SHA256
-toPrefetchCommand = \case
+runFetcher :: NixFetcher Fresh -> Action SHA256
+runFetcher = \case
   FetchGit {..} -> do
     let parser = A.withObject "nix-prefetch-git" $ \o -> SHA256 <$> o A..: "sha256"
     (CmdTime t, Stdout out, CmdLine c) <-
@@ -97,7 +97,7 @@ toPrefetchCommand = \case
     putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
       [x] -> pure $ coerce x
-      _ -> fail "Failed to parse output from nix-prefetch-url"
+      _ -> fail $ "Failed to parse output from nix-prefetch-url: " <> T.unpack out
 
 buildNixFetcher :: Text -> NixFetcher k -> Text
 buildNixFetcher sha256 = \case
@@ -138,7 +138,7 @@ pypiUrl pypi (coerce -> ver) =
 prefetchRule :: Rules ()
 prefetchRule = void $
   addOracleCache $ \(f :: NixFetcher Fresh) -> do
-    sha256 <- toPrefetchCommand f
+    sha256 <- runFetcher f
     pure $ f {sha256 = sha256}
 
 -- | Run nix fetcher

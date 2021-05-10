@@ -5,7 +5,7 @@ module Main where
 import NvFetcher
 
 main :: IO ()
-main = runNvFetcher defaultArgs {argPackageSet = packageSet}
+main = runNvFetcher defaultArgs packageSet
 
 packageSet :: PackageSet ()
 packageSet = do

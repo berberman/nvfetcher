@@ -53,10 +53,10 @@ main = runNvFetcherWith flags $ \flagValues -> do
             pure $
               Just
                 ( defaultArgs
-                    { argPackageSet = purePackageSet x,
-                      argOutputFilePath = outputPath,
+                    { argOutputFilePath = outputPath,
                       argActionAfterBuild = case logPath of
                         Just fp -> logChangesToFile fp
                         _ -> pure ()
-                    }
+                    },
+                  purePackageSet x
                 )
