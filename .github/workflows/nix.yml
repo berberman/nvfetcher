@@ -1,7 +1,9 @@
-on: [push]
-name: nix
+name: CI
+on:
+  pull_request:
+  push:
 jobs:
-  nix:
+  nix-tests:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2.3.4
@@ -11,9 +13,13 @@ jobs:
         install_options: '--tarball-url-prefix https://nixos-nix-install-tests.cachix.org/serve'
         extra_nix_config: |
           experimental-features = nix-command flakes
+
+    - name: Run Nix Flake Check
+      run: nix flake check
+
     - name: Build and generate haddock
       run: nix build .\#nvfetcher-lib
-      
+
     - name: Deploy generated haddock to github pages
       uses: peaceiris/actions-gh-pages@v3
       with:
