@@ -27,15 +27,15 @@ module NvFetcher.ShakeExtras
 where
 
 import Control.Concurrent.Extra
-import Data.HashMap.Strict (HashMap)
-import qualified Data.HashMap.Strict as HMap
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
 import Development.Shake
 import NvFetcher.Types
 
 -- | Values we use during the build. It's stored in 'shakeExtra'
 data ShakeExtras = ShakeExtras
   { versionChanges :: Var [VersionChange],
-    targetPackages :: HashMap PackageKey Package
+    targetPackages :: Map PackageKey Package
   }
 
 -- | Get our values from shake
@@ -46,7 +46,7 @@ getShakeExtras =
     _ -> fail "ShakeExtras is missing!"
 
 -- | Create an empty 'ShakeExtras' from packages to build
-initShakeExtras :: HashMap PackageKey Package -> IO ShakeExtras
+initShakeExtras :: Map PackageKey Package -> IO ShakeExtras
 initShakeExtras targetPackages = do
   versionChanges <- newVar mempty
   pure ShakeExtras {..}
@@ -55,17 +55,17 @@ initShakeExtras targetPackages = do
 getAllPackageKeys :: Action [PackageKey]
 getAllPackageKeys = do
   ShakeExtras {..} <- getShakeExtras
-  pure $ HMap.keys targetPackages
+  pure $ Map.keys targetPackages
 
 -- | Find a package given its key
 lookupPackage :: PackageKey -> Action (Maybe Package)
 lookupPackage key = do
   ShakeExtras {..} <- getShakeExtras
-  pure $ HMap.lookup key targetPackages
+  pure $ Map.lookup key targetPackages
 
 -- | Check if we need build this package
 isPackageKeyTarget :: PackageKey -> Action Bool
-isPackageKeyTarget k = HMap.member k . targetPackages <$> getShakeExtras
+isPackageKeyTarget k = Map.member k . targetPackages <$> getShakeExtras
 
 -- | Record version change of a package
 recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()

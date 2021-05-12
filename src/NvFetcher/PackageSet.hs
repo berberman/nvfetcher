@@ -72,7 +72,7 @@ import Control.Monad.Free
 import Control.Monad.IO.Class
 import Data.Coerce (coerce)
 import Data.Kind (Constraint, Type)
-import Data.HashMap.Strict as HMap
+import Data.Map.Strict as HMap
 import Data.Maybe (isJust)
 import Data.Text (Text)
 import GHC.TypeLits
@@ -118,7 +118,7 @@ purePackageSet = mapM_ (liftF . flip NewPackage ())
 --
 -- Throws exception as more then one packages with the same name
 -- are defined
-runPackageSet :: PackageSet () -> IO (HashMap PackageKey Package)
+runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 runPackageSet = \case
   Free (NewPackage p g) ->
     runPackageSet g >>= \m ->

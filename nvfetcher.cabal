@@ -24,17 +24,17 @@ source-repository head
 
 common common-options
   build-depends:
-    , aeson                 ^>=1.5.6
-    , base                  >=4.8    && <5
+    , aeson               ^>=1.5.6
+    , base                >=4.8    && <5
     , binary
     , bytestring
-    , extra                 ^>=1.7.9
-    , free                  ^>=5.1.5
-    , neat-interpolation    ^>=0.5.1
-    , shake                 ^>=0.19.4
+    , containers
+    , extra               ^>=1.7.9
+    , free                ^>=5.1.5
+    , neat-interpolation  ^>=0.5.1
+    , shake               ^>=0.19.4
     , text
     , transformers
-    , unordered-containers
 
   ghc-options:
     -Wall -Wcompat -Widentities -Wincomplete-uni-patterns
