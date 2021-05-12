@@ -192,12 +192,12 @@ module NvFetcher.ShakeExtras
 
 -- | Values we use during the build. It's stored in <a>shakeExtra</a>
 data ShakeExtras
-ShakeExtras :: Var [VersionChange] -> HashMap PackageKey Package -> ShakeExtras
+ShakeExtras :: Var [VersionChange] -> Map PackageKey Package -> ShakeExtras
 [versionChanges] :: ShakeExtras -> Var [VersionChange]
-[targetPackages] :: ShakeExtras -> HashMap PackageKey Package
+[targetPackages] :: ShakeExtras -> Map PackageKey Package
 
 -- | Create an empty <a>ShakeExtras</a> from packages to build
-initShakeExtras :: HashMap PackageKey Package -> IO ShakeExtras
+initShakeExtras :: Map PackageKey Package -> IO ShakeExtras
 
 -- | Get our values from shake
 getShakeExtras :: Action ShakeExtras
@@ -316,7 +316,7 @@ purePackageSet :: [Package] -> PackageSet ()
 --   
 --   Throws exception as more then one packages with the same name are
 --   defined
-runPackageSet :: PackageSet () -> IO (HashMap PackageKey Package)
+runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 
 -- | A tagless final style DSL for constructing packages
 class PkgDSL f
