@@ -293,7 +293,7 @@ owner :: Traversal' VersionSource Text
 manual :: Traversal' VersionSource Text
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_aa9m k_asNs. Lens (NixFetcher k_aa9m) (NixFetcher k_asNs) (PrefetchResult k_aa9m) (PrefetchResult k_asNs)
+sha256 :: forall k_aa9m k_asWz. Lens (NixFetcher k_aa9m) (NixFetcher k_asWz) (PrefetchResult k_aa9m) (PrefetchResult k_asWz)
 rev :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) Version
 leaveDotGit :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) Bool
 furl :: forall k_aa9m. Lens' (NixFetcher k_aa9m) Text
