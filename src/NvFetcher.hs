@@ -141,7 +141,7 @@ mainRules Args {..} = do
         else do
           putInfo "Changes:"
           putInfo $ unlines $ show <$> changes
-    writeFileChanged argOutputFilePath $ T.unpack $ srouces $ T.unlines body
+    writeFileChanged argOutputFilePath $ T.unpack $ srouces (T.unlines body) <> "\n"
     putInfo $ "Generate " <> argOutputFilePath
     argActionAfterBuild
 
