@@ -51,21 +51,21 @@ Core :: Core
 -- | The input of nvchecker
 data VersionSource
 GitHubRelease :: Text -> Text -> VersionSource
-[owner] :: VersionSource -> Text
-[repo] :: VersionSource -> Text
+[_owner] :: VersionSource -> Text
+[_repo] :: VersionSource -> Text
 Git :: Text -> VersionSource
-[vurl] :: VersionSource -> Text
+[_vurl] :: VersionSource -> Text
 Pypi :: Text -> VersionSource
-[pypi] :: VersionSource -> Text
+[_pypi] :: VersionSource -> Text
 ArchLinux :: Text -> VersionSource
-[archpkg] :: VersionSource -> Text
+[_archpkg] :: VersionSource -> Text
 Aur :: Text -> VersionSource
-[aur] :: VersionSource -> Text
+[_aur] :: VersionSource -> Text
 Manual :: Text -> VersionSource
-[manual] :: VersionSource -> Text
+[_manual] :: VersionSource -> Text
 Repology :: Text -> Text -> VersionSource
-[repology] :: VersionSource -> Text
-[repo] :: VersionSource -> Text
+[_repology] :: VersionSource -> Text
+[_repo] :: VersionSource -> Text
 
 -- | The result of running nvchecker
 data NvcheckerResult
@@ -78,16 +78,16 @@ NvcheckerResult :: Version -> Maybe Version -> NvcheckerResult
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: Prefetch)
 FetchGit :: Text -> Version -> Maybe Text -> Bool -> Bool -> Bool -> PrefetchResult k -> NixFetcher (k :: Prefetch)
-[furl] :: NixFetcher (k :: Prefetch) -> Text
-[rev] :: NixFetcher (k :: Prefetch) -> Version
-[branch] :: NixFetcher (k :: Prefetch) -> Maybe Text
-[deepClone] :: NixFetcher (k :: Prefetch) -> Bool
-[fetchSubmodules] :: NixFetcher (k :: Prefetch) -> Bool
-[leaveDotGit] :: NixFetcher (k :: Prefetch) -> Bool
-[sha256] :: NixFetcher (k :: Prefetch) -> PrefetchResult k
+[_furl] :: NixFetcher (k :: Prefetch) -> Text
+[_rev] :: NixFetcher (k :: Prefetch) -> Version
+[_branch] :: NixFetcher (k :: Prefetch) -> Maybe Text
+[_deepClone] :: NixFetcher (k :: Prefetch) -> Bool
+[_fetchSubmodules] :: NixFetcher (k :: Prefetch) -> Bool
+[_leaveDotGit] :: NixFetcher (k :: Prefetch) -> Bool
+[_sha256] :: NixFetcher (k :: Prefetch) -> PrefetchResult k
 FetchUrl :: Text -> PrefetchResult k -> NixFetcher (k :: Prefetch)
-[furl] :: NixFetcher (k :: Prefetch) -> Text
-[sha256] :: NixFetcher (k :: Prefetch) -> PrefetchResult k
+[_furl] :: NixFetcher (k :: Prefetch) -> Text
+[_sha256] :: NixFetcher (k :: Prefetch) -> PrefetchResult k
 
 -- | Prefetch status
 data Prefetch
@@ -117,9 +117,9 @@ type PackageFetcher = Version -> NixFetcher Fresh
 --   functions.</i>
 data Package
 Package :: PackageName -> VersionSource -> PackageFetcher -> Package
-[pname] :: Package -> PackageName
-[pversion] :: Package -> VersionSource
-[pfetcher] :: Package -> PackageFetcher
+[_pname] :: Package -> PackageName
+[_pversion] :: Package -> VersionSource
+[_pfetcher] :: Package -> PackageFetcher
 
 -- | Package key is the name of a package. We use this type to index
 --   packages.
@@ -234,16 +234,16 @@ module NvFetcher.NixFetcher
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: Prefetch)
 FetchGit :: Text -> Version -> Maybe Text -> Bool -> Bool -> Bool -> PrefetchResult k -> NixFetcher (k :: Prefetch)
-[furl] :: NixFetcher (k :: Prefetch) -> Text
-[rev] :: NixFetcher (k :: Prefetch) -> Version
-[branch] :: NixFetcher (k :: Prefetch) -> Maybe Text
-[deepClone] :: NixFetcher (k :: Prefetch) -> Bool
-[fetchSubmodules] :: NixFetcher (k :: Prefetch) -> Bool
-[leaveDotGit] :: NixFetcher (k :: Prefetch) -> Bool
-[sha256] :: NixFetcher (k :: Prefetch) -> PrefetchResult k
+[_furl] :: NixFetcher (k :: Prefetch) -> Text
+[_rev] :: NixFetcher (k :: Prefetch) -> Version
+[_branch] :: NixFetcher (k :: Prefetch) -> Maybe Text
+[_deepClone] :: NixFetcher (k :: Prefetch) -> Bool
+[_fetchSubmodules] :: NixFetcher (k :: Prefetch) -> Bool
+[_leaveDotGit] :: NixFetcher (k :: Prefetch) -> Bool
+[_sha256] :: NixFetcher (k :: Prefetch) -> PrefetchResult k
 FetchUrl :: Text -> PrefetchResult k -> NixFetcher (k :: Prefetch)
-[furl] :: NixFetcher (k :: Prefetch) -> Text
-[sha256] :: NixFetcher (k :: Prefetch) -> PrefetchResult k
+[_furl] :: NixFetcher (k :: Prefetch) -> Text
+[_sha256] :: NixFetcher (k :: Prefetch) -> PrefetchResult k
 
 -- | Prefetch status
 data Prefetch
@@ -281,6 +281,28 @@ instance NvFetcher.NixFetcher.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.T
 instance NvFetcher.NixFetcher.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Prefetched)
 instance NvFetcher.NixFetcher.ToNixExpr GHC.Types.Bool
 instance NvFetcher.NixFetcher.ToNixExpr NvFetcher.Types.Version
+
+
+-- | Lenses for <a>NvFetcher.Types</a>
+module NvFetcher.Types.Lens
+vurl :: Traversal' VersionSource Text
+repology :: Traversal' VersionSource Text
+repo :: Traversal' VersionSource Text
+pypi :: Traversal' VersionSource Text
+owner :: Traversal' VersionSource Text
+manual :: Traversal' VersionSource Text
+aur :: Traversal' VersionSource Text
+archpkg :: Traversal' VersionSource Text
+sha256 :: forall k_aa9m k_asNs. Lens (NixFetcher k_aa9m) (NixFetcher k_asNs) (PrefetchResult k_aa9m) (PrefetchResult k_asNs)
+rev :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) Version
+leaveDotGit :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) Bool
+furl :: forall k_aa9m. Lens' (NixFetcher k_aa9m) Text
+fetchSubmodules :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) Bool
+deepClone :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) Bool
+branch :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) (Maybe Text)
+pversion :: Lens' Package VersionSource
+pname :: Lens' Package PackageName
+pfetcher :: Lens' Package PackageFetcher
 
 
 -- | This module mainly contains two things: <a>PackageSet</a> and
@@ -329,7 +351,7 @@ end :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFe
 --   Example:
 --   
 --   <pre>
---   define $ package "nvfetcher-git" <a>sourceGit</a> "nvfetcher" <a>fetchGitHub</a> ("berberman", "nvfetcher")
+--   define $ package "nvfetcher-git" <a>sourceGit</a> "<a>https://github.com/berberman/nvfetcher"</a> <a>fetchGitHub</a> ("berberman", "nvfetcher")
 --   </pre>
 define :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r) => PackageSet (Prod r) -> PackageSet ()
 
@@ -344,6 +366,9 @@ fetch :: PackageSet (Prod r) -> PackageFetcher -> PackageSet (Prod (PackageFetch
 
 -- | A synonym of <a>fetchGitHub</a> and <a>sourceGitHub</a>
 fromGitHub :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
+
+-- | A synonym of <a>fetchGitHub'</a> and <a>sourceGitHub</a>
+fromGitHub' :: PackageSet (Prod r) -> (Text, Text, NixFetcher Fresh -> NixFetcher Fresh) -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
 
 -- | A synonym of <a>fetchPypi</a> and <a>sourcePypi</a>
 fromPypi :: PackageSet (Prod r) -> Text -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
@@ -372,6 +397,16 @@ sourceRepology :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (Versi
 -- | This package is fetched from a github repo
 fetchGitHub :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (PackageFetcher : r))
 
+-- | This package is fetched from a github repo
+--   
+--   Similar to <a>fetchGitHub</a>, but allows a modifier to the fetcher.
+--   For example, you can enable fetch submodules like:
+--   
+--   <pre>
+--   define $ package "qliveplayer" <a>sourceGitHub</a> (<a>IsoaSFlus</a>, <a>QLivePlayer</a>) <a>fetchGitHub</a>` (<a>IsoaSFlus</a>, <a>QLivePlayer</a>, fetchSubmodules .~ True)
+--   </pre>
+fetchGitHub' :: PackageSet (Prod r) -> (Text, Text, NixFetcher Fresh -> NixFetcher Fresh) -> PackageSet (Prod (PackageFetcher : r))
+
 -- | This package is fetched from a file in github release
 fetchGitHubRelease :: PackageSet (Prod r) -> (Text, Text, Text) -> PackageSet (Prod (PackageFetcher : r))
 
@@ -380,6 +415,12 @@ fetchPypi :: PackageSet (Prod r) -> Text -> PackageSet (Prod (PackageFetcher : r
 
 -- | This package is fetched from git
 fetchGit :: PackageSet (Prod r) -> Text -> PackageSet (Prod (PackageFetcher : r))
+
+-- | This package is fetched from git
+--   
+--   Similar to <a>fetchGit</a>, but allows a modifier to the fetcher. See
+--   <a>fetchGitHub'</a> for a concret example.
+fetchGit' :: PackageSet (Prod r) -> (Text, NixFetcher Fresh -> NixFetcher Fresh) -> PackageSet (Prod (PackageFetcher : r))
 
 -- | This package is fetched from url
 fetchUrl :: PackageSet (Prod r) -> (Version -> Text) -> PackageSet (Prod (PackageFetcher : r))
@@ -408,6 +449,92 @@ coerce :: forall (k :: RuntimeRep) (a :: TYPE k) (b :: TYPE k). Coercible a b =>
 
 -- | Lift a computation from the <a>IO</a> monad.
 liftIO :: MonadIO m => IO a -> m a
+
+-- | <a>&amp;</a> is a reverse application operator. This provides
+--   notational convenience. Its precedence is one higher than that of the
+--   forward application operator <a>$</a>, which allows <a>&amp;</a> to be
+--   nested in <a>$</a>.
+--   
+--   <pre>
+--   &gt;&gt;&gt; 5 &amp; (+1) &amp; show
+--   "6"
+--   </pre>
+(&) :: a -> (a -> b) -> b
+infixl 1 &
+
+-- | (<a>.~</a>) assigns a value to the target. It's the same thing as
+--   using (<a>%~</a>) with <a>const</a>:
+--   
+--   <pre>
+--   l <a>.~</a> x = l <a>%~</a> <a>const</a> x
+--   </pre>
+--   
+--   See <a>set</a> if you want a non-operator synonym.
+--   
+--   Here it is used to change 2 fields of a 3-tuple:
+--   
+--   <pre>
+--   &gt;&gt;&gt; (0,0,0) &amp; _1 .~ 1 &amp; _3 .~ 3
+--   (1,0,3)
+--   </pre>
+(.~) :: ASetter s t a b -> b -> s -> t
+infixr 4 .~
+
+-- | (<a>%~</a>) applies a function to the target; an alternative
+--   explanation is that it is an inverse of <a>sets</a>, which turns a
+--   setter into an ordinary function. <tt><a>mapped</a> <a>%~</a>
+--   <a>reverse</a></tt> is the same thing as <tt><a>fmap</a>
+--   <a>reverse</a></tt>.
+--   
+--   See <a>over</a> if you want a non-operator synonym.
+--   
+--   Negating the 1st element of a pair:
+--   
+--   <pre>
+--   &gt;&gt;&gt; (1,2) &amp; _1 %~ negate
+--   (-1,2)
+--   </pre>
+--   
+--   Turning all <tt>Left</tt>s in a list to upper case:
+--   
+--   <pre>
+--   &gt;&gt;&gt; (mapped._Left.mapped %~ toUpper) [Left "foo", Right "bar"]
+--   [Left "FOO",Right "bar"]
+--   </pre>
+(%~) :: ASetter s t a b -> (a -> b) -> s -> t
+infixr 4 %~
+
+-- | (<a>^.</a>) applies a getter to a value; in other words, it gets a
+--   value out of a structure using a getter (which can be a lens,
+--   traversal, fold, etc.).
+--   
+--   Getting 1st field of a tuple:
+--   
+--   <pre>
+--   (<a>^.</a> <a>_1</a>) :: (a, b) -&gt; a
+--   (<a>^.</a> <a>_1</a>) = <a>fst</a>
+--   </pre>
+--   
+--   When (<a>^.</a>) is used with a traversal, it combines all results
+--   using the <a>Monoid</a> instance for the resulting type. For instance,
+--   for lists it would be simple concatenation:
+--   
+--   <pre>
+--   &gt;&gt;&gt; ("str","ing") ^. each
+--   "string"
+--   </pre>
+--   
+--   The reason for this is that traversals use <a>Applicative</a>, and the
+--   <a>Applicative</a> instance for <a>Const</a> uses monoid concatenation
+--   to combine “effects” of <a>Const</a>.
+--   
+--   A non-operator version of (<a>^.</a>) is called <tt>view</tt>, and
+--   it's a bit more general than (<a>^.</a>) (it works in
+--   <tt>MonadReader</tt>). If you need the general version, you can get it
+--   from <a>microlens-mtl</a>; otherwise there's <a>view</a> available in
+--   <a>Lens.Micro.Extras</a>.
+(^.) :: s -> Getting a s a -> a
+infixl 8 ^.
 instance NvFetcher.PackageSet.PkgDSL NvFetcher.PackageSet.PackageSet
 instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.Member x (x : xs)
 instance NvFetcher.PackageSet.Member x xs => NvFetcher.PackageSet.Member x (_y : xs)
@@ -432,21 +559,21 @@ module NvFetcher.Nvchecker
 -- | The input of nvchecker
 data VersionSource
 GitHubRelease :: Text -> Text -> VersionSource
-[owner] :: VersionSource -> Text
-[repo] :: VersionSource -> Text
+[_owner] :: VersionSource -> Text
+[_repo] :: VersionSource -> Text
 Git :: Text -> VersionSource
-[vurl] :: VersionSource -> Text
+[_vurl] :: VersionSource -> Text
 Pypi :: Text -> VersionSource
-[pypi] :: VersionSource -> Text
+[_pypi] :: VersionSource -> Text
 ArchLinux :: Text -> VersionSource
-[archpkg] :: VersionSource -> Text
+[_archpkg] :: VersionSource -> Text
 Aur :: Text -> VersionSource
-[aur] :: VersionSource -> Text
+[_aur] :: VersionSource -> Text
 Manual :: Text -> VersionSource
-[manual] :: VersionSource -> Text
+[_manual] :: VersionSource -> Text
 Repology :: Text -> Text -> VersionSource
-[repology] :: VersionSource -> Text
-[repo] :: VersionSource -> Text
+[_repology] :: VersionSource -> Text
+[_repo] :: VersionSource -> Text
 
 -- | The result of running nvchecker
 data NvcheckerResult
@@ -472,11 +599,16 @@ coreRules :: Rules ()
 -- | Run the core rule. Given a package key, run nvchecker and then
 --   prefetch it, resulting a nix source snippet like:
 --   
---   @<tt> feeluown-core = { pname = "feeluown-core"; version = "3.7.7";
---   src = fetchurl { sha256 =
---   "06d3j39ff9znqxkhp9ly81lcgajkhg30hyqxy2809yn23xixg3x2"; url =
---   "<a>https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";</a>
---   }; }; </tt>@
+--   <pre>
+--   feeluown-core = {
+--       pname = "feeluown-core";
+--       version = "3.7.7";
+--       src = fetchurl {
+--         sha256 = "06d3j39ff9znqxkhp9ly81lcgajkhg30hyqxy2809yn23xixg3x2";
+--         url = "<a>https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";</a>
+--       };
+--     };
+--   </pre>
 generateNixSourceExpr :: PackageKey -> Action NixExpr
 
 
