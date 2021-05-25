@@ -34,22 +34,22 @@ running `nvfetcher build` will create `sources.nix` like:
 {
   feeluown-core = {
     pname = "feeluown-core";
-    version = "3.7.6";
+    version = "3.7.7";
     src = fetchurl {
-      sha256 = "1bsz149dv3j5sfbynjrqsqbkkxdxkdlq4sdx2vi8whvfwfg0j2f0";
-      url = "https://pypi.io/packages/source/f/feeluown/feeluown-3.7.6.tar.gz";
+      sha256 = "06d3j39ff9znqxkhp9ly81lcgajkhg30hyqxy2809yn23xixg3x2";
+      url = "https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";
     };
   };
   qliveplayer = {
     pname = "qliveplayer";
-    version = "3.22.0";
+    version = "3.22.1";
     src = fetchgit {
       url = "https://github.com/IsoaSFlus/QLivePlayer";
-      rev = "3.22.0";
-      fetchSubmodules = false;
+      rev = "3.22.1";
+      fetchSubmodules = true;
       deepClone = false;
       leaveDotGit = false;
-      sha256 = "192g42pvibms2rsjh68fck4bj59b10ay9zqcf2hqhcka0xmnyb09";
+      sha256 = "00zqg28q5xrbgql0kclgkhd15fc02qzsrvi0qg8lg3qf8a53v263";
     };
   };
 }
