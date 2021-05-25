@@ -11,7 +11,7 @@ packageSet :: PackageSet ()
 packageSet = do
   define $ package "feeluown-core" `fromPypi` "feeluown"
 
-  define $ package "qliveplayer" `fromGitHub` ("IsoaSFlus", "QLivePlayer")
+  define $ package "qliveplayer" `fromGitHub'` ("IsoaSFlus", "QLivePlayer", fetchSubmodules .~ True)
 
   define $
     package "fcitx5-pinyin-zhwiki"

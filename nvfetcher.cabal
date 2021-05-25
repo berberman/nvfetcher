@@ -31,6 +31,8 @@ common common-options
     , containers
     , extra               ^>=1.7.9
     , free                ^>=5.1.5
+    , microlens
+    , microlens-th
     , neat-interpolation  ^>=0.5.1
     , shake               ^>=0.19.4
     , text
@@ -56,6 +58,7 @@ library
     NvFetcher.PackageSet
     NvFetcher.ShakeExtras
     NvFetcher.Types
+    NvFetcher.Types.Lens
 
 executable nvfetcher
   import:          common-options

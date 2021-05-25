@@ -66,7 +66,7 @@ instance ToNixExpr (NixFetcher Fresh) where
 
 instance ToNixExpr (NixFetcher Prefetched) where
   -- add quotation marks
-  toNixExpr f = buildNixFetcher (T.pack $ show $ T.unpack $ coerce $ sha256 f) f
+  toNixExpr f = buildNixFetcher (T.pack $ show $ T.unpack $ coerce $ _sha256 f) f
 
 instance ToNixExpr Bool where
   toNixExpr True = "true"
@@ -81,19 +81,19 @@ runFetcher = \case
     let parser = A.withObject "nix-prefetch-git" $ \o -> SHA256 <$> o A..: "sha256"
     (CmdTime t, Stdout out, CmdLine c) <-
       command [EchoStderr False] "nix-prefetch-git" $
-        [T.unpack furl]
-          <> ["--rev", T.unpack $ coerce rev]
-          <> ["--fetch-submodules" | fetchSubmodules]
-          <> ["--branch-name " <> T.unpack b | b <- maybeToList branch]
-          <> ["--deepClone" | deepClone]
-          <> ["--leave-dotGit" | leaveDotGit]
+        [T.unpack _furl]
+          <> ["--rev", T.unpack $ coerce _rev]
+          <> ["--fetch-submodules" | _fetchSubmodules]
+          <> ["--branch-name " <> T.unpack b | b <- maybeToList _branch]
+          <> ["--deepClone" | _deepClone]
+          <> ["--leave-dotGit" | _leaveDotGit]
     putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
     let result = A.parseMaybe parser <=< A.decodeStrict $ out
     case result of
       Just x -> pure x
       _ -> fail $ "Failed to parse output from nix-prefetch-git: " <> T.unpack (T.decodeUtf8 out)
   FetchUrl {..} -> do
-    (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <- command [EchoStderr False] "nix-prefetch-url" [T.unpack furl]
+    (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <- command [EchoStderr False] "nix-prefetch-url" [T.unpack _furl]
     putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
       [x] -> pure $ coerce x
@@ -102,16 +102,16 @@ runFetcher = \case
 buildNixFetcher :: Text -> NixFetcher k -> Text
 buildNixFetcher sha256 = \case
   FetchGit
-    { sha256 = _,
-      rev = toNixExpr -> rev,
-      fetchSubmodules = toNixExpr -> fetchSubmodules,
-      deepClone = toNixExpr -> deepClone,
-      leaveDotGit = toNixExpr -> leaveDotGit,
+    { _sha256 = _,
+      _rev = toNixExpr -> rev,
+      _fetchSubmodules = toNixExpr -> fetchSubmodules,
+      _deepClone = toNixExpr -> deepClone,
+      _leaveDotGit = toNixExpr -> leaveDotGit,
       ..
     } ->
       [trimming|
           fetchgit {
-            url = "$furl";
+            url = "$_furl";
             rev = "$rev";
             fetchSubmodules = $fetchSubmodules;
             deepClone = $deepClone;
@@ -139,7 +139,7 @@ prefetchRule :: Rules ()
 prefetchRule = void $
   addOracleCache $ \(f :: NixFetcher Fresh) -> do
     sha256 <- runFetcher f
-    pure $ f {sha256 = sha256}
+    pure $ f {_sha256 = sha256}
 
 -- | Run nix fetcher
 prefetch :: NixFetcher Fresh -> Action (NixFetcher Prefetched)

@@ -41,6 +41,7 @@ module NvFetcher.PackageSet
 
     -- ** Two-in-one functions
     fromGitHub,
+    fromGitHub',
     fromPypi,
 
     -- ** Version sources
@@ -54,9 +55,11 @@ module NvFetcher.PackageSet
 
     -- ** Fetchers
     fetchGitHub,
+    fetchGitHub',
     fetchGitHubRelease,
     fetchPypi,
     fetchGit,
+    fetchGit',
     fetchUrl,
 
     -- ** Miscellaneous
@@ -65,6 +68,13 @@ module NvFetcher.PackageSet
     NotElem,
     coerce,
     liftIO,
+
+    -- * Lenses
+    (&),
+    (.~),
+    (%~),
+    (^.),
+    module NvFetcher.Types.Lens,
   )
 where
 
@@ -76,8 +86,10 @@ import Data.Map.Strict as HMap
 import Data.Maybe (isJust)
 import Data.Text (Text)
 import GHC.TypeLits
+import Lens.Micro
 import NvFetcher.NixFetcher
 import NvFetcher.Types
+import NvFetcher.Types.Lens
 
 --------------------------------------------------------------------------------
 
@@ -122,9 +134,9 @@ runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 runPackageSet = \case
   Free (NewPackage p g) ->
     runPackageSet g >>= \m ->
-      if isJust (HMap.lookup (PackageKey $ pname p) m)
-        then fail $ "Duplicate package name: " <> show (pname p)
-        else pure $ HMap.insert (PackageKey $ pname p) p m
+      if isJust (HMap.lookup (PackageKey $ _pname p) m)
+        then fail $ "Duplicate package name: " <> show (_pname p)
+        else pure $ HMap.insert (PackageKey $ _pname p) p m
   Free (EmbedIO action g) -> action >>= runPackageSet . g
   Pure _ -> pure mempty
 
@@ -179,7 +191,7 @@ instance PkgDSL PackageSet where
 -- Example:
 --
 -- @
--- define $ package "nvfetcher-git" `sourceGit` "nvfetcher" `fetchGitHub` ("berberman", "nvfetcher")
+-- define $ package "nvfetcher-git" `sourceGit` "https://github.com/berberman/nvfetcher" `fetchGitHub` ("berberman", "nvfetcher")
 -- @
 define ::
   ( Member PackageName r,
@@ -213,7 +225,15 @@ fromGitHub ::
   (Text, Text) ->
   PackageSet
     (Prod (PackageFetcher : VersionSource : r))
-fromGitHub e p = fetchGitHub (sourceGitHub e p) p
+fromGitHub e (owner, repo) = fromGitHub' e (owner, repo, id)
+
+-- | A synonym of 'fetchGitHub'' and 'sourceGitHub'
+fromGitHub' ::
+  PackageSet (Prod r) ->
+  (Text, Text, NixFetcher Fresh -> NixFetcher Fresh) ->
+  PackageSet
+    (Prod (PackageFetcher : VersionSource : r))
+fromGitHub' e p@(owner, repo, _) = fetchGitHub' (sourceGitHub e (owner, repo)) p
 
 -- | A synonym of 'fetchPypi' and 'sourcePypi'
 fromPypi ::
@@ -239,7 +259,7 @@ sourceGit ::
   -- | git url
   Text ->
   PackageSet (Prod (VersionSource : r))
-sourceGit e vurl = src e Git {..}
+sourceGit e _vurl = src e Git {..}
 
 -- | This package follows the latest pypi release
 sourcePypi ::
@@ -247,7 +267,7 @@ sourcePypi ::
   -- | pypi name
   Text ->
   PackageSet (Prod (VersionSource : r))
-sourcePypi e pypi = src e Pypi {..}
+sourcePypi e _pypi = src e Pypi {..}
 
 -- | This package follows the version of an Arch Linux package
 sourceArchLinux ::
@@ -255,7 +275,7 @@ sourceArchLinux ::
   -- | package name in Arch Linux repo
   Text ->
   PackageSet (Prod (VersionSource : r))
-sourceArchLinux e archpkg = src e ArchLinux {..}
+sourceArchLinux e _archpkg = src e ArchLinux {..}
 
 -- | This package follows the version of an Aur package
 sourceAur ::
@@ -263,14 +283,14 @@ sourceAur ::
   -- | package name in Aur
   Text ->
   PackageSet (Prod (VersionSource : r))
-sourceAur e aur = src e Aur {..}
+sourceAur e _aur = src e Aur {..}
 
 -- | This package follows a pinned version
 sourceManual ::
   PackageSet (Prod r) ->
   Text ->
   PackageSet (Prod (VersionSource : r))
-sourceManual e manual = src e Manual {..}
+sourceManual e _manual = src e Manual {..}
 
 -- | This package follows the version of a repology package
 sourceRepology ::
@@ -288,7 +308,25 @@ fetchGitHub ::
   -- | owner and repo
   (Text, Text) ->
   PackageSet (Prod (PackageFetcher : r))
-fetchGitHub e p = fetch e $ gitHubFetcher p
+fetchGitHub e (owner, repo) = fetchGitHub' e (owner, repo, id)
+
+-- | This package is fetched from a github repo
+--
+-- Similar to 'fetchGitHub', but allows a modifier to the fetcher.
+-- For example, you can enable fetch submodules like:
+--
+-- @
+-- define $ package "qliveplayer" `sourceGitHub` ("IsoaSFlus", "QLivePlayer") `fetchGitHub'` ("IsoaSFlus", "QLivePlayer", fetchSubmodules .~ True)
+-- @
+fetchGitHub' ::
+  PackageSet (Prod r) ->
+  -- | owner and repo
+  ( Text,
+    Text,
+    NixFetcher Fresh -> NixFetcher Fresh
+  ) ->
+  PackageSet (Prod (PackageFetcher : r))
+fetchGitHub' e (owner, repo, f) = fetch e $ f . gitHubFetcher (owner, repo)
 
 -- | This package is fetched from a file in github release
 fetchGitHubRelease ::
@@ -312,7 +350,18 @@ fetchGit ::
   -- | git url
   Text ->
   PackageSet (Prod (PackageFetcher : r))
-fetchGit e = fetch e . gitFetcher
+fetchGit e u = fetchGit' e (u, id)
+
+-- | This package is fetched from git
+--
+-- Similar to 'fetchGit', but allows a modifier to the fetcher.
+-- See 'fetchGitHub'' for a concret example.
+fetchGit' ::
+  PackageSet (Prod r) ->
+  -- | git url
+  (Text, NixFetcher Fresh -> NixFetcher Fresh) ->
+  PackageSet (Prod (PackageFetcher : r))
+fetchGit' e (u, f) = fetch e $ f . gitFetcher u
 
 -- | This package is fetched from url
 fetchUrl ::

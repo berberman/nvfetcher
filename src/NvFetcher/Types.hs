@@ -95,13 +95,13 @@ type NixExpr = Text
 
 -- | The input of nvchecker
 data VersionSource
-  = GitHubRelease {owner :: Text, repo :: Text}
-  | Git {vurl :: Text}
-  | Pypi {pypi :: Text}
-  | ArchLinux {archpkg :: Text}
-  | Aur {aur :: Text}
-  | Manual {manual :: Text}
-  | Repology {repology :: Text, repo :: Text}
+  = GitHubRelease {_owner :: Text, _repo :: Text}
+  | Git {_vurl :: Text}
+  | Pypi {_pypi :: Text}
+  | ArchLinux {_archpkg :: Text}
+  | Aur {_aur :: Text}
+  | Manual {_manual :: Text}
+  | Repology {_repology :: Text, _repo :: Text}
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 -- | The result of running nvchecker
@@ -123,15 +123,15 @@ type instance RuleResult VersionSource = NvcheckerResult
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: Prefetch)
   = FetchGit
-      { furl :: Text,
-        rev :: Version,
-        branch :: Maybe Text,
-        deepClone :: Bool,
-        fetchSubmodules :: Bool,
-        leaveDotGit :: Bool,
-        sha256 :: PrefetchResult k
+      { _furl :: Text,
+        _rev :: Version,
+        _branch :: Maybe Text,
+        _deepClone :: Bool,
+        _fetchSubmodules :: Bool,
+        _leaveDotGit :: Bool,
+        _sha256 :: PrefetchResult k
       }
-  | FetchUrl {furl :: Text, sha256 :: PrefetchResult k}
+  | FetchUrl {_furl :: Text, _sha256 :: PrefetchResult k}
   deriving (Typeable, Generic)
 
 -- | Prefetch status
@@ -174,9 +174,9 @@ type PackageFetcher = Version -> NixFetcher Fresh
 -- /i.e. can only be concatenated with other strings,/
 -- /in case we can't check the equality between fetcher functions./
 data Package = Package
-  { pname :: PackageName,
-    pversion :: VersionSource,
-    pfetcher :: PackageFetcher
+  { _pname :: PackageName,
+    _pversion :: VersionSource,
+    _pfetcher :: PackageFetcher
   }
 
 -- | Package key is the name of a package.

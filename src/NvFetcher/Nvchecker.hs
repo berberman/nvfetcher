@@ -79,48 +79,48 @@ genNvConfig srcName = \case
     [trimming|
           [$srcName]
           source = "github"
-          github = "$owner/$repo"
+          github = "$_owner/$_repo"
           use_latest_release = true
     |]
   Git {..} ->
     [trimming|
           [$srcName]
           source = "git"
-          git = "$vurl"
+          git = "$_vurl"
           use_commit = true
     |]
   Aur {..} ->
     [trimming|
           [$srcName]
           source = "aur"
-          aur = "$aur"
+          aur = "$_aur"
           strip_release = true
     |]
   ArchLinux {..} ->
     [trimming|
           [$srcName]
           source = "archpkg"
-          archpkg = "$archpkg"
+          archpkg = "$_archpkg"
           strip_release = true
     |]
   Pypi {..} ->
     [trimming|
           [$srcName]
           source = "pypi"
-          pypi = "$pypi"
+          pypi = "$_pypi"
     |]
   Manual {..} ->
     [trimming|
           [$srcName]
           source = "manual"
-          manual = "$manual"
+          manual = "$_manual"
     |]
   Repology {..} ->
     [trimming|
           [$srcName]
           source = "repology"
-          repology = "$repology"
-          repo = "$repo"
+          repology = "$_repology"
+          repo = "$_repo"
     |]
 
 -- | Run nvchecker

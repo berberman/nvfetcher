@@ -42,23 +42,23 @@ coreRules = do
       lookupPackage pkg >>= \case
         Nothing -> fail $ "Unkown package key: " <> show pkg
         Just Package {..} -> do
-          (NvcheckerResult version mOldV) <- checkVersion pversion pkg
-          prefetched <- prefetch $ pfetcher version
+          (NvcheckerResult version mOldV) <- checkVersion _pversion pkg
+          prefetched <- prefetch $ _pfetcher version
           case mOldV of
             Nothing ->
-              recordVersionChange pname Nothing version
+              recordVersionChange _pname Nothing version
             Just old
               | old /= version ->
-                recordVersionChange pname (Just old) version
+                recordVersionChange _pname (Just old) version
             _ -> pure ()
-          let result = gen pname version prefetched
+          let result = gen _pname version prefetched
           pure $ RunResult ChangedRecomputeDiff (encode' (result, version)) result
 
 -- | Run the core rule.
 -- Given a package key, run nvchecker and then prefetch it,
 -- resulting a nix source snippet like:
 --
--- @@
+-- @
 -- feeluown-core = {
 --     pname = "feeluown-core";
 --     version = "3.7.7";
@@ -67,7 +67,7 @@ coreRules = do
 --       url = "https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";
 --     };
 --   };
--- @@
+-- @
 generateNixSourceExpr :: PackageKey -> Action NixExpr
 generateNixSourceExpr k = apply1 $ WithPackageKey (Core, k)
 
