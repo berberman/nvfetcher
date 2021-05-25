@@ -35,46 +35,46 @@ versionSourceCodec =
     id
     ( Toml.textBy
         ( \case
-            GitHubRelease {..} -> owner <> "/" <> repo
+            GitHubRelease {..} -> _owner <> "/" <> _repo
             _ -> error "impossible"
         )
         ( \x -> case T.split (== '/') x of
-            [owner, repo] -> Right GitHubRelease {..}
+            [_owner, _repo] -> Right GitHubRelease {..}
             _ -> Left "unexpected github srouce: it should be something like [owner]/[repo]"
         )
         "src.github"
     )
     <|> Toml.dimatch
       ( \case
-          Git {..} -> Just vurl
+          Git {..} -> Just _vurl
           _ -> Nothing
       )
       Git
       (Toml.text "src.git")
     <|> Toml.dimatch
       ( \case
-          Pypi {..} -> Just pypi
+          Pypi {..} -> Just _pypi
           _ -> Nothing
       )
       Pypi
       (Toml.text "src.pypi")
     <|> Toml.dimatch
       ( \case
-          ArchLinux {..} -> Just archpkg
+          ArchLinux {..} -> Just _archpkg
           _ -> Nothing
       )
       ArchLinux
       (Toml.text "src.archpkg")
     <|> Toml.dimatch
       ( \case
-          Aur {..} -> Just aur
+          Aur {..} -> Just _aur
           _ -> Nothing
       )
       Aur
       (Toml.text "src.aur")
     <|> Toml.dimatch
       ( \case
-          Manual {..} -> Just manual
+          Manual {..} -> Just _manual
           _ -> Nothing
       )
       Manual
@@ -87,11 +87,11 @@ versionSourceCodec =
       id
       ( Toml.textBy
           ( \case
-              Repology {..} -> repology <> ":" <> repo
+              Repology {..} -> _repology <> ":" <> _repo
               _ -> error "impossible"
           )
           ( \t -> case T.split (== ':') t of
-              [repology, repo] -> Right Repology {..}
+              [_repology, _repo] -> Right Repology {..}
               _ -> Left "unexpected repology source: it should be something like [project]:[repo]"
           )
           "src.repology"
