@@ -7,10 +7,15 @@
 module Config where
 
 import Control.Applicative ((<|>))
+import Data.Coerce (coerce)
 import Data.List.NonEmpty (NonEmpty ((:|)))
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
-import NvFetcher
+import Lens.Micro
+import Lens.Micro.Extras (view)
 import NvFetcher.NixFetcher
+import NvFetcher.Types
+import NvFetcher.Types.Lens
 import Toml (TOML, TomlCodec, (.=))
 import qualified Toml
 import Validation (validationToEither)
@@ -22,8 +27,21 @@ parseConfig toml = go tables [] []
     go (Right x : xs) se sp = go xs se (x : sp)
     go [] [] sp = Right sp
     go [] se _ = Left se
-    tables = [fmap (uncurry (Package k)) $ validationToEither $ Toml.runTomlCodec iCodec v | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml]
-    iCodec = (,) <$> versionSourceCodec .= fst <*> fetcherCodec .= snd
+    tables = [fmap (toPackage k) $ validationToEither $ Toml.runTomlCodec iCodec v | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml]
+    toPackage k (v, f, g@GitOptions {..}) =
+      let f' v = case f v of
+            x@FetchGit {} ->
+              x
+                & branch .~ goBranch
+                & deepClone .~ fromMaybe False goDeepClone
+                & fetchSubmodules .~ fromMaybe False goFetchSubmodules
+                & leaveDotGit .~ fromMaybe False goLeaveDotGit
+            x ->
+              if not $ isGitOptionsDefault g
+                then error $ "Try to set git-prefetch configuration for a url fetcher: " <> show x
+                else x
+       in Package k v f'
+    iCodec = (,,) <$> versionSourceCodec .= (view _1) <*> fetcherCodec .= (view _2) <*> gitOptionsCodec .= (view _3)
 
 versionSourceCodec :: TomlCodec VersionSource
 versionSourceCodec =
@@ -98,7 +116,7 @@ versionSourceCodec =
       )
 
 unsupportError :: a
-unsupportError = error "serialization of fetchers is unsupported"
+unsupportError = error "serialization is unsupported"
 
 -- | Use it only for deserialization!!!
 fetcherCodec :: TomlCodec PackageFetcher
@@ -136,3 +154,22 @@ fetcherCodec =
       unsupportError
       (\t -> Right $ \(coerce -> v) -> urlFetcher $ T.replace "$ver" v t)
       "fetch.url"
+
+data GitOptions = GitOptions
+  { goBranch :: Maybe T.Text,
+    goDeepClone :: Maybe Bool,
+    goFetchSubmodules :: Maybe Bool,
+    goLeaveDotGit :: Maybe Bool
+  }
+  deriving (Eq)
+
+isGitOptionsDefault :: GitOptions -> Bool
+isGitOptionsDefault = (== GitOptions Nothing Nothing Nothing Nothing)
+
+gitOptionsCodec :: TomlCodec GitOptions
+gitOptionsCodec =
+  GitOptions
+    <$> Toml.dioptional (Toml.text "git.branch") .= goBranch
+    <*> Toml.dioptional (Toml.bool "git.deepClone") .= goDeepClone
+    <*> Toml.dioptional (Toml.bool "git.fetchSubmodules") .= goFetchSubmodules
+    <*> Toml.dioptional (Toml.bool "git.leaveDotGit") .= goLeaveDotGit

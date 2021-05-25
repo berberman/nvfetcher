@@ -84,7 +84,7 @@ runFetcher = \case
         [T.unpack _furl]
           <> ["--rev", T.unpack $ coerce _rev]
           <> ["--fetch-submodules" | _fetchSubmodules]
-          <> ["--branch-name " <> T.unpack b | b <- maybeToList _branch]
+          <> concat [["--branch-name", T.unpack b] | b <- maybeToList _branch]
           <> ["--deepClone" | _deepClone]
           <> ["--leave-dotGit" | _leaveDotGit]
     putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"

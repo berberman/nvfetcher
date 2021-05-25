@@ -5,6 +5,7 @@ fetch.pypi = "feeluown"
 [qliveplayer]
 src.github = "IsoaSFlus/QLivePlayer"
 fetch.github = "IsoaSFlus/QLivePlayer"
+git.fetchSubmodules = true
 
 [fcitx5-pinyin-zhwiki]
 src.aur = "fcitx5-pinyin-zhwiki"

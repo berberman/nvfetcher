@@ -23,6 +23,7 @@ fetch.pypi = "feeluown"
 [qliveplayer]
 src.github = "IsoaSFlus/QLivePlayer"
 fetch.github = "IsoaSFlus/QLivePlayer"
+git.fetchSubmodules = true
 ```
 
 running `nvfetcher build` will create `sources.nix` like:
@@ -89,7 +90,7 @@ Aavailable CLI options:
 * `-l` (`--log`) - path to log file, where nvfetcher dumps the version changes 
 
 Each *package* corresponds to a TOML table, whose name is encoded as table key;
-there are two pairs in each table:
+there are two fields and four optional git prefetch configuration in each table:
 * a nvchecker configuration, how to track version updates
   * `src.github = owner/repo` - the latest gituhb release
   * `src.pypi = pypi_name` - the latest pypi release
@@ -103,6 +104,13 @@ there are two pairs in each table:
   * `fetch.pypi = pypi_name` or `pypi_name:ver` (default to `$ver` if no `ver` specified)
   * `fetch.git = git_url` or `git_url:rev` (default to `$ver` if no `rev` specified)
   * `fetch.url = url`
+
+* optional git prefetch configuration, which makes sense only when the fetcher equals to `fetch.github` or `fetch.git`.
+They can exist simultanesouly.
+  * `git.branch = branch_name` - branch to fetch
+  * `git.deepClone` - a bool value to control deep clone
+  * `git.fetchSubmodules` - a bool value to control fetching submodules
+  * `git.leaveDotGit` - a bool value to control leaving dot git
 
 You can find an example of the configuration file, see [`nvfetcher_example.toml`](nvfetcher_example.toml).
 
