@@ -126,7 +126,7 @@ fetcherCodec =
     ( \t -> case T.split (== '/') t of
         [owner, rest] -> case T.split (== ':') rest of
           [repo, rawV] ->
-            Right $ \(coerce -> realV) -> gitHubFetcher (owner, repo) $ coerce $ T.replace "$ver" rawV realV
+            Right $ \(coerce -> realV) -> gitHubFetcher (owner, repo) $ coerce $ T.replace "$ver" realV rawV
           [repo] -> Right $ gitHubFetcher (owner, repo)
           _ -> Left "unexpected github fetcher: it should be something like [owner]/[repo] or [owner]/[repo]:[ver]"
         _ -> Left "unexpected github fetcher: it should be something like [owner]/[repo] or [owner]/[repo]:[ver]"
@@ -136,7 +136,7 @@ fetcherCodec =
       unsupportError
       ( \t -> case T.split (== ':') t of
           [fpypi, rawV] ->
-            Right $ \(coerce -> realV) -> pypiFetcher fpypi $ coerce $ T.replace "$ver" rawV realV
+            Right $ \(coerce -> realV) -> pypiFetcher fpypi $ coerce $ T.replace "$ver" realV rawV
           [fpypi] -> Right $ pypiFetcher fpypi
           _ -> Left "unexpected pypi fetcher: it should be something like [pypi] or [pypi]:[ver]"
       )
@@ -145,7 +145,7 @@ fetcherCodec =
       unsupportError
       ( \t -> case T.split (== ':') t of
           [furl, rawV] ->
-            Right $ \(coerce -> realV) -> gitFetcher furl $ coerce $ T.replace "$ver" rawV realV
+            Right $ \(coerce -> realV) -> gitFetcher furl $ coerce $ T.replace "$ver" realV rawV
           [furl] -> Right $ gitFetcher furl
           _ -> Left "unexpected git fetcher: it should be something like [git_url] or [git_url]:[ver]"
       )
