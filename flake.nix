@@ -22,6 +22,7 @@
               cabal-install
               nvchecker
               nix-prefetch-git
+              cabal2nix #cd nix && cabal2nix ../. > default.nix && ..
             ]).envFunc { };
           packages.nvfetcher-lib = with haskell.lib;
             overrideCabal (haskellPackages.nvfetcher) (drv: {
