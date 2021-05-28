@@ -649,10 +649,13 @@ module NvFetcher
 
 -- | Arguments for running nvfetcher
 data Args
-Args :: (ShakeOptions -> ShakeOptions) -> FilePath -> Rules () -> Action () -> Action () -> Args
+Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action () -> Args
 
--- | tweak shake options
-[argShakeOptions] :: Args -> ShakeOptions -> ShakeOptions
+-- | Shake options
+[argShakeOptions] :: Args -> ShakeOptions
+
+-- | Build target
+[argTarget] :: Args -> String
 
 -- | Output file path
 [argOutputFilePath] :: Args -> FilePath
@@ -673,6 +676,3 @@ defaultArgs :: Args
 
 -- | Entry point of nvfetcher
 runNvFetcher :: Args -> PackageSet () -> IO ()
-
--- | Like <a>runNvFetcher</a> but allows to define custom cli flags
-runNvFetcherWith :: [OptDescr (Either String a)] -> ([a] -> IO (Maybe (Args, PackageSet ()))) -> IO ()
