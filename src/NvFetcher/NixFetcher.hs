@@ -87,14 +87,14 @@ runFetcher = \case
           <> concat [["--branch-name", T.unpack b] | b <- maybeToList _branch]
           <> ["--deepClone" | _deepClone]
           <> ["--leave-dotGit" | _leaveDotGit]
-    putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
+    putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     let result = A.parseMaybe parser <=< A.decodeStrict $ out
     case result of
       Just x -> pure x
       _ -> fail $ "Failed to parse output from nix-prefetch-git: " <> T.unpack (T.decodeUtf8 out)
   FetchUrl {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <- command [EchoStderr False] "nix-prefetch-url" [T.unpack _furl]
-    putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
+    putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
       [x] -> pure $ coerce x
       _ -> fail $ "Failed to parse output from nix-prefetch-url: " <> T.unpack out

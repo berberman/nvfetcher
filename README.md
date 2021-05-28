@@ -69,25 +69,26 @@ How to use the generated sources file? Here are some examples:
 
 ## Usage
 
-Basically, there are two ways to use nvfetcher, where the difference is how we provide package sources definitions to it. 
-No matter which way you use it in, CLI options are inherited from shake with two targets, typically used as:
-
-* `nvfetcher build` - our main purpose, creating `sources.nix`
-* `nvfetcher clean` - clean up cache and remove `sources.nix`
-
-> nvfetcher uses `build` as the target if no specified
-
-> You can specify `-j` to enable parallelism
+Basically, there are two ways to use nvfetcher, where the difference is how we provide package sources definitions to it.
 
 ### CLI
 
 To run nvfetcher as a CLI program, you'll need to provide package sources defined in TOML.
 
-Aavailable CLI options:
-* `-c` (`--config`) - path to the TOML configuration file
-* `-o` (`--output`) - path to the output nix file
-* `-v` (`--version`) - print nvfetcher version
-* `-l` (`--log`) - path to log file, where nvfetcher dumps the version changes 
+```
+Available options:
+  --version                Show version
+  --help                   Show this help text
+  -c,--config FILE         Path to nvfetcher TOML config
+                           (default: "nvfetcher.toml")
+  -o,--output FILE         Path to output nix file (default: "sources.nix")
+  -l,--changelog FILE      Dump version changes to a file
+  -j NUM                   Number of threads (0: detected number of processors)
+                           (default: 0)
+  -t,--timing              Show build time
+  -v,--verbose             Print more things
+  TARGET                   Two targets are available: build and clean
+```
 
 Each *package* corresponds to a TOML table, whose name is encoded as table key;
 there are two fields and four optional git prefetch configuration in each table:

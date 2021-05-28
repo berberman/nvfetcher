@@ -58,7 +58,7 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (q, pkg)) ol
         writeFile' config $ T.unpack $ genNvConfig "pkg" q
         need [config]
         (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
-        putInfo $ "Finishing running " <> c <> ", took " <> show t <> "s"
+        putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
         let out' = T.decodeUtf8 out
             result = mapMaybe (A.decodeStrict . T.encodeUtf8) (T.lines out')
         now <- case result of

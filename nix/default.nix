@@ -1,6 +1,7 @@
 { mkDerivation, aeson, base, binary, bytestring, containers, extra
-, free, lib, microlens, microlens-th, neat-interpolation, shake
-, text, tomland, transformers, validation-selective
+, free, lib, microlens, microlens-th, neat-interpolation
+, optparse-simple, shake, text, tomland, transformers
+, validation-selective
 }:
 mkDerivation {
   pname = "nvfetcher";
@@ -14,8 +15,8 @@ mkDerivation {
   ];
   executableHaskellDepends = [
     aeson base binary bytestring containers extra free microlens
-    microlens-th neat-interpolation shake text tomland transformers
-    validation-selective
+    microlens-th neat-interpolation optparse-simple shake text tomland
+    transformers validation-selective
   ];
   homepage = "https://github.com/berberman/nvfetcher";
   description = "Generate nix sources expr for the latest version of packages";

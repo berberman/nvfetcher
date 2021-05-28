@@ -42,14 +42,12 @@ module NvFetcher
   ( Args (..),
     defaultArgs,
     runNvFetcher,
-    runNvFetcherWith,
     module NvFetcher.PackageSet,
     module NvFetcher.Types,
     module NvFetcher.ShakeExtras,
   )
 where
 
-import Control.Monad.Trans.Maybe
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
@@ -60,12 +58,13 @@ import NvFetcher.Nvchecker
 import NvFetcher.PackageSet
 import NvFetcher.ShakeExtras
 import NvFetcher.Types
-import System.Console.GetOpt (OptDescr)
 
 -- | Arguments for running nvfetcher
 data Args = Args
-  { -- | tweak shake options
-    argShakeOptions :: ShakeOptions -> ShakeOptions,
+  { -- | Shake options
+    argShakeOptions :: ShakeOptions,
+    -- | Build target
+    argTarget :: String,
     -- | Output file path
     argOutputFilePath :: FilePath,
     -- | Custom rules
@@ -82,12 +81,11 @@ data Args = Args
 defaultArgs :: Args
 defaultArgs =
   Args
-    ( \x ->
-        x
-          { shakeTimings = True,
-            shakeProgress = progressSimple
-          }
+    ( shakeOptions
+        { shakeProgress = progressSimple
+        }
     )
+    "build"
     "sources.nix"
     (pure ())
     (pure ())
@@ -95,38 +93,18 @@ defaultArgs =
 
 -- | Entry point of nvfetcher
 runNvFetcher :: Args -> PackageSet () -> IO ()
-runNvFetcher args packageSet = runNvFetcherWith [] $ const $ pure $ Just (args, packageSet)
-
--- | Like 'runNvFetcher' but allows to define custom cli flags
-runNvFetcherWith ::
-  -- | Custom flags
-  [OptDescr (Either String a)] ->
-  -- | Continuation, the build system won't run if it returns Nothing
-  ([a] -> IO (Maybe (Args, PackageSet ()))) ->
-  IO ()
-runNvFetcherWith flags f = do
-  shakeArgsOptionsWith
-    shakeOptions
-    flags
-    $ \opts flagValues argValues -> runMaybeT $ do
-      (args@Args {..}, packageSet) <- MaybeT $ f flagValues
-      pkgs <- liftIO $ runPackageSet packageSet
-      shakeExtras <- liftIO $ initShakeExtras pkgs
-      let opts' =
-            let old = argShakeOptions opts
-             in old
-                  { shakeExtra = addShakeExtra shakeExtras (shakeExtra old)
-                  }
-          rules = mainRules args
-      pure $ case argValues of
-        [] -> (opts', want ["build"] >> rules)
-        files -> (opts', want files >> rules)
+runNvFetcher args@Args {..} packageSet = do
+  pkgs <- runPackageSet packageSet
+  shakeExtras <- initShakeExtras pkgs
+  let opts =
+        argShakeOptions
+          { shakeExtra = addShakeExtra shakeExtras (shakeExtra argShakeOptions)
+          }
+      rules = mainRules args
+  shake opts $ want [argTarget] >> rules
 
 mainRules :: Args -> Rules ()
 mainRules Args {..} = do
-  addHelpSuffix "It's important to keep .shake dir if you want to get correct version changes and proper cache"
-  addHelpSuffix "Changing input packages will lead to a fully cleanup, requiring to rebuild everything next run"
-
   "clean" ~> do
     removeFilesAfter ".shake" ["//*"]
     removeFilesAfter "." [argOutputFilePath]
