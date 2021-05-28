@@ -75,10 +75,10 @@ How to use the generated sources file? Here are some examples:
 $ nix-shell -p nvfetcher
 ```
 
-This repo also has flakes support, so you can build the binary with:
+This repo also has flakes support:
 
 ```
-$ nix build
+$ nix run github:berberman/nvfetcher
 ```
 
 To use it as a Haskell library, the package is available on [Hackage](https://hackage.haskell.org/package/nvfetcher).
@@ -157,3 +157,11 @@ However, this shouldn't happen frequently and we want to minimize the changes, s
 ## Contributing
 
 Issues and PRs are always welcome. **\_(:з」∠)\_**
+
+Building from source:
+
+```
+$ git clone https://github.com/berberman/nvfetcher
+$ nix develop
+$ cabal build
+```
