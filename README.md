@@ -86,7 +86,7 @@ Available options:
   -j NUM                   Number of threads (0: detected number of processors)
                            (default: 0)
   -t,--timing              Show build time
-  -v,--verbose             Print more things
+  -v,--verbose             Verbose mode
   TARGET                   Two targets are available: build and clean
 ```
 
@@ -117,7 +117,9 @@ You can find an example of the configuration file, see [`nvfetcher_example.toml`
 
 ### Haskell library
 
-nvfetcher itsetlf is a Haskell library as well, whereas the CLI program is just a trivial wrapper of the library. You can create a Haskell program depending on it directly, creating an entry point. In this case, we can define packages in Haskell language, getting rid of TOML constraints.
+nvfetcher itsetlf is a Haskell library as well, whereas the CLI program is just a trivial wrapper of the library.
+You can create a Haskell program depending on it directly, by using the `runNvFetcher` entry point.
+In this case, we can define packages in Haskell language, getting rid of TOML constraints.
 
 You can find an example of using nvfetcher in the library way, see [`Main_example.hs`](Main_example.hs).
 
