@@ -20,7 +20,7 @@
 -- import NvFetcher
 --
 -- main :: IO ()
--- main = defaultMain defaultArgs packageSet
+-- main = runNvFetcher defaultArgs packageSet
 --
 -- packageSet :: PackageSet ()
 -- packageSet = do
