@@ -59,13 +59,29 @@ We tell nvfetcher how to get the latest version number of packages and how to fe
 and nvfetcher will help us keep their version and prefetched SHA256 sums up-to-date, stored in `sources.nix`.
 Shake will help us handle necessary rebuilds -- we check versions of packages during each run, but only prefetch them when needed.
 
-## Live examples
+### Live examples
 
 How to use the generated sources file? Here are some examples:
 
 * My [flakes repo](https://github.com/berberman/flakes)
 
 * Nick Cao's [flakes repo](https://gitlab.com/NickCao/flakes/-/tree/master/pkgs)
+
+## Installation
+
+`nvfetcher` package is available in [nixpkgs](https://github.com/NixOS/nixpkgs), so you can try it with:
+
+```
+$ nix-shell -p nvfetcher
+```
+
+This repo also has flakes support, so you can build the binary with:
+
+```
+$ nix build
+```
+
+To use it as a Haskell library, the package is available on [Hackage](https://hackage.haskell.org/package/nvfetcher).
 
 ## Usage
 
