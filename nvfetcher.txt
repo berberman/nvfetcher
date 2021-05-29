@@ -47,14 +47,32 @@ WithPackageKey :: (k, PackageKey) -> WithPackageKey k
 -- | The key type of nvfetcher rule. See <a>NvFetcher.Core</a>
 data Core
 Core :: Core
+data VersionSortMethod
+ParseVersion :: VersionSortMethod
+Vercmp :: VersionSortMethod
+
+-- | The extra configuration for some version sources. See
+--   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#list-options</a>
+--   for details.
+data ListOptions
+ListOptions :: Maybe Text -> Maybe Text -> Maybe VersionSortMethod -> Maybe Text -> ListOptions
+[_includeRegex] :: ListOptions -> Maybe Text
+[_excludeRegex] :: ListOptions -> Maybe Text
+[_sortVersionKey] :: ListOptions -> Maybe VersionSortMethod
+[_ignored] :: ListOptions -> Maybe Text
 
 -- | The input of nvchecker
 data VersionSource
 GitHubRelease :: Text -> Text -> VersionSource
 [_owner] :: VersionSource -> Text
 [_repo] :: VersionSource -> Text
-Git :: Text -> VersionSource
+GitHubTag :: Text -> Text -> ListOptions -> VersionSource
+[_owner] :: VersionSource -> Text
+[_repo] :: VersionSource -> Text
+[_listOptions] :: VersionSource -> ListOptions
+Git :: Text -> Maybe Text -> VersionSource
 [_vurl] :: VersionSource -> Text
+[_vbranch] :: VersionSource -> Maybe Text
 Pypi :: Text -> VersionSource
 [_pypi] :: VersionSource -> Text
 ArchLinux :: Text -> VersionSource
@@ -143,6 +161,21 @@ instance Data.Hashable.Class.Hashable NvFetcher.Types.SHA256
 instance GHC.Generics.Generic NvFetcher.Types.SHA256
 instance GHC.Classes.Eq NvFetcher.Types.SHA256
 instance GHC.Show.Show NvFetcher.Types.SHA256
+instance Control.DeepSeq.NFData NvFetcher.Types.VersionSortMethod
+instance Data.Binary.Class.Binary NvFetcher.Types.VersionSortMethod
+instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSortMethod
+instance GHC.Generics.Generic NvFetcher.Types.VersionSortMethod
+instance GHC.Enum.Enum NvFetcher.Types.VersionSortMethod
+instance GHC.Classes.Ord NvFetcher.Types.VersionSortMethod
+instance GHC.Classes.Eq NvFetcher.Types.VersionSortMethod
+instance Data.Default.Class.Default NvFetcher.Types.ListOptions
+instance Control.DeepSeq.NFData NvFetcher.Types.ListOptions
+instance Data.Binary.Class.Binary NvFetcher.Types.ListOptions
+instance Data.Hashable.Class.Hashable NvFetcher.Types.ListOptions
+instance GHC.Generics.Generic NvFetcher.Types.ListOptions
+instance GHC.Classes.Ord NvFetcher.Types.ListOptions
+instance GHC.Classes.Eq NvFetcher.Types.ListOptions
+instance GHC.Show.Show NvFetcher.Types.ListOptions
 instance Control.DeepSeq.NFData NvFetcher.Types.VersionSource
 instance Data.Binary.Class.Binary NvFetcher.Types.VersionSource
 instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSource
@@ -185,6 +218,8 @@ instance Control.DeepSeq.NFData (NvFetcher.Types.PrefetchResult k) => Control.De
 instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
 instance GHC.Show.Show NvFetcher.Types.VersionChange
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerResult
+instance GHC.Show.Show NvFetcher.Types.VersionSortMethod
+instance Data.Default.Class.Default NvFetcher.Types.VersionSortMethod
 
 
 -- | This module is about global information we use in rules.
@@ -285,21 +320,27 @@ instance NvFetcher.NixFetcher.ToNixExpr NvFetcher.Types.Version
 
 -- | Lenses for <a>NvFetcher.Types</a>
 module NvFetcher.Types.Lens
+sortVersionKey :: Lens' ListOptions (Maybe VersionSortMethod)
+includeRegex :: Lens' ListOptions (Maybe Text)
+ignored :: Lens' ListOptions (Maybe Text)
+excludeRegex :: Lens' ListOptions (Maybe Text)
 vurl :: Traversal' VersionSource Text
+vbranch :: Traversal' VersionSource (Maybe Text)
 repology :: Traversal' VersionSource Text
 repo :: Traversal' VersionSource Text
 pypi :: Traversal' VersionSource Text
 owner :: Traversal' VersionSource Text
 manual :: Traversal' VersionSource Text
+listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_aa9m k_asWz. Lens (NixFetcher k_aa9m) (NixFetcher k_asWz) (PrefetchResult k_aa9m) (PrefetchResult k_asWz)
-rev :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) Version
-leaveDotGit :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) Bool
-furl :: forall k_aa9m. Lens' (NixFetcher k_aa9m) Text
-fetchSubmodules :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) Bool
-deepClone :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) Bool
-branch :: forall k_aa9m. Traversal' (NixFetcher k_aa9m) (Maybe Text)
+sha256 :: forall k_aabY k_awMu. Lens (NixFetcher k_aabY) (NixFetcher k_awMu) (PrefetchResult k_aabY) (PrefetchResult k_awMu)
+rev :: forall k_aabY. Traversal' (NixFetcher k_aabY) Version
+leaveDotGit :: forall k_aabY. Traversal' (NixFetcher k_aabY) Bool
+furl :: forall k_aabY. Lens' (NixFetcher k_aabY) Text
+fetchSubmodules :: forall k_aabY. Traversal' (NixFetcher k_aabY) Bool
+deepClone :: forall k_aabY. Traversal' (NixFetcher k_aabY) Bool
+branch :: forall k_aabY. Traversal' (NixFetcher k_aabY) (Maybe Text)
 pversion :: Lens' Package VersionSource
 pname :: Lens' Package PackageName
 pfetcher :: Lens' Package PackageFetcher
@@ -370,14 +411,26 @@ fromGitHub :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (PackageFe
 -- | A synonym of <a>fetchGitHub'</a> and <a>sourceGitHub</a>
 fromGitHub' :: PackageSet (Prod r) -> (Text, Text, NixFetcher Fresh -> NixFetcher Fresh) -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
 
+-- | A synonym of <a>fetchGitHub</a> and <a>sourceGitHubTag</a>
+fromGitHubTag :: PackageSet (Prod r) -> (Text, Text, ListOptions -> ListOptions) -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
+
+-- | A synonym of <a>fetchGitHub'</a> and <a>sourceGitHubTag</a>
+fromGitHubTag' :: PackageSet (Prod r) -> (Text, Text, ListOptions -> ListOptions, NixFetcher Fresh -> NixFetcher Fresh) -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
+
 -- | A synonym of <a>fetchPypi</a> and <a>sourcePypi</a>
 fromPypi :: PackageSet (Prod r) -> Text -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
 
 -- | This package follows the latest github release
 sourceGitHub :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (VersionSource : r))
 
+-- | This package follows the a tag from github
+sourceGitHubTag :: PackageSet (Prod r) -> (Text, Text, ListOptions -> ListOptions) -> PackageSet (Prod (VersionSource : r))
+
 -- | This package follows the latest git commit
 sourceGit :: PackageSet (Prod r) -> Text -> PackageSet (Prod (VersionSource : r))
+
+-- | Similar to <a>sourceGit</a>, but allows to specify branch
+sourceGit' :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (VersionSource : r))
 
 -- | This package follows the latest pypi release
 sourcePypi :: PackageSet (Prod r) -> Text -> PackageSet (Prod (VersionSource : r))
@@ -535,6 +588,22 @@ infixr 4 %~
 --   <a>Lens.Micro.Extras</a>.
 (^.) :: s -> Getting a s a -> a
 infixl 8 ^.
+
+-- | (<a>?~</a>) is a version of (<a>.~</a>) that wraps the value into
+--   <a>Just</a> before setting.
+--   
+--   <pre>
+--   l ?~ b = l .~ Just b
+--   </pre>
+--   
+--   It can be useful in combination with <a>at</a>:
+--   
+--   <pre>
+--   &gt;&gt;&gt; Map.empty &amp; at 3 ?~ x
+--   fromList [(3,x)]
+--   </pre>
+(?~) :: ASetter s t a (Maybe b) -> b -> s -> t
+infixr 4 ?~
 instance NvFetcher.PackageSet.PkgDSL NvFetcher.PackageSet.PackageSet
 instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.Member x (x : xs)
 instance NvFetcher.PackageSet.Member x xs => NvFetcher.PackageSet.Member x (_y : xs)
@@ -555,14 +624,32 @@ instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
 --   run. Fortunately, we can reimplement this using shake database, see
 --   <a>nvcheckerRule</a> for details.
 module NvFetcher.Nvchecker
+data VersionSortMethod
+ParseVersion :: VersionSortMethod
+Vercmp :: VersionSortMethod
+
+-- | The extra configuration for some version sources. See
+--   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#list-options</a>
+--   for details.
+data ListOptions
+ListOptions :: Maybe Text -> Maybe Text -> Maybe VersionSortMethod -> Maybe Text -> ListOptions
+[_includeRegex] :: ListOptions -> Maybe Text
+[_excludeRegex] :: ListOptions -> Maybe Text
+[_sortVersionKey] :: ListOptions -> Maybe VersionSortMethod
+[_ignored] :: ListOptions -> Maybe Text
 
 -- | The input of nvchecker
 data VersionSource
 GitHubRelease :: Text -> Text -> VersionSource
 [_owner] :: VersionSource -> Text
 [_repo] :: VersionSource -> Text
-Git :: Text -> VersionSource
+GitHubTag :: Text -> Text -> ListOptions -> VersionSource
+[_owner] :: VersionSource -> Text
+[_repo] :: VersionSource -> Text
+[_listOptions] :: VersionSource -> ListOptions
+Git :: Text -> Maybe Text -> VersionSource
 [_vurl] :: VersionSource -> Text
+[_vbranch] :: VersionSource -> Maybe Text
 Pypi :: Text -> VersionSource
 [_pypi] :: VersionSource -> Text
 ArchLinux :: Text -> VersionSource

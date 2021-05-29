@@ -129,6 +129,12 @@ They can exist simultanesouly.
   * `git.fetchSubmodules` - a bool value to control fetching submodules
   * `git.leaveDotGit` - a bool value to control leaving dot git
 
+* optional list options configuration for some version sources. See the corresponding [documentation of nvchecker](https://nvchecker.readthedocs.io/en/latest/usage.html#list-options) for details.
+  * `src.include_regex`
+  * `src.exclude_regex`
+  * `src.sort_version_key`
+  * `src.ignored`
+
 You can find an example of the configuration file, see [`nvfetcher_example.toml`](nvfetcher_example.toml).
 
 ### Haskell library
