@@ -10,6 +10,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ViewPatterns #-}
 
 -- | Copyright: (c) 2021 berberman
 -- SPDX-License-Identifier: MIT
@@ -42,11 +43,15 @@ module NvFetcher.PackageSet
     -- ** Two-in-one functions
     fromGitHub,
     fromGitHub',
+    fromGitHubTag,
+    fromGitHubTag',
     fromPypi,
 
     -- ** Version sources
     sourceGitHub,
+    sourceGitHubTag,
     sourceGit,
+    sourceGit',
     sourcePypi,
     sourceAur,
     sourceArchLinux,
@@ -74,6 +79,7 @@ module NvFetcher.PackageSet
     (.~),
     (%~),
     (^.),
+    (?~),
     module NvFetcher.Types.Lens,
   )
 where
@@ -81,6 +87,7 @@ where
 import Control.Monad.Free
 import Control.Monad.IO.Class
 import Data.Coerce (coerce)
+import Data.Default (def)
 import Data.Kind (Constraint, Type)
 import Data.Map.Strict as HMap
 import Data.Maybe (isJust)
@@ -235,6 +242,22 @@ fromGitHub' ::
     (Prod (PackageFetcher : VersionSource : r))
 fromGitHub' e p@(owner, repo, _) = fetchGitHub' (sourceGitHub e (owner, repo)) p
 
+-- | A synonym of 'fetchGitHub' and 'sourceGitHubTag'
+fromGitHubTag ::
+  PackageSet (Prod r) ->
+  (Text, Text, ListOptions -> ListOptions) ->
+  PackageSet
+    (Prod (PackageFetcher : VersionSource : r))
+fromGitHubTag e (owner, repo, f) = fromGitHubTag' e (owner, repo, f, id)
+
+-- | A synonym of 'fetchGitHub'' and 'sourceGitHubTag'
+fromGitHubTag' ::
+  PackageSet (Prod r) ->
+  (Text, Text, ListOptions -> ListOptions, NixFetcher Fresh -> NixFetcher Fresh) ->
+  PackageSet
+    (Prod (PackageFetcher : VersionSource : r))
+fromGitHubTag' e (owner, repo, fv, ff) = fetchGitHub' (sourceGitHubTag e (owner, repo, fv)) (owner, repo, ff)
+
 -- | A synonym of 'fetchPypi' and 'sourcePypi'
 fromPypi ::
   PackageSet (Prod r) ->
@@ -253,13 +276,29 @@ sourceGitHub ::
   PackageSet (Prod (VersionSource : r))
 sourceGitHub e (owner, repo) = src e $ GitHubRelease owner repo
 
+-- | This package follows the a tag from github
+sourceGitHubTag ::
+  PackageSet (Prod r) ->
+  -- | owner, repo, and nvchecker list options to find the target tag
+  (Text, Text, ListOptions -> ListOptions) ->
+  PackageSet (Prod (VersionSource : r))
+sourceGitHubTag e (owner, repo, f) = src e $ GitHubTag owner repo $ f def
+
 -- | This package follows the latest git commit
 sourceGit ::
   PackageSet (Prod r) ->
   -- | git url
   Text ->
   PackageSet (Prod (VersionSource : r))
-sourceGit e _vurl = src e Git {..}
+sourceGit e _vurl = src e $ Git _vurl Nothing
+
+-- | Similar to 'sourceGit', but allows to specify branch
+sourceGit' ::
+  PackageSet (Prod r) ->
+  -- | git url and branch
+  (Text, Text) ->
+  PackageSet (Prod (VersionSource : r))
+sourceGit' e (_vurl, Just -> _vbranch) = src e $ Git {..}
 
 -- | This package follows the latest pypi release
 sourcePypi ::

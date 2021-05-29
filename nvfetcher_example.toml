@@ -21,3 +21,9 @@ fetch.url = "https://github.com/samuelngs/apple-emoji-linux/releases/download/la
 # following the latest commit
 src.git = "https://github.com/berberman/nvfetcher"
 fetch.github = "berberman/nvfetcher"
+
+[gcc-10]
+# Find a tag by regex
+src.github_tag = "gcc-mirror/gcc"
+src.include_regex = "releases/gcc-10.*"
+fetch.github = "gcc-mirror/gcc"

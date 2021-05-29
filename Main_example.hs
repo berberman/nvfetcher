@@ -5,10 +5,12 @@ module Main where
 import NvFetcher
 
 main :: IO ()
-main = runNvFetcher defaultArgs packageSet
+main = runNvFetcher defaultArgs {argTarget = "build"} packageSet
 
 packageSet :: PackageSet ()
 packageSet = do
+  define $ package "gcc-10" `fromGitHubTag` ("gcc-mirror", "gcc", includeRegex ?~ "releases/gcc-10.*")
+
   define $ package "feeluown-core" `fromPypi` "feeluown"
 
   define $ package "qliveplayer" `fromGitHub'` ("IsoaSFlus", "QLivePlayer", fetchSubmodules .~ True)

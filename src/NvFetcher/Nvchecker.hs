@@ -19,6 +19,8 @@
 -- see 'nvcheckerRule' for details.
 module NvFetcher.Nvchecker
   ( -- * Types
+    VersionSortMethod (..),
+    ListOptions (..),
     VersionSource (..),
     NvcheckerResult (..),
 
@@ -30,7 +32,7 @@ where
 
 import qualified Data.Aeson as A
 import Data.Coerce (coerce)
-import Data.Maybe (mapMaybe)
+import Data.Maybe (mapMaybe, maybeToList)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
@@ -82,6 +84,14 @@ genNvConfig srcName = \case
           github = "$_owner/$_repo"
           use_latest_release = true
     |]
+  GitHubTag {..} ->
+    [trimming|
+          [$srcName]
+          source = "github"
+          github = "$_owner/$_repo"
+          use_max_tag = true
+    |]
+      <> genListOptions _listOptions
   Git {..} ->
     [trimming|
           [$srcName]
@@ -122,6 +132,16 @@ genNvConfig srcName = \case
           repology = "$_repology"
           repo = "$_repo"
     |]
+  where
+    genListOptions ListOptions {..} =
+      "\n"
+        <> ( T.unlines . concat $
+               [ [[trimming|include_regex = "$x"|] | x <- maybeToList _includeRegex],
+                 [[trimming|exclude_regex = "$x"|] | x <- maybeToList _excludeRegex],
+                 [[trimming|sort_version_key = "$x"|] | (T.pack . show -> x) <- maybeToList _sortVersionKey],
+                 [[trimming|ignored = "$x"|] | x <- maybeToList _ignored]
+               ]
+           )
 
 -- | Run nvchecker
 checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult

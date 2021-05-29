@@ -11,6 +11,8 @@ module NvFetcher.Types.Lens where
 import Lens.Micro.TH
 import NvFetcher.Types
 
+makeLenses ''ListOptions
+
 makeLenses ''VersionSource
 
 makeLenses ''NixFetcher

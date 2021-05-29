@@ -30,6 +30,8 @@ module NvFetcher.Types
     Core (..),
 
     -- * Nvchecker types
+    VersionSortMethod (..),
+    ListOptions (..),
     VersionSource (..),
     NvcheckerResult (..),
 
@@ -48,6 +50,7 @@ where
 
 import qualified Data.Aeson as A
 import Data.Coerce (coerce)
+import Data.Default
 import Data.Maybe (fromMaybe)
 import Data.String (IsString)
 import Data.Text (Text)
@@ -93,10 +96,32 @@ type NixExpr = Text
 
 --------------------------------------------------------------------------------
 
+data VersionSortMethod = ParseVersion | Vercmp
+  deriving (Typeable, Eq, Ord, Enum, Generic, Hashable, Binary, NFData)
+
+instance Show VersionSortMethod where
+  show = \case
+    ParseVersion -> "parse_version"
+    Vercmp -> "vercmp"
+
+instance Default VersionSortMethod where
+  def = ParseVersion
+
+-- | The extra configuration for some version sources.
+-- See <https://nvchecker.readthedocs.io/en/latest/usage.html#list-options> for details.
+data ListOptions = ListOptions
+  { _includeRegex :: Maybe Text,
+    _excludeRegex :: Maybe Text,
+    _sortVersionKey :: Maybe VersionSortMethod,
+    _ignored :: Maybe Text
+  }
+  deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData, Default)
+
 -- | The input of nvchecker
 data VersionSource
   = GitHubRelease {_owner :: Text, _repo :: Text}
-  | Git {_vurl :: Text}
+  | GitHubTag {_owner :: Text, _repo :: Text, _listOptions :: ListOptions}
+  | Git {_vurl :: Text, _vbranch :: Maybe Text}
   | Pypi {_pypi :: Text}
   | ArchLinux {_archpkg :: Text}
   | Aur {_aur :: Text}
