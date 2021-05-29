@@ -27,3 +27,8 @@ fetch.github = "berberman/nvfetcher"
 src.github_tag = "gcc-mirror/gcc"
 src.include_regex = "releases/gcc-10.*"
 fetch.github = "gcc-mirror/gcc"
+
+[vim]
+src.webpage = "http://ftp.vim.org/pub/vim/patches/7.3/"
+src.regex = "7\\.3\\.\\d+"
+fetch.github = "gcc-mirror/gcc"

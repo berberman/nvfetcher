@@ -110,12 +110,15 @@ Each *package* corresponds to a TOML table, whose name is encoded as table key;
 there are two fields and four optional git prefetch configuration in each table:
 * a nvchecker configuration, how to track version updates
   * `src.github = owner/repo` - the latest gituhb release
+  * `src.github_tag = owner/repo` - the max github tag, usually used with list options (see below)
   * `src.pypi = pypi_name` - the latest pypi release
-  * `src.git = git_url` - the latest commit of a repo
+  * `src.git = git_url` (and an optional `src.branch = git_branch`) - the latest commit of a repo
   * `src.archpkg = archlinux_pkg_name` -- the latest version of an archlinux package
   * `src.aur = aur_pkg_name` -- the latest version of an aur package
   * `src.manual = v` -- a fixed version, which never updates
   * `src.repology = project:repo` -- the latest version from repology
+  * `src.webpage = web_url` and `src.regex` -- a string in webpage that matches with regex
+  * `src.httpheader = request_url` and `src.regex` -- a string in http header that matches with regex
 * a nix fetcher function, how to fetch the package given the version number. `$ver` is available, which will be set to the result of nvchecker.
   * `fetch.github = owner/repo` or `owner/repo:rev` (default to `$ver` if no `rev` specified)
   * `fetch.pypi = pypi_name` or `pypi_name:ver` (default to `$ver` if no `ver` specified)

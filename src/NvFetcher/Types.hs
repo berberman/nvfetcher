@@ -24,6 +24,7 @@ module NvFetcher.Types
   ( -- * Common types
     Version (..),
     SHA256 (..),
+    Branch (..),
     NixExpr,
     VersionChange (..),
     WithPackageKey (..),
@@ -70,6 +71,12 @@ newtype Version = Version Text
 -- | SHA 256 sum
 newtype SHA256 = SHA256 Text
   deriving newtype (Show, Eq)
+  deriving stock (Typeable, Generic)
+  deriving anyclass (Hashable, Binary, NFData)
+
+-- | Git branch ('Nothing': master)
+newtype Branch = Branch (Maybe Text)
+  deriving newtype (Show, Eq, Ord, Default)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
@@ -121,12 +128,14 @@ data ListOptions = ListOptions
 data VersionSource
   = GitHubRelease {_owner :: Text, _repo :: Text}
   | GitHubTag {_owner :: Text, _repo :: Text, _listOptions :: ListOptions}
-  | Git {_vurl :: Text, _vbranch :: Maybe Text}
+  | Git {_vurl :: Text, _vbranch :: Branch}
   | Pypi {_pypi :: Text}
   | ArchLinux {_archpkg :: Text}
   | Aur {_aur :: Text}
   | Manual {_manual :: Text}
   | Repology {_repology :: Text, _repo :: Text}
+  | Webpage {_vurl :: Text, _regex :: Text, _listOptions :: ListOptions}
+  | HttpHeader {_vurl :: Text, _regex :: Text, _listOptions :: ListOptions}
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 -- | The result of running nvchecker
@@ -150,7 +159,7 @@ data NixFetcher (k :: Prefetch)
   = FetchGit
       { _furl :: Text,
         _rev :: Version,
-        _branch :: Maybe Text,
+        _branch :: Branch,
         _deepClone :: Bool,
         _fetchSubmodules :: Bool,
         _leaveDotGit :: Bool,

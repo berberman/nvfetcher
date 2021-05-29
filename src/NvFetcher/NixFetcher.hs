@@ -54,6 +54,7 @@ import qualified Data.Text.Encoding as T
 import Development.Shake
 import NeatInterpolation (trimming)
 import NvFetcher.Types
+import Data.Default (def)
 
 --------------------------------------------------------------------------------
 
@@ -84,7 +85,7 @@ runFetcher = \case
         [T.unpack _furl]
           <> ["--rev", T.unpack $ coerce _rev]
           <> ["--fetch-submodules" | _fetchSubmodules]
-          <> concat [["--branch-name", T.unpack b] | b <- maybeToList _branch]
+          <> concat [["--branch-name", T.unpack b] | b <- maybeToList $ coerce _branch]
           <> ["--deepClone" | _deepClone]
           <> ["--leave-dotGit" | _leaveDotGit]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
@@ -149,7 +150,7 @@ prefetch = askOracle
 
 -- | Create a fetcher from git url
 gitFetcher :: Text -> PackageFetcher
-gitFetcher furl rev = FetchGit furl rev Nothing False False False ()
+gitFetcher furl rev = FetchGit furl rev def False False False ()
 
 -- | Create a fetcher from github repo
 gitHubFetcher ::

@@ -57,6 +57,8 @@ module NvFetcher.PackageSet
     sourceArchLinux,
     sourceManual,
     sourceRepology,
+    sourceWebpage,
+    sourceHttpHeader,
 
     -- ** Fetchers
     fetchGitHub,
@@ -290,7 +292,7 @@ sourceGit ::
   -- | git url
   Text ->
   PackageSet (Prod (VersionSource : r))
-sourceGit e _vurl = src e $ Git _vurl Nothing
+sourceGit e _vurl = src e $ Git _vurl def
 
 -- | Similar to 'sourceGit', but allows to specify branch
 sourceGit' ::
@@ -298,7 +300,7 @@ sourceGit' ::
   -- | git url and branch
   (Text, Text) ->
   PackageSet (Prod (VersionSource : r))
-sourceGit' e (_vurl, Just -> _vbranch) = src e $ Git {..}
+sourceGit' e (_vurl, coerce . Just -> _vbranch) = src e $ Git {..}
 
 -- | This package follows the latest pypi release
 sourcePypi ::
@@ -338,6 +340,22 @@ sourceRepology ::
   (Text, Text) ->
   PackageSet (Prod (VersionSource : r))
 sourceRepology e (project, repo) = src e $ Repology project repo
+
+-- | This package follows a version extracted from web page
+sourceWebpage ::
+  PackageSet (Prod r) ->
+  -- | web page url, regex, and list options
+  (Text, Text, ListOptions -> ListOptions) ->
+  PackageSet (Prod (VersionSource : r))
+sourceWebpage e (_vurl, _regex, f) = src e $ Webpage _vurl _regex $ f def
+
+-- | This package follows a version extracted from http header
+sourceHttpHeader ::
+  PackageSet (Prod r) ->
+  -- | url of the http request, regex, and list options
+  (Text, Text, ListOptions -> ListOptions) ->
+  PackageSet (Prod (VersionSource : r))
+sourceHttpHeader e (_vurl, _regex, f) = src e $ HttpHeader _vurl _regex $ f def
 
 --------------------------------------------------------------------------------
 

@@ -1,6 +1,5 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
 
@@ -32,16 +31,17 @@ where
 
 import qualified Data.Aeson as A
 import Data.Coerce (coerce)
-import Data.Maybe (mapMaybe, maybeToList)
-import Data.Text (Text)
+import Data.Maybe (mapMaybe)
+import Data.String (fromString)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import Development.Shake
 import Development.Shake.Rule
-import NeatInterpolation (trimming)
 import NvFetcher.ShakeExtras
 import NvFetcher.Types
 import NvFetcher.Utils
+import Toml (Value (Bool, Text), pretty)
+import Toml.Type.Edsl
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()
@@ -57,7 +57,7 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (q, pkg)) ol
       pure $ RunResult ChangedRecomputeDiff mempty undefined -- skip running, returning a never consumed result
     _ ->
       withTempFile $ \config -> do
-        writeFile' config $ T.unpack $ genNvConfig "pkg" q
+        writeFile' config $ T.unpack $ pretty $ mkToml $ table (fromString $ T.unpack $ coerce pkg) $ genNvConfig q
         need [config]
         (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
         putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
@@ -75,73 +75,58 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (q, pkg)) ol
                 else RunResult ChangedRecomputeDiff (encode' $ nvNow now) now {nvOld = Just cachedResult}
           Nothing -> RunResult ChangedRecomputeDiff (encode' $ nvNow now) now
 
-genNvConfig :: Text -> VersionSource -> Text
-genNvConfig srcName = \case
-  GitHubRelease {..} ->
-    [trimming|
-          [$srcName]
-          source = "github"
-          github = "$_owner/$_repo"
-          use_latest_release = true
-    |]
-  GitHubTag {..} ->
-    [trimming|
-          [$srcName]
-          source = "github"
-          github = "$_owner/$_repo"
-          use_max_tag = true
-    |]
-      <> genListOptions _listOptions
-  Git {..} ->
-    [trimming|
-          [$srcName]
-          source = "git"
-          git = "$_vurl"
-          use_commit = true
-    |]
-  Aur {..} ->
-    [trimming|
-          [$srcName]
-          source = "aur"
-          aur = "$_aur"
-          strip_release = true
-    |]
-  ArchLinux {..} ->
-    [trimming|
-          [$srcName]
-          source = "archpkg"
-          archpkg = "$_archpkg"
-          strip_release = true
-    |]
-  Pypi {..} ->
-    [trimming|
-          [$srcName]
-          source = "pypi"
-          pypi = "$_pypi"
-    |]
-  Manual {..} ->
-    [trimming|
-          [$srcName]
-          source = "manual"
-          manual = "$_manual"
-    |]
-  Repology {..} ->
-    [trimming|
-          [$srcName]
-          source = "repology"
-          repology = "$_repology"
-          repo = "$_repo"
-    |]
+genNvConfig :: VersionSource -> TDSL
+genNvConfig = \case
+  GitHubRelease {..} -> do
+    "source" =: "github"
+    "github" =: Text (_owner <> "/" <> _repo)
+    "use_latest_release" =: Bool True
+  GitHubTag {..} -> do
+    "source" =: "github"
+    "github" =: Text (_owner <> "/" <> _repo)
+    "use_max_tag" =: Bool True
+    genListOptions _listOptions
+  Git {..} -> do
+    "source" =: "git"
+    "git" =: Text _vurl
+    "branch" =:? coerce _vbranch
+    "use_commit" =: Bool True
+  Aur {..} -> do
+    "source" =: "aur"
+    "aur" =: Text _aur
+    "strip_release" =: Bool True
+  ArchLinux {..} -> do
+    "source" =: "archpkg"
+    "aur" =: Text _archpkg
+    "strip_release" =: Bool True
+  Pypi {..} -> do
+    "source" =: "pypi"
+    "pypi" =: Text _pypi
+  Manual {..} -> do
+    "source" =: "manual"
+    "manual" =: Text _manual
+  Repology {..} -> do
+    "source" =: "repology"
+    "repology" =: Text _repology
+    "repo" =: Text _repo
+  Webpage {..} -> do
+    "source" =: "regex"
+    "url" =: Text _vurl
+    "regex" =: Text _regex
+    genListOptions _listOptions
+  HttpHeader {..} -> do
+    "source" =: "httpheader"
+    "url" =: Text _vurl
+    "regex" =: Text _regex
+    genListOptions _listOptions
   where
-    genListOptions ListOptions {..} =
-      "\n"
-        <> ( T.unlines . concat $
-               [ [[trimming|include_regex = "$x"|] | x <- maybeToList _includeRegex],
-                 [[trimming|exclude_regex = "$x"|] | x <- maybeToList _excludeRegex],
-                 [[trimming|sort_version_key = "$x"|] | (T.pack . show -> x) <- maybeToList _sortVersionKey],
-                 [[trimming|ignored = "$x"|] | x <- maybeToList _ignored]
-               ]
-           )
+    key =:? (Just x) = key =: Text x
+    _ =:? _ = pure ()
+    genListOptions ListOptions {..} = do
+      "include_regex" =:? _includeRegex
+      "exclude_regex" =:? _excludeRegex
+      "sort_version_key" =:? fmap (T.pack . show) _sortVersionKey
+      "ignored" =:? _ignored
 
 -- | Run nvchecker
 checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult
