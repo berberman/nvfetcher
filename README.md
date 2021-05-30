@@ -120,9 +120,9 @@ there are two fields and four optional git prefetch configuration in each table:
   * `src.webpage = web_url` and `src.regex` -- a string in webpage that matches with regex
   * `src.httpheader = request_url` and `src.regex` -- a string in http header that matches with regex
 * a nix fetcher function, how to fetch the package given the version number. `$ver` is available, which will be set to the result of nvchecker.
-  * `fetch.github = owner/repo` or `owner/repo:rev` (default to `$ver` if no `rev` specified)
-  * `fetch.pypi = pypi_name` or `pypi_name:ver` (default to `$ver` if no `ver` specified)
-  * `fetch.git = git_url` or `git_url:rev` (default to `$ver` if no `rev` specified)
+  * `fetch.github = owner/repo`
+  * `fetch.pypi = pypi_name`
+  * `fetch.git = git_url`
   * `fetch.url = url`
 
 * optional git prefetch configuration, which makes sense only when the fetcher equals to `fetch.github` or `fetch.git`.
