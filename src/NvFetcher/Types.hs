@@ -28,7 +28,7 @@ module NvFetcher.Types
     NixExpr,
     VersionChange (..),
     WithPackageKey (..),
-    Core (..),
+    FetchStatus (..),
 
     -- * Nvchecker types
     VersionSortMethod (..),
@@ -38,11 +38,17 @@ module NvFetcher.Types
 
     -- * Nix fetcher types
     NixFetcher (..),
-    Prefetch (..),
-    PrefetchResult,
+    FetchResult,
+
+    -- * Post fetch types
+    PostFetcher (..),
+    Core (..),
+    -- * Core types
+
 
     -- * Package types
     PackageName,
+    PackagePostFetch,
     PackageFetcher,
     Package (..),
     PackageKey (..),
@@ -56,6 +62,7 @@ import Data.Maybe (fromMaybe)
 import Data.String (IsString)
 import Data.Text (Text)
 import qualified Data.Text as T
+import Data.Void (Void)
 import Development.Shake
 import Development.Shake.Classes
 import GHC.Generics (Generic)
@@ -70,7 +77,7 @@ newtype Version = Version Text
 
 -- | SHA 256 sum
 newtype SHA256 = SHA256 Text
-  deriving newtype (Show, Eq)
+  deriving newtype (Show, Eq, Ord)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
@@ -155,7 +162,7 @@ type instance RuleResult VersionSource = NvcheckerResult
 --------------------------------------------------------------------------------
 
 -- | If the package is prefetched, then we can obtain the SHA256
-data NixFetcher (k :: Prefetch)
+data NixFetcher (k :: FetchStatus)
   = FetchGit
       { _furl :: Text,
         _rev :: Version,
@@ -163,32 +170,57 @@ data NixFetcher (k :: Prefetch)
         _deepClone :: Bool,
         _fetchSubmodules :: Bool,
         _leaveDotGit :: Bool,
-        _sha256 :: PrefetchResult k
+        _sha256 :: FetchResult k
       }
-  | FetchUrl {_furl :: Text, _sha256 :: PrefetchResult k}
+  | FetchUrl {_furl :: Text, _sha256 :: FetchResult k}
   deriving (Typeable, Generic)
 
--- | Prefetch status
-data Prefetch = Fresh | Prefetched
+-- | Fetch status
+data FetchStatus = Fresh | Fetched
 
 -- | Prefetched fetchers hold hashes
-type family PrefetchResult (k :: Prefetch) where
-  PrefetchResult Fresh = ()
-  PrefetchResult Prefetched = SHA256
+type family FetchResult (k :: FetchStatus) where
+  FetchResult Fresh = ()
+  FetchResult Fetched = SHA256
 
-type instance RuleResult (NixFetcher Fresh) = NixFetcher Prefetched
+type instance RuleResult (NixFetcher Fresh) = NixFetcher Fetched
 
-deriving instance Show (PrefetchResult k) => Show (NixFetcher k)
+deriving instance Show (FetchResult k) => Show (NixFetcher k)
 
-deriving instance Eq (PrefetchResult k) => Eq (NixFetcher k)
+deriving instance Eq (FetchResult k) => Eq (NixFetcher k)
 
-deriving instance Ord (PrefetchResult k) => Ord (NixFetcher k)
+deriving instance Ord (FetchResult k) => Ord (NixFetcher k)
 
-deriving instance Hashable (PrefetchResult k) => Hashable (NixFetcher k)
+deriving instance Hashable (FetchResult k) => Hashable (NixFetcher k)
 
-deriving instance Binary (PrefetchResult k) => Binary (NixFetcher k)
+deriving instance Binary (FetchResult k) => Binary (NixFetcher k)
 
-deriving instance NFData (PrefetchResult k) => NFData (NixFetcher k)
+deriving instance NFData (FetchResult k) => NFData (NixFetcher k)
+
+--------------------------------------------------------------------------------
+
+-- | Language-specific information of a package for post-process
+data PostFetcher (k :: FetchStatus)
+  = -- | Fetch @cargoSha256@ used in @buildRustPackage@
+    -- New packages should consider using @CargoLock@ instead.
+    RustLegacy PackageName Version (NixFetcher Fetched) (FetchResult k)
+  | -- | TODO
+    Go Void
+  deriving (Typeable, Generic)
+
+type instance RuleResult (PostFetcher Fresh) = PostFetcher Fetched
+
+deriving instance Show (FetchResult k) => Show (PostFetcher k)
+
+deriving instance Eq (FetchResult k) => Eq (PostFetcher k)
+
+deriving instance Ord (FetchResult k) => Ord (PostFetcher k)
+
+deriving instance Hashable (FetchResult k) => Hashable (PostFetcher k)
+
+deriving instance Binary (FetchResult k) => Binary (PostFetcher k)
+
+deriving instance NFData (FetchResult k) => NFData (PostFetcher k)
 
 --------------------------------------------------------------------------------
 
@@ -197,6 +229,9 @@ type PackageName = Text
 
 -- | How to create package source fetcher given a version
 type PackageFetcher = Version -> NixFetcher Fresh
+
+-- | How to creat post fetcher given prefetch source
+type PackagePostFetch = PackageName -> Version -> NixFetcher Fetched -> PostFetcher Fresh
 
 -- | A package is defined with:
 --
@@ -210,7 +245,8 @@ type PackageFetcher = Version -> NixFetcher Fresh
 data Package = Package
   { _pname :: PackageName,
     _pversion :: VersionSource,
-    _pfetcher :: PackageFetcher
+    _pfetcher :: PackageFetcher,
+    _ppostfetch :: Maybe PackagePostFetch
   }
 
 -- | Package key is the name of a package.
@@ -220,13 +256,13 @@ newtype PackageKey = PackageKey PackageName
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
+--------------------------------------------------------------------------------
+
 -- | The key type of nvfetcher rule. See "NvFetcher.Core"
 data Core = Core
   deriving (Eq, Show, Ord, Typeable, Generic, Hashable, Binary, NFData)
 
 type instance RuleResult Core = NixExpr
-
---------------------------------------------------------------------------------
 
 -- | Decorate a rule's key with 'PackageKey'
 newtype WithPackageKey k = WithPackageKey (k, PackageKey)

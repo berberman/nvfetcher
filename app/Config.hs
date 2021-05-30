@@ -26,5 +26,5 @@ parseConfig toml = go tables [] []
     go [] [] sp = Right sp
     go [] se _ = Left se
     tables = [fmap (toPackage k) $ validationToEither $ Toml.runTomlCodec iCodec v | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml]
-    toPackage k (v, f) = Package k v f
+    toPackage k (v, f) = Package k v f Nothing
     iCodec = (,) <$> versionSourceCodec .= view _1 <*> fetcherCodec .= view _2

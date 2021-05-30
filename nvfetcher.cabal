@@ -55,12 +55,14 @@ library
   exposed-modules:
     NvFetcher
     NvFetcher.Core
+    NvFetcher.NixExpr
     NvFetcher.NixFetcher
     NvFetcher.Nvchecker
     NvFetcher.PackageSet
-    NvFetcher.ShakeExtras
+    NvFetcher.PostFetcher
     NvFetcher.Types
     NvFetcher.Types.Lens
+    NvFetcher.Types.ShakeExtras
 
 executable nvfetcher
   import:          common-options

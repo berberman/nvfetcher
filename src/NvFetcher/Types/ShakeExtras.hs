@@ -9,7 +9,7 @@
 -- Portability: portable
 --
 -- This module is about global information we use in rules.
-module NvFetcher.ShakeExtras
+module NvFetcher.Types.ShakeExtras
   ( -- * Types
     ShakeExtras (..),
     initShakeExtras,

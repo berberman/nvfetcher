@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TypeApplications #-}
@@ -11,20 +12,24 @@
 -- Stability: experimental
 -- Portability: portable
 module NvFetcher.Core
-  ( coreRules,
+  ( Core (..),
+    coreRules,
     generateNixSourceExpr,
   )
 where
 
 import Data.Coerce (coerce)
 import Data.Text (Text)
+import Data.Void (absurd)
 import Development.Shake
 import Development.Shake.Rule
 import NeatInterpolation (trimming)
+import NvFetcher.NixExpr
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
-import NvFetcher.ShakeExtras
+import NvFetcher.PostFetcher
 import NvFetcher.Types
+import NvFetcher.Types.ShakeExtras
 import NvFetcher.Utils
 
 -- | The core rule of nvchecker.
@@ -33,6 +38,7 @@ coreRules :: Rules ()
 coreRules = do
   nvcheckerRule
   prefetchRule
+  postFetchRule
   addBuiltinRule noLint noIdentity $ \(WithPackageKey (Core, pkg)) mOld mode -> case mode of
     RunDependenciesSame
       | Just old <- mOld,
@@ -44,6 +50,11 @@ coreRules = do
         Just Package {..} -> do
           (NvcheckerResult version mOldV) <- checkVersion _pversion pkg
           prefetched <- prefetch $ _pfetcher version
+          postfetched <- sequenceA $ (`postfetch` pkg) <$> (($ prefetched) . ($ version) . ($ _pname) <$> _ppostfetch)
+          let appending = case postfetched of
+                Just (RustLegacy _ _ _ cargoSha256) -> "cargoSha256 = " <> asString (coerce cargoSha256) <> ";"
+                Just (Go bot) -> absurd bot
+                Nothing -> ""
           case mOldV of
             Nothing ->
               recordVersionChange _pname Nothing version
@@ -51,7 +62,7 @@ coreRules = do
               | old /= version ->
                 recordVersionChange _pname (Just old) version
             _ -> pure ()
-          let result = gen _pname version prefetched
+          let result = gen _pname version prefetched appending
           pure $ RunResult ChangedRecomputeDiff (encode' (result, version)) result
 
 -- | Run the core rule.
@@ -71,12 +82,13 @@ coreRules = do
 generateNixSourceExpr :: PackageKey -> Action NixExpr
 generateNixSourceExpr k = apply1 $ WithPackageKey (Core, k)
 
-gen :: PackageName -> Version -> NixFetcher Prefetched -> Text
-gen name (coerce -> ver) (toNixExpr -> srcP) =
+gen :: PackageName -> Version -> NixFetcher Fetched -> Text -> Text
+gen name (coerce -> ver) (toNixExpr -> srcP) appending =
   [trimming|
   $name = {
     pname = "$name";
     version = "$ver";
     src = $srcP;
+    $appending
   };
 |]

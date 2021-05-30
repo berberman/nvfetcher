@@ -26,9 +26,8 @@
 module NvFetcher.NixFetcher
   ( -- * Types
     NixFetcher (..),
-    Prefetch (..),
-    ToNixExpr (..),
-    PrefetchResult,
+    FetchStatus (..),
+    FetchResult,
 
     -- * Rules
     prefetchRule,
@@ -47,6 +46,7 @@ import Control.Monad (void, (<=<))
 import qualified Data.Aeson as A
 import qualified Data.Aeson.Types as A
 import Data.Coerce (coerce)
+import Data.Default (def)
 import Data.Maybe (maybeToList)
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -54,27 +54,8 @@ import qualified Data.Text.Encoding as T
 import Development.Shake
 import NeatInterpolation (trimming)
 import NvFetcher.Types
-import Data.Default (def)
 
 --------------------------------------------------------------------------------
-
--- | Types can be converted into nix expr
-class ToNixExpr a where
-  toNixExpr :: a -> NixExpr
-
-instance ToNixExpr (NixFetcher Fresh) where
-  toNixExpr = buildNixFetcher "lib.fakeSha256"
-
-instance ToNixExpr (NixFetcher Prefetched) where
-  -- add quotation marks
-  toNixExpr f = buildNixFetcher (T.pack $ show $ T.unpack $ coerce $ _sha256 f) f
-
-instance ToNixExpr Bool where
-  toNixExpr True = "true"
-  toNixExpr False = "false"
-
-instance ToNixExpr Version where
-  toNixExpr = coerce
 
 runFetcher :: NixFetcher Fresh -> Action SHA256
 runFetcher = \case
@@ -100,34 +81,6 @@ runFetcher = \case
       [x] -> pure $ coerce x
       _ -> fail $ "Failed to parse output from nix-prefetch-url: " <> T.unpack out
 
-buildNixFetcher :: Text -> NixFetcher k -> Text
-buildNixFetcher sha256 = \case
-  FetchGit
-    { _sha256 = _,
-      _rev = toNixExpr -> rev,
-      _fetchSubmodules = toNixExpr -> fetchSubmodules,
-      _deepClone = toNixExpr -> deepClone,
-      _leaveDotGit = toNixExpr -> leaveDotGit,
-      ..
-    } ->
-      [trimming|
-          fetchgit {
-            url = "$_furl";
-            rev = "$rev";
-            fetchSubmodules = $fetchSubmodules;
-            deepClone = $deepClone;
-            leaveDotGit = $leaveDotGit;
-            sha256 = $sha256;
-          }
-    |]
-  (FetchUrl url _) ->
-    [trimming|
-          fetchurl {
-            sha256 = $sha256;
-            url = "$url";
-          }
-    |]
-
 pypiUrl :: Text -> Version -> Text
 pypiUrl pypi (coerce -> ver) =
   let h = T.cons (T.head pypi) ""
@@ -143,7 +96,7 @@ prefetchRule = void $
     pure $ f {_sha256 = sha256}
 
 -- | Run nix fetcher
-prefetch :: NixFetcher Fresh -> Action (NixFetcher Prefetched)
+prefetch :: NixFetcher Fresh -> Action (NixFetcher Fetched)
 prefetch = askOracle
 
 --------------------------------------------------------------------------------

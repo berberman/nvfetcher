@@ -44,7 +44,7 @@ module NvFetcher
     runNvFetcher,
     module NvFetcher.PackageSet,
     module NvFetcher.Types,
-    module NvFetcher.ShakeExtras,
+    module NvFetcher.Types.ShakeExtras,
   )
 where
 
@@ -56,7 +56,7 @@ import NvFetcher.Core
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
 import NvFetcher.PackageSet
-import NvFetcher.ShakeExtras
+import NvFetcher.Types.ShakeExtras
 import NvFetcher.Types
 
 -- | Arguments for running nvfetcher

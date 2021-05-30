@@ -37,7 +37,7 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import Development.Shake
 import Development.Shake.Rule
-import NvFetcher.ShakeExtras
+import NvFetcher.Types.ShakeExtras
 import NvFetcher.Types
 import NvFetcher.Utils
 import Toml (Value (Bool, Text), pretty)
