@@ -9,6 +9,8 @@ main = runNvFetcher defaultArgs {argTarget = "build"} packageSet
 
 packageSet :: PackageSet ()
 packageSet = do
+  defineExtractSrc ["Cargo.lock"] $ package "fd" `fromGitHub` ("sharkdp", "fd")
+
   define $ package "gcc-10" `fromGitHubTag` ("gcc-mirror", "gcc", includeRegex ?~ "releases/gcc-10.*")
 
   define $ package "feeluown-core" `fromPypi` "feeluown"

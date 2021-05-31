@@ -32,3 +32,8 @@ fetch.github = "gcc-mirror/gcc"
 src.webpage = "http://ftp.vim.org/pub/vim/patches/7.3/"
 src.regex = "7\\.3\\.\\d+"
 fetch.github = "vim/vim"
+
+[fd]
+src.github = "sharkdp/fd"
+fetch.github = "sharkdp/fd"
+extract = ["Cargo.lock"]

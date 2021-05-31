@@ -40,15 +40,15 @@ module NvFetcher.Types
     NixFetcher (..),
     FetchResult,
 
-    -- * Post fetch types
-    PostFetcher (..),
-    Core (..),
-    -- * Core types
+    -- * ExtractSrc Types
+    ExtractSrc (..),
 
+    -- * Core types
+    Core (..),
 
     -- * Package types
     PackageName,
-    PackagePostFetch,
+    -- PackagePostFetch,
     PackageFetcher,
     Package (..),
     PackageKey (..),
@@ -58,11 +58,11 @@ where
 import qualified Data.Aeson as A
 import Data.Coerce (coerce)
 import Data.Default
+import Data.HashMap.Strict (HashMap)
 import Data.Maybe (fromMaybe)
 import Data.String (IsString)
 import Data.Text (Text)
 import qualified Data.Text as T
-import Data.Void (Void)
 import Development.Shake
 import Development.Shake.Classes
 import GHC.Generics (Generic)
@@ -199,28 +199,12 @@ deriving instance NFData (FetchResult k) => NFData (NixFetcher k)
 
 --------------------------------------------------------------------------------
 
--- | Language-specific information of a package for post-process
-data PostFetcher (k :: FetchStatus)
-  = -- | Fetch @cargoSha256@ used in @buildRustPackage@
-    -- New packages should consider using @CargoLock@ instead.
-    RustLegacy PackageName Version (NixFetcher Fetched) (FetchResult k)
-  | -- | TODO
-    Go Void
-  deriving (Typeable, Generic)
+-- | Extract file contents from package source
+-- e.g. @Cargo.lock@
+data ExtractSrc = ExtractSrc (NixFetcher Fetched) [FilePath]
+  deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
-type instance RuleResult (PostFetcher Fresh) = PostFetcher Fetched
-
-deriving instance Show (FetchResult k) => Show (PostFetcher k)
-
-deriving instance Eq (FetchResult k) => Eq (PostFetcher k)
-
-deriving instance Ord (FetchResult k) => Ord (PostFetcher k)
-
-deriving instance Hashable (FetchResult k) => Hashable (PostFetcher k)
-
-deriving instance Binary (FetchResult k) => Binary (PostFetcher k)
-
-deriving instance NFData (FetchResult k) => NFData (PostFetcher k)
+type instance RuleResult ExtractSrc = HashMap FilePath Text
 
 --------------------------------------------------------------------------------
 
@@ -230,14 +214,12 @@ type PackageName = Text
 -- | How to create package source fetcher given a version
 type PackageFetcher = Version -> NixFetcher Fresh
 
--- | How to creat post fetcher given prefetch source
-type PackagePostFetch = PackageName -> Version -> NixFetcher Fetched -> PostFetcher Fresh
-
 -- | A package is defined with:
 --
 -- 1. its name
 -- 2. how to track its version
 -- 3. how to fetch it as we have the version
+-- 4. optional file paths to extract (dump to generated nix expr)
 --
 -- /INVARIANT: 'Version' passed to 'PackageFetcher' MUST be used textually,/
 -- /i.e. can only be concatenated with other strings,/
@@ -246,7 +228,7 @@ data Package = Package
   { _pname :: PackageName,
     _pversion :: VersionSource,
     _pfetcher :: PackageFetcher,
-    _ppostfetch :: Maybe PackagePostFetch
+    _pextract :: [FilePath]
   }
 
 -- | Package key is the name of a package.

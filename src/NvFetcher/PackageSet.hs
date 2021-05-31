@@ -28,7 +28,7 @@ module NvFetcher.PackageSet
     PackageSetF,
     PackageSet,
     newPackage,
-    newPackagePostFetch,
+    newPackageExtractSrc,
     purePackageSet,
     runPackageSet,
 
@@ -37,11 +37,10 @@ module NvFetcher.PackageSet
     -- ** Primitives
     PkgDSL (..),
     define,
-    definePostFetch,
+    defineExtractSrc,
     package,
     src,
     fetch,
-    postFetch,
 
     -- ** Two-in-one functions
     fromGitHub,
@@ -72,9 +71,6 @@ module NvFetcher.PackageSet
     fetchGit',
     fetchUrl,
 
-    -- ** Post-fetchers
-    calculateCargoSha256,
-
     -- ** Miscellaneous
     Prod,
     Member,
@@ -103,7 +99,7 @@ import Data.Text (Text)
 import GHC.TypeLits
 import Lens.Micro
 import NvFetcher.NixFetcher
-import NvFetcher.PostFetcher
+-- import NvFetcher.PostFetcher
 import NvFetcher.Types
 import NvFetcher.Types.Lens
 
@@ -136,16 +132,16 @@ newPackage ::
   VersionSource ->
   PackageFetcher ->
   PackageSet ()
-newPackage name source fetcher = liftF $ NewPackage (Package name source fetcher Nothing) ()
+newPackage name source fetcher = liftF $ NewPackage (Package name source fetcher []) ()
 
 -- | Add a package which needs post-fetch to package set
-newPackagePostFetch ::
+newPackageExtractSrc ::
   PackageName ->
   VersionSource ->
   PackageFetcher ->
-  PackagePostFetch ->
+  [FilePath] ->
   PackageSet ()
-newPackagePostFetch name source fetcher pf = liftF $ NewPackage (Package name source fetcher $ Just pf) ()
+newPackageExtractSrc name source fetcher fp = liftF $ NewPackage (Package name source fetcher fp) ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -198,7 +194,7 @@ class PkgDSL f where
   new :: f PackageName -> f (Prod '[PackageName])
   andThen :: f (Prod r) -> f a -> f (Prod (a ': r))
   end :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r) => f (Prod r) -> f ()
-  end' :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member PackagePostFetch r) => f (Prod r) -> f ()
+  end' :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member [FilePath] r) => f (Prod r) -> f ()
 
 instance PkgDSL PackageSet where
   new e = do
@@ -213,7 +209,7 @@ instance PkgDSL PackageSet where
     newPackage (proj p) (proj p) (proj p)
   end' e = do
     p <- e
-    newPackagePostFetch (proj p) (proj p) (proj p) (proj p)
+    newPackageExtractSrc (proj p) (proj p) (proj p) (proj p)
 
 -- | 'PkgDSL' version of 'newPackage'
 --
@@ -231,16 +227,17 @@ define ::
   PackageSet ()
 define = end
 
--- | Similar to 'define', but allows post-fetch
-definePostFetch ::
+-- | Similar to 'define', but takes an input file paths to extract from package source
+defineExtractSrc ::
   ( Member PackageName r,
     Member VersionSource r,
     Member PackageFetcher r,
-    Member PackagePostFetch r
+    NotElem [FilePath] r
   ) =>
+  [FilePath] ->
   PackageSet (Prod r) ->
   PackageSet ()
-definePostFetch = end'
+defineExtractSrc fp e = end' $ andThen e $ pure fp
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])
@@ -256,13 +253,6 @@ fetch ::
   PackageFetcher ->
   PackageSet (Prod (PackageFetcher ': r))
 fetch = (. pure) . andThen
-
--- | Attach post-fetchers
-postFetch ::
-  PackageSet (Prod r) ->
-  PackagePostFetch ->
-  PackageSet (Prod (PackagePostFetch ': r))
-postFetch = (. pure) . andThen
 
 --------------------------------------------------------------------------------
 

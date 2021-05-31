@@ -14,7 +14,7 @@ where
 
 import Data.Coerce (coerce)
 import Data.Text (Text)
-import Data.Void (absurd)
+import qualified Data.Text as T
 import NeatInterpolation (trimming)
 import NvFetcher.Types
 import NvFetcher.Utils (asString)
@@ -32,6 +32,15 @@ instance ToNixExpr (NixFetcher Fetched) where
 instance ToNixExpr Bool where
   toNixExpr True = "true"
   toNixExpr False = "false"
+
+instance ToNixExpr a => ToNixExpr [a] where
+  toNixExpr xs = foldl (\acc x -> acc <> " " <> toNixExpr x) "[" xs <> " ]"
+
+instance {-# OVERLAPS #-} ToNixExpr String where
+  toNixExpr = T.pack . show
+
+instance ToNixExpr NixExpr where
+  toNixExpr = id
 
 instance ToNixExpr Version where
   toNixExpr = coerce
@@ -64,20 +73,22 @@ nixFetcher sha256 = \case
           }
     |]
 
-instance ToNixExpr (PostFetcher Fresh) where
-  toNixExpr (RustLegacy name (coerce -> version) fetcher _) = fetchCargoTarball (name <> "-" <> version) "lib.fakeSha256" fetcher
-  toNixExpr (Go bot) = absurd bot
+instance ToNixExpr ExtractSrc where
+  toNixExpr (ExtractSrc fetcher files) = extractFiles fetcher files
 
-instance ToNixExpr (PostFetcher Fetched) where
-  toNixExpr (RustLegacy name (coerce -> version) fetcher sha256) = fetchCargoTarball (name <> "-" <> version) (asString $ coerce sha256) fetcher
-  toNixExpr (Go bot) = absurd bot
-
-fetchCargoTarball :: PackageName -> Text -> NixFetcher Fetched -> NixExpr
-fetchCargoTarball (asString -> name) sha256 (toNixExpr -> fetcherExpr) =
+extractFiles :: NixFetcher Fetched -> [FilePath] -> NixExpr
+extractFiles (toNixExpr -> fetcherExpr) (toNixExpr -> fileNames) =
   [trimming|
-    rustPlatform.fetchCargoTarball {
-      name = $name;
-      src = $fetcherExpr;
-      sha256 = $sha256;
-    }
+    let
+      drv = import (pkgs.writeText "src" ''
+        pkgs: {
+          src = pkgs.$fetcherExpr;
+        }
+      '');
+      fileNames = $fileNames;
+      toFile = f: builtins.readFile ((drv pkgs).src + "/" + f);
+    in builtins.listToAttrs (builtins.map (x: {
+      name = x;
+      value = toFile x;
+    }) fileNames)
   |]

@@ -19,15 +19,16 @@ module NvFetcher.Core
 where
 
 import Data.Coerce (coerce)
+import qualified Data.HashMap.Strict as HMap
 import Data.Text (Text)
-import Data.Void (absurd)
+import qualified Data.Text as T
 import Development.Shake
 import Development.Shake.Rule
 import NeatInterpolation (trimming)
+import NvFetcher.ExtractSrc
 import NvFetcher.NixExpr
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
-import NvFetcher.PostFetcher
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
 import NvFetcher.Utils
@@ -38,7 +39,7 @@ coreRules :: Rules ()
 coreRules = do
   nvcheckerRule
   prefetchRule
-  postFetchRule
+  extractSrcRule
   addBuiltinRule noLint noIdentity $ \(WithPackageKey (Core, pkg)) mOld mode -> case mode of
     RunDependenciesSame
       | Just old <- mOld,
@@ -50,11 +51,12 @@ coreRules = do
         Just Package {..} -> do
           (NvcheckerResult version mOldV) <- checkVersion _pversion pkg
           prefetched <- prefetch $ _pfetcher version
-          postfetched <- sequenceA $ (`postfetch` pkg) <$> (($ prefetched) . ($ version) . ($ _pname) <$> _ppostfetch)
-          let appending = case postfetched of
-                Just (RustLegacy _ _ _ cargoSha256) -> "cargoSha256 = " <> asString (coerce cargoSha256) <> ";"
-                Just (Go bot) -> absurd bot
-                Nothing -> ""
+          appending <-
+            if null _pextract
+              then pure ""
+              else do
+                result <- HMap.toList <$> extractSrc (ExtractSrc prefetched _pextract) pkg
+                pure $ T.unlines [toNixExpr k <> " = ''\n" <> v <> "'';" | (k, v) <- result]
           case mOldV of
             Nothing ->
               recordVersionChange _pname Nothing version

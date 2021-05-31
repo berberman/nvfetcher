@@ -8,6 +8,7 @@
 
 module Config where
 
+import Config.ExtractFiles
 import Config.PackageFetcher
 import Config.VersionSource
 import Data.List.NonEmpty (NonEmpty ((:|)))
@@ -26,5 +27,5 @@ parseConfig toml = go tables [] []
     go [] [] sp = Right sp
     go [] se _ = Left se
     tables = [fmap (toPackage k) $ validationToEither $ Toml.runTomlCodec iCodec v | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml]
-    toPackage k (v, f) = Package k v f Nothing
-    iCodec = (,) <$> versionSourceCodec .= view _1 <*> fetcherCodec .= view _2
+    toPackage k (v, f, e) = Package k v f e
+    iCodec = (,,) <$> versionSourceCodec .= view _1 <*> fetcherCodec .= view _2 <*> extractFilesCodec .= view _3
