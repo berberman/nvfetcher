@@ -36,6 +36,7 @@ common common-options
     , microlens
     , microlens-th
     , neat-interpolation    ^>=0.5.1
+    , parsec
     , shake                 ^>=0.19.4
     , text
     , tomland               ^>=1.3.2
@@ -58,6 +59,7 @@ library
     NvFetcher
     NvFetcher.Core
     NvFetcher.ExtractSrc
+    NvFetcher.FetchRustGitDeps
     NvFetcher.NixExpr
     NvFetcher.NixFetcher
     NvFetcher.Nvchecker
@@ -74,7 +76,6 @@ executable nvfetcher
     Config
     Config.PackageFetcher
     Config.VersionSource
-    Config.ExtractFiles
     Paths_nvfetcher
 
   autogen-modules: Paths_nvfetcher

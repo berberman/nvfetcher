@@ -28,7 +28,6 @@ module NvFetcher.Types
     NixExpr,
     VersionChange (..),
     WithPackageKey (..),
-    FetchStatus (..),
 
     -- * Nvchecker types
     VersionSortMethod (..),
@@ -39,16 +38,19 @@ module NvFetcher.Types
     -- * Nix fetcher types
     NixFetcher (..),
     FetchResult,
+    FetchStatus (..),
 
     -- * ExtractSrc Types
     ExtractSrc (..),
+
+    -- * FetchRustGitDeps types
+    FetchRustGitDeps (..),
 
     -- * Core types
     Core (..),
 
     -- * Package types
     PackageName,
-    -- PackagePostFetch,
     PackageFetcher,
     Package (..),
     PackageKey (..),
@@ -208,6 +210,17 @@ type instance RuleResult ExtractSrc = HashMap FilePath Text
 
 --------------------------------------------------------------------------------
 
+-- | Fetch @outputHashes@ for git dependencies in @Cargo.lock@.
+-- See <https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file> for details.
+-- We need fetched source and the file path to @@Cargo.lock@.
+data FetchRustGitDeps = FetchRustGitDeps (NixFetcher Fetched) FilePath
+  deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
+
+-- | @outputHashes@, a mapping from nameVer -> output hash
+type instance RuleResult FetchRustGitDeps = HashMap Text SHA256
+
+--------------------------------------------------------------------------------
+
 -- | Package name, used in generating nix expr
 type PackageName = Text
 
@@ -220,6 +233,7 @@ type PackageFetcher = Version -> NixFetcher Fresh
 -- 2. how to track its version
 -- 3. how to fetch it as we have the version
 -- 4. optional file paths to extract (dump to generated nix expr)
+-- 5. @Cargo.lock@ path (if it's a rust package)
 --
 -- /INVARIANT: 'Version' passed to 'PackageFetcher' MUST be used textually,/
 -- /i.e. can only be concatenated with other strings,/
@@ -228,7 +242,8 @@ data Package = Package
   { _pname :: PackageName,
     _pversion :: VersionSource,
     _pfetcher :: PackageFetcher,
-    _pextract :: [FilePath]
+    _pextract :: [FilePath],
+    _pcargo :: Maybe FilePath
   }
 
 -- | Package key is the name of a package.

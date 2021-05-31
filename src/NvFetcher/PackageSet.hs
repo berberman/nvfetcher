@@ -29,6 +29,7 @@ module NvFetcher.PackageSet
     PackageSet,
     newPackage,
     newPackageExtractSrc,
+    newPackageRust,
     purePackageSet,
     runPackageSet,
 
@@ -38,6 +39,7 @@ module NvFetcher.PackageSet
     PkgDSL (..),
     define,
     defineExtractSrc,
+    defineRust,
     package,
     src,
     fetch,
@@ -132,16 +134,27 @@ newPackage ::
   VersionSource ->
   PackageFetcher ->
   PackageSet ()
-newPackage name source fetcher = liftF $ NewPackage (Package name source fetcher []) ()
+newPackage name source fetcher = liftF $ NewPackage (Package name source fetcher [] Nothing) ()
 
--- | Add a package which needs post-fetch to package set
+-- | Add a package which needs extract some files to package set.
+-- See 'ExtractSrc'.
 newPackageExtractSrc ::
   PackageName ->
   VersionSource ->
   PackageFetcher ->
   [FilePath] ->
   PackageSet ()
-newPackageExtractSrc name source fetcher fp = liftF $ NewPackage (Package name source fetcher fp) ()
+newPackageExtractSrc name source fetcher fp = liftF $ NewPackage (Package name source fetcher fp Nothing) ()
+
+-- | Add a (rust) package which needs fetch git dependencies to package set.
+-- See 'FetchRustGitDeps'.
+newPackageRust ::
+  PackageName ->
+  VersionSource ->
+  PackageFetcher ->
+  FilePath ->
+  PackageSet ()
+newPackageRust name source fetcher fp = liftF $ NewPackage (Package name source fetcher [] $ Just fp) ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -194,7 +207,8 @@ class PkgDSL f where
   new :: f PackageName -> f (Prod '[PackageName])
   andThen :: f (Prod r) -> f a -> f (Prod (a ': r))
   end :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r) => f (Prod r) -> f ()
-  end' :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member [FilePath] r) => f (Prod r) -> f ()
+  endExtract :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member [FilePath] r) => f (Prod r) -> f ()
+  endRust :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member FilePath r) => f (Prod r) -> f ()
 
 instance PkgDSL PackageSet where
   new e = do
@@ -207,9 +221,12 @@ instance PkgDSL PackageSet where
   end e = do
     p <- e
     newPackage (proj p) (proj p) (proj p)
-  end' e = do
+  endExtract e = do
     p <- e
     newPackageExtractSrc (proj p) (proj p) (proj p) (proj p)
+  endRust e = do
+    p <- e
+    newPackageRust (proj p) (proj p) (proj p) (proj p)
 
 -- | 'PkgDSL' version of 'newPackage'
 --
@@ -237,7 +254,20 @@ defineExtractSrc ::
   [FilePath] ->
   PackageSet (Prod r) ->
   PackageSet ()
-defineExtractSrc fp e = end' $ andThen e $ pure fp
+defineExtractSrc fp e = endExtract $ andThen e $ pure fp
+
+-- | Similar to 'define', but fetches rust git dependencies
+defineRust ::
+  ( Member PackageName r,
+    Member VersionSource r,
+    Member PackageFetcher r,
+    NotElem FilePath r
+  ) =>
+  -- | Relative path to @Cargo.lock@
+  FilePath ->
+  PackageSet (Prod r) ->
+  PackageSet ()
+defineRust fp e = endRust $ andThen e $ pure fp
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])

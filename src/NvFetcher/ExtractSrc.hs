@@ -35,8 +35,8 @@ extractSrcRule = void $
       Just x -> pure x
       _ -> fail $ "Failed to parse output of nix-instantiate: " <> T.unpack (T.decodeUtf8 out)
 
-extractSrc :: ExtractSrc -> PackageKey -> Action (HashMap FilePath Text)
-extractSrc v k = askOracle $ WithPackageKey (v, k)
+extractSrc :: NixFetcher Fetched -> [FilePath] -> PackageKey -> Action (HashMap FilePath Text)
+extractSrc fetcher fp k = askOracle $ WithPackageKey (ExtractSrc fetcher fp, k)
 
 --------------------------------------------------------------------------------
 

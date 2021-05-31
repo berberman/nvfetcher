@@ -26,6 +26,7 @@ import Development.Shake
 import Development.Shake.Rule
 import NeatInterpolation (trimming)
 import NvFetcher.ExtractSrc
+import NvFetcher.FetchRustGitDeps
 import NvFetcher.NixExpr
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
@@ -34,12 +35,13 @@ import NvFetcher.Types.ShakeExtras
 import NvFetcher.Utils
 
 -- | The core rule of nvchecker.
--- nvchecker rule and prefetch rule are wired here.
+-- all rules are wired here.
 coreRules :: Rules ()
 coreRules = do
   nvcheckerRule
   prefetchRule
   extractSrcRule
+  fetchRustGitDepsRule
   addBuiltinRule noLint noIdentity $ \(WithPackageKey (Core, pkg)) mOld mode -> case mode of
     RunDependenciesSame
       | Just old <- mOld,
@@ -51,12 +53,27 @@ coreRules = do
         Just Package {..} -> do
           (NvcheckerResult version mOldV) <- checkVersion _pversion pkg
           prefetched <- prefetch $ _pfetcher version
-          appending <-
+          appending1 <-
             if null _pextract
               then pure ""
               else do
-                result <- HMap.toList <$> extractSrc (ExtractSrc prefetched _pextract) pkg
+                result <- HMap.toList <$> extractSrc prefetched _pextract pkg
                 pure $ T.unlines [toNixExpr k <> " = ''\n" <> v <> "'';" | (k, v) <- result]
+          appending2 <-
+            case _pcargo of
+              Just lockPath -> do
+                result <- fetchRustGitDeps prefetched lockPath pkg
+                let body = T.unlines [asString k <> " = " <> coerce (asString $ coerce v) <> ";" | (k, v) <- HMap.toList result]
+                    lockPathNix = T.pack $ "./" <> lockPath
+                pure [trimming|
+                  cargoLock = {
+                    lockFile = $lockPathNix;
+                    outputHashes = {
+                      $body
+                    };
+                  };
+                |]
+              _ -> pure ""
           case mOldV of
             Nothing ->
               recordVersionChange _pname Nothing version
@@ -64,7 +81,7 @@ coreRules = do
               | old /= version ->
                 recordVersionChange _pname (Just old) version
             _ -> pure ()
-          let result = gen _pname version prefetched appending
+          let result = gen _pname version prefetched $ appending1 <> appending2
           pure $ RunResult ChangedRecomputeDiff (encode' (result, version)) result
 
 -- | Run the core rule.

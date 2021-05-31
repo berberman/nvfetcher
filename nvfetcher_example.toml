@@ -37,3 +37,8 @@ fetch.github = "vim/vim"
 src.github = "sharkdp/fd"
 fetch.github = "sharkdp/fd"
 extract = ["Cargo.lock"]
+
+[git-dependency]
+src.manual= "522a2a222f9529ce94cdc0fe256b11154f97f258"
+fetch.github = "NixOS/nixpkgs"
+cargo_lock = "pkgs/build-support/rust/test/import-cargo-lock/git-dependency/Cargo.lock"
