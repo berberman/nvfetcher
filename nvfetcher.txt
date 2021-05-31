@@ -47,11 +47,6 @@ VersionChange :: PackageName -> Maybe Version -> Version -> VersionChange
 -- | Decorate a rule's key with <a>PackageKey</a>
 newtype WithPackageKey k
 WithPackageKey :: (k, PackageKey) -> WithPackageKey k
-
--- | Fetch status
-data FetchStatus
-Fresh :: FetchStatus
-Fetched :: FetchStatus
 data VersionSortMethod
 ParseVersion :: VersionSortMethod
 Vercmp :: VersionSortMethod
@@ -123,9 +118,22 @@ FetchUrl :: Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 -- | Prefetched fetchers hold hashes
 type family FetchResult (k :: FetchStatus)
 
+-- | Fetch status
+data FetchStatus
+Fresh :: FetchStatus
+Fetched :: FetchStatus
+
 -- | Extract file contents from package source e.g. <tt>Cargo.lock</tt>
 data ExtractSrc
 ExtractSrc :: NixFetcher Fetched -> [FilePath] -> ExtractSrc
+
+-- | Fetch <tt>outputHashes</tt> for git dependencies in
+--   <tt>Cargo.lock</tt>. See
+--   <a>https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file</a>
+--   for details. We need fetched source and the file path to
+--   @<tt>Cargo.lock</tt>.
+data FetchRustGitDeps
+FetchRustGitDeps :: NixFetcher Fetched -> FilePath -> FetchRustGitDeps
 
 -- | The key type of nvfetcher rule. See <a>NvFetcher.Core</a>
 data Core
@@ -144,6 +152,7 @@ type PackageFetcher = Version -> NixFetcher Fresh
 --   <li>how to track its version</li>
 --   <li>how to fetch it as we have the version</li>
 --   <li>optional file paths to extract (dump to generated nix expr)</li>
+--   <li><tt>Cargo.lock</tt> path (if it's a rust package)</li>
 --   </ol>
 --   
 --   <i>INVARIANT: <a>Version</a> passed to <a>PackageFetcher</a> MUST be
@@ -151,11 +160,12 @@ type PackageFetcher = Version -> NixFetcher Fresh
 --   strings,</i> <i>in case we can't check the equality between fetcher
 --   functions.</i>
 data Package
-Package :: PackageName -> VersionSource -> PackageFetcher -> [FilePath] -> Package
+Package :: PackageName -> VersionSource -> PackageFetcher -> [FilePath] -> Maybe FilePath -> Package
 [_pname] :: Package -> PackageName
 [_pversion] :: Package -> VersionSource
 [_pfetcher] :: Package -> PackageFetcher
 [_pextract] :: Package -> [FilePath]
+[_pcargo] :: Package -> Maybe FilePath
 
 -- | Package key is the name of a package. We use this type to index
 --   packages.
@@ -224,6 +234,13 @@ instance Data.Hashable.Class.Hashable NvFetcher.Types.ExtractSrc
 instance GHC.Classes.Ord NvFetcher.Types.ExtractSrc
 instance GHC.Classes.Eq NvFetcher.Types.ExtractSrc
 instance GHC.Show.Show NvFetcher.Types.ExtractSrc
+instance GHC.Generics.Generic NvFetcher.Types.FetchRustGitDeps
+instance Data.Binary.Class.Binary NvFetcher.Types.FetchRustGitDeps
+instance Control.DeepSeq.NFData NvFetcher.Types.FetchRustGitDeps
+instance Data.Hashable.Class.Hashable NvFetcher.Types.FetchRustGitDeps
+instance GHC.Classes.Ord NvFetcher.Types.FetchRustGitDeps
+instance GHC.Classes.Eq NvFetcher.Types.FetchRustGitDeps
+instance GHC.Show.Show NvFetcher.Types.FetchRustGitDeps
 instance GHC.Classes.Eq NvFetcher.Types.VersionChange
 instance Control.DeepSeq.NFData NvFetcher.Types.PackageKey
 instance Data.Binary.Class.Binary NvFetcher.Types.PackageKey
@@ -330,17 +347,18 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_aapD k_aywI. Lens (NixFetcher k_aapD) (NixFetcher k_aywI) (FetchResult k_aapD) (FetchResult k_aywI)
-rev :: forall k_aapD. Traversal' (NixFetcher k_aapD) Version
-leaveDotGit :: forall k_aapD. Traversal' (NixFetcher k_aapD) Bool
-furl :: forall k_aapD. Lens' (NixFetcher k_aapD) Text
-fetchSubmodules :: forall k_aapD. Traversal' (NixFetcher k_aapD) Bool
-deepClone :: forall k_aapD. Traversal' (NixFetcher k_aapD) Bool
-branch :: forall k_aapD. Traversal' (NixFetcher k_aapD) Branch
+sha256 :: forall k_aauf k_azvq. Lens (NixFetcher k_aauf) (NixFetcher k_azvq) (FetchResult k_aauf) (FetchResult k_azvq)
+rev :: forall k_aauf. Traversal' (NixFetcher k_aauf) Version
+leaveDotGit :: forall k_aauf. Traversal' (NixFetcher k_aauf) Bool
+furl :: forall k_aauf. Lens' (NixFetcher k_aauf) Text
+fetchSubmodules :: forall k_aauf. Traversal' (NixFetcher k_aauf) Bool
+deepClone :: forall k_aauf. Traversal' (NixFetcher k_aauf) Bool
+branch :: forall k_aauf. Traversal' (NixFetcher k_aauf) Branch
 pversion :: Lens' Package VersionSource
 pname :: Lens' Package PackageName
 pfetcher :: Lens' Package PackageFetcher
 pextract :: Lens' Package [FilePath]
+pcargo :: Lens' Package (Maybe FilePath)
 
 
 -- | This module mainly contains two things: <a>PackageSet</a> and
@@ -369,8 +387,13 @@ type PackageSet = Free PackageSetF
 -- | Add a package to package set
 newPackage :: PackageName -> VersionSource -> PackageFetcher -> PackageSet ()
 
--- | Add a package which needs post-fetch to package set
+-- | Add a package which needs extract some files to package set. See
+--   <a>ExtractSrc</a>.
 newPackageExtractSrc :: PackageName -> VersionSource -> PackageFetcher -> [FilePath] -> PackageSet ()
+
+-- | Add a (rust) package which needs fetch git dependencies to package
+--   set. See <a>FetchRustGitDeps</a>.
+newPackageRust :: PackageName -> VersionSource -> PackageFetcher -> FilePath -> PackageSet ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -386,7 +409,8 @@ class PkgDSL f
 new :: PkgDSL f => f PackageName -> f (Prod '[PackageName])
 andThen :: PkgDSL f => f (Prod r) -> f a -> f (Prod (a : r))
 end :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r) => f (Prod r) -> f ()
-end' :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member [FilePath] r) => f (Prod r) -> f ()
+endExtract :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member [FilePath] r) => f (Prod r) -> f ()
+endRust :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member FilePath r) => f (Prod r) -> f ()
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
@@ -400,6 +424,9 @@ define :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r
 -- | Similar to <a>define</a>, but takes an input file paths to extract
 --   from package source
 defineExtractSrc :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, NotElem [FilePath] r) => [FilePath] -> PackageSet (Prod r) -> PackageSet ()
+
+-- | Similar to <a>define</a>, but fetches rust git dependencies
+defineRust :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, NotElem FilePath r) => FilePath -> PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])
@@ -749,7 +776,17 @@ module NvFetcher.ExtractSrc
 data ExtractSrc
 ExtractSrc :: NixFetcher Fetched -> [FilePath] -> ExtractSrc
 extractSrcRule :: Rules ()
-extractSrc :: ExtractSrc -> PackageKey -> Action (HashMap FilePath Text)
+extractSrc :: NixFetcher Fetched -> [FilePath] -> PackageKey -> Action (HashMap FilePath Text)
+
+module NvFetcher.FetchRustGitDeps
+fetchRustGitDepsRule :: Rules ()
+fetchRustGitDeps :: NixFetcher Fetched -> FilePath -> PackageKey -> Action (HashMap Text SHA256)
+instance GHC.Classes.Ord NvFetcher.FetchRustGitDeps.ParsedGitSrc
+instance GHC.Classes.Eq NvFetcher.FetchRustGitDeps.ParsedGitSrc
+instance GHC.Show.Show NvFetcher.FetchRustGitDeps.ParsedGitSrc
+instance GHC.Classes.Ord NvFetcher.FetchRustGitDeps.RustDep
+instance GHC.Classes.Eq NvFetcher.FetchRustGitDeps.RustDep
+instance GHC.Show.Show NvFetcher.FetchRustGitDeps.RustDep
 
 
 module NvFetcher.Core
@@ -758,8 +795,7 @@ module NvFetcher.Core
 data Core
 Core :: Core
 
--- | The core rule of nvchecker. nvchecker rule and prefetch rule are wired
---   here.
+-- | The core rule of nvchecker. all rules are wired here.
 coreRules :: Rules ()
 
 -- | Run the core rule. Given a package key, run nvchecker and then
