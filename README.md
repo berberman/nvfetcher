@@ -107,7 +107,7 @@ Available options:
 ```
 
 Each *package* corresponds to a TOML table, whose name is encoded as table key;
-there are two fields and four optional git prefetch configuration in each table:
+there are two required fields and three optional fields in each table:
 * a nvchecker configuration, how to track version updates
   * `src.github = owner/repo` - the latest gituhb release
   * `src.github_tag = owner/repo` - the max github tag, usually used with list options (see below)
@@ -137,6 +137,9 @@ They can exist simultanesouly.
   * `src.exclude_regex`
   * `src.sort_version_key`
   * `src.ignored`
+
+* optional *extract* configuration
+  * `extract = [ "file_1", "file_2", ...]` - file paths are relative to the source root, which will be pulled into generated nix expr.
 
 You can find an example of the configuration file, see [`nvfetcher_example.toml`](nvfetcher_example.toml).
 

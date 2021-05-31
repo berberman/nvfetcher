@@ -123,15 +123,9 @@ FetchUrl :: Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 -- | Prefetched fetchers hold hashes
 type family FetchResult (k :: FetchStatus)
 
--- | Language-specific information of a package for post-process
-data PostFetcher (k :: FetchStatus)
-
--- | Fetch <tt>cargoSha256</tt> used in <tt>buildRustPackage</tt> New
---   packages should consider using <tt>CargoLock</tt> instead.
-RustLegacy :: PackageName -> Version -> NixFetcher Fetched -> FetchResult k -> PostFetcher (k :: FetchStatus)
-
--- | TODO
-Go :: Void -> PostFetcher (k :: FetchStatus)
+-- | Extract file contents from package source e.g. <tt>Cargo.lock</tt>
+data ExtractSrc
+ExtractSrc :: NixFetcher Fetched -> [FilePath] -> ExtractSrc
 
 -- | The key type of nvfetcher rule. See <a>NvFetcher.Core</a>
 data Core
@@ -139,9 +133,6 @@ Core :: Core
 
 -- | Package name, used in generating nix expr
 type PackageName = Text
-
--- | How to creat post fetcher given prefetch source
-type PackagePostFetch = PackageName -> Version -> NixFetcher Fetched -> PostFetcher Fresh
 
 -- | How to create package source fetcher given a version
 type PackageFetcher = Version -> NixFetcher Fresh
@@ -152,6 +143,7 @@ type PackageFetcher = Version -> NixFetcher Fresh
 --   <li>its name</li>
 --   <li>how to track its version</li>
 --   <li>how to fetch it as we have the version</li>
+--   <li>optional file paths to extract (dump to generated nix expr)</li>
 --   </ol>
 --   
 --   <i>INVARIANT: <a>Version</a> passed to <a>PackageFetcher</a> MUST be
@@ -159,11 +151,11 @@ type PackageFetcher = Version -> NixFetcher Fresh
 --   strings,</i> <i>in case we can't check the equality between fetcher
 --   functions.</i>
 data Package
-Package :: PackageName -> VersionSource -> PackageFetcher -> Maybe PackagePostFetch -> Package
+Package :: PackageName -> VersionSource -> PackageFetcher -> [FilePath] -> Package
 [_pname] :: Package -> PackageName
 [_pversion] :: Package -> VersionSource
 [_pfetcher] :: Package -> PackageFetcher
-[_ppostfetch] :: Package -> Maybe PackagePostFetch
+[_pextract] :: Package -> [FilePath]
 
 -- | Package key is the name of a package. We use this type to index
 --   packages.
@@ -225,7 +217,13 @@ instance GHC.Generics.Generic NvFetcher.Types.NvcheckerResult
 instance GHC.Classes.Eq NvFetcher.Types.NvcheckerResult
 instance GHC.Show.Show NvFetcher.Types.NvcheckerResult
 instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
-instance GHC.Generics.Generic (NvFetcher.Types.PostFetcher k)
+instance GHC.Generics.Generic NvFetcher.Types.ExtractSrc
+instance Data.Binary.Class.Binary NvFetcher.Types.ExtractSrc
+instance Control.DeepSeq.NFData NvFetcher.Types.ExtractSrc
+instance Data.Hashable.Class.Hashable NvFetcher.Types.ExtractSrc
+instance GHC.Classes.Ord NvFetcher.Types.ExtractSrc
+instance GHC.Classes.Eq NvFetcher.Types.ExtractSrc
+instance GHC.Show.Show NvFetcher.Types.ExtractSrc
 instance GHC.Classes.Eq NvFetcher.Types.VersionChange
 instance Control.DeepSeq.NFData NvFetcher.Types.PackageKey
 instance Data.Binary.Class.Binary NvFetcher.Types.PackageKey
@@ -251,12 +249,6 @@ instance GHC.Classes.Ord (NvFetcher.Types.FetchResult k) => GHC.Classes.Ord (NvF
 instance Data.Hashable.Class.Hashable (NvFetcher.Types.FetchResult k) => Data.Hashable.Class.Hashable (NvFetcher.Types.NixFetcher k)
 instance Data.Binary.Class.Binary (NvFetcher.Types.FetchResult k) => Data.Binary.Class.Binary (NvFetcher.Types.NixFetcher k)
 instance Control.DeepSeq.NFData (NvFetcher.Types.FetchResult k) => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
-instance GHC.Show.Show (NvFetcher.Types.FetchResult k) => GHC.Show.Show (NvFetcher.Types.PostFetcher k)
-instance GHC.Classes.Eq (NvFetcher.Types.FetchResult k) => GHC.Classes.Eq (NvFetcher.Types.PostFetcher k)
-instance GHC.Classes.Ord (NvFetcher.Types.FetchResult k) => GHC.Classes.Ord (NvFetcher.Types.PostFetcher k)
-instance Data.Hashable.Class.Hashable (NvFetcher.Types.FetchResult k) => Data.Hashable.Class.Hashable (NvFetcher.Types.PostFetcher k)
-instance Data.Binary.Class.Binary (NvFetcher.Types.FetchResult k) => Data.Binary.Class.Binary (NvFetcher.Types.PostFetcher k)
-instance Control.DeepSeq.NFData (NvFetcher.Types.FetchResult k) => Control.DeepSeq.NFData (NvFetcher.Types.PostFetcher k)
 instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
 instance GHC.Show.Show NvFetcher.Types.VersionChange
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerResult
@@ -338,143 +330,17 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_aaps k_azim. Lens (NixFetcher k_aaps) (NixFetcher k_azim) (FetchResult k_aaps) (FetchResult k_azim)
-rev :: forall k_aaps. Traversal' (NixFetcher k_aaps) Version
-leaveDotGit :: forall k_aaps. Traversal' (NixFetcher k_aaps) Bool
-furl :: forall k_aaps. Lens' (NixFetcher k_aaps) Text
-fetchSubmodules :: forall k_aaps. Traversal' (NixFetcher k_aaps) Bool
-deepClone :: forall k_aaps. Traversal' (NixFetcher k_aaps) Bool
-branch :: forall k_aaps. Traversal' (NixFetcher k_aaps) Branch
+sha256 :: forall k_aapD k_aywI. Lens (NixFetcher k_aapD) (NixFetcher k_aywI) (FetchResult k_aapD) (FetchResult k_aywI)
+rev :: forall k_aapD. Traversal' (NixFetcher k_aapD) Version
+leaveDotGit :: forall k_aapD. Traversal' (NixFetcher k_aapD) Bool
+furl :: forall k_aapD. Lens' (NixFetcher k_aapD) Text
+fetchSubmodules :: forall k_aapD. Traversal' (NixFetcher k_aapD) Bool
+deepClone :: forall k_aapD. Traversal' (NixFetcher k_aapD) Bool
+branch :: forall k_aapD. Traversal' (NixFetcher k_aapD) Branch
 pversion :: Lens' Package VersionSource
-ppostfetch :: Lens' Package (Maybe PackagePostFetch)
 pname :: Lens' Package PackageName
 pfetcher :: Lens' Package PackageFetcher
-
-
--- | This module is about global information we use in rules.
-module NvFetcher.Types.ShakeExtras
-
--- | Values we use during the build. It's stored in <a>shakeExtra</a>
-data ShakeExtras
-ShakeExtras :: Var [VersionChange] -> Map PackageKey Package -> ShakeExtras
-[versionChanges] :: ShakeExtras -> Var [VersionChange]
-[targetPackages] :: ShakeExtras -> Map PackageKey Package
-
--- | Create an empty <a>ShakeExtras</a> from packages to build
-initShakeExtras :: Map PackageKey Package -> IO ShakeExtras
-
--- | Get our values from shake
-getShakeExtras :: Action ShakeExtras
-
--- | Find a package given its key
-lookupPackage :: PackageKey -> Action (Maybe Package)
-
--- | Get keys of all packages to build
-getAllPackageKeys :: Action [PackageKey]
-
--- | Check if we need build this package
-isPackageKeyTarget :: PackageKey -> Action Bool
-
--- | Record version change of a package
-recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()
-
--- | Get version changes since the last run
-getVersionChanges :: Action [VersionChange]
-
-
--- | <a>nvchecker</a> is a program checking new versions of packages. We
---   encode the checking process into shake build system, generating
---   configuration of nvchecker and calling it externally. Now we call
---   nvchecker for each <a>VersionSource</a>, which seems not to be
---   efficient, but it's tolerable when running in parallel.
---   
---   Meanwhile, we lose the capabilities of tracking version updates, i.e.
---   normally nvchecker will help us maintain a list of old versions, so
---   that we are able to know which package's version is updated in this
---   run. Fortunately, we can reimplement this using shake database, see
---   <a>nvcheckerRule</a> for details.
-module NvFetcher.Nvchecker
-data VersionSortMethod
-ParseVersion :: VersionSortMethod
-Vercmp :: VersionSortMethod
-
--- | The extra configuration for some version sources. See
---   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#list-options</a>
---   for details.
-data ListOptions
-ListOptions :: Maybe Text -> Maybe Text -> Maybe VersionSortMethod -> Maybe Text -> ListOptions
-[_includeRegex] :: ListOptions -> Maybe Text
-[_excludeRegex] :: ListOptions -> Maybe Text
-[_sortVersionKey] :: ListOptions -> Maybe VersionSortMethod
-[_ignored] :: ListOptions -> Maybe Text
-
--- | The input of nvchecker
-data VersionSource
-GitHubRelease :: Text -> Text -> VersionSource
-[_owner] :: VersionSource -> Text
-[_repo] :: VersionSource -> Text
-GitHubTag :: Text -> Text -> ListOptions -> VersionSource
-[_owner] :: VersionSource -> Text
-[_repo] :: VersionSource -> Text
-[_listOptions] :: VersionSource -> ListOptions
-Git :: Text -> Branch -> VersionSource
-[_vurl] :: VersionSource -> Text
-[_vbranch] :: VersionSource -> Branch
-Pypi :: Text -> VersionSource
-[_pypi] :: VersionSource -> Text
-ArchLinux :: Text -> VersionSource
-[_archpkg] :: VersionSource -> Text
-Aur :: Text -> VersionSource
-[_aur] :: VersionSource -> Text
-Manual :: Text -> VersionSource
-[_manual] :: VersionSource -> Text
-Repology :: Text -> Text -> VersionSource
-[_repology] :: VersionSource -> Text
-[_repo] :: VersionSource -> Text
-Webpage :: Text -> Text -> ListOptions -> VersionSource
-[_vurl] :: VersionSource -> Text
-[_regex] :: VersionSource -> Text
-[_listOptions] :: VersionSource -> ListOptions
-HttpHeader :: Text -> Text -> ListOptions -> VersionSource
-[_vurl] :: VersionSource -> Text
-[_regex] :: VersionSource -> Text
-[_listOptions] :: VersionSource -> ListOptions
-
--- | The result of running nvchecker
-data NvcheckerResult
-NvcheckerResult :: Version -> Maybe Version -> NvcheckerResult
-[nvNow] :: NvcheckerResult -> Version
-
--- | nvchecker doesn't give this value, but shake restores it from last run
-[nvOld] :: NvcheckerResult -> Maybe Version
-
--- | Rules of nvchecker
-nvcheckerRule :: Rules ()
-
--- | Run nvchecker
-checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult
-
-module NvFetcher.NixExpr
-
--- | Nix expression
-type NixExpr = Text
-
--- | Types can be converted into nix expr
-class ToNixExpr a
-toNixExpr :: ToNixExpr a => a -> NixExpr
-instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fresh)
-instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
-instance NvFetcher.NixExpr.ToNixExpr GHC.Types.Bool
-instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.Version
-instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.PostFetcher 'NvFetcher.Types.Fresh)
-instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.PostFetcher 'NvFetcher.Types.Fetched)
-
-module NvFetcher.PostFetcher
-postFetchRule :: Rules ()
-postfetch :: PostFetcher Fresh -> PackageKey -> Action (PostFetcher Fetched)
-
--- | Post-fetch to get <tt>cargoSha256</tt>
-calculateCargoSha256 :: PackagePostFetch
+pextract :: Lens' Package [FilePath]
 
 
 -- | This module mainly contains two things: <a>PackageSet</a> and
@@ -504,7 +370,7 @@ type PackageSet = Free PackageSetF
 newPackage :: PackageName -> VersionSource -> PackageFetcher -> PackageSet ()
 
 -- | Add a package which needs post-fetch to package set
-newPackagePostFetch :: PackageName -> VersionSource -> PackageFetcher -> PackagePostFetch -> PackageSet ()
+newPackageExtractSrc :: PackageName -> VersionSource -> PackageFetcher -> [FilePath] -> PackageSet ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -520,7 +386,7 @@ class PkgDSL f
 new :: PkgDSL f => f PackageName -> f (Prod '[PackageName])
 andThen :: PkgDSL f => f (Prod r) -> f a -> f (Prod (a : r))
 end :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r) => f (Prod r) -> f ()
-end' :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member PackagePostFetch r) => f (Prod r) -> f ()
+end' :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member [FilePath] r) => f (Prod r) -> f ()
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
@@ -531,8 +397,9 @@ end' :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageF
 --   </pre>
 define :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r) => PackageSet (Prod r) -> PackageSet ()
 
--- | Similar to <a>define</a>, but allows post-fetch
-definePostFetch :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member PackagePostFetch r) => PackageSet (Prod r) -> PackageSet ()
+-- | Similar to <a>define</a>, but takes an input file paths to extract
+--   from package source
+defineExtractSrc :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, NotElem [FilePath] r) => [FilePath] -> PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])
@@ -542,9 +409,6 @@ src :: PackageSet (Prod r) -> VersionSource -> PackageSet (Prod (VersionSource :
 
 -- | Attach fetchers
 fetch :: PackageSet (Prod r) -> PackageFetcher -> PackageSet (Prod (PackageFetcher : r))
-
--- | Attach post-fetchers
-postFetch :: PackageSet (Prod r) -> PackagePostFetch -> PackageSet (Prod (PackagePostFetch : r))
 
 -- | A synonym of <a>fetchGitHub</a> and <a>sourceGitHub</a>
 fromGitHub :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
@@ -624,9 +488,6 @@ fetchGit' :: PackageSet (Prod r) -> (Text, NixFetcher Fresh -> NixFetcher Fresh)
 
 -- | This package is fetched from url
 fetchUrl :: PackageSet (Prod r) -> (Version -> Text) -> PackageSet (Prod (PackageFetcher : r))
-
--- | Post-fetch to get <tt>cargoSha256</tt>
-calculateCargoSha256 :: PackagePostFetch
 
 -- | Simple HList
 data Prod (r :: [Type])
@@ -760,6 +621,135 @@ instance NvFetcher.PackageSet.Member x xs => NvFetcher.PackageSet.Member x (_y :
 instance (TypeError ...) => NvFetcher.PackageSet.Member x '[]
 instance Control.Monad.IO.Class.MonadIO NvFetcher.PackageSet.PackageSet
 instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
+
+
+-- | This module is about global information we use in rules.
+module NvFetcher.Types.ShakeExtras
+
+-- | Values we use during the build. It's stored in <a>shakeExtra</a>
+data ShakeExtras
+ShakeExtras :: Var [VersionChange] -> Map PackageKey Package -> ShakeExtras
+[versionChanges] :: ShakeExtras -> Var [VersionChange]
+[targetPackages] :: ShakeExtras -> Map PackageKey Package
+
+-- | Create an empty <a>ShakeExtras</a> from packages to build
+initShakeExtras :: Map PackageKey Package -> IO ShakeExtras
+
+-- | Get our values from shake
+getShakeExtras :: Action ShakeExtras
+
+-- | Find a package given its key
+lookupPackage :: PackageKey -> Action (Maybe Package)
+
+-- | Get keys of all packages to build
+getAllPackageKeys :: Action [PackageKey]
+
+-- | Check if we need build this package
+isPackageKeyTarget :: PackageKey -> Action Bool
+
+-- | Record version change of a package
+recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()
+
+-- | Get version changes since the last run
+getVersionChanges :: Action [VersionChange]
+
+
+-- | <a>nvchecker</a> is a program checking new versions of packages. We
+--   encode the checking process into shake build system, generating
+--   configuration of nvchecker and calling it externally. Now we call
+--   nvchecker for each <a>VersionSource</a>, which seems not to be
+--   efficient, but it's tolerable when running in parallel.
+--   
+--   Meanwhile, we lose the capabilities of tracking version updates, i.e.
+--   normally nvchecker will help us maintain a list of old versions, so
+--   that we are able to know which package's version is updated in this
+--   run. Fortunately, we can reimplement this using shake database, see
+--   <a>nvcheckerRule</a> for details.
+module NvFetcher.Nvchecker
+data VersionSortMethod
+ParseVersion :: VersionSortMethod
+Vercmp :: VersionSortMethod
+
+-- | The extra configuration for some version sources. See
+--   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#list-options</a>
+--   for details.
+data ListOptions
+ListOptions :: Maybe Text -> Maybe Text -> Maybe VersionSortMethod -> Maybe Text -> ListOptions
+[_includeRegex] :: ListOptions -> Maybe Text
+[_excludeRegex] :: ListOptions -> Maybe Text
+[_sortVersionKey] :: ListOptions -> Maybe VersionSortMethod
+[_ignored] :: ListOptions -> Maybe Text
+
+-- | The input of nvchecker
+data VersionSource
+GitHubRelease :: Text -> Text -> VersionSource
+[_owner] :: VersionSource -> Text
+[_repo] :: VersionSource -> Text
+GitHubTag :: Text -> Text -> ListOptions -> VersionSource
+[_owner] :: VersionSource -> Text
+[_repo] :: VersionSource -> Text
+[_listOptions] :: VersionSource -> ListOptions
+Git :: Text -> Branch -> VersionSource
+[_vurl] :: VersionSource -> Text
+[_vbranch] :: VersionSource -> Branch
+Pypi :: Text -> VersionSource
+[_pypi] :: VersionSource -> Text
+ArchLinux :: Text -> VersionSource
+[_archpkg] :: VersionSource -> Text
+Aur :: Text -> VersionSource
+[_aur] :: VersionSource -> Text
+Manual :: Text -> VersionSource
+[_manual] :: VersionSource -> Text
+Repology :: Text -> Text -> VersionSource
+[_repology] :: VersionSource -> Text
+[_repo] :: VersionSource -> Text
+Webpage :: Text -> Text -> ListOptions -> VersionSource
+[_vurl] :: VersionSource -> Text
+[_regex] :: VersionSource -> Text
+[_listOptions] :: VersionSource -> ListOptions
+HttpHeader :: Text -> Text -> ListOptions -> VersionSource
+[_vurl] :: VersionSource -> Text
+[_regex] :: VersionSource -> Text
+[_listOptions] :: VersionSource -> ListOptions
+
+-- | The result of running nvchecker
+data NvcheckerResult
+NvcheckerResult :: Version -> Maybe Version -> NvcheckerResult
+[nvNow] :: NvcheckerResult -> Version
+
+-- | nvchecker doesn't give this value, but shake restores it from last run
+[nvOld] :: NvcheckerResult -> Maybe Version
+
+-- | Rules of nvchecker
+nvcheckerRule :: Rules ()
+
+-- | Run nvchecker
+checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult
+
+module NvFetcher.NixExpr
+
+-- | Nix expression
+type NixExpr = Text
+
+-- | Types can be converted into nix expr
+class ToNixExpr a
+toNixExpr :: ToNixExpr a => a -> NixExpr
+instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fresh)
+instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
+instance NvFetcher.NixExpr.ToNixExpr GHC.Types.Bool
+instance NvFetcher.NixExpr.ToNixExpr a => NvFetcher.NixExpr.ToNixExpr [a]
+instance NvFetcher.NixExpr.ToNixExpr GHC.Base.String
+instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.NixExpr
+instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.Version
+instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.ExtractSrc
+
+module NvFetcher.ExtractSrc
+
+-- | Extract file contents from package source e.g. <tt>Cargo.lock</tt>
+data ExtractSrc
+ExtractSrc :: NixFetcher Fetched -> [FilePath] -> ExtractSrc
+extractSrcRule :: Rules ()
+extractSrc :: ExtractSrc -> PackageKey -> Action (HashMap FilePath Text)
 
 
 module NvFetcher.Core

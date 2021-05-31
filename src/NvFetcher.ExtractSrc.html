@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE DataKinds #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE OverloadedStrings #-}</span><span>
+</span><span id="line-3"></span><span class="hs-pragma">{-# LANGUAGE QuasiQuotes #-}</span><span>
+</span><span id="line-4"></span><span class="hs-pragma">{-# LANGUAGE ScopedTypeVariables #-}</span><span>
+</span><span id="line-5"></span><span class="hs-pragma">{-# LANGUAGE ViewPatterns #-}</span><span>
+</span><span id="line-6"></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">NvFetcher.ExtractSrc</span><span>
+</span><span id="line-8"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#ExtractSrc"><span class="hs-identifier">ExtractSrc</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-9"></span><span>    </span><span class="annot"><a href="NvFetcher.ExtractSrc.html#extractSrcRule"><span class="hs-identifier">extractSrcRule</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-10"></span><span>    </span><span class="annot"><a href="NvFetcher.ExtractSrc.html#extractSrc"><span class="hs-identifier">extractSrc</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-11"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">where</span><span>
+</span><span id="line-13"></span><span>
+</span><span id="line-14"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Control.Monad</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">void</span></span><span class="hs-special">)</span><span>
+</span><span id="line-15"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Aeson</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">A</span></span><span>
+</span><span id="line-16"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Binary.Instances</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-17"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.HashMap.Strict</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">HashMap</span></span><span class="hs-special">)</span><span>
+</span><span id="line-18"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Text</span></span><span class="hs-special">)</span><span>
+</span><span id="line-19"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">T</span></span><span>
+</span><span id="line-20"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text.Encoding</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">T</span></span><span>
+</span><span id="line-21"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Development.Shake</span></span><span>
+</span><span id="line-22"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">NeatInterpolation</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">trimming</span></span><span class="hs-special">)</span><span>
+</span><span id="line-23"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html"><span class="hs-identifier">NvFetcher.NixExpr</span></a></span><span>
+</span><span id="line-24"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.Types.html"><span class="hs-identifier">NvFetcher.Types</span></a></span><span>
+</span><span id="line-25"></span><span>
+</span><span id="line-26"></span><span class="annot"><a href="NvFetcher.ExtractSrc.html#extractSrcRule"><span class="hs-identifier hs-type">extractSrcRule</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Rules</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span><span id="extractSrcRule"><span class="annot"><span class="annottext">extractSrcRule :: Rules ()
+</span><a href="NvFetcher.ExtractSrc.html#extractSrcRule"><span class="hs-identifier hs-var hs-var">extractSrcRule</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Rules (WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text))
+-&gt; Rules ()
+forall (f :: * -&gt; *) a. Functor f =&gt; f a -&gt; f ()
+</span><span class="hs-identifier hs-var">void</span></span><span> </span><span class="annot"><span class="annottext">(Rules
+   (WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text))
+ -&gt; Rules ())
+-&gt; Rules
+     (WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text))
+-&gt; Rules ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-28"></span><span>  </span><span class="annot"><span class="annottext">(WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text))
+-&gt; Rules
+     (WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text))
+forall q a.
+(RuleResult q ~ a, ShakeValue q, ShakeValue a, Partial) =&gt;
+(q -&gt; Action a) -&gt; Rules (q -&gt; Action a)
+</span><span class="hs-identifier hs-var">addOracleCache</span></span><span> </span><span class="annot"><span class="annottext">((WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text))
+ -&gt; Rules
+      (WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text)))
+-&gt; (WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text))
+-&gt; Rules
+     (WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-type">WithPackageKey</span></a></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679205314"><span class="annot"><span class="annottext">ExtractSrc
+</span><a href="#local-6989586621679205314"><span class="hs-identifier hs-var">q</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#ExtractSrc"><span class="hs-identifier hs-type">ExtractSrc</span></a></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679205313"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679205313"><span class="hs-identifier hs-var">_pkg</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action (HashMap FilePath Text))
+-&gt; Action (HashMap FilePath Text)
+forall a. (FilePath -&gt; Action a) -&gt; Action a
+</span><span class="hs-identifier hs-var">withTempFile</span></span><span> </span><span class="annot"><span class="annottext">((FilePath -&gt; Action (HashMap FilePath Text))
+ -&gt; Action (HashMap FilePath Text))
+-&gt; (FilePath -&gt; Action (HashMap FilePath Text))
+-&gt; Action (HashMap FilePath Text)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679205311"><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679205311"><span class="hs-identifier hs-var">fp</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-29"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; Action ()
+forall (m :: * -&gt; *).
+(MonadIO m, Partial) =&gt;
+FilePath -&gt; FilePath -&gt; m ()
+</span><span class="hs-identifier hs-var">writeFile'</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679205311"><span class="hs-identifier hs-var">fp</span></a></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action ()) -&gt; FilePath -&gt; Action ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; FilePath
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; FilePath) -&gt; Text -&gt; FilePath
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
+</span><a href="NvFetcher.ExtractSrc.html#wrap"><span class="hs-identifier hs-var">wrap</span></a></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; Text -&gt; Text
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">ExtractSrc -&gt; Text
+forall a. ToNixExpr a =&gt; a -&gt; Text
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="annot"><span class="annottext">ExtractSrc
+</span><a href="#local-6989586621679205314"><span class="hs-identifier hs-var">q</span></a></span><span>
+</span><span id="line-30"></span><span>    </span><span class="annot"><span class="annottext">Partial =&gt; [FilePath] -&gt; Action ()
+[FilePath] -&gt; Action ()
+</span><span class="hs-identifier hs-var">need</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679205311"><span class="hs-identifier hs-var">fp</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-31"></span><span>    </span><span class="hs-comment">-- TODO: Avoid using NIX_PATH</span><span>
+</span><span id="line-32"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679205304"><span class="annot"><span class="annottext">Double
+</span><a href="#local-6989586621679205304"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">StdoutTrim</span></span><span> </span><span id="local-6989586621679205302"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679205302"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679205300"><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679205300"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">(CmdOption
+ -&gt; FilePath -&gt; Action (CmdTime, StdoutTrim ByteString, CmdLine))
+:-&gt; Action Any
+forall args r. (Partial, CmdArguments args) =&gt; args
+</span><span class="hs-identifier hs-var">cmd</span></span><span> </span><span class="annot"><span class="annottext">CmdOption
+</span><span class="hs-identifier hs-var">Shell</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action (CmdTime, StdoutTrim ByteString, CmdLine))
+-&gt; FilePath -&gt; Action (CmdTime, StdoutTrim ByteString, CmdLine)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-string">&quot;nix-instantiate --eval --strict --json --read-write-mode -E 'let pkgs = import &lt;nixpkgs&gt; { }; in ((import &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679205311"><span class="hs-identifier hs-var">fp</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-string">&quot;) pkgs)'&quot;</span></span><span>
+</span><span id="line-33"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; Action ()
+</span><span class="hs-identifier hs-var">putVerbose</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action ()) -&gt; FilePath -&gt; Action ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-string">&quot;Finishing running &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679205300"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-string">&quot;, took &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Double -&gt; FilePath
+forall a. Show a =&gt; a -&gt; FilePath
+</span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Double
+</span><a href="#local-6989586621679205304"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-string">&quot;s&quot;</span></span><span>
+</span><span id="line-34"></span><span>    </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; Maybe (HashMap FilePath Text)
+forall a. FromJSON a =&gt; ByteString -&gt; Maybe a
+</span><span class="hs-identifier hs-var">A.decodeStrict</span></span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679205302"><span class="hs-identifier hs-var">out</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-35"></span><span>      </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679205294"><span class="annot"><span class="annottext">HashMap FilePath Text
+</span><a href="#local-6989586621679205294"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">HashMap FilePath Text -&gt; Action (HashMap FilePath Text)
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">HashMap FilePath Text
+</span><a href="#local-6989586621679205294"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-36"></span><span>      </span><span class="annot"><span class="annottext">Maybe (HashMap FilePath Text)
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Action (HashMap FilePath Text)
+forall (m :: * -&gt; *) a. MonadFail m =&gt; FilePath -&gt; m a
+</span><span class="hs-identifier hs-var">fail</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action (HashMap FilePath Text))
+-&gt; FilePath -&gt; Action (HashMap FilePath Text)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-string">&quot;Failed to parse output of nix-instantiate: &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; FilePath
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; Text
+</span><span class="hs-identifier hs-var">T.decodeUtf8</span></span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679205302"><span class="hs-identifier hs-var">out</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-37"></span><span>
+</span><span id="line-38"></span><span class="annot"><a href="NvFetcher.ExtractSrc.html#extractSrc"><span class="hs-identifier hs-type">extractSrc</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#ExtractSrc"><span class="hs-identifier hs-type">ExtractSrc</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">HashMap</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">)</span><span>
+</span><span id="line-39"></span><span id="extractSrc"><span class="annot"><span class="annottext">extractSrc :: ExtractSrc -&gt; PackageKey -&gt; Action (HashMap FilePath Text)
+</span><a href="NvFetcher.ExtractSrc.html#extractSrc"><span class="hs-identifier hs-var hs-var">extractSrc</span></a></span></span><span> </span><span id="local-6989586621679205292"><span class="annot"><span class="annottext">ExtractSrc
+</span><a href="#local-6989586621679205292"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span id="local-6989586621679205291"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679205291"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text)
+forall q a.
+(RuleResult q ~ a, ShakeValue q, ShakeValue a) =&gt;
+q -&gt; Action a
+</span><span class="hs-identifier hs-var">askOracle</span></span><span> </span><span class="annot"><span class="annottext">(WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text))
+-&gt; WithPackageKey ExtractSrc -&gt; Action (HashMap FilePath Text)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(ExtractSrc, PackageKey) -&gt; WithPackageKey ExtractSrc
+forall k. (k, PackageKey) -&gt; WithPackageKey k
+</span><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-var">WithPackageKey</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ExtractSrc
+</span><a href="#local-6989586621679205292"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679205291"><span class="hs-identifier hs-var">k</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-40"></span><span>
+</span><span id="line-41"></span><span class="hs-comment">--------------------------------------------------------------------------------</span><span>
+</span><span id="line-42"></span><span>
+</span><span id="line-43"></span><span class="annot"><a href="NvFetcher.ExtractSrc.html#wrap"><span class="hs-identifier hs-type">wrap</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span>
+</span><span id="line-44"></span><span id="wrap"><span class="annot"><span class="annottext">wrap :: Text -&gt; Text
+</span><a href="NvFetcher.ExtractSrc.html#wrap"><span class="hs-identifier hs-var hs-var">wrap</span></a></span></span><span> </span><span id="local-6989586621679205288"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679205288"><span class="hs-identifier hs-var">expr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-45"></span><span>  </span><span class="annot"><span class="">[trimming|
+    { pkgs, ... }:
+    $expr
+  |]</span></span><span>
+</span><span id="line-49"></span></pre></body></html>
