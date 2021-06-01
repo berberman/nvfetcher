@@ -56,8 +56,8 @@ import NvFetcher.Core
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
 import NvFetcher.PackageSet
-import NvFetcher.Types.ShakeExtras
 import NvFetcher.Types
+import NvFetcher.Types.ShakeExtras
 
 -- | Arguments for running nvfetcher
 data Args = Args
@@ -82,7 +82,8 @@ defaultArgs :: Args
 defaultArgs =
   Args
     ( shakeOptions
-        { shakeProgress = progressSimple
+        { shakeProgress = progressSimple,
+          shakeThreads = 0
         }
     )
     "build"
