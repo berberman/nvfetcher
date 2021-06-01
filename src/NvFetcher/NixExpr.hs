@@ -69,7 +69,7 @@ nixFetcher sha256 = \case
     [trimming|
           fetchurl {
             sha256 = $sha256;
-            url = "$url";
+            url = $url;
           }
     |]
 
