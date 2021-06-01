@@ -154,7 +154,7 @@ forall a. ToNixExpr a =&gt; a -&gt; NixExpr
 </span><span id="line-69"></span><span>    </span><span class="annot"><span class="">[trimming|
           fetchurl {
             sha256 = $sha256;
-            url = &quot;$url&quot;;
+            url = $url;
           }
     |]</span></span><span>
 </span><span id="line-75"></span><span>
