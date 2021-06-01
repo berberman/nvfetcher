@@ -17,8 +17,17 @@ jobs:
     - name: Run Nix Flake Check
       run: nix flake check
 
-    - name: Build and generate haddock
+    - name: Build library and generate haddock
       run: nix build .\#nvfetcher-lib
+
+    - name: Test CLI with nvfetcher_example.toml
+      run : nix shell --command nvfetcher --config nvfetcher_example.toml
+
+    - name: Cleanup
+      run: rm -r .shake sources.nix
+
+    - name: Test Main_example.hs
+      run: nix develop --command cabal run example
 
     - name: Deploy generated haddock to github pages
       uses: peaceiris/actions-gh-pages@v3
