@@ -26,11 +26,24 @@ parseConfig toml = go tables [] []
     go [] [] sp = Right sp
     go [] se _ = Left se
     tables = [fmap (toPackage k) $ validationToEither $ Toml.runTomlCodec iCodec v | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml]
-    toPackage k (v, f, e, c) = Package k v f e c
-    iCodec = (,,,) <$> versionSourceCodec .= view _1 <*> fetcherCodec .= view _2 <*> extractFilesCodec .= view _3 <*> cargoLockPathCodec .= view _4
+    toPackage k (versionSource, f, e, c, options) = Package k (Nvchecker versionSource options) f e c
+    iCodec =
+      (,,,,)
+        <$> versionSourceCodec .= view _1
+        <*> fetcherCodec .= view _2
+        <*> extractFilesCodec .= view _3
+        <*> cargoLockPathCodec .= view _4
+        <*> nvcheckerOptionsCodec .= view _5
 
-extractFilesCodec :: TomlCodec [FilePath]
-extractFilesCodec = dimap Just (fromMaybe []) $ dioptional $ arrayOf _String "extract"
+extractFilesCodec :: TomlCodec PackageExtractSrc
+extractFilesCodec = diwrap $ dimap Just (fromMaybe []) $ dioptional $ arrayOf _String "extract"
 
-cargoLockPathCodec :: TomlCodec (Maybe FilePath)
-cargoLockPathCodec = dioptional (string "cargo_lock")
+cargoLockPathCodec :: TomlCodec (Maybe PackageCargoFilePath)
+cargoLockPathCodec = dioptional $ diwrap (string "cargo_lock")
+
+nvcheckerOptionsCodec :: TomlCodec NvcheckerOptions
+nvcheckerOptionsCodec =
+  NvcheckerOptions
+    <$> dioptional (text "src.prefix") .= _stripPrefix
+    <*> dioptional (text "src.from_pattern") .= _fromPattern
+    <*> dioptional (text "src.to_pattern") .= _toPattern

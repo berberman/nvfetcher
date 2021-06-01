@@ -5,6 +5,7 @@ fetch.pypi = "feeluown"
 [qliveplayer]
 src.github = "IsoaSFlus/QLivePlayer"
 fetch.github = "IsoaSFlus/QLivePlayer"
+# nix-prefetch-git options
 git.fetchSubmodules = true
 
 [fcitx5-pinyin-zhwiki]
@@ -13,18 +14,19 @@ src.aur = "fcitx5-pinyin-zhwiki"
 fetch.url = "https://github.com/felixonmars/fcitx5-pinyin-zhwiki/releases/download/0.2.2/zhwiki-$ver.dict"
 
 [apple-emoji]
-# a fake version
+# A fake version, which is unused in the fetcher
 src.manual = "0.0.0.20200413"
 fetch.url = "https://github.com/samuelngs/apple-emoji-linux/releases/download/latest/AppleColorEmoji.ttf"
 
 [nvfetcher-git]
-# following the latest commit
+# Follow the latest git commit
 src.git = "https://github.com/berberman/nvfetcher"
 fetch.github = "berberman/nvfetcher"
 
 [gcc-10]
 # Find a tag by regex
 src.github_tag = "gcc-mirror/gcc"
+# nvchecker list options, which uses regex to filter out a list of tags
 src.include_regex = "releases/gcc-10.*"
 fetch.github = "gcc-mirror/gcc"
 
@@ -32,13 +34,18 @@ fetch.github = "gcc-mirror/gcc"
 src.webpage = "http://ftp.vim.org/pub/vim/patches/7.3/"
 src.regex = "7\\.3\\.\\d+"
 fetch.github = "vim/vim"
+# nvchecker global options, which adds prefix `v` to the version number  
+src.from_pattern = "(.+)"
+src.to_pattern = "v\\1"
 
 [fd]
 src.github = "sharkdp/fd"
 fetch.github = "sharkdp/fd"
+# Pull the contents of `Cargo.lock` into generated nix expr
 extract = ["Cargo.lock"]
 
 [git-dependency]
-src.manual= "522a2a222f9529ce94cdc0fe256b11154f97f258"
+src.manual = "522a2a222f9529ce94cdc0fe256b11154f97f258"
 fetch.github = "NixOS/nixpkgs"
+# Calculate outputHashes for git dependencies in cargo lock
 cargo_lock = "pkgs/build-support/rust/test/import-cargo-lock/git-dependency/Cargo.lock"

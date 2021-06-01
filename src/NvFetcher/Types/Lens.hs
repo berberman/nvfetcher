@@ -14,6 +14,8 @@ import NvFetcher.Types
 
 makeLenses ''ListOptions
 
+makeLenses ''NvcheckerOptions
+
 makeLenses ''VersionSource
 
 makeLenses ''NixFetcher

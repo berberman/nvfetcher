@@ -34,6 +34,8 @@ module NvFetcher.Types
     ListOptions (..),
     VersionSource (..),
     NvcheckerResult (..),
+    Nvchecker (..),
+    NvcheckerOptions (..),
 
     -- * Nix fetcher types
     NixFetcher (..),
@@ -52,6 +54,8 @@ module NvFetcher.Types
     -- * Package types
     PackageName,
     PackageFetcher,
+    PackageExtractSrc (..),
+    PackageCargoFilePath (..),
     Package (..),
     PackageKey (..),
   )
@@ -123,7 +127,7 @@ instance Show VersionSortMethod where
 instance Default VersionSortMethod where
   def = ParseVersion
 
--- | The extra configuration for some version sources.
+-- | Filter-like configuration for some version sources.
 -- See <https://nvchecker.readthedocs.io/en/latest/usage.html#list-options> for details.
 data ListOptions = ListOptions
   { _includeRegex :: Maybe Text,
@@ -133,7 +137,16 @@ data ListOptions = ListOptions
   }
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData, Default)
 
--- | The input of nvchecker
+-- | Configuration available for evey version sourece.
+-- See <https://nvchecker.readthedocs.io/en/latest/usage.html#global-options> for details.
+data NvcheckerOptions = NvcheckerOptions
+  { _stripPrefix :: Maybe Text,
+    _fromPattern :: Maybe Text,
+    _toPattern :: Maybe Text
+  }
+  deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData, Default)
+
+-- | Upstream version source for nvchecker to check
 data VersionSource
   = GitHubRelease {_owner :: Text, _repo :: Text}
   | GitHubTag {_owner :: Text, _repo :: Text, _listOptions :: ListOptions}
@@ -145,6 +158,10 @@ data VersionSource
   | Repology {_repology :: Text, _repo :: Text}
   | Webpage {_vurl :: Text, _regex :: Text, _listOptions :: ListOptions}
   | HttpHeader {_vurl :: Text, _regex :: Text, _listOptions :: ListOptions}
+  deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
+
+-- | The input of nvchecker
+data Nvchecker = Nvchecker VersionSource NvcheckerOptions
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 -- | The result of running nvchecker
@@ -159,7 +176,7 @@ instance A.FromJSON NvcheckerResult where
   parseJSON = A.withObject "NvcheckerResult" $ \o ->
     NvcheckerResult <$> o A..: "version" <*> pure Nothing
 
-type instance RuleResult VersionSource = NvcheckerResult
+type instance RuleResult Nvchecker = NvcheckerResult
 
 --------------------------------------------------------------------------------
 
@@ -227,6 +244,10 @@ type PackageName = Text
 -- | How to create package source fetcher given a version
 type PackageFetcher = Version -> NixFetcher Fresh
 
+newtype PackageExtractSrc = PackageExtractSrc [FilePath]
+
+newtype PackageCargoFilePath = PackageCargoFilePath FilePath
+
 -- | A package is defined with:
 --
 -- 1. its name
@@ -240,10 +261,10 @@ type PackageFetcher = Version -> NixFetcher Fresh
 -- /in case we can't check the equality between fetcher functions./
 data Package = Package
   { _pname :: PackageName,
-    _pversion :: VersionSource,
+    _pversion :: Nvchecker,
     _pfetcher :: PackageFetcher,
-    _pextract :: [FilePath],
-    _pcargo :: Maybe FilePath
+    _pextract :: PackageExtractSrc,
+    _pcargo :: Maybe PackageCargoFilePath
   }
 
 -- | Package key is the name of a package.

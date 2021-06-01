@@ -20,6 +20,8 @@ module NvFetcher.Nvchecker
   ( -- * Types
     VersionSortMethod (..),
     ListOptions (..),
+    Nvchecker (..),
+    NvcheckerOptions (..),
     VersionSource (..),
     NvcheckerResult (..),
 
@@ -37,15 +39,15 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import Development.Shake
 import Development.Shake.Rule
-import NvFetcher.Types.ShakeExtras
 import NvFetcher.Types
+import NvFetcher.Types.ShakeExtras
 import NvFetcher.Utils
 import Toml (Value (Bool, Text), pretty)
 import Toml.Type.Edsl
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()
-nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (q, pkg)) old _mode ->
+nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (Nvchecker versionSource options, pkg)) old _mode ->
   -- If the package was removed after the last run,
   -- shake still runs the nvchecker rule for this package.
   -- So we record a version change here, indicating that the package has been removed.
@@ -57,7 +59,7 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (q, pkg)) ol
       pure $ RunResult ChangedRecomputeDiff mempty undefined -- skip running, returning a never consumed result
     _ ->
       withTempFile $ \config -> do
-        writeFile' config $ T.unpack $ pretty $ mkToml $ table (fromString $ T.unpack $ coerce pkg) $ genNvConfig q
+        writeFile' config $ T.unpack $ pretty $ mkToml $ genNvConfig pkg options versionSource
         need [config]
         (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
         putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
@@ -75,59 +77,66 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (q, pkg)) ol
                 else RunResult ChangedRecomputeDiff (encode' $ nvNow now) now {nvOld = Just cachedResult}
           Nothing -> RunResult ChangedRecomputeDiff (encode' $ nvNow now) now
 
-genNvConfig :: VersionSource -> TDSL
-genNvConfig = \case
-  GitHubRelease {..} -> do
-    "source" =: "github"
-    "github" =: Text (_owner <> "/" <> _repo)
-    "use_latest_release" =: Bool True
-  GitHubTag {..} -> do
-    "source" =: "github"
-    "github" =: Text (_owner <> "/" <> _repo)
-    "use_max_tag" =: Bool True
-    genListOptions _listOptions
-  Git {..} -> do
-    "source" =: "git"
-    "git" =: Text _vurl
-    "branch" =:? coerce _vbranch
-    "use_commit" =: Bool True
-  Aur {..} -> do
-    "source" =: "aur"
-    "aur" =: Text _aur
-    "strip_release" =: Bool True
-  ArchLinux {..} -> do
-    "source" =: "archpkg"
-    "aur" =: Text _archpkg
-    "strip_release" =: Bool True
-  Pypi {..} -> do
-    "source" =: "pypi"
-    "pypi" =: Text _pypi
-  Manual {..} -> do
-    "source" =: "manual"
-    "manual" =: Text _manual
-  Repology {..} -> do
-    "source" =: "repology"
-    "repology" =: Text _repology
-    "repo" =: Text _repo
-  Webpage {..} -> do
-    "source" =: "regex"
-    "url" =: Text _vurl
-    "regex" =: Text _regex
-    genListOptions _listOptions
-  HttpHeader {..} -> do
-    "source" =: "httpheader"
-    "url" =: Text _vurl
-    "regex" =: Text _regex
-    genListOptions _listOptions
+genNvConfig :: PackageKey -> NvcheckerOptions -> VersionSource -> TDSL
+genNvConfig pkg options versionSource = table (fromString $ T.unpack $ coerce pkg) $ do
+  genVersionSource versionSource
+  genOptions options
   where
     key =:? (Just x) = key =: Text x
     _ =:? _ = pure ()
+    genVersionSource = \case
+      GitHubRelease {..} -> do
+        "source" =: "github"
+        "github" =: Text (_owner <> "/" <> _repo)
+        "use_latest_release" =: Bool True
+      GitHubTag {..} -> do
+        "source" =: "github"
+        "github" =: Text (_owner <> "/" <> _repo)
+        "use_max_tag" =: Bool True
+        genListOptions _listOptions
+      Git {..} -> do
+        "source" =: "git"
+        "git" =: Text _vurl
+        "branch" =:? coerce _vbranch
+        "use_commit" =: Bool True
+      Aur {..} -> do
+        "source" =: "aur"
+        "aur" =: Text _aur
+        "strip_release" =: Bool True
+      ArchLinux {..} -> do
+        "source" =: "archpkg"
+        "aur" =: Text _archpkg
+        "strip_release" =: Bool True
+      Pypi {..} -> do
+        "source" =: "pypi"
+        "pypi" =: Text _pypi
+      Manual {..} -> do
+        "source" =: "manual"
+        "manual" =: Text _manual
+      Repology {..} -> do
+        "source" =: "repology"
+        "repology" =: Text _repology
+        "repo" =: Text _repo
+      Webpage {..} -> do
+        "source" =: "regex"
+        "url" =: Text _vurl
+        "regex" =: Text _regex
+        genListOptions _listOptions
+      HttpHeader {..} -> do
+        "source" =: "httpheader"
+        "url" =: Text _vurl
+        "regex" =: Text _regex
+        genListOptions _listOptions
     genListOptions ListOptions {..} = do
       "include_regex" =:? _includeRegex
       "exclude_regex" =:? _excludeRegex
       "sort_version_key" =:? fmap (T.pack . show) _sortVersionKey
       "ignored" =:? _ignored
+    genOptions NvcheckerOptions {..} = do
+      "prefix" =:? _stripPrefix
+      "from_pattern" =:? _fromPattern
+      "to_pattern" =:? _toPattern
 
 -- | Run nvchecker
-checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult
-checkVersion v k = apply1 $ WithPackageKey (v, k)
+checkVersion :: VersionSource -> NvcheckerOptions -> PackageKey -> Action NvcheckerResult
+checkVersion v o k = apply1 $ WithPackageKey (Nvchecker v o, k)

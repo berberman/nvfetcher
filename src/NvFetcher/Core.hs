@@ -50,22 +50,28 @@ coreRules = do
     _ ->
       lookupPackage pkg >>= \case
         Nothing -> fail $ "Unkown package key: " <> show pkg
-        Just Package {..} -> do
-          (NvcheckerResult version mOldV) <- checkVersion _pversion pkg
-          prefetched <- prefetch $ _pfetcher version
-          appending1 <-
-            if null _pextract
-              then pure ""
-              else do
-                result <- HMap.toList <$> extractSrc prefetched _pextract pkg
-                pure $ T.unlines [toNixExpr k <> " = ''\n" <> v <> "'';" | (k, v) <- result]
-          appending2 <-
-            case _pcargo of
-              Just lockPath -> do
-                result <- fetchRustGitDeps prefetched lockPath pkg
-                let body = T.unlines [asString k <> " = " <> coerce (asString $ coerce v) <> ";" | (k, v) <- HMap.toList result]
-                    lockPathNix = T.pack $ "./" <> lockPath
-                pure [trimming|
+        Just
+          Package
+            { _pversion = Nvchecker versionSource options,
+              _pextract = PackageExtractSrc extract,
+              ..
+            } -> do
+            (NvcheckerResult version mOldV) <- checkVersion versionSource options pkg
+            prefetched <- prefetch $ _pfetcher version
+            appending1 <-
+              if null extract
+                then pure ""
+                else do
+                  result <- HMap.toList <$> extractSrc prefetched extract pkg
+                  pure $ T.unlines [toNixExpr k <> " = ''\n" <> v <> "'';" | (k, v) <- result]
+            appending2 <-
+              case _pcargo of
+                Just (PackageCargoFilePath lockPath) -> do
+                  result <- fetchRustGitDeps prefetched lockPath pkg
+                  let body = T.unlines [asString k <> " = " <> coerce (asString $ coerce v) <> ";" | (k, v) <- HMap.toList result]
+                      lockPathNix = T.pack $ "./" <> lockPath
+                  pure
+                    [trimming|
                   cargoLock = {
                     lockFile = $lockPathNix;
                     outputHashes = {
@@ -73,16 +79,16 @@ coreRules = do
                     };
                   };
                 |]
-              _ -> pure ""
-          case mOldV of
-            Nothing ->
-              recordVersionChange _pname Nothing version
-            Just old
-              | old /= version ->
-                recordVersionChange _pname (Just old) version
-            _ -> pure ()
-          let result = gen _pname version prefetched $ appending1 <> appending2
-          pure $ RunResult ChangedRecomputeDiff (encode' (result, version)) result
+                _ -> pure ""
+            case mOldV of
+              Nothing ->
+                recordVersionChange _pname Nothing version
+              Just old
+                | old /= version ->
+                  recordVersionChange _pname (Just old) version
+              _ -> pure ()
+            let result = gen _pname version prefetched $ appending1 <> appending2
+            pure $ RunResult ChangedRecomputeDiff (encode' (result, version)) result
 
 -- | Run the core rule.
 -- Given a package key, run nvchecker and then prefetch it,
