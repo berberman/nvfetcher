@@ -46,7 +46,7 @@
                 ++ [ makeWrapper ];
               postInstall = ''
                 wrapProgram $out/bin/nvfetcher \
-                  --prefix PATH ":" "${nvchecker}/bin:${nix-prefetch-git}/bin"
+                  --prefix PATH ":" "${lib.makeBinPath [ nvchecker nix-prefetch-git ]}"
               '';
             }));
         };
