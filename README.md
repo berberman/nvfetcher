@@ -127,7 +127,6 @@ there are two required fields and three optional fields in each table:
 
 * optional git prefetch configuration, which makes sense only when the fetcher equals to `fetch.github` or `fetch.git`.
 They can exist simultanesouly.
-  * `git.branch = branch_name` - branch to fetch
   * `git.deepClone` - a bool value to control deep clone
   * `git.fetchSubmodules` - a bool value to control fetching submodules
   * `git.leaveDotGit` - a bool value to control leaving dot git

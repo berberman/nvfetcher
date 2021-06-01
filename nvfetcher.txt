@@ -51,7 +51,7 @@ data VersionSortMethod
 ParseVersion :: VersionSortMethod
 Vercmp :: VersionSortMethod
 
--- | The extra configuration for some version sources. See
+-- | Filter-like configuration for some version sources. See
 --   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#list-options</a>
 --   for details.
 data ListOptions
@@ -61,7 +61,7 @@ ListOptions :: Maybe Text -> Maybe Text -> Maybe VersionSortMethod -> Maybe Text
 [_sortVersionKey] :: ListOptions -> Maybe VersionSortMethod
 [_ignored] :: ListOptions -> Maybe Text
 
--- | The input of nvchecker
+-- | Upstream version source for nvchecker to check
 data VersionSource
 GitHubRelease :: Text -> Text -> VersionSource
 [_owner] :: VersionSource -> Text
@@ -101,12 +101,24 @@ NvcheckerResult :: Version -> Maybe Version -> NvcheckerResult
 -- | nvchecker doesn't give this value, but shake restores it from last run
 [nvOld] :: NvcheckerResult -> Maybe Version
 
+-- | The input of nvchecker
+data Nvchecker
+Nvchecker :: VersionSource -> NvcheckerOptions -> Nvchecker
+
+-- | Configuration available for evey version sourece. See
+--   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#global-options</a>
+--   for details.
+data NvcheckerOptions
+NvcheckerOptions :: Maybe Text -> Maybe Text -> Maybe Text -> NvcheckerOptions
+[_stripPrefix] :: NvcheckerOptions -> Maybe Text
+[_fromPattern] :: NvcheckerOptions -> Maybe Text
+[_toPattern] :: NvcheckerOptions -> Maybe Text
+
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
-FetchGit :: Text -> Version -> Branch -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
+FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
-[_branch] :: NixFetcher (k :: FetchStatus) -> Branch
 [_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
@@ -144,6 +156,10 @@ type PackageName = Text
 
 -- | How to create package source fetcher given a version
 type PackageFetcher = Version -> NixFetcher Fresh
+newtype PackageExtractSrc
+PackageExtractSrc :: [FilePath] -> PackageExtractSrc
+newtype PackageCargoFilePath
+PackageCargoFilePath :: FilePath -> PackageCargoFilePath
 
 -- | A package is defined with:
 --   
@@ -160,12 +176,12 @@ type PackageFetcher = Version -> NixFetcher Fresh
 --   strings,</i> <i>in case we can't check the equality between fetcher
 --   functions.</i>
 data Package
-Package :: PackageName -> VersionSource -> PackageFetcher -> [FilePath] -> Maybe FilePath -> Package
+Package :: PackageName -> Nvchecker -> PackageFetcher -> PackageExtractSrc -> Maybe PackageCargoFilePath -> Package
 [_pname] :: Package -> PackageName
-[_pversion] :: Package -> VersionSource
+[_pversion] :: Package -> Nvchecker
 [_pfetcher] :: Package -> PackageFetcher
-[_pextract] :: Package -> [FilePath]
-[_pcargo] :: Package -> Maybe FilePath
+[_pextract] :: Package -> PackageExtractSrc
+[_pcargo] :: Package -> Maybe PackageCargoFilePath
 
 -- | Package key is the name of a package. We use this type to index
 --   packages.
@@ -213,6 +229,14 @@ instance GHC.Generics.Generic NvFetcher.Types.ListOptions
 instance GHC.Classes.Ord NvFetcher.Types.ListOptions
 instance GHC.Classes.Eq NvFetcher.Types.ListOptions
 instance GHC.Show.Show NvFetcher.Types.ListOptions
+instance Data.Default.Class.Default NvFetcher.Types.NvcheckerOptions
+instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerOptions
+instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerOptions
+instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerOptions
+instance GHC.Generics.Generic NvFetcher.Types.NvcheckerOptions
+instance GHC.Classes.Ord NvFetcher.Types.NvcheckerOptions
+instance GHC.Classes.Eq NvFetcher.Types.NvcheckerOptions
+instance GHC.Show.Show NvFetcher.Types.NvcheckerOptions
 instance Control.DeepSeq.NFData NvFetcher.Types.VersionSource
 instance Data.Binary.Class.Binary NvFetcher.Types.VersionSource
 instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSource
@@ -220,6 +244,13 @@ instance GHC.Generics.Generic NvFetcher.Types.VersionSource
 instance GHC.Classes.Ord NvFetcher.Types.VersionSource
 instance GHC.Classes.Eq NvFetcher.Types.VersionSource
 instance GHC.Show.Show NvFetcher.Types.VersionSource
+instance Control.DeepSeq.NFData NvFetcher.Types.Nvchecker
+instance Data.Binary.Class.Binary NvFetcher.Types.Nvchecker
+instance Data.Hashable.Class.Hashable NvFetcher.Types.Nvchecker
+instance GHC.Generics.Generic NvFetcher.Types.Nvchecker
+instance GHC.Classes.Ord NvFetcher.Types.Nvchecker
+instance GHC.Classes.Eq NvFetcher.Types.Nvchecker
+instance GHC.Show.Show NvFetcher.Types.Nvchecker
 instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerResult
 instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerResult
 instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerResult
@@ -288,10 +319,9 @@ module NvFetcher.NixFetcher
 
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
-FetchGit :: Text -> Version -> Branch -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
+FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
-[_branch] :: NixFetcher (k :: FetchStatus) -> Branch
 [_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
@@ -336,6 +366,9 @@ sortVersionKey :: Lens' ListOptions (Maybe VersionSortMethod)
 includeRegex :: Lens' ListOptions (Maybe Text)
 ignored :: Lens' ListOptions (Maybe Text)
 excludeRegex :: Lens' ListOptions (Maybe Text)
+toPattern :: Lens' NvcheckerOptions (Maybe Text)
+stripPrefix :: Lens' NvcheckerOptions (Maybe Text)
+fromPattern :: Lens' NvcheckerOptions (Maybe Text)
 vurl :: Traversal' VersionSource Text
 vbranch :: Traversal' VersionSource Branch
 repology :: Traversal' VersionSource Text
@@ -347,18 +380,17 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_aauf k_azvq. Lens (NixFetcher k_aauf) (NixFetcher k_azvq) (FetchResult k_aauf) (FetchResult k_azvq)
-rev :: forall k_aauf. Traversal' (NixFetcher k_aauf) Version
-leaveDotGit :: forall k_aauf. Traversal' (NixFetcher k_aauf) Bool
-furl :: forall k_aauf. Lens' (NixFetcher k_aauf) Text
-fetchSubmodules :: forall k_aauf. Traversal' (NixFetcher k_aauf) Bool
-deepClone :: forall k_aauf. Traversal' (NixFetcher k_aauf) Bool
-branch :: forall k_aauf. Traversal' (NixFetcher k_aauf) Branch
-pversion :: Lens' Package VersionSource
+sha256 :: forall k_aaup k_aAYU. Lens (NixFetcher k_aaup) (NixFetcher k_aAYU) (FetchResult k_aaup) (FetchResult k_aAYU)
+rev :: forall k_aaup. Traversal' (NixFetcher k_aaup) Version
+leaveDotGit :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
+furl :: forall k_aaup. Lens' (NixFetcher k_aaup) Text
+fetchSubmodules :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
+deepClone :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
+pversion :: Lens' Package Nvchecker
 pname :: Lens' Package PackageName
 pfetcher :: Lens' Package PackageFetcher
-pextract :: Lens' Package [FilePath]
-pcargo :: Lens' Package (Maybe FilePath)
+pextract :: Lens' Package PackageExtractSrc
+pcargo :: Lens' Package (Maybe PackageCargoFilePath)
 
 
 -- | This module mainly contains two things: <a>PackageSet</a> and
@@ -385,15 +417,7 @@ data PackageSetF f
 type PackageSet = Free PackageSetF
 
 -- | Add a package to package set
-newPackage :: PackageName -> VersionSource -> PackageFetcher -> PackageSet ()
-
--- | Add a package which needs extract some files to package set. See
---   <a>ExtractSrc</a>.
-newPackageExtractSrc :: PackageName -> VersionSource -> PackageFetcher -> [FilePath] -> PackageSet ()
-
--- | Add a (rust) package which needs fetch git dependencies to package
---   set. See <a>FetchRustGitDeps</a>.
-newPackageRust :: PackageName -> VersionSource -> PackageFetcher -> FilePath -> PackageSet ()
+newPackage :: PackageName -> Nvchecker -> PackageFetcher -> PackageExtractSrc -> Maybe PackageCargoFilePath -> PackageSet ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -408,9 +432,7 @@ runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 class PkgDSL f
 new :: PkgDSL f => f PackageName -> f (Prod '[PackageName])
 andThen :: PkgDSL f => f (Prod r) -> f a -> f (Prod (a : r))
-end :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r) => f (Prod r) -> f ()
-endExtract :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member [FilePath] r) => f (Prod r) -> f ()
-endRust :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r, Member FilePath r) => f (Prod r) -> f ()
+end :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r, OptionalMember PackageExtractSrc r, OptionalMember PackageCargoFilePath r, OptionalMember NvcheckerOptions r) => f (Prod r) -> f ()
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
@@ -419,14 +441,7 @@ endRust :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member Packa
 --   <pre>
 --   define $ package "nvfetcher-git" <a>sourceGit</a> "<a>https://github.com/berberman/nvfetcher"</a> <a>fetchGitHub</a> ("berberman", "nvfetcher")
 --   </pre>
-define :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r) => PackageSet (Prod r) -> PackageSet ()
-
--- | Similar to <a>define</a>, but takes an input file paths to extract
---   from package source
-defineExtractSrc :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, NotElem [FilePath] r) => [FilePath] -> PackageSet (Prod r) -> PackageSet ()
-
--- | Similar to <a>define</a>, but fetches rust git dependencies
-defineRust :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, NotElem FilePath r) => FilePath -> PackageSet (Prod r) -> PackageSet ()
+define :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, OptionalMember PackageExtractSrc r, OptionalMember PackageCargoFilePath r, OptionalMember NvcheckerOptions r) => PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])
@@ -515,6 +530,9 @@ fetchGit' :: PackageSet (Prod r) -> (Text, NixFetcher Fresh -> NixFetcher Fresh)
 
 -- | This package is fetched from url
 fetchUrl :: PackageSet (Prod r) -> (Version -> Text) -> PackageSet (Prod (PackageFetcher : r))
+extractSource :: PackageSet (Prod r) -> [FilePath] -> PackageSet (Prod (PackageExtractSrc : r))
+hasCargoLock :: PackageSet (Prod r) -> FilePath -> PackageSet (Prod (PackageCargoFilePath : r))
+tweakVersion :: PackageSet (Prod r) -> (NvcheckerOptions -> NvcheckerOptions) -> PackageSet (Prod (NvcheckerOptions : r))
 
 -- | Simple HList
 data Prod (r :: [Type])
@@ -644,6 +662,9 @@ infixl 8 ^.
 infixr 4 ?~
 instance NvFetcher.PackageSet.PkgDSL NvFetcher.PackageSet.PackageSet
 instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.Member x (x : xs)
+instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.OptionalMember x (x : xs)
+instance NvFetcher.PackageSet.OptionalMember x xs => NvFetcher.PackageSet.OptionalMember x (_y : xs)
+instance NvFetcher.PackageSet.OptionalMember x '[]
 instance NvFetcher.PackageSet.Member x xs => NvFetcher.PackageSet.Member x (_y : xs)
 instance (TypeError ...) => NvFetcher.PackageSet.Member x '[]
 instance Control.Monad.IO.Class.MonadIO NvFetcher.PackageSet.PackageSet
@@ -697,7 +718,7 @@ data VersionSortMethod
 ParseVersion :: VersionSortMethod
 Vercmp :: VersionSortMethod
 
--- | The extra configuration for some version sources. See
+-- | Filter-like configuration for some version sources. See
 --   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#list-options</a>
 --   for details.
 data ListOptions
@@ -708,6 +729,19 @@ ListOptions :: Maybe Text -> Maybe Text -> Maybe VersionSortMethod -> Maybe Text
 [_ignored] :: ListOptions -> Maybe Text
 
 -- | The input of nvchecker
+data Nvchecker
+Nvchecker :: VersionSource -> NvcheckerOptions -> Nvchecker
+
+-- | Configuration available for evey version sourece. See
+--   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#global-options</a>
+--   for details.
+data NvcheckerOptions
+NvcheckerOptions :: Maybe Text -> Maybe Text -> Maybe Text -> NvcheckerOptions
+[_stripPrefix] :: NvcheckerOptions -> Maybe Text
+[_fromPattern] :: NvcheckerOptions -> Maybe Text
+[_toPattern] :: NvcheckerOptions -> Maybe Text
+
+-- | Upstream version source for nvchecker to check
 data VersionSource
 GitHubRelease :: Text -> Text -> VersionSource
 [_owner] :: VersionSource -> Text
@@ -751,7 +785,7 @@ NvcheckerResult :: Version -> Maybe Version -> NvcheckerResult
 nvcheckerRule :: Rules ()
 
 -- | Run nvchecker
-checkVersion :: VersionSource -> PackageKey -> Action NvcheckerResult
+checkVersion :: VersionSource -> NvcheckerOptions -> PackageKey -> Action NvcheckerResult
 
 module NvFetcher.NixExpr
 
