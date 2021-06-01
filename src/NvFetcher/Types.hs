@@ -185,7 +185,6 @@ data NixFetcher (k :: FetchStatus)
   = FetchGit
       { _furl :: Text,
         _rev :: Version,
-        _branch :: Branch,
         _deepClone :: Bool,
         _fetchSubmodules :: Bool,
         _leaveDotGit :: Bool,

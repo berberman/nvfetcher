@@ -46,8 +46,6 @@ import Control.Monad (void, (<=<))
 import qualified Data.Aeson as A
 import qualified Data.Aeson.Types as A
 import Data.Coerce (coerce)
-import Data.Default (def)
-import Data.Maybe (maybeToList)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
@@ -66,7 +64,6 @@ runFetcher = \case
         [T.unpack _furl]
           <> ["--rev", T.unpack $ coerce _rev]
           <> ["--fetch-submodules" | _fetchSubmodules]
-          <> concat [["--branch-name", T.unpack b] | b <- maybeToList $ coerce _branch]
           <> ["--deepClone" | _deepClone]
           <> ["--leave-dotGit" | _leaveDotGit]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
@@ -103,7 +100,7 @@ prefetch = askOracle
 
 -- | Create a fetcher from git url
 gitFetcher :: Text -> PackageFetcher
-gitFetcher furl rev = FetchGit furl rev def False False False ()
+gitFetcher furl rev = FetchGit furl rev False False False ()
 
 -- | Create a fetcher from github repo
 gitHubFetcher ::

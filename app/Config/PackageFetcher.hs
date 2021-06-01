@@ -26,8 +26,7 @@ unsupportError = error "serialization is unsupported"
 --------------------------------------------------------------------------------
 
 data GitOptions = GitOptions
-  { goBranch :: Branch,
-    goDeepClone :: Maybe Bool,
+  { goDeepClone :: Maybe Bool,
     goFetchSubmodules :: Maybe Bool,
     goLeaveDotGit :: Maybe Bool
   }
@@ -36,20 +35,19 @@ data GitOptions = GitOptions
 gitOptionsCodec :: TomlCodec GitOptions
 gitOptionsCodec =
   GitOptions
-    <$> diwrap (dioptional (text "git.branch")) .= goBranch
-    <*> dioptional (bool "git.deepClone") .= goDeepClone
+    <$> dioptional (bool "git.deepClone") .= goDeepClone
     <*> dioptional (bool "git.fetchSubmodules") .= goFetchSubmodules
     <*> dioptional (bool "git.leaveDotGit") .= goLeaveDotGit
 
 _GitOptions :: Traversal' (NixFetcher f) GitOptions
 _GitOptions f x@FetchGit {..} =
   ( \GitOptions {..} ->
-      x & branch .~ goBranch
+      x
         & deepClone .~ fromMaybe False goDeepClone
         & fetchSubmodules .~ fromMaybe False goFetchSubmodules
         & leaveDotGit .~ fromMaybe False goLeaveDotGit
   )
-    <$> f (GitOptions _branch (Just _deepClone) (Just _fetchSubmodules) (Just _leaveDotGit))
+    <$> f (GitOptions (Just _deepClone) (Just _fetchSubmodules) (Just _leaveDotGit))
 _GitOptions _ x@FetchUrl {} = pure x
 
 --------------------------------------------------------------------------------
