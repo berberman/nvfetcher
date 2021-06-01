@@ -29,26 +29,35 @@
               "--html-location='https://hackage.haskell.org/package/$pkg-$version/docs'"
             ];
           });
+        packages.ghcWithNvfetcher = mkShell {
+          buildInputs = [
+            nix-prefetch-git
+            nvchecker
+            (haskellPackages.ghcWithPackages (p: [ p.nvfetcher ]))
+          ];
+        };
         hydraJobs = { inherit packages; };
       }) // {
         overlay = final: prev: {
           haskellPackages = prev.haskellPackages.override (old: {
             overrides = hself: hsuper: {
-              nvfetcher = prev.haskellPackages.callPackage ./nix { };
+              nvfetcher = with final.haskell.lib;
+                generateOptparseApplicativeCompletion "nvfetcher"
+                (overrideCabal (prev.haskellPackages.callPackage ./nix { })
+                  (drv: {
+                    buildTools = drv.buildTools or [ ] ++ [ final.makeWrapper ];
+                    postInstall = with final;
+                      drv.postInstall or "" + ''
+                        wrapProgram $out/bin/nvfetcher \
+                          --prefix PATH ":" "${
+                            lib.makeBinPath [ nvchecker nix-prefetch-git ]
+                          }"
+                      '';
+                  }));
             };
           });
-          nvfetcher-bin = with prev;
-            with final.haskellPackages;
-            with haskell.lib;
-            generateOptparseApplicativeCompletion "nvfetcher"
-            (overrideCabal (justStaticExecutables nvfetcher) (drv: {
-              executableToolDepends = drv.executableToolDepends or [ ]
-                ++ [ makeWrapper ];
-              postInstall = ''
-                wrapProgram $out/bin/nvfetcher \
-                  --prefix PATH ":" "${lib.makeBinPath [ nvchecker nix-prefetch-git ]}"
-              '';
-            }));
+          nvfetcher-bin = with final;
+            haskell.lib.justStaticExecutables haskellPackages.nvfetcher;
         };
       };
 }

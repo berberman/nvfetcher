@@ -82,6 +82,14 @@ $ nix run github:berberman/nvfetcher
 ```
 
 To use it as a Haskell library, the package is available on [Hackage](https://hackage.haskell.org/package/nvfetcher).
+If you want to use the Haskell library from flakes, there is also a shell `ghcWithNvfetcher`:
+
+```
+$ nix develop github:berberman/nvfetcher#ghcWithNvfetcher
+$ runghc Main.hs
+```
+
+where you can define packages in `Main.hs`. See [Haskell library](#Haskell-library) for details.
 
 ## Usage
 
