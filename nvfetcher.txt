@@ -16,9 +16,9 @@ module NvFetcher.Types
 newtype Version
 Version :: Text -> Version
 
--- | SHA 256 sum
-newtype SHA256
-SHA256 :: Text -> SHA256
+-- | Check sum, sha256, sri or base32, etc.
+newtype Checksum
+Checksum :: Text -> Checksum
 
 -- | Git branch (<a>Nothing</a>: master)
 newtype Branch
@@ -94,16 +94,16 @@ HttpHeader :: Text -> Text -> ListOptions -> VersionSource
 [_listOptions] :: VersionSource -> ListOptions
 
 -- | The result of running nvchecker
-data NvcheckerResult
-NvcheckerResult :: Version -> Maybe Version -> NvcheckerResult
-[nvNow] :: NvcheckerResult -> Version
+data NvcheckerA
+NvcheckerA :: Version -> Maybe Version -> NvcheckerA
+[nvNow] :: NvcheckerA -> Version
 
 -- | nvchecker doesn't give this value, but shake restores it from last run
-[nvOld] :: NvcheckerResult -> Maybe Version
+[nvOld] :: NvcheckerA -> Maybe Version
 
 -- | The input of nvchecker
-data Nvchecker
-Nvchecker :: VersionSource -> NvcheckerOptions -> Nvchecker
+data NvcheckerQ
+NvcheckerQ :: VersionSource -> NvcheckerOptions -> NvcheckerQ
 
 -- | Configuration available for evey version sourece. See
 --   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#global-options</a>
@@ -136,16 +136,16 @@ Fresh :: FetchStatus
 Fetched :: FetchStatus
 
 -- | Extract file contents from package source e.g. <tt>Cargo.lock</tt>
-data ExtractSrc
-ExtractSrc :: NixFetcher Fetched -> [FilePath] -> ExtractSrc
+data ExtractSrcQ
+ExtractSrcQ :: NixFetcher Fetched -> [FilePath] -> ExtractSrcQ
 
 -- | Fetch <tt>outputHashes</tt> for git dependencies in
 --   <tt>Cargo.lock</tt>. See
 --   <a>https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file</a>
 --   for details. We need fetched source and the file path to
---   @<tt>Cargo.lock</tt>.
-data FetchRustGitDeps
-FetchRustGitDeps :: NixFetcher Fetched -> FilePath -> FetchRustGitDeps
+--   <tt>Cargo.lock</tt>.
+data FetchRustGitDepsQ
+FetchRustGitDepsQ :: NixFetcher Fetched -> FilePath -> FetchRustGitDepsQ
 
 -- | The key type of nvfetcher rule. See <a>NvFetcher.Core</a>
 data Core
@@ -176,9 +176,9 @@ PackageCargoFilePath :: FilePath -> PackageCargoFilePath
 --   strings,</i> <i>in case we can't check the equality between fetcher
 --   functions.</i>
 data Package
-Package :: PackageName -> Nvchecker -> PackageFetcher -> PackageExtractSrc -> Maybe PackageCargoFilePath -> Package
+Package :: PackageName -> NvcheckerQ -> PackageFetcher -> PackageExtractSrc -> Maybe PackageCargoFilePath -> Package
 [_pname] :: Package -> PackageName
-[_pversion] :: Package -> Nvchecker
+[_pversion] :: Package -> NvcheckerQ
 [_pfetcher] :: Package -> PackageFetcher
 [_pextract] :: Package -> PackageExtractSrc
 [_pcargo] :: Package -> Maybe PackageCargoFilePath
@@ -199,13 +199,13 @@ instance Data.String.IsString NvFetcher.Types.Version
 instance GHC.Classes.Ord NvFetcher.Types.Version
 instance GHC.Show.Show NvFetcher.Types.Version
 instance GHC.Classes.Eq NvFetcher.Types.Version
-instance Control.DeepSeq.NFData NvFetcher.Types.SHA256
-instance Data.Binary.Class.Binary NvFetcher.Types.SHA256
-instance Data.Hashable.Class.Hashable NvFetcher.Types.SHA256
-instance GHC.Generics.Generic NvFetcher.Types.SHA256
-instance GHC.Classes.Ord NvFetcher.Types.SHA256
-instance GHC.Classes.Eq NvFetcher.Types.SHA256
-instance GHC.Show.Show NvFetcher.Types.SHA256
+instance Control.DeepSeq.NFData NvFetcher.Types.Checksum
+instance Data.Binary.Class.Binary NvFetcher.Types.Checksum
+instance Data.Hashable.Class.Hashable NvFetcher.Types.Checksum
+instance GHC.Generics.Generic NvFetcher.Types.Checksum
+instance GHC.Classes.Ord NvFetcher.Types.Checksum
+instance GHC.Classes.Eq NvFetcher.Types.Checksum
+instance GHC.Show.Show NvFetcher.Types.Checksum
 instance Control.DeepSeq.NFData NvFetcher.Types.Branch
 instance Data.Binary.Class.Binary NvFetcher.Types.Branch
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Branch
@@ -244,34 +244,34 @@ instance GHC.Generics.Generic NvFetcher.Types.VersionSource
 instance GHC.Classes.Ord NvFetcher.Types.VersionSource
 instance GHC.Classes.Eq NvFetcher.Types.VersionSource
 instance GHC.Show.Show NvFetcher.Types.VersionSource
-instance Control.DeepSeq.NFData NvFetcher.Types.Nvchecker
-instance Data.Binary.Class.Binary NvFetcher.Types.Nvchecker
-instance Data.Hashable.Class.Hashable NvFetcher.Types.Nvchecker
-instance GHC.Generics.Generic NvFetcher.Types.Nvchecker
-instance GHC.Classes.Ord NvFetcher.Types.Nvchecker
-instance GHC.Classes.Eq NvFetcher.Types.Nvchecker
-instance GHC.Show.Show NvFetcher.Types.Nvchecker
-instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerResult
-instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerResult
-instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerResult
-instance GHC.Generics.Generic NvFetcher.Types.NvcheckerResult
-instance GHC.Classes.Eq NvFetcher.Types.NvcheckerResult
-instance GHC.Show.Show NvFetcher.Types.NvcheckerResult
+instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerQ
+instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerQ
+instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerQ
+instance GHC.Generics.Generic NvFetcher.Types.NvcheckerQ
+instance GHC.Classes.Ord NvFetcher.Types.NvcheckerQ
+instance GHC.Classes.Eq NvFetcher.Types.NvcheckerQ
+instance GHC.Show.Show NvFetcher.Types.NvcheckerQ
+instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerA
+instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerA
+instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerA
+instance GHC.Generics.Generic NvFetcher.Types.NvcheckerA
+instance GHC.Classes.Eq NvFetcher.Types.NvcheckerA
+instance GHC.Show.Show NvFetcher.Types.NvcheckerA
 instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
-instance GHC.Generics.Generic NvFetcher.Types.ExtractSrc
-instance Data.Binary.Class.Binary NvFetcher.Types.ExtractSrc
-instance Control.DeepSeq.NFData NvFetcher.Types.ExtractSrc
-instance Data.Hashable.Class.Hashable NvFetcher.Types.ExtractSrc
-instance GHC.Classes.Ord NvFetcher.Types.ExtractSrc
-instance GHC.Classes.Eq NvFetcher.Types.ExtractSrc
-instance GHC.Show.Show NvFetcher.Types.ExtractSrc
-instance GHC.Generics.Generic NvFetcher.Types.FetchRustGitDeps
-instance Data.Binary.Class.Binary NvFetcher.Types.FetchRustGitDeps
-instance Control.DeepSeq.NFData NvFetcher.Types.FetchRustGitDeps
-instance Data.Hashable.Class.Hashable NvFetcher.Types.FetchRustGitDeps
-instance GHC.Classes.Ord NvFetcher.Types.FetchRustGitDeps
-instance GHC.Classes.Eq NvFetcher.Types.FetchRustGitDeps
-instance GHC.Show.Show NvFetcher.Types.FetchRustGitDeps
+instance GHC.Generics.Generic NvFetcher.Types.ExtractSrcQ
+instance Data.Binary.Class.Binary NvFetcher.Types.ExtractSrcQ
+instance Control.DeepSeq.NFData NvFetcher.Types.ExtractSrcQ
+instance Data.Hashable.Class.Hashable NvFetcher.Types.ExtractSrcQ
+instance GHC.Classes.Ord NvFetcher.Types.ExtractSrcQ
+instance GHC.Classes.Eq NvFetcher.Types.ExtractSrcQ
+instance GHC.Show.Show NvFetcher.Types.ExtractSrcQ
+instance GHC.Generics.Generic NvFetcher.Types.FetchRustGitDepsQ
+instance Data.Binary.Class.Binary NvFetcher.Types.FetchRustGitDepsQ
+instance Control.DeepSeq.NFData NvFetcher.Types.FetchRustGitDepsQ
+instance Data.Hashable.Class.Hashable NvFetcher.Types.FetchRustGitDepsQ
+instance GHC.Classes.Ord NvFetcher.Types.FetchRustGitDepsQ
+instance GHC.Classes.Eq NvFetcher.Types.FetchRustGitDepsQ
+instance GHC.Show.Show NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Classes.Eq NvFetcher.Types.VersionChange
 instance Control.DeepSeq.NFData NvFetcher.Types.PackageKey
 instance Data.Binary.Class.Binary NvFetcher.Types.PackageKey
@@ -299,7 +299,7 @@ instance Data.Binary.Class.Binary (NvFetcher.Types.FetchResult k) => Data.Binary
 instance Control.DeepSeq.NFData (NvFetcher.Types.FetchResult k) => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
 instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
 instance GHC.Show.Show NvFetcher.Types.VersionChange
-instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerResult
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerA
 instance GHC.Show.Show NvFetcher.Types.VersionSortMethod
 instance Data.Default.Class.Default NvFetcher.Types.VersionSortMethod
 
@@ -386,7 +386,7 @@ leaveDotGit :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
 furl :: forall k_aaup. Lens' (NixFetcher k_aaup) Text
 fetchSubmodules :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
 deepClone :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
-pversion :: Lens' Package Nvchecker
+pversion :: Lens' Package NvcheckerQ
 pname :: Lens' Package PackageName
 pfetcher :: Lens' Package PackageFetcher
 pextract :: Lens' Package PackageExtractSrc
@@ -417,7 +417,7 @@ data PackageSetF f
 type PackageSet = Free PackageSetF
 
 -- | Add a package to package set
-newPackage :: PackageName -> Nvchecker -> PackageFetcher -> PackageExtractSrc -> Maybe PackageCargoFilePath -> PackageSet ()
+newPackage :: PackageName -> NvcheckerQ -> PackageFetcher -> PackageExtractSrc -> Maybe PackageCargoFilePath -> PackageSet ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -729,8 +729,8 @@ ListOptions :: Maybe Text -> Maybe Text -> Maybe VersionSortMethod -> Maybe Text
 [_ignored] :: ListOptions -> Maybe Text
 
 -- | The input of nvchecker
-data Nvchecker
-Nvchecker :: VersionSource -> NvcheckerOptions -> Nvchecker
+data NvcheckerQ
+NvcheckerQ :: VersionSource -> NvcheckerOptions -> NvcheckerQ
 
 -- | Configuration available for evey version sourece. See
 --   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#global-options</a>
@@ -774,19 +774,23 @@ HttpHeader :: Text -> Text -> ListOptions -> VersionSource
 [_listOptions] :: VersionSource -> ListOptions
 
 -- | The result of running nvchecker
-data NvcheckerResult
-NvcheckerResult :: Version -> Maybe Version -> NvcheckerResult
-[nvNow] :: NvcheckerResult -> Version
+data NvcheckerA
+NvcheckerA :: Version -> Maybe Version -> NvcheckerA
+[nvNow] :: NvcheckerA -> Version
 
 -- | nvchecker doesn't give this value, but shake restores it from last run
-[nvOld] :: NvcheckerResult -> Maybe Version
+[nvOld] :: NvcheckerA -> Maybe Version
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()
 
 -- | Run nvchecker
-checkVersion :: VersionSource -> NvcheckerOptions -> PackageKey -> Action NvcheckerResult
+checkVersion :: VersionSource -> NvcheckerOptions -> PackageKey -> Action NvcheckerA
 
+
+-- | This module contains a type class <a>ToNixExpr</a> and some its
+--   instances associated with either Haskell primitive types or our
+--   <a>NvFetcher.Types</a>.
 module NvFetcher.NixExpr
 
 -- | Nix expression
@@ -802,19 +806,43 @@ instance NvFetcher.NixExpr.ToNixExpr a => NvFetcher.NixExpr.ToNixExpr [a]
 instance NvFetcher.NixExpr.ToNixExpr GHC.Base.String
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.NixExpr
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.Version
-instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.ExtractSrc
+instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.ExtractSrcQ
 
+
+-- | This module provides function that extracs files contents from package
+--   sources. It uses <a>IFD</a> under the hood, pulling <i>textual</i>
+--   files from source drv. Because we use <tt>nix-instantiate</tt> to
+--   build drv, so <tt><a>nixpkgs</a></tt> (<tt>NIX_PATH</tt>) is required.
 module NvFetcher.ExtractSrc
 
 -- | Extract file contents from package source e.g. <tt>Cargo.lock</tt>
-data ExtractSrc
-ExtractSrc :: NixFetcher Fetched -> [FilePath] -> ExtractSrc
-extractSrcRule :: Rules ()
-extractSrc :: NixFetcher Fetched -> [FilePath] -> PackageKey -> Action (HashMap FilePath Text)
+data ExtractSrcQ
+ExtractSrcQ :: NixFetcher Fetched -> [FilePath] -> ExtractSrcQ
 
+-- | Rules of extract source
+extractSrcRule :: Rules ()
+
+-- | Run extract source
+extractSrc :: NixFetcher Fetched -> [FilePath] -> Action (HashMap FilePath Text)
+
+
+-- | This module provides function to calculate <tt>cargoLock</tt> used in
+--   <tt>rustPlatform.buildRustPackage</tt>.
 module NvFetcher.FetchRustGitDeps
+
+-- | Fetch <tt>outputHashes</tt> for git dependencies in
+--   <tt>Cargo.lock</tt>. See
+--   <a>https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file</a>
+--   for details. We need fetched source and the file path to
+--   <tt>Cargo.lock</tt>.
+data FetchRustGitDepsQ
+FetchRustGitDepsQ :: NixFetcher Fetched -> FilePath -> FetchRustGitDepsQ
+
+-- | Rules of fetch rust git dependencies
 fetchRustGitDepsRule :: Rules ()
-fetchRustGitDeps :: NixFetcher Fetched -> FilePath -> PackageKey -> Action (HashMap Text SHA256)
+
+-- | Run fetch rust git dependencies
+fetchRustGitDeps :: NixFetcher Fetched -> FilePath -> Action (HashMap Text Checksum)
 instance GHC.Classes.Ord NvFetcher.FetchRustGitDeps.ParsedGitSrc
 instance GHC.Classes.Eq NvFetcher.FetchRustGitDeps.ParsedGitSrc
 instance GHC.Show.Show NvFetcher.FetchRustGitDeps.ParsedGitSrc
@@ -832,8 +860,10 @@ Core :: Core
 -- | The core rule of nvchecker. all rules are wired here.
 coreRules :: Rules ()
 
--- | Run the core rule. Given a package key, run nvchecker and then
---   prefetch it, resulting a nix source snippet like:
+-- | Run the core rule. Given a <a>PackageKey</a>, run
+--   <a>NvFetcher.Nvchecker</a>, <a>NvFetcher.NixFetcher</a> (may also run
+--   <a>NvFetcher.ExtractSrc</a> or <a>FetchRustGitDeps</a>) resulting a
+--   nix source snippet like:
 --   
 --   <pre>
 --   feeluown-core = {
