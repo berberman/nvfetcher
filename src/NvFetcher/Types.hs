@@ -23,7 +23,7 @@
 module NvFetcher.Types
   ( -- * Common types
     Version (..),
-    SHA256 (..),
+    Checksum (..),
     Branch (..),
     NixExpr,
     VersionChange (..),
@@ -33,8 +33,8 @@ module NvFetcher.Types
     VersionSortMethod (..),
     ListOptions (..),
     VersionSource (..),
-    NvcheckerResult (..),
-    Nvchecker (..),
+    NvcheckerA (..),
+    NvcheckerQ (..),
     NvcheckerOptions (..),
 
     -- * Nix fetcher types
@@ -43,10 +43,10 @@ module NvFetcher.Types
     FetchStatus (..),
 
     -- * ExtractSrc Types
-    ExtractSrc (..),
+    ExtractSrcQ (..),
 
     -- * FetchRustGitDeps types
-    FetchRustGitDeps (..),
+    FetchRustGitDepsQ (..),
 
     -- * Core types
     Core (..),
@@ -81,8 +81,8 @@ newtype Version = Version Text
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
--- | SHA 256 sum
-newtype SHA256 = SHA256 Text
+-- | Check sum, sha256, sri or base32, etc.
+newtype Checksum = Checksum Text
   deriving newtype (Show, Eq, Ord)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
@@ -161,22 +161,22 @@ data VersionSource
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 -- | The input of nvchecker
-data Nvchecker = Nvchecker VersionSource NvcheckerOptions
+data NvcheckerQ = NvcheckerQ VersionSource NvcheckerOptions
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 -- | The result of running nvchecker
-data NvcheckerResult = NvcheckerResult
+data NvcheckerA = NvcheckerA
   { nvNow :: Version,
     -- | nvchecker doesn't give this value, but shake restores it from last run
     nvOld :: Maybe Version
   }
   deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
 
-instance A.FromJSON NvcheckerResult where
+instance A.FromJSON NvcheckerA where
   parseJSON = A.withObject "NvcheckerResult" $ \o ->
-    NvcheckerResult <$> o A..: "version" <*> pure Nothing
+    NvcheckerA <$> o A..: "version" <*> pure Nothing
 
-type instance RuleResult Nvchecker = NvcheckerResult
+type instance RuleResult NvcheckerQ = NvcheckerA
 
 --------------------------------------------------------------------------------
 
@@ -199,7 +199,7 @@ data FetchStatus = Fresh | Fetched
 -- | Prefetched fetchers hold hashes
 type family FetchResult (k :: FetchStatus) where
   FetchResult Fresh = ()
-  FetchResult Fetched = SHA256
+  FetchResult Fetched = Checksum
 
 type instance RuleResult (NixFetcher Fresh) = NixFetcher Fetched
 
@@ -219,21 +219,21 @@ deriving instance NFData (FetchResult k) => NFData (NixFetcher k)
 
 -- | Extract file contents from package source
 -- e.g. @Cargo.lock@
-data ExtractSrc = ExtractSrc (NixFetcher Fetched) [FilePath]
+data ExtractSrcQ = ExtractSrcQ (NixFetcher Fetched) [FilePath]
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
-type instance RuleResult ExtractSrc = HashMap FilePath Text
+type instance RuleResult ExtractSrcQ = HashMap FilePath Text
 
 --------------------------------------------------------------------------------
 
 -- | Fetch @outputHashes@ for git dependencies in @Cargo.lock@.
 -- See <https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file> for details.
--- We need fetched source and the file path to @@Cargo.lock@.
-data FetchRustGitDeps = FetchRustGitDeps (NixFetcher Fetched) FilePath
+-- We need fetched source and the file path to @Cargo.lock@.
+data FetchRustGitDepsQ = FetchRustGitDepsQ (NixFetcher Fetched) FilePath
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
 -- | @outputHashes@, a mapping from nameVer -> output hash
-type instance RuleResult FetchRustGitDeps = HashMap Text SHA256
+type instance RuleResult FetchRustGitDepsQ = HashMap Text Checksum
 
 --------------------------------------------------------------------------------
 
@@ -260,7 +260,7 @@ newtype PackageCargoFilePath = PackageCargoFilePath FilePath
 -- /in case we can't check the equality between fetcher functions./
 data Package = Package
   { _pname :: PackageName,
-    _pversion :: Nvchecker,
+    _pversion :: NvcheckerQ,
     _pfetcher :: PackageFetcher,
     _pextract :: PackageExtractSrc,
     _pcargo :: Maybe PackageCargoFilePath

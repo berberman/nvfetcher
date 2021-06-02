@@ -2,9 +2,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
-
+-- | Copyright: (c) 2021 berberman
+-- SPDX-License-Identifier: MIT
+-- Maintainer: berberman <berberman@yandex.com>
+-- Stability: experimental
+-- Portability: portable
+--
+-- This module provides function to calculate @cargoLock@ used in @rustPlatform.buildRustPackage@.
 module NvFetcher.FetchRustGitDeps
-  ( fetchRustGitDepsRule,
+  ( -- * Types
+    FetchRustGitDepsQ (..),
+
+    -- * Rules
+    fetchRustGitDepsRule,
     fetchRustGitDeps,
   )
 where
@@ -27,10 +37,11 @@ import Text.Parsec.Text
 import Toml (TomlCodec, (.=))
 import qualified Toml
 
+-- | Rules of fetch rust git dependencies
 fetchRustGitDepsRule :: Rules ()
 fetchRustGitDepsRule = void $
-  addOracleCache $ \(WithPackageKey (FetchRustGitDeps fetcher lockPath, pkg)) -> do
-    cargoLock <- head . HMap.elems <$> extractSrc fetcher [lockPath] pkg
+  addOracleCache $ \(FetchRustGitDepsQ fetcher lockPath) -> do
+    cargoLock <- head . HMap.elems <$> extractSrc fetcher [lockPath]
     deps <- case Toml.decode (Toml.list rustDepCodec "package") cargoLock of
       Right r -> pure $ nubOrdOn rrawSrc r
       Left err -> fail $ "Failed to parse Cargo.lock: " <> T.unpack (Toml.prettyTomlDecodeErrors err)
@@ -50,8 +61,14 @@ fetchRustGitDepsRule = void $
         ]
     pure $ HMap.fromList r
 
-fetchRustGitDeps :: NixFetcher Fetched -> FilePath -> PackageKey -> Action (HashMap Text SHA256)
-fetchRustGitDeps fetcher lockPath k = askOracle $ WithPackageKey (FetchRustGitDeps fetcher lockPath, k)
+-- | Run fetch rust git dependencies
+fetchRustGitDeps ::
+  -- | prefetched source
+  NixFetcher Fetched ->
+  -- | relative file path of @Cargo.lock@
+  FilePath ->
+  Action (HashMap Text Checksum)
+fetchRustGitDeps fetcher lockPath = askOracle $ FetchRustGitDepsQ fetcher lockPath
 
 data ParsedGitSrc = ParsedGitSrc
   { -- | git url

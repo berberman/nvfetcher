@@ -26,7 +26,7 @@ parseConfig toml = go tables [] []
     go [] [] sp = Right sp
     go [] se _ = Left se
     tables = [fmap (toPackage k) $ validationToEither $ Toml.runTomlCodec iCodec v | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml]
-    toPackage k (versionSource, f, e, c, options) = Package k (Nvchecker versionSource options) f e c
+    toPackage k (versionSource, f, e, c, options) = Package k (NvcheckerQ versionSource options) f e c
     iCodec =
       (,,,,)
         <$> versionSourceCodec .= view _1

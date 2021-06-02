@@ -55,10 +55,10 @@ import NvFetcher.Types
 
 --------------------------------------------------------------------------------
 
-runFetcher :: NixFetcher Fresh -> Action SHA256
+runFetcher :: NixFetcher Fresh -> Action Checksum
 runFetcher = \case
   FetchGit {..} -> do
-    let parser = A.withObject "nix-prefetch-git" $ \o -> SHA256 <$> o A..: "sha256"
+    let parser = A.withObject "nix-prefetch-git" $ \o -> Checksum <$> o A..: "sha256"
     (CmdTime t, Stdout out, CmdLine c) <-
       command [EchoStderr False] "nix-prefetch-git" $
         [T.unpack _furl]

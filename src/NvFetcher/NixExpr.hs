@@ -6,6 +6,14 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
 
+-- | Copyright: (c) 2021 berberman
+-- SPDX-License-Identifier: MIT
+-- Maintainer: berberman <berberman@yandex.com>
+-- Stability: experimental
+-- Portability: portable
+--
+-- This module contains a type class 'ToNixExpr' and some its instances associated with either Haskell
+-- primitive types or our "NvFetcher.Types".
 module NvFetcher.NixExpr
   ( NixExpr,
     ToNixExpr (..),
@@ -73,8 +81,8 @@ nixFetcher sha256 = \case
           }
     |]
 
-instance ToNixExpr ExtractSrc where
-  toNixExpr (ExtractSrc fetcher files) = extractFiles fetcher files
+instance ToNixExpr ExtractSrcQ where
+  toNixExpr (ExtractSrcQ fetcher files) = extractFiles fetcher files
 
 extractFiles :: NixFetcher Fetched -> [FilePath] -> NixExpr
 extractFiles (toNixExpr -> fetcherExpr) (toNixExpr -> fileNames) =

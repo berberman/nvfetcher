@@ -4,8 +4,21 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE ViewPatterns #-}
 
+-- | Copyright: (c) 2021 berberman
+-- SPDX-License-Identifier: MIT
+-- Maintainer: berberman <berberman@yandex.com>
+-- Stability: experimental
+-- Portability: portable
+--
+-- This module provides function that extracs files contents from package sources.
+-- It uses [IFD](https://nixos.wiki/wiki/Import_From_Derivation) under the hood,
+-- pulling /textual/ files from source drv.
+-- Because we use @nix-instantiate@ to build drv, so @<nixpkgs>@ (@NIX_PATH@) is required.
 module NvFetcher.ExtractSrc
-  ( ExtractSrc (..),
+  ( -- * Types
+    ExtractSrcQ (..),
+
+    -- * Rules
     extractSrcRule,
     extractSrc,
   )
@@ -23,9 +36,10 @@ import NeatInterpolation (trimming)
 import NvFetcher.NixExpr
 import NvFetcher.Types
 
+-- | Rules of extract source
 extractSrcRule :: Rules ()
 extractSrcRule = void $
-  addOracleCache $ \(WithPackageKey (q :: ExtractSrc, _pkg)) -> withTempFile $ \fp -> do
+  addOracleCache $ \(q :: ExtractSrcQ) -> withTempFile $ \fp -> do
     writeFile' fp $ T.unpack $ wrap $ toNixExpr q
     need [fp]
     -- TODO: Avoid using NIX_PATH
@@ -35,8 +49,14 @@ extractSrcRule = void $
       Just x -> pure x
       _ -> fail $ "Failed to parse output of nix-instantiate: " <> T.unpack (T.decodeUtf8 out)
 
-extractSrc :: NixFetcher Fetched -> [FilePath] -> PackageKey -> Action (HashMap FilePath Text)
-extractSrc fetcher fp k = askOracle $ WithPackageKey (ExtractSrc fetcher fp, k)
+-- | Run extract source
+extractSrc ::
+  -- | prefetched source
+  NixFetcher Fetched ->
+  -- | relative file paths to extract
+  [FilePath] ->
+  Action (HashMap FilePath Text)
+extractSrc fetcher fp = askOracle (ExtractSrcQ fetcher fp)
 
 --------------------------------------------------------------------------------
 

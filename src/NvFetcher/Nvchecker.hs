@@ -20,10 +20,10 @@ module NvFetcher.Nvchecker
   ( -- * Types
     VersionSortMethod (..),
     ListOptions (..),
-    Nvchecker (..),
+    NvcheckerQ (..),
     NvcheckerOptions (..),
     VersionSource (..),
-    NvcheckerResult (..),
+    NvcheckerA (..),
 
     -- * Rules
     nvcheckerRule,
@@ -47,7 +47,7 @@ import Toml.Type.Edsl
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()
-nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (Nvchecker versionSource options, pkg)) old _mode ->
+nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (NvcheckerQ versionSource options, pkg)) old _mode ->
   -- If the package was removed after the last run,
   -- shake still runs the nvchecker rule for this package.
   -- So we record a version change here, indicating that the package has been removed.
@@ -138,5 +138,5 @@ genNvConfig pkg options versionSource = table (fromString $ T.unpack $ coerce pk
       "to_pattern" =:? _toPattern
 
 -- | Run nvchecker
-checkVersion :: VersionSource -> NvcheckerOptions -> PackageKey -> Action NvcheckerResult
-checkVersion v o k = apply1 $ WithPackageKey (Nvchecker v o, k)
+checkVersion :: VersionSource -> NvcheckerOptions -> PackageKey -> Action NvcheckerA
+checkVersion v o k = apply1 $ WithPackageKey (NvcheckerQ v o, k)

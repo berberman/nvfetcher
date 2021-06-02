@@ -133,7 +133,7 @@ instance MonadIO PackageSet where
 -- | Add a package to package set
 newPackage ::
   PackageName ->
-  Nvchecker ->
+  NvcheckerQ ->
   PackageFetcher ->
   PackageExtractSrc ->
   Maybe PackageCargoFilePath ->
@@ -225,7 +225,7 @@ instance PkgDSL PackageSet where
     p <- e
     newPackage
       (proj p)
-      (Nvchecker (proj p) (fromMaybe def (projMaybe p)))
+      (NvcheckerQ (proj p) (fromMaybe def (projMaybe p)))
       (proj p)
       (fromMaybe (PackageExtractSrc []) $ projMaybe p)
       (projMaybe p)

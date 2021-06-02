@@ -55,7 +55,7 @@ cliOptionsParser =
                 <> completer (bashCompleter "file")
             )
         )
-      <*> ( option
+      <*> option
               auto
               ( short 'j'
                   <> metavar "NUM"
@@ -63,7 +63,6 @@ cliOptionsParser =
                   <> value 0
                   <> showDefault
               )
-          )
       <*> switch (long "timing" <> short 't' <> help "Show build time")
       <*> switch (long "verbose" <> short 'v' <> help "Verbose mode")
       <*> strArgument

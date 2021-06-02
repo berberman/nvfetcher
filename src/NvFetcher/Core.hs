@@ -52,22 +52,22 @@ coreRules = do
         Nothing -> fail $ "Unkown package key: " <> show pkg
         Just
           Package
-            { _pversion = Nvchecker versionSource options,
+            { _pversion = NvcheckerQ versionSource options,
               _pextract = PackageExtractSrc extract,
               ..
             } -> do
-            (NvcheckerResult version mOldV) <- checkVersion versionSource options pkg
+            (NvcheckerA version mOldV) <- checkVersion versionSource options pkg
             prefetched <- prefetch $ _pfetcher version
             appending1 <-
               if null extract
                 then pure ""
                 else do
-                  result <- HMap.toList <$> extractSrc prefetched extract pkg
+                  result <- HMap.toList <$> extractSrc prefetched extract
                   pure $ T.unlines [toNixExpr k <> " = ''\n" <> v <> "'';" | (k, v) <- result]
             appending2 <-
               case _pcargo of
                 Just (PackageCargoFilePath lockPath) -> do
-                  result <- fetchRustGitDeps prefetched lockPath pkg
+                  result <- fetchRustGitDeps prefetched lockPath
                   let body = T.unlines [asString k <> " = " <> coerce (asString $ coerce v) <> ";" | (k, v) <- HMap.toList result]
                       lockPathNix = T.pack $ "./" <> lockPath
                   pure
@@ -91,7 +91,8 @@ coreRules = do
             pure $ RunResult ChangedRecomputeDiff (encode' (result, version)) result
 
 -- | Run the core rule.
--- Given a package key, run nvchecker and then prefetch it,
+-- Given a 'PackageKey', run "NvFetcher.Nvchecker", "NvFetcher.NixFetcher"
+-- (may also run "NvFetcher.ExtractSrc" or "FetchRustGitDeps")
 -- resulting a nix source snippet like:
 --
 -- @
