@@ -58,10 +58,10 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (NvcheckerQ 
       recordVersionChange (coerce pkg) oldVer "∅"
       pure $ RunResult ChangedRecomputeDiff mempty undefined -- skip running, returning a never consumed result
     _ ->
-      withTempFile $ \config -> do
+      withTempFile $ \config -> withRetries $ do
         writeFile' config $ T.unpack $ pretty $ mkToml $ genNvConfig pkg options versionSource
         need [config]
-        (CmdTime t, Stdout out, CmdLine c) <- withRetries $ cmd $ "nvchecker --logger json -c " <> config
+        (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
         putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
         let out' = T.decodeUtf8 out
             result = mapMaybe (A.decodeStrict . T.encodeUtf8) (T.lines out')
