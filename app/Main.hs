@@ -93,7 +93,7 @@ getCLIOptions = do
       version
       "nvfetcher - generate nix sources expr for the latest version of packages"
       ( unlines
-          [ "It's important to keep .shake dir to make caches work properly.",
+          [ "It's important to keep _build dir to make caches work properly.",
             "If you change the version source or fetcher of an existing package, please run target \"clean\" to rebuild everything."
           ]
       )

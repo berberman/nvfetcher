@@ -25,7 +25,7 @@ jobs:
       run : nix shell --command nvfetcher --config nvfetcher_example.toml
 
     - name: Cleanup
-      run: rm -r .shake sources.nix
+      run: rm -r _build sources.nix
 
     - name: Test Main_example.hs
       run: nix develop .\#ghcWithNvfetcher --command runghc Main_example.hs
