@@ -61,7 +61,7 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (NvcheckerQ 
       withTempFile $ \config -> do
         writeFile' config $ T.unpack $ pretty $ mkToml $ genNvConfig pkg options versionSource
         need [config]
-        (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
+        (CmdTime t, Stdout out, CmdLine c) <- withRetries $ cmd $ "nvchecker --loggerr json -c " <> config
         putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
         let out' = T.decodeUtf8 out
             result = mapMaybe (A.decodeStrict . T.encodeUtf8) (T.lines out')

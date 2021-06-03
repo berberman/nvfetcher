@@ -23,6 +23,9 @@ module NvFetcher.Types.ShakeExtras
     -- * Version changes
     recordVersionChange,
     getVersionChanges,
+
+    -- * Retries
+    withRetries,
   )
 where
 
@@ -35,7 +38,8 @@ import NvFetcher.Types
 -- | Values we use during the build. It's stored in 'shakeExtra'
 data ShakeExtras = ShakeExtras
   { versionChanges :: Var [VersionChange],
-    targetPackages :: Map PackageKey Package
+    targetPackages :: Map PackageKey Package,
+    retries :: Int
   }
 
 -- | Get our values from shake
@@ -45,9 +49,9 @@ getShakeExtras =
     Just x -> pure x
     _ -> fail "ShakeExtras is missing!"
 
--- | Create an empty 'ShakeExtras' from packages to build
-initShakeExtras :: Map PackageKey Package -> IO ShakeExtras
-initShakeExtras targetPackages = do
+-- | Create an empty 'ShakeExtras' from packages to build and times to retry for each rule
+initShakeExtras :: Map PackageKey Package -> Int -> IO ShakeExtras
+initShakeExtras targetPackages retries = do
   versionChanges <- newVar mempty
   pure ShakeExtras {..}
 
@@ -78,3 +82,7 @@ getVersionChanges :: Action [VersionChange]
 getVersionChanges = do
   ShakeExtras {..} <- getShakeExtras
   liftIO $ readVar versionChanges
+
+-- | Run an action, retry at most 'retries' times if it throws an exception
+withRetries :: Action a -> Action a
+withRetries a = getShakeExtras >>= \ShakeExtras {..} -> actionRetry retries a

@@ -72,7 +72,8 @@ data Args = Args
     -- | Action run after build rule
     argActionAfterBuild :: Action (),
     -- | Action run after clean rule
-    argActionAfterClean :: Action ()
+    argActionAfterClean :: Action (),
+    argRetries :: Int
   }
 
 -- | Default arguments of 'defaultMain'
@@ -91,12 +92,13 @@ defaultArgs =
     (pure ())
     (pure ())
     (pure ())
+    3
 
 -- | Entry point of nvfetcher
 runNvFetcher :: Args -> PackageSet () -> IO ()
 runNvFetcher args@Args {..} packageSet = do
   pkgs <- runPackageSet packageSet
-  shakeExtras <- initShakeExtras pkgs
+  shakeExtras <- initShakeExtras pkgs argRetries
   let opts =
         argShakeOptions
           { shakeExtra = addShakeExtra shakeExtras (shakeExtra argShakeOptions)

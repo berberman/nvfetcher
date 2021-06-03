@@ -52,6 +52,7 @@ import qualified Data.Text.Encoding as T
 import Development.Shake
 import NeatInterpolation (trimming)
 import NvFetcher.Types
+import NvFetcher.Types.ShakeExtras
 
 --------------------------------------------------------------------------------
 
@@ -89,7 +90,7 @@ pypiUrl pypi (coerce -> ver) =
 prefetchRule :: Rules ()
 prefetchRule = void $
   addOracleCache $ \(f :: NixFetcher Fresh) -> do
-    sha256 <- runFetcher f
+    sha256 <- withRetries $ runFetcher f
     pure $ f {_sha256 = sha256}
 
 -- | Run nix fetcher

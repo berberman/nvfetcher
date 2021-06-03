@@ -35,6 +35,7 @@ import Development.Shake
 import NeatInterpolation (trimming)
 import NvFetcher.NixExpr
 import NvFetcher.Types
+import NvFetcher.Types.ShakeExtras
 
 -- | Rules of extract source
 extractSrcRule :: Rules ()
@@ -43,7 +44,7 @@ extractSrcRule = void $
     writeFile' fp $ T.unpack $ wrap $ toNixExpr q
     need [fp]
     -- TODO: Avoid using NIX_PATH
-    (CmdTime t, StdoutTrim out, CmdLine c) <- cmd Shell $ "nix-instantiate --eval --strict --json --read-write-mode -E 'let pkgs = import <nixpkgs> { }; in ((import " <> fp <> ") pkgs)'"
+    (CmdTime t, StdoutTrim out, CmdLine c) <- withRetries $ cmd Shell $ "nix-instantiate --eval --strict --json --read-write-mode -E 'let pkgs = import <nixpkgs> { }; in ((import " <> fp <> ") pkgs)'"
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case A.decodeStrict out of
       Just x -> pure x

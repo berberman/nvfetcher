@@ -19,6 +19,7 @@ data CLIOptions = CLIOptions
     outputPath :: FilePath,
     logPath :: Maybe FilePath,
     threads :: Int,
+    retries :: Int,
     timing :: Bool,
     verbose :: Bool,
     target :: String
@@ -56,20 +57,30 @@ cliOptionsParser =
             )
         )
       <*> option
-              auto
-              ( short 'j'
-                  <> metavar "NUM"
-                  <> help "Number of threads (0: detected number of processors)"
-                  <> value 0
-                  <> showDefault
-              )
+        auto
+        ( short 'j'
+            <> metavar "NUM"
+            <> help "Number of threads (0: detected number of processors)"
+            <> value 0
+            <> showDefault
+        )
+      <*> option
+        auto
+        ( short 'r'
+            <> long "retry"
+            <> metavar "NUM"
+            <> help "Times to retry of some rules (nvchecker, prefetch, nix-instantiate, etc.)"
+            <> value 3
+            <> showDefault
+        )
       <*> switch (long "timing" <> short 't' <> help "Show build time")
       <*> switch (long "verbose" <> short 'v' <> help "Verbose mode")
       <*> strArgument
         ( metavar "TARGET"
-            <> help "Two targets are available: build and clean"
+            <> help "Two targets are available: 1.build  2.clean"
             <> value "build"
             <> completer (listCompleter ["build", "clean"])
+            <> showDefault
         )
 
 version :: String
