@@ -109,9 +109,12 @@ Available options:
   -l,--changelog FILE      Dump version changes to a file
   -j NUM                   Number of threads (0: detected number of processors)
                            (default: 0)
+  -r,--retry NUM           Times to retry of some rules (nvchecker, prefetch,
+                           nix-instantiate, etc.) (default: 3)
   -t,--timing              Show build time
   -v,--verbose             Verbose mode
-  TARGET                   Two targets are available: build and clean
+  TARGET                   Two targets are available: 1.build 2.clean
+                           (default: "build")
 ```
 
 Each *package* corresponds to a TOML table, whose name is encoded as table key;

@@ -304,6 +304,76 @@ instance GHC.Show.Show NvFetcher.Types.VersionSortMethod
 instance Data.Default.Class.Default NvFetcher.Types.VersionSortMethod
 
 
+-- | Lenses for <a>NvFetcher.Types</a>
+module NvFetcher.Types.Lens
+sortVersionKey :: Lens' ListOptions (Maybe VersionSortMethod)
+includeRegex :: Lens' ListOptions (Maybe Text)
+ignored :: Lens' ListOptions (Maybe Text)
+excludeRegex :: Lens' ListOptions (Maybe Text)
+toPattern :: Lens' NvcheckerOptions (Maybe Text)
+stripPrefix :: Lens' NvcheckerOptions (Maybe Text)
+fromPattern :: Lens' NvcheckerOptions (Maybe Text)
+vurl :: Traversal' VersionSource Text
+vbranch :: Traversal' VersionSource Branch
+repology :: Traversal' VersionSource Text
+repo :: Traversal' VersionSource Text
+regex :: Traversal' VersionSource Text
+pypi :: Traversal' VersionSource Text
+owner :: Traversal' VersionSource Text
+manual :: Traversal' VersionSource Text
+listOptions :: Traversal' VersionSource ListOptions
+aur :: Traversal' VersionSource Text
+archpkg :: Traversal' VersionSource Text
+sha256 :: forall k_aaup k_ayns. Lens (NixFetcher k_aaup) (NixFetcher k_ayns) (FetchResult k_aaup) (FetchResult k_ayns)
+rev :: forall k_aaup. Traversal' (NixFetcher k_aaup) Version
+leaveDotGit :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
+furl :: forall k_aaup. Lens' (NixFetcher k_aaup) Text
+fetchSubmodules :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
+deepClone :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
+pversion :: Lens' Package NvcheckerQ
+pname :: Lens' Package PackageName
+pfetcher :: Lens' Package PackageFetcher
+pextract :: Lens' Package PackageExtractSrc
+pcargo :: Lens' Package (Maybe PackageCargoFilePath)
+
+
+-- | This module is about global information we use in rules.
+module NvFetcher.Types.ShakeExtras
+
+-- | Values we use during the build. It's stored in <a>shakeExtra</a>
+data ShakeExtras
+ShakeExtras :: Var [VersionChange] -> Map PackageKey Package -> Int -> ShakeExtras
+[versionChanges] :: ShakeExtras -> Var [VersionChange]
+[targetPackages] :: ShakeExtras -> Map PackageKey Package
+[retries] :: ShakeExtras -> Int
+
+-- | Create an empty <a>ShakeExtras</a> from packages to build and times to
+--   retry for each rule
+initShakeExtras :: Map PackageKey Package -> Int -> IO ShakeExtras
+
+-- | Get our values from shake
+getShakeExtras :: Action ShakeExtras
+
+-- | Find a package given its key
+lookupPackage :: PackageKey -> Action (Maybe Package)
+
+-- | Get keys of all packages to build
+getAllPackageKeys :: Action [PackageKey]
+
+-- | Check if we need build this package
+isPackageKeyTarget :: PackageKey -> Action Bool
+
+-- | Record version change of a package
+recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()
+
+-- | Get version changes since the last run
+getVersionChanges :: Action [VersionChange]
+
+-- | Run an action, retry at most <a>retries</a> times if it throws an
+--   exception
+withRetries :: Action a -> Action a
+
+
 -- | <a>NixFetcher</a> is used to describe how to fetch package sources.
 --   
 --   There are two types of fetchers overall:
@@ -358,39 +428,6 @@ gitFetcher :: Text -> PackageFetcher
 
 -- | Create a fetcher from url
 urlFetcher :: Text -> NixFetcher Fresh
-
-
--- | Lenses for <a>NvFetcher.Types</a>
-module NvFetcher.Types.Lens
-sortVersionKey :: Lens' ListOptions (Maybe VersionSortMethod)
-includeRegex :: Lens' ListOptions (Maybe Text)
-ignored :: Lens' ListOptions (Maybe Text)
-excludeRegex :: Lens' ListOptions (Maybe Text)
-toPattern :: Lens' NvcheckerOptions (Maybe Text)
-stripPrefix :: Lens' NvcheckerOptions (Maybe Text)
-fromPattern :: Lens' NvcheckerOptions (Maybe Text)
-vurl :: Traversal' VersionSource Text
-vbranch :: Traversal' VersionSource Branch
-repology :: Traversal' VersionSource Text
-repo :: Traversal' VersionSource Text
-regex :: Traversal' VersionSource Text
-pypi :: Traversal' VersionSource Text
-owner :: Traversal' VersionSource Text
-manual :: Traversal' VersionSource Text
-listOptions :: Traversal' VersionSource ListOptions
-aur :: Traversal' VersionSource Text
-archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_aaup k_aAYU. Lens (NixFetcher k_aaup) (NixFetcher k_aAYU) (FetchResult k_aaup) (FetchResult k_aAYU)
-rev :: forall k_aaup. Traversal' (NixFetcher k_aaup) Version
-leaveDotGit :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
-furl :: forall k_aaup. Lens' (NixFetcher k_aaup) Text
-fetchSubmodules :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
-deepClone :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
-pversion :: Lens' Package NvcheckerQ
-pname :: Lens' Package PackageName
-pfetcher :: Lens' Package PackageFetcher
-pextract :: Lens' Package PackageExtractSrc
-pcargo :: Lens' Package (Maybe PackageCargoFilePath)
 
 
 -- | This module mainly contains two things: <a>PackageSet</a> and
@@ -671,37 +708,6 @@ instance Control.Monad.IO.Class.MonadIO NvFetcher.PackageSet.PackageSet
 instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
 
 
--- | This module is about global information we use in rules.
-module NvFetcher.Types.ShakeExtras
-
--- | Values we use during the build. It's stored in <a>shakeExtra</a>
-data ShakeExtras
-ShakeExtras :: Var [VersionChange] -> Map PackageKey Package -> ShakeExtras
-[versionChanges] :: ShakeExtras -> Var [VersionChange]
-[targetPackages] :: ShakeExtras -> Map PackageKey Package
-
--- | Create an empty <a>ShakeExtras</a> from packages to build
-initShakeExtras :: Map PackageKey Package -> IO ShakeExtras
-
--- | Get our values from shake
-getShakeExtras :: Action ShakeExtras
-
--- | Find a package given its key
-lookupPackage :: PackageKey -> Action (Maybe Package)
-
--- | Get keys of all packages to build
-getAllPackageKeys :: Action [PackageKey]
-
--- | Check if we need build this package
-isPackageKeyTarget :: PackageKey -> Action Bool
-
--- | Record version change of a package
-recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()
-
--- | Get version changes since the last run
-getVersionChanges :: Action [VersionChange]
-
-
 -- | <a>nvchecker</a> is a program checking new versions of packages. We
 --   encode the checking process into shake build system, generating
 --   configuration of nvchecker and calling it externally. Now we call
@@ -915,7 +921,7 @@ module NvFetcher
 
 -- | Arguments for running nvfetcher
 data Args
-Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action () -> Args
+Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action () -> Int -> Args
 
 -- | Shake options
 [argShakeOptions] :: Args -> ShakeOptions
@@ -934,6 +940,7 @@ Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action ()
 
 -- | Action run after clean rule
 [argActionAfterClean] :: Args -> Action ()
+[argRetries] :: Args -> Int
 
 -- | Default arguments of <tt>defaultMain</tt>
 --   
