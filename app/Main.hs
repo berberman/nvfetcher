@@ -93,8 +93,9 @@ getCLIOptions = do
       version
       "nvfetcher - generate nix sources expr for the latest version of packages"
       ( unlines
-          [ "It's important to keep _build dir to make caches work properly.",
-            "If you change the version source or fetcher of an existing package, please run target \"clean\" to rebuild everything."
+          [ "It's important to keep _build dir.",
+            "If you change any field of an existing package, you may have to run target \"clean\" to invalidate the databse,",
+            "making sure the consistency of our build system."
           ]
       )
       cliOptionsParser

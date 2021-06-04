@@ -23,6 +23,7 @@ import qualified Data.HashMap.Strict as HMap
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
+import Development.Shake.FilePath
 import Development.Shake.Rule
 import NeatInterpolation (trimming)
 import NvFetcher.ExtractSrc
@@ -58,18 +59,40 @@ coreRules = do
             } -> do
             (NvcheckerA version mOldV) <- checkVersion versionSource options pkg
             prefetched <- prefetch $ _pfetcher version
+            shakeDir <- getShakeDir
             appending1 <-
               if null extract
                 then pure ""
                 else do
                   result <- HMap.toList <$> extractSrc prefetched extract
-                  pure $ T.unlines [toNixExpr k <> " = ''\n" <> v <> "'';" | (k, v) <- result]
+                  T.unlines
+                    <$> sequence
+                      [ do
+                          -- write extracted files to shake dir
+                          -- and read them in nix using 'builtins.readFile'
+                          writeFile' (shakeDir </> path) (T.unpack v)
+                          pure $ toNixExpr k <> " = builtins.readFile ./" <> T.pack path
+                        | (k, v) <- result,
+                          let path =
+                                T.unpack _pname
+                                  <> "-"
+                                  <> T.unpack (coerce version)
+                                  </> k
+                      ]
             appending2 <-
               case _pcargo of
                 Just (PackageCargoFilePath lockPath) -> do
+                  (_, lockData) <- head . HMap.toList <$> extractSrc prefetched [lockPath]
                   result <- fetchRustGitDeps prefetched lockPath
                   let body = T.unlines [asString k <> " = " <> coerce (asString $ coerce v) <> ";" | (k, v) <- HMap.toList result]
-                      lockPathNix = T.pack $ "./" <> lockPath
+                      lockPath' =
+                        T.unpack _pname
+                          <> "-"
+                          <> T.unpack (coerce version)
+                          </> lockPath
+                      lockPathNix = "./" <> T.pack lockPath'
+                  -- similar to extract src, write lock file to shake dir
+                  writeFile' (shakeDir </> lockPath') $ T.unpack lockData
                   pure
                     [trimming|
                   cargoLock = {

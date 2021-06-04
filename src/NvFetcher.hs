@@ -48,9 +48,11 @@ module NvFetcher
   )
 where
 
+import qualified Control.Exception as CE
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
+import Development.Shake.FilePath
 import NeatInterpolation (trimming)
 import NvFetcher.Core
 import NvFetcher.NixFetcher
@@ -58,6 +60,8 @@ import NvFetcher.Nvchecker
 import NvFetcher.PackageSet
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
+import NvFetcher.Utils (getShakeDir)
+import System.Directory.Extra (createDirectoryIfMissing, createFileLink, removeFile)
 
 -- | Arguments for running nvfetcher
 data Args = Args
@@ -110,7 +114,7 @@ runNvFetcher args@Args {..} packageSet = do
 mainRules :: Args -> Rules ()
 mainRules Args {..} = do
   "clean" ~> do
-    removeFilesAfter ".build" ["//*"]
+    removeFilesAfter "_build" ["//*"]
     removeFilesAfter "." [argOutputFilePath]
     argActionAfterClean
 
@@ -123,8 +127,16 @@ mainRules Args {..} = do
         else do
           putInfo "Changes:"
           putInfo $ unlines $ show <$> changes
-    writeFileChanged argOutputFilePath $ T.unpack $ srouces (T.unlines body) <> "\n"
-    putInfo $ "Generate " <> argOutputFilePath
+    shakeDir <- getShakeDir
+    let genPath = shakeDir </> "generated.nix"
+    putVerbose $ "Generating " <> genPath
+    writeFileChanged genPath $ T.unpack $ srouces (T.unlines body) <> "\n"
+    need [genPath]
+    let outDir = takeDirectory argOutputFilePath
+    liftIO $ createDirectoryIfMissing True outDir
+    liftIO $ CE.catch @IOError (removeFile argOutputFilePath) (const $ pure ())
+    putVerbose $ "Symlinking " <> argOutputFilePath
+    liftIO $ createFileLink genPath argOutputFilePath
     argActionAfterBuild
 
   argRules

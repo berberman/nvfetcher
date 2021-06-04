@@ -44,8 +44,8 @@ fetch.github = "sharkdp/fd"
 # Pull the contents of `Cargo.lock` into generated nix expr
 extract = ["Cargo.lock"]
 
-[git-dependency]
-src.manual = "522a2a222f9529ce94cdc0fe256b11154f97f258"
-fetch.github = "NixOS/nixpkgs"
+[rust-git-dependency-example]
+src.manual = "8a5f37a8f80a3b05290707febf57e88661cee442"
+fetch.git = "https://gist.github.com/NickCao/6c4dbc4e15db5da107de6cdb89578375"
 # Calculate outputHashes for git dependencies in cargo lock
-cargo_lock = "pkgs/build-support/rust/test/import-cargo-lock/git-dependency/Cargo.lock"
+cargo_lock = "Cargo.lock"
