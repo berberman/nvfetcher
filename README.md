@@ -6,8 +6,6 @@
 
 nvfetcher is a tool to automate packages updates in flakes repos. It's built on top of [shake](https://www.shakebuild.com/),
 integrating [nvchecker](https://github.com/lilydjwg/nvchecker).
-It's very simple -- most complicated works are done by nvchecker, nvfetcher just wires it with prefetch tools,
-producing only one artifact as the result of build.
 nvfetcher cli program accepts a TOML file as config, which defines a set of package sources to run.
 
 ## Overview
@@ -58,6 +56,10 @@ running `nvfetcher build` will create `sources.nix` like:
 We tell nvfetcher how to get the latest version number of packages and how to fetch their sources given version numbers,
 and nvfetcher will help us keep their version and prefetched SHA256 sums up-to-date, stored in `sources.nix`.
 Shake will help us handle necessary rebuilds -- we check versions of packages during each run, but only prefetch them when needed.
+
+
+`sources.nix` is a symlink of `_build/generated.nix`, which means that the "build" results produced by `nvfetcher` are under `_build`,
+so you have to keep this directory for further use.
 
 ### Live examples
 
