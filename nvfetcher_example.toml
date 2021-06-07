@@ -8,11 +8,6 @@ fetch.github = "IsoaSFlus/QLivePlayer"
 # nix-prefetch-git options
 git.fetchSubmodules = true
 
-[fcitx5-pinyin-zhwiki]
-src.aur = "fcitx5-pinyin-zhwiki"
-# $ver can be used in fetch.url
-fetch.url = "https://github.com/felixonmars/fcitx5-pinyin-zhwiki/releases/download/0.2.2/zhwiki-$ver.dict"
-
 [apple-emoji]
 # A fake version, which is unused in the fetcher
 src.manual = "0.0.0.20200413"
