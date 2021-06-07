@@ -468,18 +468,23 @@ fetchUrl e f = fetch e (urlFetcher . f)
 
 --------------------------------------------------------------------------------
 
+-- | Extract files from fetched package source
 extractSource ::
   PackageSet (Prod r) ->
   [FilePath] ->
   PackageSet (Prod (PackageExtractSrc : r))
 extractSource = (. pure . PackageExtractSrc) . andThen
 
+-- | Run 'FetchRustGitDependencies' given the path to @Cargo.lock@
+--
+-- The lock file will be extracted as well.
 hasCargoLock ::
   PackageSet (Prod r) ->
   FilePath ->
   PackageSet (Prod (PackageCargoFilePath : r))
 hasCargoLock = (. pure . PackageCargoFilePath) . andThen
 
+-- | Set 'NvcheckerOptions' for a package, which can tweak the version number we obtain
 tweakVersion ::
   PackageSet (Prod r) ->
   (NvcheckerOptions -> NvcheckerOptions) ->
