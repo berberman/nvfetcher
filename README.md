@@ -119,41 +119,69 @@ Available options:
                            (default: "build")
 ```
 
-Each *package* corresponds to a TOML table, whose name is encoded as table key;
-there are two required fields and three optional fields in each table:
-* a nvchecker configuration, how to track version updates
-  * `src.github = owner/repo` - the latest gituhb release
-  * `src.github_tag = owner/repo` - the max github tag, usually used with list options (see below)
-  * `src.pypi = pypi_name` - the latest pypi release
-  * `src.git = git_url` (and an optional `src.branch = git_branch`) - the latest commit of a repo
-  * `src.archpkg = archlinux_pkg_name` -- the latest version of an archlinux package
-  * `src.aur = aur_pkg_name` -- the latest version of an aur package
-  * `src.manual = v` -- a fixed version, which never updates
-  * `src.repology = project:repo` -- the latest version from repology
-  * `src.webpage = web_url` and `src.regex` -- a string in webpage that matches with regex
-  * `src.httpheader = request_url` and `src.regex` -- a string in http header that matches with regex
-* a nix fetcher function, how to fetch the package given the version number. `$ver` is available, which will be set to the result of nvchecker.
-  * `fetch.github = owner/repo`
-  * `fetch.pypi = pypi_name`
-  * `fetch.git = git_url`
-  * `fetch.url = url`
-
-* optional git prefetch configuration, which makes sense only when the fetcher equals to `fetch.github` or `fetch.git`.
-They can exist simultanesouly.
-  * `git.deepClone` - a bool value to control deep clone
-  * `git.fetchSubmodules` - a bool value to control fetching submodules
-  * `git.leaveDotGit` - a bool value to control leaving dot git
-
-* optional list options configuration for some version sources. See the corresponding [documentation of nvchecker](https://nvchecker.readthedocs.io/en/latest/usage.html#list-options) for details.
-  * `src.include_regex`
-  * `src.exclude_regex`
-  * `src.sort_version_key`
-  * `src.ignored`
-
-* optional *extract* configuration
-  * `extract = [ "file_1", "file_2", ...]` - file paths are relative to the source root, which will be pulled into generated nix expr.
-
+Each *package* corresponds to a TOML table, whose name is encoded as table key, with
+two required fields and three optional fields in each table.
 You can find an example of the configuration file, see [`nvfetcher_example.toml`](nvfetcher_example.toml).
+
+#### Nvchecker
+
+Version source -- how do we track upstream version updates?
+* `src.github = owner/repo` - the latest gituhb release
+* `src.github_tag = owner/repo` - the max github tag, usually used with list options (see below)
+* `src.pypi = pypi_name` - the latest pypi release
+* `src.git = git_url` (and an optional `src.branch = git_branch`) - **the latest commit** of a repo
+* `src.archpkg = archlinux_pkg_name` -- the latest version of an archlinux package
+* `src.aur = aur_pkg_name` -- the latest version of an aur package
+* `src.manual = v` -- a fixed version, which never updates
+* `src.repology = project:repo` -- the latest version from repology
+* `src.webpage = web_url` and `src.regex` -- a string in webpage that matches with regex
+* `src.httpheader = request_url` and `src.regex` -- a string in http header that matches with regex
+
+
+Optional list options for some version sources (`src.github_tag`, `src.webpage`, and `src.httpheader`),
+see the corresponding [nvchecker documentation](https://nvchecker.readthedocs.io/en/latest/usage.html#list-options) for details.
+* `src.include_regex`
+* `src.exclude_regex`
+* `src.sort_version_key`
+* `src.ignored`
+
+
+Optional global options for all kinds of version sources,
+see the corresponding [nvchecker documentation](https://nvchecker.readthedocs.io/en/latest/usage.html#global-options) for details. You can tweak obtained version number using this option, e.g. stripping the prefix `v` or transforming the result by regex.
+* `src.prefix`
+* `src.from_pattern`
+* `src.to_pattern`
+
+#### Nix fetcher
+
+How do we fetch the package source if we have the target version number?
+`$ver` is available in string, which will be set to the result of nvchecker.
+
+* `fetch.github = owner/repo`
+* `fetch.pypi = pypi_name`
+* `fetch.git = git_url`
+* `fetch.url = url`
+
+
+Optional `nix-prefetch-git` config, which make sense only when the fetcher equals to `fetch.github` or `fetch.git`.
+They can exist simultanesouly.
+  * `git.deepClone`
+  * `git.fetchSubmodules`
+  * `git.leaveDotGit`
+
+
+#### Extract src
+
+Optional *extract src* config, files are extracted into build directory, and then read by `readFile` in generated nix expr.
+  * `extract = [ "file_1", "file_2", ...]` - file paths are relative to the source root
+
+#### Rust support
+
+`rustPlatform.buildRustPackage` now accepts an attribute [`cargoLock`](https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file) to vendor dependencies from `Cargo.lock`,
+so we can use this instead TOFU `cargoSha256` for Rust packageing. `nvfetcher` supports automating this process,
+extracting the lock file to build and calculating `cargoLock.outputHashes`, as long as you set the config
+* `cargo_lock = cargo_lock_path` - relative to the source root
+
 
 ### Haskell library
 

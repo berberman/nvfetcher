@@ -567,8 +567,18 @@ fetchGit' :: PackageSet (Prod r) -> (Text, NixFetcher Fresh -> NixFetcher Fresh)
 
 -- | This package is fetched from url
 fetchUrl :: PackageSet (Prod r) -> (Version -> Text) -> PackageSet (Prod (PackageFetcher : r))
+
+-- | Extract files from fetched package source
 extractSource :: PackageSet (Prod r) -> [FilePath] -> PackageSet (Prod (PackageExtractSrc : r))
+
+-- | Run <tt>FetchRustGitDependencies</tt> given the path to
+--   <tt>Cargo.lock</tt>
+--   
+--   The lock file will be extracted as well.
 hasCargoLock :: PackageSet (Prod r) -> FilePath -> PackageSet (Prod (PackageCargoFilePath : r))
+
+-- | Set <a>NvcheckerOptions</a> for a package, which can tweak the version
+--   number we obtain
 tweakVersion :: PackageSet (Prod r) -> (NvcheckerOptions -> NvcheckerOptions) -> PackageSet (Prod (NvcheckerOptions : r))
 
 -- | Simple HList
