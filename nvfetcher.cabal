@@ -36,6 +36,7 @@ common common-options
     , microlens
     , microlens-th
     , neat-interpolation    ^>=0.5.1
+    , optparse-simple
     , parsec
     , shake                 ^>=0.19.4
     , text
@@ -63,28 +64,29 @@ library
     NvFetcher.NixExpr
     NvFetcher.NixFetcher
     NvFetcher.Nvchecker
+    NvFetcher.Options
     NvFetcher.PackageSet
     NvFetcher.Types
     NvFetcher.Types.Lens
     NvFetcher.Types.ShakeExtras
 
+  other-modules:   Paths_nvfetcher
+  autogen-modules: Paths_nvfetcher
+
 executable nvfetcher
-  import:          common-options
-  hs-source-dirs:  app
-  main-is:         Main.hs
+  import:         common-options
+  hs-source-dirs: app
+  main-is:        Main.hs
   other-modules:
     Config
     Config.PackageFetcher
     Config.VersionSource
-    Paths_nvfetcher
 
-  autogen-modules: Paths_nvfetcher
   build-depends:
     , nvfetcher
-    , optparse-simple
     , validation-selective
 
-  ghc-options:     -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:    -threaded -rtsopts -with-rtsopts=-N
 
 flag build-example
   description: Build example executable

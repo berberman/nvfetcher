@@ -42,6 +42,8 @@ module NvFetcher
   ( Args (..),
     defaultArgs,
     runNvFetcher,
+    runNvFetcherNoCLI,
+    cliOptionsToArgs,
     module NvFetcher.PackageSet,
     module NvFetcher.Types,
     module NvFetcher.Types.ShakeExtras,
@@ -57,6 +59,7 @@ import NeatInterpolation (trimming)
 import NvFetcher.Core
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
+import NvFetcher.Options
 import NvFetcher.PackageSet
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
@@ -77,6 +80,7 @@ data Args = Args
     argActionAfterBuild :: Action (),
     -- | Action run after clean rule
     argActionAfterClean :: Action (),
+    -- | Retry times
     argRetries :: Int
   }
 
@@ -98,9 +102,37 @@ defaultArgs =
     (pure ())
     3
 
+-- | Run nvfetcher with CLI options
+--
+-- This function calls 'runNvFetcherNoCLI', using 'Args' from 'CLIOptions'.
+-- Use this function to create your own Haskell executable program.
+runNvFetcher :: PackageSet () -> IO ()
+runNvFetcher packageSet =
+  getCLIOptions cliOptionsParser >>= flip runNvFetcherNoCLI packageSet . cliOptionsToArgs
+
+-- | Apply 'CLIOptions' to 'defaultArgs'
+cliOptionsToArgs :: CLIOptions -> Args
+cliOptionsToArgs CLIOptions {..} =
+  defaultArgs
+    { argOutputFilePath = outputPath,
+      argActionAfterBuild = maybe (pure ()) logChangesToFile logPath,
+      argTarget = target,
+      argShakeOptions =
+        (argShakeOptions defaultArgs)
+          { shakeTimings = timing,
+            shakeVerbosity = if verbose then Verbose else Info,
+            shakeThreads = threads
+          }
+    }
+
+logChangesToFile :: FilePath -> Action ()
+logChangesToFile fp = do
+  changes <- getVersionChanges
+  writeFile' fp $ unlines $ show <$> changes
+
 -- | Entry point of nvfetcher
-runNvFetcher :: Args -> PackageSet () -> IO ()
-runNvFetcher args@Args {..} packageSet = do
+runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
+runNvFetcherNoCLI args@Args {..} packageSet = do
   pkgs <- runPackageSet packageSet
   shakeExtras <- initShakeExtras pkgs argRetries
   let opts =
@@ -110,6 +142,8 @@ runNvFetcher args@Args {..} packageSet = do
           }
       rules = mainRules args
   shake opts $ want [argTarget] >> rules
+
+--------------------------------------------------------------------------------
 
 mainRules :: Args -> Rules ()
 mainRules Args {..} = do
