@@ -4,9 +4,9 @@
 
 -- | Generate nix sources expr for the latest version of packages
 --   
---   Please see README
+--   Please see <a>README</a>
 @package nvfetcher
-@version 0.2.0.0
+@version 0.3.0.0
 
 
 -- | Types used in this program.
