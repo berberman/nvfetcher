@@ -324,12 +324,12 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_aaup k_ayns. Lens (NixFetcher k_aaup) (NixFetcher k_ayns) (FetchResult k_aaup) (FetchResult k_ayns)
-rev :: forall k_aaup. Traversal' (NixFetcher k_aaup) Version
-leaveDotGit :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
-furl :: forall k_aaup. Lens' (NixFetcher k_aaup) Text
-fetchSubmodules :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
-deepClone :: forall k_aaup. Traversal' (NixFetcher k_aaup) Bool
+sha256 :: forall k_aaMk k_ayFn. Lens (NixFetcher k_aaMk) (NixFetcher k_ayFn) (FetchResult k_aaMk) (FetchResult k_ayFn)
+rev :: forall k_aaMk. Traversal' (NixFetcher k_aaMk) Version
+leaveDotGit :: forall k_aaMk. Traversal' (NixFetcher k_aaMk) Bool
+furl :: forall k_aaMk. Lens' (NixFetcher k_aaMk) Text
+fetchSubmodules :: forall k_aaMk. Traversal' (NixFetcher k_aaMk) Bool
+deepClone :: forall k_aaMk. Traversal' (NixFetcher k_aaMk) Bool
 pversion :: Lens' Package NvcheckerQ
 pname :: Lens' Package PackageName
 pfetcher :: Lens' Package PackageFetcher
@@ -894,6 +894,26 @@ coreRules :: Rules ()
 generateNixSourceExpr :: PackageKey -> Action NixExpr
 
 
+-- | CLI interface of nvfetcher
+module NvFetcher.Options
+
+-- | Options for nvfetcher CLI
+data CLIOptions
+CLIOptions :: FilePath -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> String -> CLIOptions
+[outputPath] :: CLIOptions -> FilePath
+[logPath] :: CLIOptions -> Maybe FilePath
+[threads] :: CLIOptions -> Int
+[retries] :: CLIOptions -> Int
+[timing] :: CLIOptions -> Bool
+[verbose] :: CLIOptions -> Bool
+[target] :: CLIOptions -> String
+cliOptionsParser :: Parser CLIOptions
+
+-- | Parse nvfetcher CLI options
+getCLIOptions :: Parser a -> IO a
+instance GHC.Show.Show NvFetcher.Options.CLIOptions
+
+
 -- | The main module of nvfetcher. If you want to create CLI program with
 --   it, it's enough to import only this module.
 --   
@@ -950,6 +970,8 @@ Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action ()
 
 -- | Action run after clean rule
 [argActionAfterClean] :: Args -> Action ()
+
+-- | Retry times
 [argRetries] :: Args -> Int
 
 -- | Default arguments of <tt>defaultMain</tt>
@@ -957,5 +979,15 @@ Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action ()
 --   Output file path is <tt>sources.nix</tt>.
 defaultArgs :: Args
 
+-- | Run nvfetcher with CLI options
+--   
+--   This function calls <a>runNvFetcherNoCLI</a>, using <a>Args</a> from
+--   <a>CLIOptions</a>. Use this function to create your own Haskell
+--   executable program.
+runNvFetcher :: PackageSet () -> IO ()
+
 -- | Entry point of nvfetcher
-runNvFetcher :: Args -> PackageSet () -> IO ()
+runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
+
+-- | Apply <a>CLIOptions</a> to <a>defaultArgs</a>
+cliOptionsToArgs :: CLIOptions -> Args
