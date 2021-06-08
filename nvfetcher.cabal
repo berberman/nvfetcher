@@ -1,10 +1,12 @@
 cabal-version:   2.4
 name:            nvfetcher
-version:         0.2.0.0
+version:         0.3.0.0
 synopsis:
   Generate nix sources expr for the latest version of packages
 
-description:     Please see README
+description:
+  Please see [README](https://github.com/berberman/nvfetcher/blob/master/README.md)
+
 homepage:        https://github.com/berberman/nvfetcher
 bug-reports:     https://github.com/berberman/nvfetcher/issues
 license:         MIT
@@ -36,7 +38,7 @@ common common-options
     , microlens
     , microlens-th
     , neat-interpolation    ^>=0.5.1
-    , optparse-simple
+    , optparse-simple       ^>=0.1.1
     , parsec
     , shake                 ^>=0.19.4
     , text
