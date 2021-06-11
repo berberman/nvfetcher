@@ -105,8 +105,6 @@ To run nvfetcher as a CLI program, you'll need to provide package sources define
 Available options:
   --version                Show version
   --help                   Show this help text
-  -c,--config FILE         Path to nvfetcher TOML config
-                           (default: "nvfetcher.toml")
   -o,--output FILE         Path to output nix file (default: "sources.nix")
   -l,--changelog FILE      Dump version changes to a file
   -j NUM                   Number of threads (0: detected number of processors)
@@ -115,8 +113,11 @@ Available options:
                            nix-instantiate, etc.) (default: 3)
   -t,--timing              Show build time
   -v,--verbose             Verbose mode
+  --no-output              Don't symlink generated.nix to the output path
   TARGET                   Two targets are available: 1.build 2.clean
                            (default: "build")
+  -c,--config FILE         Path to nvfetcher TOML config
+                           (default: "nvfetcher.toml")
 ```
 
 Each *package* corresponds to a TOML table, whose name is encoded as table key, with

@@ -51,6 +51,7 @@ module NvFetcher
 where
 
 import qualified Control.Exception as CE
+import Control.Monad.Extra (whenJust)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
@@ -72,8 +73,8 @@ data Args = Args
     argShakeOptions :: ShakeOptions,
     -- | Build target
     argTarget :: String,
-    -- | Output file path
-    argOutputFilePath :: FilePath,
+    -- | Output file path (the symlink target of @generated.nix@)
+    argOutputFilePath :: Maybe FilePath,
     -- | Custom rules
     argRules :: Rules (),
     -- | Action run after build rule
@@ -96,7 +97,7 @@ defaultArgs =
         }
     )
     "build"
-    "sources.nix"
+    (Just "sources.nix")
     (pure ())
     (pure ())
     (pure ())
@@ -114,7 +115,7 @@ runNvFetcher packageSet =
 cliOptionsToArgs :: CLIOptions -> Args
 cliOptionsToArgs CLIOptions {..} =
   defaultArgs
-    { argOutputFilePath = outputPath,
+    { argOutputFilePath = if noOutput then Nothing else Just outputPath,
       argActionAfterBuild = maybe (pure ()) logChangesToFile logPath,
       argTarget = target,
       argShakeOptions =
@@ -149,7 +150,7 @@ mainRules :: Args -> Rules ()
 mainRules Args {..} = do
   "clean" ~> do
     removeFilesAfter "_build" ["//*"]
-    removeFilesAfter "." [argOutputFilePath]
+    whenJust argOutputFilePath $ \out -> removeFilesAfter "." [out]
     argActionAfterClean
 
   "build" ~> do
@@ -166,11 +167,12 @@ mainRules Args {..} = do
     putVerbose $ "Generating " <> genPath
     writeFileChanged genPath $ T.unpack $ srouces (T.unlines body) <> "\n"
     need [genPath]
-    let outDir = takeDirectory argOutputFilePath
-    liftIO $ createDirectoryIfMissing True outDir
-    liftIO $ CE.catch @IOError (removeFile argOutputFilePath) (const $ pure ())
-    putVerbose $ "Symlinking " <> argOutputFilePath
-    liftIO $ createFileLink genPath argOutputFilePath
+    whenJust argOutputFilePath $ \out -> do
+      let outDir = takeDirectory out
+      liftIO $ createDirectoryIfMissing True outDir
+      liftIO $ CE.catch @IOError (removeFile out) (const $ pure ())
+      putVerbose $ "Symlinking " <> out
+      liftIO $ createFileLink genPath out
     argActionAfterBuild
 
   argRules

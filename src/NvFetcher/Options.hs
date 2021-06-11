@@ -25,6 +25,7 @@ data CLIOptions = CLIOptions
     retries :: Int,
     timing :: Bool,
     verbose :: Bool,
+    noOutput :: Bool,
     target :: String
   }
   deriving (Show)
@@ -69,6 +70,7 @@ cliOptionsParser =
       )
     <*> switch (long "timing" <> short 't' <> help "Show build time")
     <*> switch (long "verbose" <> short 'v' <> help "Verbose mode")
+    <*> switch (long "no-output" <> help "Don't symlink generated.nix to the output path")
     <*> strArgument
       ( metavar "TARGET"
           <> help "Two targets are available: 1.build  2.clean"
