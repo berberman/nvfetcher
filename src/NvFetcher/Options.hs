@@ -90,7 +90,7 @@ getCLIOptions parser = do
       version
       "nvfetcher - generate nix sources expr for the latest version of packages"
       ( unlines
-          [ "It's important to keep _build dir.",
+          [ "It's important to keep _sources dir.",
             "If you change any field of an existing package, you may have to run target \"clean\" to invalidate the databse,",
             "making sure the consistency of our build system."
           ]

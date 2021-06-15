@@ -53,7 +53,7 @@ TAGS
 # other
 .DS_Store
 
-_build
+_sources
 sources.nix
 
 result

@@ -139,7 +139,7 @@ runNvFetcherNoCLI args@Args {..} packageSet = do
   let opts =
         argShakeOptions
           { shakeExtra = addShakeExtra shakeExtras (shakeExtra argShakeOptions),
-            shakeFiles = "_build"
+            shakeFiles = "_sources"
           }
       rules = mainRules args
   shake opts $ want [argTarget] >> rules
@@ -149,7 +149,7 @@ runNvFetcherNoCLI args@Args {..} packageSet = do
 mainRules :: Args -> Rules ()
 mainRules Args {..} = do
   "clean" ~> do
-    removeFilesAfter "_build" ["//*"]
+    removeFilesAfter "_sources" ["//*"]
     whenJust argOutputFilePath $ \out -> removeFilesAfter "." [out]
     argActionAfterClean
 
