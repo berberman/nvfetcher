@@ -58,7 +58,7 @@ and nvfetcher will help us keep their version and prefetched SHA256 sums up-to-d
 Shake will help us handle necessary rebuilds -- we check versions of packages during each run, but only prefetch them when needed.
 
 
-`sources.nix` is a symlink of `_build/generated.nix`, which means that the "build" results produced by `nvfetcher` are under `_build`,
+`sources.nix` is a symlink of `_sources/generated.nix`, which means that the "build" results produced by `nvfetcher` are under `_sources`,
 so you have to keep this directory for further use.
 
 ### Live examples

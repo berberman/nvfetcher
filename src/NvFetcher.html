@@ -295,7 +295,7 @@ a -&gt; HashMap TypeRep Dynamic -&gt; HashMap TypeRep Dynamic
 </span><a href="#local-6989586621679242268"><span class="hs-identifier hs-var">argShakeOptions</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
 </span><span id="line-142"></span><span>            </span><span class="annot"><span class="annottext">shakeFiles :: String
 </span><span class="hs-identifier hs-var">shakeFiles</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><span class="hs-string">&quot;_build&quot;</span></span><span>
+</span><span class="hs-string">&quot;_sources&quot;</span></span><span>
 </span><span id="line-143"></span><span>          </span><span class="hs-special">}</span><span>
 </span><span id="line-144"></span><span>      </span><span id="local-6989586621679242252"><span class="annot"><span class="annottext">rules :: Rules ()
 </span><a href="#local-6989586621679242252"><span class="hs-identifier hs-var hs-var">rules</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Args -&gt; Rules ()
@@ -344,7 +344,7 @@ String -&gt; Action () -&gt; Rules ()
 </span><span class="hs-operator hs-var">~&gt;</span></span><span> </span><span class="hs-keyword">do</span><span>
 </span><span id="line-152"></span><span>    </span><span class="annot"><span class="annottext">String -&gt; [String] -&gt; Action ()
 </span><span class="hs-identifier hs-var">removeFilesAfter</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><span class="hs-string">&quot;_build&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;_sources&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;//*&quot;</span></span><span class="hs-special">]</span><span>
 </span><span id="line-153"></span><span>    </span><span class="annot"><span class="annottext">Maybe String -&gt; (String -&gt; Action ()) -&gt; Action ()
 forall (m :: * -&gt; *) a.
