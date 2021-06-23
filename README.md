@@ -127,7 +127,7 @@ You can find an example of the configuration file, see [`nvfetcher_example.toml`
 #### Nvchecker
 
 Version source -- how do we track upstream version updates?
-* `src.github = owner/repo` - the latest gituhb release
+* `src.github = owner/repo` - the latest github release
 * `src.github_tag = owner/repo` - the max github tag, usually used with list options (see below)
 * `src.pypi = pypi_name` - the latest pypi release
 * `src.git = git_url` (and an optional `src.branch = git_branch`) - **the latest commit** of a repo
