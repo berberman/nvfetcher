@@ -40,7 +40,7 @@
       }) // {
         overlay = final: prev: {
           haskellPackages = prev.haskellPackages.override (old: {
-            overrides = hself: hsuper: {
+            overrides = final.lib.composeExtensions (old.overrides or (_: _: {})) (hself: hsuper: {
               nvfetcher = with final.haskell.lib;
                 generateOptparseApplicativeCompletion "nvfetcher"
                 (overrideCabal (prev.haskellPackages.callPackage ./nix { })
@@ -54,7 +54,7 @@
                           }"
                       '';
                   }));
-            };
+            });
           });
           nvfetcher-bin = with final;
             haskell.lib.justStaticExecutables haskellPackages.nvfetcher;
