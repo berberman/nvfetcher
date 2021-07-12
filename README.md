@@ -106,6 +106,7 @@ Available options:
   --version                Show version
   --help                   Show this help text
   -o,--output FILE         Path to output nix file (default: "sources.nix")
+  --commit-changes         `git commit` changes in this run (with shake db)
   -l,--changelog FILE      Dump version changes to a file
   -j NUM                   Number of threads (0: detected number of processors)
                            (default: 0)

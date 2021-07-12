@@ -20,6 +20,7 @@ import qualified Paths_nvfetcher as Paths
 -- | Options for nvfetcher CLI
 data CLIOptions = CLIOptions
   { outputPath :: FilePath,
+    commit :: Bool,
     logPath :: Maybe FilePath,
     threads :: Int,
     retries :: Int,
@@ -41,6 +42,10 @@ cliOptionsParser =
           <> showDefault
           <> value "sources.nix"
           <> completer (bashCompleter "file")
+      )
+    <*> switch
+      ( long "commit-changes"
+          <> help "`git commit` changes in this run (with shake db)"
       )
     <*> optional
       ( strOption
