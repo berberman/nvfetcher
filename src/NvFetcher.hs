@@ -51,7 +51,7 @@ module NvFetcher
 where
 
 import qualified Control.Exception as CE
-import Control.Monad.Extra (whenJust)
+import Control.Monad.Extra (when, whenJust)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
@@ -116,7 +116,9 @@ cliOptionsToArgs :: CLIOptions -> Args
 cliOptionsToArgs CLIOptions {..} =
   defaultArgs
     { argOutputFilePath = if noOutput then Nothing else Just outputPath,
-      argActionAfterBuild = maybe (pure ()) logChangesToFile logPath,
+      argActionAfterBuild = do
+        whenJust logPath logChangesToFile
+        when commit commitChanges,
       argTarget = target,
       argShakeOptions =
         (argShakeOptions defaultArgs)
@@ -130,6 +132,18 @@ logChangesToFile :: FilePath -> Action ()
 logChangesToFile fp = do
   changes <- getVersionChanges
   writeFile' fp $ unlines $ show <$> changes
+
+commitChanges :: Action ()
+commitChanges = do
+  changes <- getVersionChanges
+  let commitMsg = case changes of
+        [x] -> Just $ show x
+        xs@(_ : _) -> Just $ "Update\n" <> unlines (show <$> xs)
+        [] -> Nothing
+  whenJust commitMsg $ \msg -> do
+    putInfo "Commiting changes"
+    getShakeDir >>= \dir -> command_ [] "git" ["add", dir]
+    command_ [] "git" ["commit", "-m", msg]
 
 -- | Entry point of nvfetcher
 runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
@@ -149,7 +163,7 @@ runNvFetcherNoCLI args@Args {..} packageSet = do
 mainRules :: Args -> Rules ()
 mainRules Args {..} = do
   "clean" ~> do
-    removeFilesAfter "_sources" ["//*"]
+    getShakeDir >>= flip removeFilesAfter ["//*"]
     whenJust argOutputFilePath $ \out -> removeFilesAfter "." [out]
     argActionAfterClean
 
