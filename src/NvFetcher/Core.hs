@@ -137,7 +137,8 @@ gen name (coerce -> ver) (toNixExpr -> srcP) appending =
   $name = {
     pname = "$name";
     version = "$ver";
-    src = $srcP;
-    $appending
+    src = $srcP;$appending'
   };
 |]
+  where
+    appending' = if T.null appending then "" else "\n" <> appending
