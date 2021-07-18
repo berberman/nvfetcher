@@ -10,8 +10,9 @@ module Config where
 
 import Config.PackageFetcher
 import Config.VersionSource
+import Data.Coerce (coerce)
 import Data.List.NonEmpty (NonEmpty ((:|)))
-import Data.Maybe (fromMaybe)
+import qualified Data.List.NonEmpty as NE
 import Lens.Micro
 import Lens.Micro.Extras (view)
 import NvFetcher.Types
@@ -35,8 +36,12 @@ parseConfig toml = go tables [] []
         <*> cargoLockPathCodec .= view _4
         <*> nvcheckerOptionsCodec .= view _5
 
-extractFilesCodec :: TomlCodec PackageExtractSrc
-extractFilesCodec = diwrap $ dimap Just (fromMaybe []) $ dioptional $ arrayOf _String "extract"
+extractFilesCodec :: TomlCodec (Maybe PackageExtractSrc)
+extractFilesCodec =
+  dimap
+    (fmap (NE.toList . coerce))
+    (\mxs -> coerce <$> (mxs >>= NE.nonEmpty))
+    $ dioptional $ arrayOf _String "extract"
 
 cargoLockPathCodec :: TomlCodec (Maybe PackageCargoFilePath)
 cargoLockPathCodec = dioptional $ diwrap (string "cargo_lock")

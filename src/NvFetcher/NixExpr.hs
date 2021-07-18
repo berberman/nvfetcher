@@ -21,6 +21,7 @@ module NvFetcher.NixExpr
 where
 
 import Data.Coerce (coerce)
+import qualified Data.List.NonEmpty as NE
 import Data.Text (Text)
 import qualified Data.Text as T
 import NeatInterpolation (trimming)
@@ -43,6 +44,9 @@ instance ToNixExpr Bool where
 
 instance ToNixExpr a => ToNixExpr [a] where
   toNixExpr xs = foldl (\acc x -> acc <> " " <> toNixExpr x) "[" xs <> " ]"
+
+instance ToNixExpr a => ToNixExpr (NE.NonEmpty a) where
+  toNixExpr = toNixExpr . NE.toList
 
 instance {-# OVERLAPS #-} ToNixExpr String where
   toNixExpr = T.pack . show
@@ -84,7 +88,7 @@ nixFetcher sha256 = \case
 instance ToNixExpr ExtractSrcQ where
   toNixExpr (ExtractSrcQ fetcher files) = extractFiles fetcher files
 
-extractFiles :: NixFetcher Fetched -> [FilePath] -> NixExpr
+extractFiles :: NixFetcher Fetched -> NE.NonEmpty FilePath -> NixExpr
 extractFiles (toNixExpr -> fetcherExpr) (toNixExpr -> fileNames) =
   [trimming|
     let

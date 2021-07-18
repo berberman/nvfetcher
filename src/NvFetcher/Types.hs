@@ -65,6 +65,7 @@ import qualified Data.Aeson as A
 import Data.Coerce (coerce)
 import Data.Default
 import Data.HashMap.Strict (HashMap)
+import qualified Data.List.NonEmpty as NE
 import Data.Maybe (fromMaybe)
 import Data.String (IsString)
 import Data.Text (Text)
@@ -219,7 +220,7 @@ deriving instance NFData (FetchResult k) => NFData (NixFetcher k)
 
 -- | Extract file contents from package source
 -- e.g. @Cargo.lock@
-data ExtractSrcQ = ExtractSrcQ (NixFetcher Fetched) [FilePath]
+data ExtractSrcQ = ExtractSrcQ (NixFetcher Fetched) (NE.NonEmpty FilePath)
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
 type instance RuleResult ExtractSrcQ = HashMap FilePath Text
@@ -243,7 +244,7 @@ type PackageName = Text
 -- | How to create package source fetcher given a version
 type PackageFetcher = Version -> NixFetcher Fresh
 
-newtype PackageExtractSrc = PackageExtractSrc [FilePath]
+newtype PackageExtractSrc = PackageExtractSrc (NE.NonEmpty FilePath)
 
 newtype PackageCargoFilePath = PackageCargoFilePath FilePath
 
@@ -262,7 +263,7 @@ data Package = Package
   { _pname :: PackageName,
     _pversion :: NvcheckerQ,
     _pfetcher :: PackageFetcher,
-    _pextract :: PackageExtractSrc,
+    _pextract :: Maybe PackageExtractSrc,
     _pcargo :: Maybe PackageCargoFilePath
   }
 

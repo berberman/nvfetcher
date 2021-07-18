@@ -54,17 +54,15 @@ coreRules = do
         Just
           Package
             { _pversion = NvcheckerQ versionSource options,
-              _pextract = PackageExtractSrc extract,
               ..
             } -> do
             (NvcheckerA version mOldV) <- checkVersion versionSource options pkg
             prefetched <- prefetch $ _pfetcher version
             shakeDir <- getShakeDir
             appending1 <-
-              if null extract
-                then pure ""
-                else do
-                  result <- HMap.toList <$> extractSrc prefetched extract
+              case _pextract of
+                Just (PackageExtractSrc extract) -> do
+                  result <- HMap.toList <$> extractSrcs prefetched extract
                   T.unlines
                     <$> sequence
                       [ do
@@ -79,10 +77,11 @@ coreRules = do
                                   <> T.unpack (coerce version)
                                   </> k
                       ]
+                _ -> pure ""
             appending2 <-
               case _pcargo of
                 Just (PackageCargoFilePath lockPath) -> do
-                  (_, lockData) <- head . HMap.toList <$> extractSrc prefetched [lockPath]
+                  (_, lockData) <- head . HMap.toList <$> extractSrc prefetched lockPath
                   result <- fetchRustGitDeps prefetched lockPath
                   let body = T.unlines [asString k <> " = " <> coerce (asString $ coerce v) <> ";" | (k, v) <- HMap.toList result]
                       lockPath' =

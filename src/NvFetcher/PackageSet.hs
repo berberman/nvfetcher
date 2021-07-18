@@ -97,13 +97,13 @@ import Control.Monad.IO.Class
 import Data.Coerce (coerce)
 import Data.Default (def)
 import Data.Kind (Constraint, Type)
+import qualified Data.List.NonEmpty as NE
 import Data.Map.Strict as HMap
 import Data.Maybe (fromMaybe, isJust)
 import Data.Text (Text)
 import GHC.TypeLits
 import Lens.Micro
 import NvFetcher.NixFetcher
--- import NvFetcher.PostFetcher
 import NvFetcher.Types
 import NvFetcher.Types.Lens
 
@@ -135,7 +135,7 @@ newPackage ::
   PackageName ->
   NvcheckerQ ->
   PackageFetcher ->
-  PackageExtractSrc ->
+  Maybe PackageExtractSrc ->
   Maybe PackageCargoFilePath ->
   PackageSet ()
 newPackage name source fetcher extract cargo = liftF $ NewPackage (Package name source fetcher extract cargo) ()
@@ -227,7 +227,7 @@ instance PkgDSL PackageSet where
       (proj p)
       (NvcheckerQ (proj p) (fromMaybe def (projMaybe p)))
       (proj p)
-      (fromMaybe (PackageExtractSrc []) $ projMaybe p)
+      (projMaybe p)
       (projMaybe p)
 
 -- | 'PkgDSL' version of 'newPackage'
@@ -473,7 +473,7 @@ extractSource ::
   PackageSet (Prod r) ->
   [FilePath] ->
   PackageSet (Prod (PackageExtractSrc : r))
-extractSource = (. pure . PackageExtractSrc) . andThen
+extractSource = (. pure . PackageExtractSrc . NE.fromList) . andThen
 
 -- | Run 'FetchRustGitDependencies' given the path to @Cargo.lock@
 --

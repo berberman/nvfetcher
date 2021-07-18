@@ -21,6 +21,7 @@ module NvFetcher.ExtractSrc
     -- * Rules
     extractSrcRule,
     extractSrc,
+    extractSrcs,
   )
 where
 
@@ -28,6 +29,7 @@ import Control.Monad (void)
 import qualified Data.Aeson as A
 import Data.Binary.Instances ()
 import Data.HashMap.Strict (HashMap)
+import qualified Data.List.NonEmpty as NE
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
@@ -50,14 +52,23 @@ extractSrcRule = void $
       Just x -> pure x
       _ -> fail $ "Failed to parse output of nix-instantiate: " <> T.unpack (T.decodeUtf8 out)
 
+-- | Run extract source with many sources
+extractSrcs ::
+  -- | prefetched source
+  NixFetcher Fetched ->
+  -- | relative file paths to extract
+  NE.NonEmpty FilePath ->
+  Action (HashMap FilePath Text)
+extractSrcs fetcher xs = askOracle (ExtractSrcQ fetcher xs)
+
 -- | Run extract source
 extractSrc ::
   -- | prefetched source
   NixFetcher Fetched ->
-  -- | relative file paths to extract
-  [FilePath] ->
+  -- | relative file path to extract
+  FilePath ->
   Action (HashMap FilePath Text)
-extractSrc fetcher fp = askOracle (ExtractSrcQ fetcher fp)
+extractSrc fetcher fp = extractSrcs fetcher $ NE.singleton fp
 
 --------------------------------------------------------------------------------
 

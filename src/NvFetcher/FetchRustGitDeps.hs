@@ -42,7 +42,7 @@ import qualified Toml
 fetchRustGitDepsRule :: Rules ()
 fetchRustGitDepsRule = void $
   addOracleCache $ \(FetchRustGitDepsQ fetcher lockPath) -> do
-    cargoLock <- head . HMap.elems <$> extractSrc fetcher [lockPath]
+    cargoLock <- head . HMap.elems <$> extractSrc fetcher lockPath
     deps <- case Toml.decode (Toml.list rustDepCodec "package") cargoLock of
       Right r -> pure $ nubOrdOn rrawSrc r
       Left err -> fail $ "Failed to parse Cargo.lock: " <> T.unpack (Toml.prettyTomlDecodeErrors err)
