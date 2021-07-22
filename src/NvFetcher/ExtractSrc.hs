@@ -68,7 +68,7 @@ extractSrc ::
   -- | relative file path to extract
   FilePath ->
   Action (HashMap FilePath Text)
-extractSrc fetcher fp = extractSrcs fetcher $ NE.singleton fp
+extractSrc fetcher fp = extractSrcs fetcher $ NE.fromList [fp]
 
 --------------------------------------------------------------------------------
 
