@@ -26,7 +26,9 @@ versionSourceCodec =
       manualCodec,
       repologyCodec,
       webpageCodec,
-      httpHeaderCodec
+      httpHeaderCodec,
+      openVsxCodec,
+      vscodeMarketplaceCodec
     ]
 
 --------------------------------------------------------------------------------
@@ -175,3 +177,41 @@ httpHeaderCodec :: TomlCodec VersionSource
 httpHeaderCodec = dimatch matchHttpHeader (uncurry3 HttpHeader) httpHeaderICodec
 
 --------------------------------------------------------------------------------
+
+matchOpenVsx :: VersionSource -> Maybe (Text, Text)
+matchOpenVsx x = (,) <$> x ^? ovPublisher <*> x ^? ovExtName
+
+openVsxICodec :: TomlCodec (Text, Text)
+openVsxICodec =
+  textBy
+    (\(publisher, extName) -> publisher <> "." <> extName)
+    ( \t ->
+        case T.split (== '.') t of
+          -- assume we can't have '.' in extension's name
+          [publisher, extName] -> Right (publisher, extName)
+          _ -> Left "unexpected openvsx source format: it should be something like [publisher].[extName]"
+    )
+    "src.openvsx"
+
+openVsxCodec :: TomlCodec VersionSource
+openVsxCodec = dimatch matchOpenVsx (uncurry OpenVsx) openVsxICodec
+
+--------------------------------------------------------------------------------
+
+matchVscodeMarketplace :: VersionSource -> Maybe (Text, Text)
+matchVscodeMarketplace x = (,) <$> x ^? vsmPublisher <*> x ^? vsmExtName
+
+vscodeMarketplaceICodec :: TomlCodec (Text, Text)
+vscodeMarketplaceICodec =
+  textBy
+    (\(publisher, extName) -> publisher <> "." <> extName)
+    ( \t ->
+        case T.split (== '.') t of
+          -- assume we can't have '.' in extension's name
+          [publisher, extName] -> Right (publisher, extName)
+          _ -> Left "unexpected vscode marketplace source format: it should be something like [publisher].[extName]"
+    )
+    "src.vsmarketplace"
+
+vscodeMarketplaceCodec :: TomlCodec VersionSource
+vscodeMarketplaceCodec = dimatch matchVscodeMarketplace (uncurry VscodeMarketplace) vscodeMarketplaceICodec

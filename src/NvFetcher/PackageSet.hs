@@ -47,6 +47,8 @@ module NvFetcher.PackageSet
     fromGitHubTag,
     fromGitHubTag',
     fromPypi,
+    fromOpenVsx,
+    fromVscodeMarketplace,
 
     -- ** Version sources
     sourceGitHub,
@@ -60,6 +62,8 @@ module NvFetcher.PackageSet
     sourceRepology,
     sourceWebpage,
     sourceHttpHeader,
+    sourceOpenVsx,
+    sourceVscodeMarketplace,
 
     -- ** Fetchers
     fetchGitHub,
@@ -69,6 +73,8 @@ module NvFetcher.PackageSet
     fetchGit,
     fetchGit',
     fetchUrl,
+    fetchOpenVsx,
+    fetchVscodeMarketplace,
 
     -- * Addons
     extractSource,
@@ -306,6 +312,22 @@ fromPypi ::
     (Prod (PackageFetcher : VersionSource : r))
 fromPypi e p = fetchPypi (sourcePypi e p) p
 
+-- | A synonym of 'fetchOpenVsx' and 'sourceOpenVsx'
+fromOpenVsx ::
+  PackageSet (Prod r) ->
+  (Text, Text) ->
+  PackageSet
+    (Prod (PackageFetcher : VersionSource : r))
+fromOpenVsx e x = fetchOpenVsx (sourceOpenVsx e x) x
+
+-- | A synonym of 'fetchVscodeMarketplace' and 'sourceVscodeMarketplace'
+fromVscodeMarketplace ::
+  PackageSet (Prod r) ->
+  (Text, Text) ->
+  PackageSet
+    (Prod (PackageFetcher : VersionSource : r))
+fromVscodeMarketplace e x = fetchVscodeMarketplace (sourceVscodeMarketplace e x) x
+
 --------------------------------------------------------------------------------
 
 -- | This package follows the latest github release
@@ -395,6 +417,22 @@ sourceHttpHeader ::
   PackageSet (Prod (VersionSource : r))
 sourceHttpHeader e (_vurl, _regex, f) = src e $ HttpHeader _vurl _regex $ f def
 
+-- | This package follows a version in Open VSX
+sourceOpenVsx ::
+  PackageSet (Prod r) ->
+  -- | publisher and extension name
+  (Text, Text) ->
+  PackageSet (Prod (VersionSource : r))
+sourceOpenVsx e (_ovPublisher, _ovExtName) = src e OpenVsx {..}
+
+-- | This package follows a version in Vscode Marketplace
+sourceVscodeMarketplace ::
+  PackageSet (Prod r) ->
+  -- | publisher and extension name
+  (Text, Text) ->
+  PackageSet (Prod (VersionSource : r))
+sourceVscodeMarketplace e (_vsmPublisher, _vsmExtName) = src e VscodeMarketplace {..}
+
 --------------------------------------------------------------------------------
 
 -- | This package is fetched from a github repo
@@ -465,6 +503,22 @@ fetchUrl ::
   (Version -> Text) ->
   PackageSet (Prod (PackageFetcher : r))
 fetchUrl e f = fetch e (urlFetcher . f)
+
+-- | This package is fetched from Open VSX
+fetchOpenVsx ::
+  PackageSet (Prod r) ->
+  -- | publisher and extension name
+  (Text, Text) ->
+  PackageSet (Prod (PackageFetcher : r))
+fetchOpenVsx e = fetch e . vscodeMarketplaceFetcher
+
+-- | This package is fetched from Vscode Marketplace
+fetchVscodeMarketplace ::
+  PackageSet (Prod r) ->
+  -- | publisher and extension name
+  (Text, Text) ->
+  PackageSet (Prod (PackageFetcher : r))
+fetchVscodeMarketplace e = fetch e . vscodeMarketplaceFetcher
 
 --------------------------------------------------------------------------------
 

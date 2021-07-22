@@ -39,6 +39,8 @@ module NvFetcher.NixFetcher
     gitHubReleaseFetcher,
     gitFetcher,
     urlFetcher,
+    openVsxFetcher,
+    vscodeMarketplaceFetcher,
   )
 where
 
@@ -128,3 +130,21 @@ gitHubReleaseFetcher (owner, repo) fp (coerce -> ver) =
 -- | Create a fetcher from url
 urlFetcher :: Text -> NixFetcher Fresh
 urlFetcher = flip FetchUrl ()
+
+-- | Create a fetcher from openvsx
+openVsxFetcher ::
+  -- | publisher and extension name
+  (Text, Text) ->
+  PackageFetcher
+openVsxFetcher (publisher, extName) (coerce -> ver) =
+  urlFetcher
+    [trimming|https://open-vsx.org/api/$publisher/$extName/$ver/file/$publisher.$extName-$ver.vsix|]
+
+-- | Create a fetcher from vscode marketplace
+vscodeMarketplaceFetcher ::
+  -- | publisher and extension name
+  (Text, Text) ->
+  PackageFetcher
+vscodeMarketplaceFetcher (publisher, extName) (coerce -> ver) =
+  urlFetcher
+    [trimming|https://$publisher.gallery.vsassets.io/_apis/public/gallery/publisher/$publisher/extension/$extName/$ver/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage|]
