@@ -44,3 +44,7 @@ src.manual = "8a5f37a8f80a3b05290707febf57e88661cee442"
 fetch.git = "https://gist.github.com/NickCao/6c4dbc4e15db5da107de6cdb89578375"
 # Calculate outputHashes for git dependencies in cargo lock
 cargo_lock = "Cargo.lock"
+
+[vscode-LiveServer]
+src.openvsx = "ritwickdey.LiveServer"
+fetch.openvsx = "ritwickdey.LiveServer"
