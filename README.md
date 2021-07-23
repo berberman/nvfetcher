@@ -138,6 +138,8 @@ Version source -- how do we track upstream version updates?
 * `src.repology = project:repo` -- the latest version from repology
 * `src.webpage = web_url` and `src.regex` -- a string in webpage that matches with regex
 * `src.httpheader = request_url` and `src.regex` -- a string in http header that matches with regex
+* `src.openvsx = publisher.ext_name` -- the latest version of a vscode extension from open vsx
+* `src.vsmarketplace = publisher.ext_name` -- the latest version of a vscode extension from vscode marketplace
 
 
 Optional list options for some version sources (`src.github_tag`, `src.webpage`, and `src.httpheader`),
@@ -163,6 +165,8 @@ How do we fetch the package source if we have the target version number?
 * `fetch.pypi = pypi_name`
 * `fetch.git = git_url`
 * `fetch.url = url`
+* `fetch.openvsx = publisher.ext_name`
+* `fetch.vsmarketplace = publisher.ext_name`
 
 
 Optional `nix-prefetch-git` config, which make sense only when the fetcher equals to `fetch.github` or `fetch.git`.

@@ -127,6 +127,12 @@ genNvConfig pkg options versionSource = table (fromString $ T.unpack $ coerce pk
         "url" =: Text _vurl
         "regex" =: Text _regex
         genListOptions _listOptions
+      OpenVsx {..} -> do
+        "source" =: "openvsx"
+        "openvsx" =: Text (_ovPublisher <> "." <> _ovExtName)
+      VscodeMarketplace {..} -> do
+        "source" =: "vsmarketplace"
+        "vsmarketplace" =: Text (_vsmPublisher <> "." <> _vsmExtName)
     genListOptions ListOptions {..} = do
       "include_regex" =:? _includeRegex
       "exclude_regex" =:? _excludeRegex

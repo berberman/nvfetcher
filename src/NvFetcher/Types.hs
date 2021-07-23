@@ -159,6 +159,8 @@ data VersionSource
   | Repology {_repology :: Text, _repo :: Text}
   | Webpage {_vurl :: Text, _regex :: Text, _listOptions :: ListOptions}
   | HttpHeader {_vurl :: Text, _regex :: Text, _listOptions :: ListOptions}
+  | OpenVsx {_ovPublisher :: Text, _ovExtName :: Text}
+  | VscodeMarketplace {_vsmPublisher :: Text, _vsmExtName :: Text}
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 -- | The input of nvchecker

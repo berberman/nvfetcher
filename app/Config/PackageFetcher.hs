@@ -7,9 +7,9 @@
 
 module Config.PackageFetcher (fetcherCodec) where
 
-import Control.Applicative ((<|>))
 import Data.Coerce (coerce)
 import Data.Default (Default, def)
+import Data.Foldable (asum)
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
@@ -22,6 +22,17 @@ import Toml
 
 unsupportError :: a
 unsupportError = error "serialization is unsupported"
+
+fetcherCodec :: TomlCodec PackageFetcher
+fetcherCodec =
+  asum
+    [ gitHubCodec,
+      pypiCodec,
+      openVsxCodec,
+      vscodeMarketplaceCodec,
+      gitCodec,
+      urlCodec
+    ]
 
 --------------------------------------------------------------------------------
 
@@ -52,7 +63,7 @@ _GitOptions _ x@FetchUrl {} = pure x
 
 --------------------------------------------------------------------------------
 
-gitHubICodec :: TomlCodec (Version -> NixFetcher 'Fresh)
+gitHubICodec :: TomlCodec PackageFetcher
 gitHubICodec =
   textBy
     unsupportError
@@ -62,7 +73,7 @@ gitHubICodec =
     )
     "fetch.github"
 
-gitHubCodec :: TomlCodec (Version -> NixFetcher Fresh)
+gitHubCodec :: TomlCodec PackageFetcher
 gitHubCodec =
   dimap
     ( \f -> let fake = f "$ver" in (f, fromMaybe def $ fake ^? _GitOptions)
@@ -71,14 +82,14 @@ gitHubCodec =
     $ (,) <$> gitHubICodec .= view _1 <*> gitOptionsCodec .= view _2
 
 --------------------------------------------------------------------------------
-gitICodec :: TomlCodec (Version -> NixFetcher 'Fresh)
+gitICodec :: TomlCodec PackageFetcher
 gitICodec =
   textBy
     unsupportError
     (Right . gitFetcher)
     "fetch.git"
 
-gitCodec :: TomlCodec (Version -> NixFetcher Fresh)
+gitCodec :: TomlCodec PackageFetcher
 gitCodec =
   dimap
     ( \f -> let fake = f "$ver" in (f, fromMaybe def $ fake ^? _GitOptions)
@@ -87,16 +98,43 @@ gitCodec =
     $ (,) <$> gitICodec .= view _1 <*> gitOptionsCodec .= view _2
 
 --------------------------------------------------------------------------------
+pypiCodec :: TomlCodec PackageFetcher
+pypiCodec =
+  Toml.textBy
+    unsupportError
+    (Right . pypiFetcher)
+    "fetch.pypi"
 
-fetcherCodec :: TomlCodec PackageFetcher
-fetcherCodec =
-  gitHubCodec
-    <|> Toml.textBy
-      unsupportError
-      (Right . pypiFetcher)
-      "fetch.pypi"
-    <|> gitCodec
-    <|> Toml.textBy
-      unsupportError
-      (\t -> Right $ \(coerce -> v) -> urlFetcher $ T.replace "$ver" v t)
-      "fetch.url"
+--------------------------------------------------------------------------------
+
+openVsxCodec :: TomlCodec PackageFetcher
+openVsxCodec =
+  textBy
+    unsupportError
+    ( \t -> case T.split (== '.') t of
+        -- assume we can't have '.' in extension's name
+        [publisher, extName] -> Right $ openVsxFetcher (publisher, extName)
+        _ -> Left "unexpected openvsx fetcher: it should be something like [publisher]/[extName]"
+    )
+    "fetch.openvsx"
+
+--------------------------------------------------------------------------------
+
+vscodeMarketplaceCodec :: TomlCodec PackageFetcher
+vscodeMarketplaceCodec =
+  textBy
+    unsupportError
+    ( \t -> case T.split (== '.') t of
+        -- assume we can't have '.' in extension's name
+        [publisher, extName] -> Right $ vscodeMarketplaceFetcher (publisher, extName)
+        _ -> Left "unexpected vscode marketplace fetcher: it should be something like [publisher]/[extName]"
+    )
+    "fetch.vsmarketplace"
+
+--------------------------------------------------------------------------------
+urlCodec :: TomlCodec PackageFetcher
+urlCodec =
+  Toml.textBy
+    unsupportError
+    (\t -> Right $ \(coerce -> v) -> urlFetcher $ T.replace "$ver" v t)
+    "fetch.url"
