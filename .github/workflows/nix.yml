@@ -20,7 +20,9 @@ jobs:
       run: nix flake check
 
     - name: Build library and generate haddock
-      run: nix build .\#nvfetcher-lib
+      run: |
+        nix build .\#nvfetcher-lib.out.doc
+        cp -r ./result-doc/share/doc/nvfetcher-*/html/ docs
 
     - name: Test CLI with nvfetcher_example.toml
       run : nix shell --command nvfetcher --config nvfetcher_example.toml
@@ -36,6 +38,6 @@ jobs:
       if: ${{ github.repository_owner == 'berberman' && github.ref == 'refs/heads/master' }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./result-doc/share/doc/nvfetcher-*/html
+        publish_dir: ./docs
         cname: nvfetcher.berberman.space
   
