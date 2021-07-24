@@ -166,6 +166,8 @@ newtype PackageExtractSrc
 PackageExtractSrc :: NonEmpty FilePath -> PackageExtractSrc
 newtype PackageCargoFilePath
 PackageCargoFilePath :: FilePath -> PackageCargoFilePath
+newtype PackagePassthru
+PackagePassthru :: HashMap Text Text -> PackagePassthru
 
 -- | A package is defined with:
 --   
@@ -173,8 +175,9 @@ PackageCargoFilePath :: FilePath -> PackageCargoFilePath
 --   <li>its name</li>
 --   <li>how to track its version</li>
 --   <li>how to fetch it as we have the version</li>
---   <li>optional file paths to extract (dump to generated nix expr)</li>
---   <li><tt>Cargo.lock</tt> path (if it's a rust package)</li>
+--   <li>optional file paths to extract (dump to shake dir)</li>
+--   <li>optional <tt>Cargo.lock</tt> path (if it's a rust package)</li>
+--   <li>an optional pass through map</li>
 --   </ol>
 --   
 --   <i>INVARIANT: <a>Version</a> passed to <a>PackageFetcher</a> MUST be
@@ -182,12 +185,13 @@ PackageCargoFilePath :: FilePath -> PackageCargoFilePath
 --   strings,</i> <i>in case we can't check the equality between fetcher
 --   functions.</i>
 data Package
-Package :: PackageName -> NvcheckerQ -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoFilePath -> Package
+Package :: PackageName -> NvcheckerQ -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoFilePath -> PackagePassthru -> Package
 [_pname] :: Package -> PackageName
 [_pversion] :: Package -> NvcheckerQ
 [_pfetcher] :: Package -> PackageFetcher
 [_pextract] :: Package -> Maybe PackageExtractSrc
 [_pcargo] :: Package -> Maybe PackageCargoFilePath
+[_ppassthru] :: Package -> PackagePassthru
 
 -- | Package key is the name of a package. We use this type to index
 --   packages.
@@ -279,6 +283,8 @@ instance GHC.Classes.Ord NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Classes.Eq NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Show.Show NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Classes.Eq NvFetcher.Types.VersionChange
+instance GHC.Base.Monoid NvFetcher.Types.PackagePassthru
+instance GHC.Base.Semigroup NvFetcher.Types.PackagePassthru
 instance Control.DeepSeq.NFData NvFetcher.Types.PackageKey
 instance Data.Binary.Class.Binary NvFetcher.Types.PackageKey
 instance Data.Hashable.Class.Hashable NvFetcher.Types.PackageKey
@@ -334,13 +340,14 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_ab0g k_aA55. Lens (NixFetcher k_ab0g) (NixFetcher k_aA55) (FetchResult k_ab0g) (FetchResult k_aA55)
-rev :: forall k_ab0g. Traversal' (NixFetcher k_ab0g) Version
-leaveDotGit :: forall k_ab0g. Traversal' (NixFetcher k_ab0g) Bool
-furl :: forall k_ab0g. Lens' (NixFetcher k_ab0g) Text
-fetchSubmodules :: forall k_ab0g. Traversal' (NixFetcher k_ab0g) Bool
-deepClone :: forall k_ab0g. Traversal' (NixFetcher k_ab0g) Bool
+sha256 :: forall k_ab3m k_aAis. Lens (NixFetcher k_ab3m) (NixFetcher k_aAis) (FetchResult k_ab3m) (FetchResult k_aAis)
+rev :: forall k_ab3m. Traversal' (NixFetcher k_ab3m) Version
+leaveDotGit :: forall k_ab3m. Traversal' (NixFetcher k_ab3m) Bool
+furl :: forall k_ab3m. Lens' (NixFetcher k_ab3m) Text
+fetchSubmodules :: forall k_ab3m. Traversal' (NixFetcher k_ab3m) Bool
+deepClone :: forall k_ab3m. Traversal' (NixFetcher k_ab3m) Bool
 pversion :: Lens' Package NvcheckerQ
+ppassthru :: Lens' Package PackagePassthru
 pname :: Lens' Package PackageName
 pfetcher :: Lens' Package PackageFetcher
 pextract :: Lens' Package (Maybe PackageExtractSrc)
@@ -470,7 +477,7 @@ data PackageSetF f
 type PackageSet = Free PackageSetF
 
 -- | Add a package to package set
-newPackage :: PackageName -> NvcheckerQ -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoFilePath -> PackageSet ()
+newPackage :: PackageName -> NvcheckerQ -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoFilePath -> PackagePassthru -> PackageSet ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -485,7 +492,7 @@ runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 class PkgDSL f
 new :: PkgDSL f => f PackageName -> f (Prod '[PackageName])
 andThen :: PkgDSL f => f (Prod r) -> f a -> f (Prod (a : r))
-end :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r, OptionalMember PackageExtractSrc r, OptionalMember PackageCargoFilePath r, OptionalMember NvcheckerOptions r) => f (Prod r) -> f ()
+end :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFetcher r, OptionalMember PackageExtractSrc r, OptionalMember PackageCargoFilePath r, OptionalMember NvcheckerOptions r, OptionalMember PackagePassthru r) => f (Prod r) -> f ()
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
@@ -494,7 +501,7 @@ end :: (PkgDSL f, Member PackageName r, Member VersionSource r, Member PackageFe
 --   <pre>
 --   define $ package "nvfetcher-git" <a>sourceGit</a> "<a>https://github.com/berberman/nvfetcher"</a> <a>fetchGitHub</a> ("berberman", "nvfetcher")
 --   </pre>
-define :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, OptionalMember PackageExtractSrc r, OptionalMember PackageCargoFilePath r, OptionalMember NvcheckerOptions r) => PackageSet (Prod r) -> PackageSet ()
+define :: (Member PackageName r, Member VersionSource r, Member PackageFetcher r, OptionalMember PackageExtractSrc r, OptionalMember PackageCargoFilePath r, OptionalMember PackagePassthru r, OptionalMember NvcheckerOptions r) => PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])
@@ -520,12 +527,14 @@ fromGitHubTag' :: PackageSet (Prod r) -> (Text, Text, ListOptions -> ListOptions
 -- | A synonym of <a>fetchPypi</a> and <a>sourcePypi</a>
 fromPypi :: PackageSet (Prod r) -> Text -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
 
--- | A synonym of <a>fetchOpenVsx</a> and <a>sourceOpenVsx</a>
-fromOpenVsx :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
+-- | A synonym of <a>fetchOpenVsx</a>, <a>sourceOpenVsx</a>, and
+--   <a>passthru</a> extension's publisher with name
+fromOpenVsx :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (PackagePassthru : (PackageFetcher : (VersionSource : r))))
 
--- | A synonym of <a>fetchVscodeMarketplace</a> and
---   <a>sourceVscodeMarketplace</a>
-fromVscodeMarketplace :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (PackageFetcher : (VersionSource : r)))
+-- | A synonym of <a>fetchVscodeMarketplace</a>,
+--   <a>sourceVscodeMarketplace</a>, and <a>passthru</a> extension's
+--   publisher with name
+fromVscodeMarketplace :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (PackagePassthru : (PackageFetcher : (VersionSource : r))))
 
 -- | This package follows the latest github release
 sourceGitHub :: PackageSet (Prod r) -> (Text, Text) -> PackageSet (Prod (VersionSource : r))
@@ -616,11 +625,17 @@ hasCargoLock :: PackageSet (Prod r) -> FilePath -> PackageSet (Prod (PackageCarg
 --   number we obtain
 tweakVersion :: PackageSet (Prod r) -> (NvcheckerOptions -> NvcheckerOptions) -> PackageSet (Prod (NvcheckerOptions : r))
 
+-- | An attrs set to pass through
+passthru :: PackageSet (Prod r) -> [(Text, Text)] -> PackageSet (Prod (PackagePassthru : r))
+
 -- | Simple HList
 data Prod (r :: [Type])
 
 -- | Project elements from <a>Prod</a>
 class Member (a :: Type) (r :: [Type])
+
+-- | Project optional elements from <a>Prod</a>
+class OptionalMember (a :: Type) (r :: [Type])
 
 -- | Constraint for producing error messages
 type family NotElem (x :: Type) (xs :: [Type]) :: Constraint
@@ -923,8 +938,20 @@ coreRules :: Rules ()
 
 -- | Run the core rule. Given a <a>PackageKey</a>, run
 --   <a>NvFetcher.Nvchecker</a>, <a>NvFetcher.NixFetcher</a> (may also run
---   <a>NvFetcher.ExtractSrc</a> or <a>FetchRustGitDeps</a>) resulting a
---   nix source snippet like:
+--   <a>NvFetcher.ExtractSrc</a> or <a>NvFetrcher.FetchRustGitDeps</a>)
+--   
+--   <pre>
+--   Package
+--   { _pname = "feeluown-core",
+--     _pversion = NvcheckerQ (Pypi "feeluown") def,
+--     _pfetcher = pypiFetcher "feeluown",
+--     _pextract = Nothing,
+--     _pcargo = Nothing,
+--     _ppassthru = PackagePassthru (HashMap.fromList [("a", <a>B</a>)])
+--   }
+--   </pre>
+--   
+--   resulting a nix exprs snippet like:
 --   
 --   <pre>
 --   feeluown-core = {
@@ -934,6 +961,7 @@ coreRules :: Rules ()
 --         sha256 = "06d3j39ff9znqxkhp9ly81lcgajkhg30hyqxy2809yn23xixg3x2";
 --         url = "<a>https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";</a>
 --       };
+--       a = <a>B</a>;
 --     };
 --   </pre>
 generateNixSourceExpr :: PackageKey -> Action NixExpr
