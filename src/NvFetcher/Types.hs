@@ -56,6 +56,7 @@ module NvFetcher.Types
     PackageFetcher,
     PackageExtractSrc (..),
     PackageCargoFilePath (..),
+    PackagePassthru (..),
     Package (..),
     PackageKey (..),
   )
@@ -250,13 +251,17 @@ newtype PackageExtractSrc = PackageExtractSrc (NE.NonEmpty FilePath)
 
 newtype PackageCargoFilePath = PackageCargoFilePath FilePath
 
+newtype PackagePassthru = PackagePassthru (HashMap Text Text)
+  deriving newtype (Semigroup, Monoid)
+
 -- | A package is defined with:
 --
 -- 1. its name
 -- 2. how to track its version
 -- 3. how to fetch it as we have the version
--- 4. optional file paths to extract (dump to generated nix expr)
--- 5. @Cargo.lock@ path (if it's a rust package)
+-- 4. optional file paths to extract (dump to shake dir)
+-- 5. optional @Cargo.lock@ path (if it's a rust package)
+-- 6. an optional pass through map
 --
 -- /INVARIANT: 'Version' passed to 'PackageFetcher' MUST be used textually,/
 -- /i.e. can only be concatenated with other strings,/
@@ -266,7 +271,8 @@ data Package = Package
     _pversion :: NvcheckerQ,
     _pfetcher :: PackageFetcher,
     _pextract :: Maybe PackageExtractSrc,
-    _pcargo :: Maybe PackageCargoFilePath
+    _pcargo :: Maybe PackageCargoFilePath,
+    _ppassthru :: PackagePassthru
   }
 
 -- | Package key is the name of a package.

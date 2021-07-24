@@ -43,6 +43,7 @@ coreRules = do
   prefetchRule
   extractSrcRule
   fetchRustGitDepsRule
+  -- TODO: maybe an oracle rule is enough
   addBuiltinRule noLint noIdentity $ \(WithPackageKey (Core, pkg)) mOld mode -> case mode of
     RunDependenciesSame
       | Just old <- mOld,
@@ -54,11 +55,16 @@ coreRules = do
         Just
           Package
             { _pversion = NvcheckerQ versionSource options,
+              _ppassthru = PackagePassthru passthruMap,
               ..
             } -> do
+            -- it's important to always rerun
+            -- since the package definition is not tracked at all
+            alwaysRerun
             (NvcheckerA version mOldV) <- checkVersion versionSource options pkg
             prefetched <- prefetch $ _pfetcher version
             shakeDir <- getShakeDir
+            -- extract src
             appending1 <-
               case _pextract of
                 Just (PackageExtractSrc extract) -> do
@@ -78,6 +84,7 @@ coreRules = do
                                   </> k
                       ]
                 _ -> pure ""
+            -- cargo lock
             appending2 <-
               case _pcargo of
                 Just (PackageCargoFilePath lockPath) -> do
@@ -102,6 +109,10 @@ coreRules = do
                   };
                 |]
                 _ -> pure ""
+            -- passthru
+            let appending3 = T.unlines [k <> " = " <> v <> ";" | (k, asString -> v) <- HMap.toList passthruMap]
+
+            -- update changelog
             case mOldV of
               Nothing ->
                 recordVersionChange _pname Nothing version
@@ -109,13 +120,26 @@ coreRules = do
                 | old /= version ->
                   recordVersionChange _pname (Just old) version
               _ -> pure ()
-            let result = gen _pname version prefetched $ appending1 <> appending2
+
+            let result = gen _pname version prefetched $ appending1 <> appending2 <> appending3
             pure $ RunResult ChangedRecomputeDiff (encode' (result, version)) result
 
 -- | Run the core rule.
 -- Given a 'PackageKey', run "NvFetcher.Nvchecker", "NvFetcher.NixFetcher"
--- (may also run "NvFetcher.ExtractSrc" or "FetchRustGitDeps")
--- resulting a nix source snippet like:
+-- (may also run "NvFetcher.ExtractSrc" or "NvFetrcher.FetchRustGitDeps")
+--
+-- @
+-- Package
+-- { _pname = "feeluown-core",
+--   _pversion = NvcheckerQ (Pypi "feeluown") def,
+--   _pfetcher = pypiFetcher "feeluown",
+--   _pextract = Nothing,
+--   _pcargo = Nothing,
+--   _ppassthru = PackagePassthru (HashMap.fromList [("a", "B")])
+-- }
+-- @
+--
+-- resulting a nix exprs snippet like:
 --
 -- @
 -- feeluown-core = {
@@ -125,6 +149,7 @@ coreRules = do
 --       sha256 = "06d3j39ff9znqxkhp9ly81lcgajkhg30hyqxy2809yn23xixg3x2";
 --       url = "https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";
 --     };
+--     a = "B";
 --   };
 -- @
 generateNixSourceExpr :: PackageKey -> Action NixExpr

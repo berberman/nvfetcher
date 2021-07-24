@@ -48,3 +48,4 @@ cargo_lock = "Cargo.lock"
 [vscode-LiveServer]
 src.openvsx = "ritwickdey.LiveServer"
 fetch.openvsx = "ritwickdey.LiveServer"
+passthru = { publisher = "ritwickdey", name = "LiveServer" }

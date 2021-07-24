@@ -13,8 +13,6 @@ import Config.VersionSource
 import Data.Coerce (coerce)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NE
-import Lens.Micro
-import Lens.Micro.Extras (view)
 import NvFetcher.Types
 import Toml
 import Validation (validationToEither)
@@ -26,15 +24,45 @@ parseConfig toml = go tables [] []
     go (Right x : xs) se sp = go xs se (x : sp)
     go [] [] sp = Right sp
     go [] se _ = Left se
-    tables = [fmap (toPackage k) $ validationToEither $ Toml.runTomlCodec iCodec v | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml]
-    toPackage k (versionSource, f, e, c, options) = Package k (NvcheckerQ versionSource options) f e c
-    iCodec =
-      (,,,,)
-        <$> versionSourceCodec .= view _1
-        <*> fetcherCodec .= view _2
-        <*> extractFilesCodec .= view _3
-        <*> cargoLockPathCodec .= view _4
-        <*> nvcheckerOptionsCodec .= view _5
+    tables =
+      [ fmap (toPackage (coerce k)) $
+          validationToEither $
+            Toml.runTomlCodec packageConfigCodec v
+        | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml
+      ]
+
+--------------------------------------------------------------------------------
+
+data PackageConfig = PackageConfig
+  { pcVersionSource :: VersionSource,
+    pcFetcher :: PackageFetcher,
+    pcExtractFiles :: Maybe PackageExtractSrc,
+    pcCargoLockPath :: Maybe PackageCargoFilePath,
+    pcNvcheckerOptions :: NvcheckerOptions,
+    pcPassthru :: PackagePassthru
+  }
+
+toPackage :: PackageKey -> PackageConfig -> Package
+toPackage k PackageConfig {..} =
+  Package
+    (coerce k)
+    (NvcheckerQ pcVersionSource pcNvcheckerOptions)
+    pcFetcher
+    pcExtractFiles
+    pcCargoLockPath
+    pcPassthru
+
+packageConfigCodec :: TomlCodec PackageConfig
+packageConfigCodec =
+  PackageConfig
+    <$> versionSourceCodec .= pcVersionSource
+    <*> fetcherCodec .= pcFetcher
+    <*> extractFilesCodec .= pcExtractFiles
+    <*> cargoLockPathCodec .= pcCargoLockPath
+    <*> nvcheckerOptionsCodec .= pcNvcheckerOptions
+    <*> passthruCodec .= pcPassthru
+
+--------------------------------------------------------------------------------
 
 extractFilesCodec :: TomlCodec (Maybe PackageExtractSrc)
 extractFilesCodec =
@@ -52,3 +80,6 @@ nvcheckerOptionsCodec =
     <$> dioptional (text "src.prefix") .= _stripPrefix
     <*> dioptional (text "src.from_pattern") .= _fromPattern
     <*> dioptional (text "src.to_pattern") .= _toPattern
+
+passthruCodec :: TomlCodec PackagePassthru
+passthruCodec = diwrap $ tableHashMap _KeyText text "passthru"
