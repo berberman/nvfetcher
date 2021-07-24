@@ -6,6 +6,7 @@
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -80,10 +81,12 @@ module NvFetcher.PackageSet
     extractSource,
     hasCargoLock,
     tweakVersion,
+    passthru,
 
     -- ** Miscellaneous
     Prod,
     Member,
+    OptionalMember,
     NotElem,
     coerce,
     liftIO,
@@ -102,9 +105,10 @@ import Control.Monad.Free
 import Control.Monad.IO.Class
 import Data.Coerce (coerce)
 import Data.Default (def)
+import qualified Data.HashMap.Strict as HMap
 import Data.Kind (Constraint, Type)
 import qualified Data.List.NonEmpty as NE
-import Data.Map.Strict as HMap
+import Data.Map.Strict as Map
 import Data.Maybe (fromMaybe, isJust)
 import Data.Text (Text)
 import GHC.TypeLits
@@ -143,8 +147,9 @@ newPackage ::
   PackageFetcher ->
   Maybe PackageExtractSrc ->
   Maybe PackageCargoFilePath ->
+  PackagePassthru ->
   PackageSet ()
-newPackage name source fetcher extract cargo = liftF $ NewPackage (Package name source fetcher extract cargo) ()
+newPackage name source fetcher extract cargo pasthru = liftF $ NewPackage (Package name source fetcher extract cargo pasthru) ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -158,9 +163,9 @@ runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 runPackageSet = \case
   Free (NewPackage p g) ->
     runPackageSet g >>= \m ->
-      if isJust (HMap.lookup (PackageKey $ _pname p) m)
+      if isJust (Map.lookup (PackageKey $ _pname p) m)
         then fail $ "Duplicate package name: " <> show (_pname p)
-        else pure $ HMap.insert (PackageKey $ _pname p) p m
+        else pure $ Map.insert (PackageKey $ _pname p) p m
   Free (EmbedIO action g) -> action >>= runPackageSet . g
   Pure _ -> pure mempty
 
@@ -184,6 +189,7 @@ instance Member x xs => Member x (_y ': xs) where
 instance TypeError (ShowType x :<>: 'Text " is undefined") => Member x '[] where
   proj = undefined
 
+-- | Project optional elements from 'Prod'
 class OptionalMember (a :: Type) (r :: [Type]) where
   projMaybe :: Prod r -> Maybe a
 
@@ -214,7 +220,8 @@ class PkgDSL f where
       Member PackageFetcher r,
       OptionalMember PackageExtractSrc r,
       OptionalMember PackageCargoFilePath r,
-      OptionalMember NvcheckerOptions r
+      OptionalMember NvcheckerOptions r,
+      OptionalMember PackagePassthru r
     ) =>
     f (Prod r) ->
     f ()
@@ -235,6 +242,7 @@ instance PkgDSL PackageSet where
       (proj p)
       (projMaybe p)
       (projMaybe p)
+      (fromMaybe mempty (projMaybe p))
 
 -- | 'PkgDSL' version of 'newPackage'
 --
@@ -249,6 +257,7 @@ define ::
     Member PackageFetcher r,
     OptionalMember PackageExtractSrc r,
     OptionalMember PackageCargoFilePath r,
+    OptionalMember PackagePassthru r,
     OptionalMember NvcheckerOptions r
   ) =>
   PackageSet (Prod r) ->
@@ -312,21 +321,31 @@ fromPypi ::
     (Prod (PackageFetcher : VersionSource : r))
 fromPypi e p = fetchPypi (sourcePypi e p) p
 
--- | A synonym of 'fetchOpenVsx' and 'sourceOpenVsx'
+-- | A synonym of 'fetchOpenVsx', 'sourceOpenVsx', and 'passthru' extension's publisher with name
 fromOpenVsx ::
   PackageSet (Prod r) ->
   (Text, Text) ->
   PackageSet
-    (Prod (PackageFetcher : VersionSource : r))
-fromOpenVsx e x = fetchOpenVsx (sourceOpenVsx e x) x
+    (Prod (PackagePassthru : PackageFetcher : VersionSource : r))
+fromOpenVsx e x@(publisher, extName) =
+  passthru
+    (fetchOpenVsx (sourceOpenVsx e x) x)
+    [ ("name", extName),
+      ("publisher", publisher)
+    ]
 
--- | A synonym of 'fetchVscodeMarketplace' and 'sourceVscodeMarketplace'
+-- | A synonym of 'fetchVscodeMarketplace', 'sourceVscodeMarketplace', and 'passthru' extension's publisher with name
 fromVscodeMarketplace ::
   PackageSet (Prod r) ->
   (Text, Text) ->
   PackageSet
-    (Prod (PackageFetcher : VersionSource : r))
-fromVscodeMarketplace e x = fetchVscodeMarketplace (sourceVscodeMarketplace e x) x
+    (Prod (PackagePassthru : PackageFetcher : VersionSource : r))
+fromVscodeMarketplace e x@(publisher, extName) =
+  passthru
+    (fetchVscodeMarketplace (sourceVscodeMarketplace e x) x)
+    [ ("name", extName),
+      ("publisher", publisher)
+    ]
 
 --------------------------------------------------------------------------------
 
@@ -544,3 +563,11 @@ tweakVersion ::
   (NvcheckerOptions -> NvcheckerOptions) ->
   PackageSet (Prod (NvcheckerOptions : r))
 tweakVersion = (. pure . ($ def)) . andThen
+
+-- | An attrs set to pass through
+passthru ::
+  PackageSet (Prod r) ->
+  -- | kv list
+  [(Text, Text)] ->
+  PackageSet (Prod (PackagePassthru : r))
+passthru = (. pure . PackagePassthru . HMap.fromList) . andThen
