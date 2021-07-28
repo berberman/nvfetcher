@@ -5,6 +5,7 @@ module CheckVersionSpec where
 import Data.Coerce (coerce)
 import Data.Default (def)
 import qualified Data.Map.Strict as Map
+import Data.Maybe (isJust)
 import NvFetcher.Nvchecker
 import NvFetcher.Types
 import Test.Hspec
@@ -39,8 +40,9 @@ spec = aroundShake' (Map.singleton fakePackageKey fakePackage) $
       runNvcheckerRule chan (GitHubTag "harry-sanabria" "ReleaseTestRepo" def {_ignored = Just "second_release release3"})
         `shouldReturnJust` Version "first_release"
 
-    specify "http header" $ \chan ->
-      shouldBeJust $ runNvcheckerRule chan (HttpHeader "https://www.unifiedremote.com/download/linux-x64-deb" "urserver-([\\d.]+).deb" def)
+    specify "http header" $ \chan -> do
+      ver <- runNvcheckerRule chan (HttpHeader "https://www.unifiedremote.com/download/linux-x64-deb" "urserver-([\\d.]+).deb" def)
+      ver `shouldSatisfy` isJust
 
     specify "manual" $ \chan ->
       runNvcheckerRule chan (Manual "Meow") `shouldReturnJust` Version "Meow"

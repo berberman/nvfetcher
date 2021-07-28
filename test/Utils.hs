@@ -10,7 +10,6 @@ import Control.Concurrent.STM
 import Control.Exception (Handler (..), SomeException, bracket, catches, throwIO)
 import Control.Monad (void)
 import Data.Map (Map)
-import Data.Maybe (isJust)
 import Development.Shake
 import Development.Shake.Database
 import NvFetcher.Core (coreRules)
@@ -27,7 +26,7 @@ runAction chan x = do
   barrier <- newBarrier
   atomically $ writeTQueue chan $ x >>= liftIO . signalBarrier barrier
   -- TODO
-  timeout 10 $ waitBarrier barrier
+  timeout 30 $ waitBarrier barrier
 
 type ActionQueue = TQueue (Action ())
 
@@ -72,6 +71,3 @@ aroundShake' pkgs = aroundAll $ \f ->
 
 shouldReturnJust :: (Show a, Eq a) => IO (Maybe a) -> a -> Expectation
 shouldReturnJust f x = f `shouldReturn` Just x
-
-shouldBeJust :: Show a => IO (Maybe a) -> Expectation
-shouldBeJust f = f >>= \x -> shouldSatisfy x isJust
