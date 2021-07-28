@@ -2,12 +2,10 @@
 
 module CheckVersionSpec where
 
-import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader
 import Data.Coerce (coerce)
 import Data.Default (def)
 import qualified Data.Map.Strict as Map
-import Data.Maybe (isJust)
 import Lens.Micro
 import NvFetcher.Nvchecker
 import NvFetcher.Types

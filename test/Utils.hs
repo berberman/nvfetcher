@@ -80,8 +80,8 @@ shouldReturnJust f x = withRunInIO $ \run -> run f `shouldReturn` Just x
 shouldBeJust :: (MonadIO m, Show a) => Maybe a -> m ()
 shouldBeJust x = liftIO $ x `shouldSatisfy` isJust
 
-specifyChan :: HasCallStack => String -> ReaderT ActionQueue IO a -> SpecWith ActionQueue
-specifyChan s m = specify s $ \r -> void $ runReaderT m r
+specifyChan :: HasCallStack => String -> ReaderT ActionQueue IO () -> SpecWith ActionQueue
+specifyChan s m = specify s $ \r -> runReaderT m r
 
 runActionChan :: Action a -> ReaderT ActionQueue IO (Maybe a)
 runActionChan m = ask >>= \chan -> liftIO $ runAction chan m
