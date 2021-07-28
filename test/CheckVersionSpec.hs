@@ -2,14 +2,17 @@
 
 module CheckVersionSpec where
 
+import Data.Coerce (coerce)
 import Data.Default (def)
+import qualified Data.Map.Strict as Map
 import NvFetcher.Nvchecker
 import NvFetcher.Types
 import Test.Hspec
 import Utils
 
+-- | We need a fakePackageKey here; otherwise the nvchecker rule would be cutoff
 spec :: Spec
-spec = aroundShake $
+spec = aroundShake' (Map.singleton fakePackageKey fakePackage) $
   describe "nvchecker" $ do
     specify "pypi" $ \chan ->
       runNvcheckerRule chan (Pypi "example") `shouldReturnJust` Version "0.1.0"
@@ -50,3 +53,22 @@ spec = aroundShake $
 
     specify "vsmarketplace" $ \chan ->
       runNvcheckerRule chan (VscodeMarketplace "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.2.6"
+
+--------------------------------------------------------------------------------
+
+runNvcheckerRule :: ActionQueue -> VersionSource -> IO (Maybe Version)
+runNvcheckerRule chan v = runAction chan $ nvNow <$> checkVersion v def fakePackageKey
+
+fakePackageKey :: PackageKey
+fakePackageKey = PackageKey "a-fake-package"
+
+fakePackage :: Package
+fakePackage =
+  Package
+    { _pname = coerce fakePackageKey,
+      _pversion = undefined,
+      _pfetcher = undefined,
+      _pcargo = undefined,
+      _pextract = undefined,
+      _ppassthru = undefined
+    }

@@ -27,7 +27,7 @@ jobs:
     - name: Run spec tests
       run: |
         nix develop --command cabal update
-        nix develop --command cabal build
+        nix develop --command cabal test
 
     - name: Run CLI with nvfetcher_example.toml
       run : nix shell --command nvfetcher --config nvfetcher_example.toml

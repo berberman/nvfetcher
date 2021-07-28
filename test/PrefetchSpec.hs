@@ -30,3 +30,8 @@ spec = aroundShake $
     specify "github" $ \chan ->
       runPrefetchRule chan (gitHubFetcher ("harry-sanabria", "ReleaseTestRepo") "release3")
         `shouldReturnJust` Checksum "1a8qv2h9ji6w5p4ljwwkgvk49w6hj9j7hgmw0ahw10y1i45s0b3i"
+
+--------------------------------------------------------------------------------
+
+runPrefetchRule :: ActionQueue -> NixFetcher Fresh -> IO (Maybe Checksum)
+runPrefetchRule chan f = runAction chan $ _sha256 <$> prefetch f
