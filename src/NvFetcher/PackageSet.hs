@@ -7,6 +7,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -85,9 +86,14 @@ module NvFetcher.PackageSet
 
     -- ** Miscellaneous
     Prod,
+    Append,
     Member,
     OptionalMember,
     NotElem,
+    Members,
+    OptionalMembers,
+    Attach,
+    AttachMany,
     coerce,
     liftIO,
 
@@ -208,6 +214,27 @@ type family NotElem (x :: Type) (xs :: [Type]) :: Constraint where
   NotElem x (_ ': xs) = NotElem x xs
   NotElem x '[] = ()
 
+-- | A list of 'Member'
+type family Members xs r :: Constraint where
+  Members '[] _ = ()
+  Members (x ': xs) r = (Member x r, Members xs r)
+
+-- | A list of 'OptionalMember'
+type family OptionalMembers xs r :: Constraint where
+  OptionalMembers '[] _ = ()
+  OptionalMembers (x ': xs) r = (OptionalMember x r, OptionalMembers xs r)
+
+-- | @xs ++ ys@, at type level
+type family Append xs ys where
+  Append '[] ys = ys
+  Append (x ': xs) ys = x ': Append xs ys
+
+-- | Attach members @xs@, with a function argument @arg@
+type AttachMany xs arg = forall r. PackageSet (Prod r) -> arg -> PackageSet (Prod (Append xs r))
+
+-- | Attach member @x@, with a function @arg@
+type Attach x arg = AttachMany '[x] arg
+
 --------------------------------------------------------------------------------
 
 -- | A tagless final style DSL for constructing packages
@@ -215,13 +242,19 @@ class PkgDSL f where
   new :: f PackageName -> f (Prod '[PackageName])
   andThen :: f (Prod r) -> f a -> f (Prod (a ': r))
   end ::
-    ( Member PackageName r,
-      Member VersionSource r,
-      Member PackageFetcher r,
-      OptionalMember PackageExtractSrc r,
-      OptionalMember PackageCargoFilePath r,
-      OptionalMember NvcheckerOptions r,
-      OptionalMember PackagePassthru r
+    ( Members
+        '[ PackageName,
+           VersionSource,
+           PackageFetcher
+         ]
+        r,
+      OptionalMembers
+        '[ PackageExtractSrc,
+           PackageCargoFilePath,
+           NvcheckerOptions,
+           PackagePassthru
+         ]
+        r
     ) =>
     f (Prod r) ->
     f ()
@@ -252,13 +285,19 @@ instance PkgDSL PackageSet where
 -- define $ package "nvfetcher-git" `sourceGit` "https://github.com/berberman/nvfetcher" `fetchGitHub` ("berberman", "nvfetcher")
 -- @
 define ::
-  ( Member PackageName r,
-    Member VersionSource r,
-    Member PackageFetcher r,
-    OptionalMember PackageExtractSrc r,
-    OptionalMember PackageCargoFilePath r,
-    OptionalMember PackagePassthru r,
-    OptionalMember NvcheckerOptions r
+  ( Members
+      '[ PackageName,
+         VersionSource,
+         PackageFetcher
+       ]
+      r,
+    OptionalMembers
+      '[ PackageExtractSrc,
+         PackageCargoFilePath,
+         PackagePassthru,
+         NvcheckerOptions
+       ]
+      r
   ) =>
   PackageSet (Prod r) ->
   PackageSet ()
@@ -269,64 +308,40 @@ package :: PackageName -> PackageSet (Prod '[PackageName])
 package = new . pure
 
 -- | Attach version sources
-src :: PackageSet (Prod r) -> VersionSource -> PackageSet (Prod (VersionSource ': r))
+src :: Attach VersionSource VersionSource
 src = (. pure) . andThen
 
 -- | Attach fetchers
-fetch ::
-  PackageSet (Prod r) ->
-  PackageFetcher ->
-  PackageSet (Prod (PackageFetcher ': r))
+fetch :: Attach PackageFetcher PackageFetcher
 fetch = (. pure) . andThen
 
 --------------------------------------------------------------------------------
 
 -- | A synonym of 'fetchGitHub' and 'sourceGitHub'
-fromGitHub ::
-  PackageSet (Prod r) ->
-  (Text, Text) ->
-  PackageSet
-    (Prod (PackageFetcher : VersionSource : r))
+fromGitHub :: AttachMany '[PackageFetcher, VersionSource] (Text, Text)
 fromGitHub e (owner, repo) = fromGitHub' e (owner, repo, id)
 
 -- | A synonym of 'fetchGitHub'' and 'sourceGitHub'
-fromGitHub' ::
-  PackageSet (Prod r) ->
-  (Text, Text, NixFetcher Fresh -> NixFetcher Fresh) ->
-  PackageSet
-    (Prod (PackageFetcher : VersionSource : r))
+fromGitHub' :: AttachMany '[PackageFetcher, VersionSource] (Text, Text, NixFetcher Fresh -> NixFetcher Fresh)
 fromGitHub' e p@(owner, repo, _) = fetchGitHub' (sourceGitHub e (owner, repo)) p
 
 -- | A synonym of 'fetchGitHub' and 'sourceGitHubTag'
-fromGitHubTag ::
-  PackageSet (Prod r) ->
-  (Text, Text, ListOptions -> ListOptions) ->
-  PackageSet
-    (Prod (PackageFetcher : VersionSource : r))
+fromGitHubTag :: AttachMany '[PackageFetcher, VersionSource] (Text, Text, ListOptions -> ListOptions)
 fromGitHubTag e (owner, repo, f) = fromGitHubTag' e (owner, repo, f, id)
 
 -- | A synonym of 'fetchGitHub'' and 'sourceGitHubTag'
 fromGitHubTag' ::
-  PackageSet (Prod r) ->
-  (Text, Text, ListOptions -> ListOptions, NixFetcher Fresh -> NixFetcher Fresh) ->
-  PackageSet
-    (Prod (PackageFetcher : VersionSource : r))
+  AttachMany
+    '[PackageFetcher, VersionSource]
+    (Text, Text, ListOptions -> ListOptions, NixFetcher Fresh -> NixFetcher Fresh)
 fromGitHubTag' e (owner, repo, fv, ff) = fetchGitHub' (sourceGitHubTag e (owner, repo, fv)) (owner, repo, ff)
 
 -- | A synonym of 'fetchPypi' and 'sourcePypi'
-fromPypi ::
-  PackageSet (Prod r) ->
-  Text ->
-  PackageSet
-    (Prod (PackageFetcher : VersionSource : r))
+fromPypi :: AttachMany '[PackageFetcher, VersionSource] Text
 fromPypi e p = fetchPypi (sourcePypi e p) p
 
 -- | A synonym of 'fetchOpenVsx', 'sourceOpenVsx', and 'passthru' extension's publisher with name
-fromOpenVsx ::
-  PackageSet (Prod r) ->
-  (Text, Text) ->
-  PackageSet
-    (Prod (PackagePassthru : PackageFetcher : VersionSource : r))
+fromOpenVsx :: AttachMany '[PackagePassthru, PackageFetcher, VersionSource] (Text, Text)
 fromOpenVsx e x@(publisher, extName) =
   passthru
     (fetchOpenVsx (sourceOpenVsx e x) x)
@@ -335,11 +350,7 @@ fromOpenVsx e x@(publisher, extName) =
     ]
 
 -- | A synonym of 'fetchVscodeMarketplace', 'sourceVscodeMarketplace', and 'passthru' extension's publisher with name
-fromVscodeMarketplace ::
-  PackageSet (Prod r) ->
-  (Text, Text) ->
-  PackageSet
-    (Prod (PackagePassthru : PackageFetcher : VersionSource : r))
+fromVscodeMarketplace :: AttachMany '[PackagePassthru, PackageFetcher, VersionSource] (Text, Text)
 fromVscodeMarketplace e x@(publisher, extName) =
   passthru
     (fetchVscodeMarketplace (sourceVscodeMarketplace e x) x)
@@ -350,116 +361,87 @@ fromVscodeMarketplace e x@(publisher, extName) =
 --------------------------------------------------------------------------------
 
 -- | This package follows the latest github release
-sourceGitHub ::
-  PackageSet (Prod r) ->
-  -- | owner and repo
-  (Text, Text) ->
-  PackageSet (Prod (VersionSource : r))
+sourceGitHub :: Attach VersionSource (Text, Text)
 sourceGitHub e (owner, repo) = src e $ GitHubRelease owner repo
 
 -- | This package follows the a tag from github
-sourceGitHubTag ::
-  PackageSet (Prod r) ->
-  -- | owner, repo, and nvchecker list options to find the target tag
-  (Text, Text, ListOptions -> ListOptions) ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Args are owner, repo, and nvchecker list options to find the target tag
+sourceGitHubTag :: Attach VersionSource (Text, Text, ListOptions -> ListOptions)
 sourceGitHubTag e (owner, repo, f) = src e $ GitHubTag owner repo $ f def
 
 -- | This package follows the latest git commit
-sourceGit ::
-  PackageSet (Prod r) ->
-  -- | git url
-  Text ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Arg is git url
+sourceGit :: Attach VersionSource Text
 sourceGit e _vurl = src e $ Git _vurl def
 
 -- | Similar to 'sourceGit', but allows to specify branch
-sourceGit' ::
-  PackageSet (Prod r) ->
-  -- | git url and branch
-  (Text, Text) ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Args are git url and branch
+sourceGit' :: Attach VersionSource (Text, Text)
 sourceGit' e (_vurl, coerce . Just -> _vbranch) = src e $ Git {..}
 
 -- | This package follows the latest pypi release
-sourcePypi ::
-  PackageSet (Prod r) ->
-  -- | pypi name
-  Text ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Arg is pypi name
+sourcePypi :: Attach VersionSource Text
 sourcePypi e _pypi = src e Pypi {..}
 
 -- | This package follows the version of an Arch Linux package
-sourceArchLinux ::
-  PackageSet (Prod r) ->
-  -- | package name in Arch Linux repo
-  Text ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Arg is package name in Arch Linux repo
+sourceArchLinux :: Attach VersionSource Text
 sourceArchLinux e _archpkg = src e ArchLinux {..}
 
 -- | This package follows the version of an Aur package
-sourceAur ::
-  PackageSet (Prod r) ->
-  -- | package name in Aur
-  Text ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Arg is package name in Aur
+sourceAur :: Attach VersionSource Text
 sourceAur e _aur = src e Aur {..}
 
 -- | This package follows a pinned version
-sourceManual ::
-  PackageSet (Prod r) ->
-  Text ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Arg is manual version
+sourceManual :: Attach VersionSource Text
 sourceManual e _manual = src e Manual {..}
 
 -- | This package follows the version of a repology package
-sourceRepology ::
-  PackageSet (Prod r) ->
-  -- | repology project name and repo
-  (Text, Text) ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Args are repology project name and repo
+sourceRepology :: Attach VersionSource (Text, Text)
 sourceRepology e (project, repo) = src e $ Repology project repo
 
 -- | This package follows a version extracted from web page
-sourceWebpage ::
-  PackageSet (Prod r) ->
-  -- | web page url, regex, and list options
-  (Text, Text, ListOptions -> ListOptions) ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Args are web page url, regex, and list options
+sourceWebpage :: Attach VersionSource (Text, Text, ListOptions -> ListOptions)
 sourceWebpage e (_vurl, _regex, f) = src e $ Webpage _vurl _regex $ f def
 
 -- | This package follows a version extracted from http header
-sourceHttpHeader ::
-  PackageSet (Prod r) ->
-  -- | url of the http request, regex, and list options
-  (Text, Text, ListOptions -> ListOptions) ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Args are the url of the http request, regex, and list options
+sourceHttpHeader :: Attach VersionSource (Text, Text, ListOptions -> ListOptions)
 sourceHttpHeader e (_vurl, _regex, f) = src e $ HttpHeader _vurl _regex $ f def
 
 -- | This package follows a version in Open VSX
-sourceOpenVsx ::
-  PackageSet (Prod r) ->
-  -- | publisher and extension name
-  (Text, Text) ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Args are publisher and extension name
+sourceOpenVsx :: Attach VersionSource (Text, Text)
 sourceOpenVsx e (_ovPublisher, _ovExtName) = src e OpenVsx {..}
 
 -- | This package follows a version in Vscode Marketplace
-sourceVscodeMarketplace ::
-  PackageSet (Prod r) ->
-  -- | publisher and extension name
-  (Text, Text) ->
-  PackageSet (Prod (VersionSource : r))
+--
+-- Args are publisher and extension name
+sourceVscodeMarketplace :: Attach VersionSource (Text, Text)
 sourceVscodeMarketplace e (_vsmPublisher, _vsmExtName) = src e VscodeMarketplace {..}
 
 --------------------------------------------------------------------------------
 
 -- | This package is fetched from a github repo
-fetchGitHub ::
-  PackageSet (Prod r) ->
-  -- | owner and repo
-  (Text, Text) ->
-  PackageSet (Prod (PackageFetcher : r))
+--
+-- Args are owner and repo
+fetchGitHub :: Attach PackageFetcher (Text, Text)
 fetchGitHub e (owner, repo) = fetchGitHub' e (owner, repo, id)
 
 -- | This package is fetched from a github repo
@@ -470,104 +452,70 @@ fetchGitHub e (owner, repo) = fetchGitHub' e (owner, repo, id)
 -- @
 -- define $ package "qliveplayer" `sourceGitHub` ("IsoaSFlus", "QLivePlayer") `fetchGitHub'` ("IsoaSFlus", "QLivePlayer", fetchSubmodules .~ True)
 -- @
-fetchGitHub' ::
-  PackageSet (Prod r) ->
-  -- | owner and repo
-  ( Text,
-    Text,
-    NixFetcher Fresh -> NixFetcher Fresh
-  ) ->
-  PackageSet (Prod (PackageFetcher : r))
+fetchGitHub' :: Attach PackageFetcher (Text, Text, NixFetcher Fresh -> NixFetcher Fresh)
 fetchGitHub' e (owner, repo, f) = fetch e $ f . gitHubFetcher (owner, repo)
 
 -- | This package is fetched from a file in github release
-fetchGitHubRelease ::
-  PackageSet (Prod r) ->
-  -- | owner, repo, and file name
-  (Text, Text, Text) ->
-  PackageSet (Prod (PackageFetcher : r))
+--
+-- Args are owner, repo, and file name
+fetchGitHubRelease :: Attach PackageFetcher (Text, Text, Text)
 fetchGitHubRelease e (owner, repo, fp) = fetch e $ gitHubReleaseFetcher (owner, repo) fp
 
 -- | This package is fetched from pypi
-fetchPypi ::
-  PackageSet (Prod r) ->
-  -- | pypi name
-  Text ->
-  PackageSet (Prod (PackageFetcher : r))
+--
+-- Arg is pypi name
+fetchPypi :: Attach PackageFetcher Text
 fetchPypi e = fetch e . pypiFetcher
 
 -- | This package is fetched from git
-fetchGit ::
-  PackageSet (Prod r) ->
-  -- | git url
-  Text ->
-  PackageSet (Prod (PackageFetcher : r))
+--
+-- Arg is git url
+fetchGit :: Attach PackageFetcher Text
 fetchGit e u = fetchGit' e (u, id)
 
 -- | This package is fetched from git
 --
 -- Similar to 'fetchGit', but allows a modifier to the fetcher.
 -- See 'fetchGitHub'' for a concret example.
-fetchGit' ::
-  PackageSet (Prod r) ->
-  -- | git url
-  (Text, NixFetcher Fresh -> NixFetcher Fresh) ->
-  PackageSet (Prod (PackageFetcher : r))
+fetchGit' :: Attach PackageFetcher (Text, NixFetcher Fresh -> NixFetcher Fresh)
 fetchGit' e (u, f) = fetch e $ f . gitFetcher u
 
 -- | This package is fetched from url
-fetchUrl ::
-  PackageSet (Prod r) ->
-  -- | url, given a specific version
-  (Version -> Text) ->
-  PackageSet (Prod (PackageFetcher : r))
+--
+-- Arg is a function which constructs the url from a version
+fetchUrl :: Attach PackageFetcher (Version -> Text)
 fetchUrl e f = fetch e (urlFetcher . f)
 
 -- | This package is fetched from Open VSX
-fetchOpenVsx ::
-  PackageSet (Prod r) ->
-  -- | publisher and extension name
-  (Text, Text) ->
-  PackageSet (Prod (PackageFetcher : r))
+--
+-- Args are publisher and extension name
+fetchOpenVsx :: Attach PackageFetcher (Text, Text)
 fetchOpenVsx e = fetch e . vscodeMarketplaceFetcher
 
 -- | This package is fetched from Vscode Marketplace
-fetchVscodeMarketplace ::
-  PackageSet (Prod r) ->
-  -- | publisher and extension name
-  (Text, Text) ->
-  PackageSet (Prod (PackageFetcher : r))
+--
+-- Args are publisher and extension name
+fetchVscodeMarketplace :: Attach PackageFetcher (Text, Text)
 fetchVscodeMarketplace e = fetch e . vscodeMarketplaceFetcher
 
 --------------------------------------------------------------------------------
 
 -- | Extract files from fetched package source
-extractSource ::
-  PackageSet (Prod r) ->
-  [FilePath] ->
-  PackageSet (Prod (PackageExtractSrc : r))
+extractSource :: Attach PackageExtractSrc [FilePath]
 extractSource = (. pure . PackageExtractSrc . NE.fromList) . andThen
 
 -- | Run 'FetchRustGitDependencies' given the path to @Cargo.lock@
 --
 -- The lock file will be extracted as well.
-hasCargoLock ::
-  PackageSet (Prod r) ->
-  FilePath ->
-  PackageSet (Prod (PackageCargoFilePath : r))
+hasCargoLock :: Attach PackageCargoFilePath FilePath
 hasCargoLock = (. pure . PackageCargoFilePath) . andThen
 
 -- | Set 'NvcheckerOptions' for a package, which can tweak the version number we obtain
-tweakVersion ::
-  PackageSet (Prod r) ->
-  (NvcheckerOptions -> NvcheckerOptions) ->
-  PackageSet (Prod (NvcheckerOptions : r))
+tweakVersion :: Attach NvcheckerOptions (NvcheckerOptions -> NvcheckerOptions)
 tweakVersion = (. pure . ($ def)) . andThen
 
 -- | An attrs set to pass through
-passthru ::
-  PackageSet (Prod r) ->
-  -- | kv list
-  [(Text, Text)] ->
-  PackageSet (Prod (PackagePassthru : r))
+--
+-- Arg is a list of kv pairs
+passthru :: Attach PackagePassthru [(Text, Text)]
 passthru = (. pure . PackagePassthru . HMap.fromList) . andThen
