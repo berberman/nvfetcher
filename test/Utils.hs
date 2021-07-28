@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Utils where
@@ -9,7 +10,10 @@ import Control.Concurrent.Extra
 import Control.Concurrent.STM
 import Control.Exception (Handler (..), SomeException, bracket, catches, throwIO)
 import Control.Monad (void)
+import Control.Monad.IO.Class
+import Control.Monad.Trans.Reader
 import Data.Map (Map)
+import Data.Maybe (isJust)
 import Development.Shake
 import Development.Shake.Database
 import NvFetcher.Core (coreRules)
@@ -18,6 +22,7 @@ import NvFetcher.Types.ShakeExtras
 import qualified System.IO.Extra as Extra
 import System.Time.Extra
 import Test.Hspec
+import UnliftIO (MonadUnliftIO (withRunInIO))
 
 --------------------------------------------------------------------------------
 
@@ -69,5 +74,14 @@ aroundShake' pkgs = aroundAll $ \f ->
     (\(_, runnerTask) -> cancel runnerTask)
     (\(chan, _) -> f chan)
 
-shouldReturnJust :: (Show a, Eq a) => IO (Maybe a) -> a -> Expectation
-shouldReturnJust f x = f `shouldReturn` Just x
+shouldReturnJust :: (Show a, Eq a, MonadUnliftIO m) => m (Maybe a) -> a -> m ()
+shouldReturnJust f x = withRunInIO $ \run -> run f `shouldReturn` Just x
+
+shouldBeJust :: (MonadIO m, Show a) => Maybe a -> m ()
+shouldBeJust x = liftIO $ x `shouldSatisfy` isJust
+
+specifyChan :: HasCallStack => String -> ReaderT ActionQueue IO () -> SpecWith ActionQueue
+specifyChan s m = specify s $ \r -> runReaderT m r
+
+runActionChan :: Action a -> ReaderT ActionQueue IO (Maybe a)
+runActionChan m = ask >>= \chan -> liftIO $ runAction chan m
