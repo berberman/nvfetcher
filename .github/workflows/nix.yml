@@ -32,6 +32,9 @@ jobs:
     - name: Run CLI with nvfetcher_example.toml
       run : nix shell --command nvfetcher --config nvfetcher_example.toml
 
+    - name: Run generated.nix syntax check
+      run : nix eval -f _sources/generated.nix
+
     - name: Cleanup
       run: rm -r _sources sources.nix
 
