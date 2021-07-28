@@ -1,7 +1,7 @@
-{ mkDerivation, aeson, base, binary, binary-instances, bytestring
-, containers, data-default, extra, free, hspec, hspec-discover, lib
-, microlens, microlens-th, neat-interpolation, optparse-simple
-, parsec, shake, stm, text, tomland, transformers
+{ mkDerivation, aeson, async, base, binary, binary-instances
+, bytestring, containers, data-default, extra, free, hspec
+, hspec-discover, lib, microlens, microlens-th, neat-interpolation
+, optparse-simple, parsec, shake, stm, text, tomland, transformers
 , unordered-containers, validation-selective
 }:
 mkDerivation {
@@ -23,7 +23,7 @@ mkDerivation {
     unordered-containers validation-selective
   ];
   testHaskellDepends = [
-    aeson base binary binary-instances bytestring containers
+    aeson async base binary binary-instances bytestring containers
     data-default extra free hspec microlens microlens-th
     neat-interpolation optparse-simple parsec shake stm text tomland
     transformers unordered-containers

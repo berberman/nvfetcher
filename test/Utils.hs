@@ -1,24 +1,30 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Utils where
 
+import Control.Concurrent.Async
 import Control.Concurrent.Extra
 import Control.Concurrent.STM
-import Control.Exception (bracket)
-import Control.Monad (forever, join)
+import Control.Exception (Handler (..), SomeException, bracket, catches, throwIO)
+import Control.Monad (void)
 import Data.Coerce (coerce)
 import Data.Default (def)
 import qualified Data.Map.Strict as Map
+import Data.Maybe (isJust)
 import Development.Shake
+import Development.Shake.Database
 import NvFetcher.Core (coreRules)
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
 import qualified System.IO.Extra as Extra
+import System.Time.Extra
 import Test.Hspec
 
+-- | We need a fakePackageKey here; otherwise the nvchecker rule would be cutoff
 fakePackageKey :: PackageKey
 fakePackageKey = PackageKey "a-fake-package"
 
@@ -35,42 +41,59 @@ fakePackage =
 
 --------------------------------------------------------------------------------
 
--- | We need a fakePackageKey here; otherwise the nvchecker rule would be cutoff
-runAction :: ActionQueue -> Action a -> IO a
+runAction :: ActionQueue -> Action a -> IO (Maybe a)
 runAction chan x = do
   barrier <- newBarrier
   atomically $ writeTQueue chan $ x >>= liftIO . signalBarrier barrier
-  waitBarrier barrier
+  -- TODO
+  timeout 10 $ waitBarrier barrier
 
 type ActionQueue = TQueue (Action ())
 
-newAsyncActionQueue :: IO (ActionQueue, ThreadId)
+newAsyncActionQueue :: IO (ActionQueue, Async ())
 newAsyncActionQueue = Extra.withTempDir $ \dir -> do
   shakeExtras <- liftIO $ initShakeExtras (Map.singleton fakePackageKey fakePackage) 3
   chan <- atomically newTQueue
-  thread <- forkIO $
-    shake
+  (getShakeDb, _) <-
+    shakeOpenDatabase
       shakeOptions
         { shakeExtra = addShakeExtra shakeExtras (shakeExtra shakeOptions),
           shakeFiles = dir,
           shakeVerbosity = Quiet
         }
-      $ do
-        coreRules
-        action $ forever $ join $ liftIO $ atomically $ readTQueue chan
-  pure (chan, thread)
+      coreRules
+  shakeDb <- getShakeDb
 
-aroundActionQueue :: SpecWith ActionQueue -> Spec
-aroundActionQueue = around $ \f ->
+  let runner restore = do
+        -- sequentially
+        act <- liftIO $ atomically $ readTQueue chan
+        catches
+          (restore $ void $ shakeRunDatabase shakeDb [act])
+          [ Handler $ \(e :: AsyncCancelled) -> throwIO e,
+            Handler $ \(e :: SomeException) -> putStrLn $ "an exception arose in action runner: " <> show e
+          ]
+        runner restore
+
+  runnerTask <- asyncWithUnmask runner
+  pure (chan, runnerTask)
+
+aroundShake :: SpecWith ActionQueue -> Spec
+aroundShake = aroundAll $ \f ->
   bracket
     newAsyncActionQueue
-    (\(_, thread) -> killThread thread)
+    (\(_, runnerTask) -> cancel runnerTask)
     (\(chan, _) -> f chan)
 
 --------------------------------------------------------------------------------
 
-enqueueNvchecker :: ActionQueue -> VersionSource -> IO Version
-enqueueNvchecker chan v = runAction chan $ nvNow <$> checkVersion v def fakePackageKey
+runNvcheckerRule :: ActionQueue -> VersionSource -> IO (Maybe Version)
+runNvcheckerRule chan v = runAction chan $ nvNow <$> checkVersion v def fakePackageKey
 
-enqueuePrefetch :: ActionQueue -> NixFetcher Fresh -> IO Checksum
-enqueuePrefetch chan f = runAction chan $ _sha256 <$> prefetch f
+runPrefetchRule :: ActionQueue -> NixFetcher Fresh -> IO (Maybe Checksum)
+runPrefetchRule chan f = runAction chan $ _sha256 <$> prefetch f
+
+shouldReturnJust :: (Show a, Eq a) => IO (Maybe a) -> a -> Expectation
+shouldReturnJust f x = f `shouldReturn` Just x
+
+shouldBeJust :: Show a => IO (Maybe a) -> Expectation
+shouldBeJust f = f >>= \x -> shouldSatisfy x isJust
