@@ -105,7 +105,7 @@ genNvConfig pkg options versionSource = table (fromString $ T.unpack $ coerce pk
         "strip_release" =: Bool True
       ArchLinux {..} -> do
         "source" =: "archpkg"
-        "aur" =: Text _archpkg
+        "archpkg" =: Text _archpkg
         "strip_release" =: Bool True
       Pypi {..} -> do
         "source" =: "pypi"
