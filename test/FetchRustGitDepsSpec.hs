@@ -3,9 +3,10 @@
 
 module FetchRustGitDepsSpec where
 
+import Control.Monad.Trans.Reader
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HMap
-import Data.Maybe (fromJust, isJust)
+import Data.Maybe (fromJust)
 import Data.Text (Text)
 import NvFetcher.FetchRustGitDeps
 import NvFetcher.NixFetcher
@@ -16,18 +17,20 @@ import Utils
 spec :: Spec
 spec = aroundShake $
   describe "fetchRustGitDeps" $
-    it "works" $ \chan -> do
+    specifyChan "works" $ do
       prefetched <-
-        runAction chan $
-          prefetch $
-            gitFetcher
-              "https://gist.github.com/NickCao/6c4dbc4e15db5da107de6cdb89578375"
-              "8a5f37a8f80a3b05290707febf57e88661cee442"
-      prefetched `shouldSatisfy` isJust
-      runFetchRustGitDepsRule chan (fromJust prefetched) "Cargo.lock"
+        runPrefetchRule $
+          gitFetcher
+            "https://gist.github.com/NickCao/6c4dbc4e15db5da107de6cdb89578375"
+            "8a5f37a8f80a3b05290707febf57e88661cee442"
+      shouldBeJust prefetched
+      runFetchRustGitDepsRule (fromJust prefetched) "Cargo.lock"
         `shouldReturnJust` HMap.fromList
           [ ("rand-0.8.3", Checksum "1khg0rnz8xxd389cprqmy9vq9sggzz78lb9n7hh2w6xfsl4xfyyc")
           ]
 
-runFetchRustGitDepsRule :: ActionQueue -> NixFetcher Fetched -> FilePath -> IO (Maybe (HashMap Text Checksum))
-runFetchRustGitDepsRule chan fetcher lockPath = runAction chan $ fetchRustGitDeps fetcher lockPath
+runPrefetchRule :: NixFetcher Fresh -> ReaderT ActionQueue IO (Maybe (NixFetcher Fetched))
+runPrefetchRule fetcher = runActionChan $ prefetch fetcher
+
+runFetchRustGitDepsRule :: NixFetcher Fetched -> FilePath -> ReaderT ActionQueue IO (Maybe (HashMap Text Checksum))
+runFetchRustGitDepsRule fetcher lockPath = runActionChan $ fetchRustGitDeps fetcher lockPath

@@ -123,6 +123,7 @@ test-suite tests
     , hspec
     , nvfetcher
     , stm
+    , unliftio
 
   build-tool-depends: hspec-discover:hspec-discover -any
   default-language:   Haskell2010
