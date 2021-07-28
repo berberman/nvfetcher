@@ -24,13 +24,18 @@ jobs:
         nix build .\#nvfetcher-lib.out.doc
         cp -r ./result-doc/share/doc/nvfetcher-*/html/ docs
 
-    - name: Test CLI with nvfetcher_example.toml
+    - name: Run spec tests
+      run: |
+        nix develop --command cabal update
+        nix develop --command cabal test
+
+    - name: Run CLI with nvfetcher_example.toml
       run : nix shell --command nvfetcher --config nvfetcher_example.toml
 
     - name: Cleanup
       run: rm -r _sources sources.nix
 
-    - name: Test Main_example.hs
+    - name: Run Main_example.hs
       run: nix develop .\#ghcWithNvfetcher --command runghc Main_example.hs
 
     - name: Deploy generated haddock to github pages
@@ -40,4 +45,3 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs
         cname: nvfetcher.berberman.space
-  

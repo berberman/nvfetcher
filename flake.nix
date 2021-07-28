@@ -57,6 +57,8 @@
                 generateOptparseApplicativeCompletion "nvfetcher"
                 (overrideCabal (prev.haskellPackages.callPackage ./nix { })
                   (drv: {
+                    # test needs network
+                    doCheck = false;
                     buildTools = drv.buildTools or [ ] ++ [ final.makeWrapper ];
                     postInstall = with final;
                       drv.postInstall or "" + ''

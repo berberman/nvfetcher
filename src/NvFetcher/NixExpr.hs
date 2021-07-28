@@ -80,8 +80,8 @@ nixFetcher sha256 = \case
   (FetchUrl (asString -> url) _) ->
     [trimming|
           fetchurl {
-            sha256 = $sha256;
             url = $url;
+            sha256 = $sha256;
           }
     |]
 
