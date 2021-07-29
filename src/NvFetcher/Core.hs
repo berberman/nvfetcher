@@ -75,7 +75,7 @@ coreRules = do
                           -- write extracted files to shake dir
                           -- and read them in nix using 'builtins.readFile'
                           writeFile' (shakeDir </> path) (T.unpack v)
-                          pure $ toNixExpr k <> " = builtins.readFile ./" <> T.pack path
+                          pure $ toNixExpr k <> " = builtins.readFile ./" <> T.pack path <> ";"
                         | (k, v) <- result,
                           let path =
                                 T.unpack _pname
