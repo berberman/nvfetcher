@@ -38,7 +38,7 @@
 </span><span id="line-30"></span><span>    </span><span id="target"><span class="annot"><span class="annottext">CLIOptions -&gt; FilePath
 </span><a href="NvFetcher.Options.html#target"><span class="hs-identifier hs-var hs-var">target</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
 </span><span id="line-31"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-32"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679257541"><span id="local-6989586621679257543"><span id="local-6989586621679257545"><span class="annot"><span class="annottext">Int -&gt; CLIOptions -&gt; ShowS
+</span><span id="line-32"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679257583"><span id="local-6989586621679257585"><span id="local-6989586621679257587"><span class="annot"><span class="annottext">Int -&gt; CLIOptions -&gt; ShowS
 [CLIOptions] -&gt; ShowS
 CLIOptions -&gt; FilePath
 (Int -&gt; CLIOptions -&gt; ShowS)
@@ -404,12 +404,12 @@ forall a (f :: * -&gt; *). Show a =&gt; Mod f a
 </span><a href="NvFetcher.Options.html#version"><span class="hs-identifier hs-var hs-var">version</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">$(</span><span class="hs-identifier">simpleVersion</span><span> </span><span class="hs-identifier">Paths.version</span><span class="hs-special">)</span><span>
 </span><span id="line-89"></span><span>
 </span><span id="line-90"></span><span class="hs-comment">-- | Parse nvfetcher CLI options</span><span>
-</span><span id="line-91"></span><span id="local-6989586621679257521"><span class="annot"><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-type">getCLIOptions</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Parser</span></span><span> </span><span class="annot"><a href="#local-6989586621679257521"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679257521"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-91"></span><span id="local-6989586621679257563"><span class="annot"><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-type">getCLIOptions</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Parser</span></span><span> </span><span class="annot"><a href="#local-6989586621679257563"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679257563"><span class="hs-identifier hs-type">a</span></a></span></span><span>
 </span><span id="line-92"></span><span id="getCLIOptions"><span class="annot"><span class="annottext">getCLIOptions :: Parser a -&gt; IO a
-</span><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-var hs-var">getCLIOptions</span></a></span></span><span> </span><span id="local-6989586621679257520"><span class="annot"><span class="annottext">Parser a
-</span><a href="#local-6989586621679257520"><span class="hs-identifier hs-var">parser</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-93"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679257519"><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679257519"><span class="hs-identifier hs-var">opts</span></a></span></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
+</span><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-var hs-var">getCLIOptions</span></a></span></span><span> </span><span id="local-6989586621679257562"><span class="annot"><span class="annottext">Parser a
+</span><a href="#local-6989586621679257562"><span class="hs-identifier hs-var">parser</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-93"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679257561"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679257561"><span class="hs-identifier hs-var">opts</span></a></span></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
 </span><span id="line-94"></span><span>    </span><span class="annot"><span class="annottext">FilePath
 -&gt; FilePath
 -&gt; FilePath
@@ -439,12 +439,12 @@ FilePath
 </span><span id="line-101"></span><span>          </span><span class="hs-special">]</span><span>
 </span><span id="line-102"></span><span>      </span><span class="hs-special">)</span><span>
 </span><span id="line-103"></span><span>      </span><span class="annot"><span class="annottext">Parser a
-</span><a href="#local-6989586621679257520"><span class="hs-identifier hs-var">parser</span></a></span><span>
+</span><a href="#local-6989586621679257562"><span class="hs-identifier hs-var">parser</span></a></span><span>
 </span><span id="line-104"></span><span>      </span><span class="annot"><span class="annottext">ExceptT () (Writer (Mod CommandFields ())) ()
 forall (f :: * -&gt; *) a. Alternative f =&gt; f a
 </span><span class="hs-identifier hs-var">empty</span></span><span>
 </span><span id="line-105"></span><span>  </span><span class="annot"><span class="annottext">a -&gt; IO a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679257519"><span class="hs-identifier hs-var">opts</span></a></span><span>
+</span><a href="#local-6989586621679257561"><span class="hs-identifier hs-var">opts</span></a></span><span>
 </span><span id="line-106"></span></pre></body></html>

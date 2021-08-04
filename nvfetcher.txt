@@ -340,12 +340,12 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_ab3m k_aAis. Lens (NixFetcher k_ab3m) (NixFetcher k_aAis) (FetchResult k_ab3m) (FetchResult k_aAis)
-rev :: forall k_ab3m. Traversal' (NixFetcher k_ab3m) Version
-leaveDotGit :: forall k_ab3m. Traversal' (NixFetcher k_ab3m) Bool
-furl :: forall k_ab3m. Lens' (NixFetcher k_ab3m) Text
-fetchSubmodules :: forall k_ab3m. Traversal' (NixFetcher k_ab3m) Bool
-deepClone :: forall k_ab3m. Traversal' (NixFetcher k_ab3m) Bool
+sha256 :: forall k_ab42 k_aAj8. Lens (NixFetcher k_ab42) (NixFetcher k_aAj8) (FetchResult k_ab42) (FetchResult k_aAj8)
+rev :: forall k_ab42. Traversal' (NixFetcher k_ab42) Version
+leaveDotGit :: forall k_ab42. Traversal' (NixFetcher k_ab42) Bool
+furl :: forall k_ab42. Lens' (NixFetcher k_ab42) Text
+fetchSubmodules :: forall k_ab42. Traversal' (NixFetcher k_ab42) Bool
+deepClone :: forall k_ab42. Traversal' (NixFetcher k_ab42) Bool
 pversion :: Lens' Package NvcheckerQ
 ppassthru :: Lens' Package PackagePassthru
 pname :: Lens' Package PackageName
