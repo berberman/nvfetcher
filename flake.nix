@@ -40,17 +40,6 @@
       }) // {
         overlay = final: prev: {
 
-          # remove it once 2.4 is released
-          nvchecker = prev.nvchecker.overrideAttrs (old: {
-            patches = [];
-            src = final.fetchFromGitHub {
-              owner = "lilydjwg";
-              repo = "nvchecker";
-              rev = "151b03801fcea7c96af210fd45de77b59ee0d82c";
-              sha256 = "Jvnu1J+fM7JG+oyj2thS07kdnQ5Qq1vDdt2zN2tcgus=";
-            };
-          });
-
           haskellPackages = prev.haskellPackages.override (old: {
             overrides = final.lib.composeExtensions (old.overrides or (_: _: {})) (hself: hsuper: {
               nvfetcher = with final.haskell.lib;

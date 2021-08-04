@@ -4,13 +4,13 @@
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![nix](https://github.com/berberman/nvfetcher/actions/workflows/nix.yml/badge.svg)](https://github.com/berberman/nvfetcher/actions/workflows/nix.yml)
 
-nvfetcher is a tool to automate packages updates in flakes repos. It's built on top of [shake](https://www.shakebuild.com/),
+nvfetcher is a tool to automate nix package updates. It's built on top of [shake](https://www.shakebuild.com/),
 integrating [nvchecker](https://github.com/lilydjwg/nvchecker).
 nvfetcher cli program accepts a TOML file as config, which defines a set of package sources to run.
 
 ## Overview
 
-For example, given the following configuration file:
+For example, feeding the following configuration to`nvfetcher`:
 
 ```toml
 # nvfetcher.toml
@@ -24,7 +24,7 @@ fetch.github = "IsoaSFlus/QLivePlayer"
 git.fetchSubmodules = true
 ```
 
-running `nvfetcher build` will create `sources.nix` like:
+it can create `sources.nix` like:
 
 ```nix
 # sources.nix
@@ -55,7 +55,7 @@ running `nvfetcher build` will create `sources.nix` like:
 
 We tell nvfetcher how to get the latest version number of packages and how to fetch their sources given version numbers,
 and nvfetcher will help us keep their version and prefetched SHA256 sums up-to-date, stored in `sources.nix`.
-Shake will help us handle necessary rebuilds -- we check versions of packages during each run, but only prefetch them when needed.
+Shake will handle necessary rebuilds -- we check versions of packages during each run, but only prefetch them when needed.
 
 
 `sources.nix` is a symlink of `_sources/generated.nix`, which means that the "build" results produced by `nvfetcher` are under `_sources`,
@@ -63,11 +63,13 @@ so you have to keep this directory for further use.
 
 ### Live examples
 
-How to use the generated sources file? Here are some examples:
+How to use the generated sources file? Here are several examples:
 
-* My [flakes repo](https://github.com/berberman/flakes)
+* [DevOS](https://github.com/divnix/devos/tree/main/pkgs) - Packages are defined in TOML
 
-* Nick Cao's [flakes repo](https://gitlab.com/NickCao/flakes/-/tree/master/pkgs)
+* My [flakes repo](https://github.com/berberman/flakes) - Packages are defined in eDSL
+
+* Nick Cao's [flakes repo](https://gitlab.com/NickCao/flakes/-/tree/master/pkgs) - Packages are defined in TOML
 
 ## Installation
 
