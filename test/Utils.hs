@@ -59,7 +59,7 @@ newAsyncActionQueue pkgs = Extra.withTempDir $ \dir -> do
           ]
         runner restore
 
-  runnerTask <- asyncWithUnmask runner
+  runnerTask <- asyncWithUnmask $ \r -> runner r
   pure (chan, runnerTask)
 
 --------------------------------------------------------------------------------
