@@ -36,7 +36,7 @@ jobs:
       run : nix eval -f _sources/generated.nix
 
     - name: Cleanup
-      run: rm -r _sources sources.nix
+      run: rm -r _sources
 
     - name: Run Main_example.hs
       run: nix develop .\#ghcWithNvfetcher --command runghc Main_example.hs

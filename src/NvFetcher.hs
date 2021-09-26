@@ -50,7 +50,6 @@ module NvFetcher
   )
 where
 
-import qualified Control.Exception as CE
 import Control.Monad.Extra (when, whenJust)
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -65,7 +64,6 @@ import NvFetcher.PackageSet
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
 import NvFetcher.Utils (getShakeDir)
-import System.Directory.Extra (createDirectoryIfMissing, createFileLink, removeFile)
 
 -- | Arguments for running nvfetcher
 data Args = Args
@@ -73,8 +71,8 @@ data Args = Args
     argShakeOptions :: ShakeOptions,
     -- | Build target
     argTarget :: String,
-    -- | Output file path (the symlink target of @generated.nix@)
-    argOutputFilePath :: Maybe FilePath,
+    -- | Shake dir
+    argBuildDir :: FilePath,
     -- | Custom rules
     argRules :: Rules (),
     -- | Action run after build rule
@@ -87,7 +85,7 @@ data Args = Args
 
 -- | Default arguments of 'defaultMain'
 --
--- Output file path is @sources.nix@.
+-- Build dir is @_sources@.
 defaultArgs :: Args
 defaultArgs =
   Args
@@ -97,7 +95,7 @@ defaultArgs =
         }
     )
     "build"
-    (Just "sources.nix")
+    "_sources"
     (pure ())
     (pure ())
     (pure ())
@@ -115,8 +113,7 @@ runNvFetcher packageSet =
 cliOptionsToArgs :: CLIOptions -> Args
 cliOptionsToArgs CLIOptions {..} =
   defaultArgs
-    { argOutputFilePath = if noOutput then Nothing else Just outputPath,
-      argActionAfterBuild = do
+    { argActionAfterBuild = do
         whenJust logPath logChangesToFile
         when commit commitChanges,
       argTarget = target,
@@ -124,7 +121,8 @@ cliOptionsToArgs CLIOptions {..} =
         (argShakeOptions defaultArgs)
           { shakeTimings = timing,
             shakeVerbosity = if verbose then Verbose else Info,
-            shakeThreads = threads
+            shakeThreads = threads,
+            shakeFiles = buildDir
           }
     }
 
@@ -152,8 +150,7 @@ runNvFetcherNoCLI args@Args {..} packageSet = do
   shakeExtras <- initShakeExtras pkgs argRetries
   let opts =
         argShakeOptions
-          { shakeExtra = addShakeExtra shakeExtras (shakeExtra argShakeOptions),
-            shakeFiles = "_sources"
+          { shakeExtra = addShakeExtra shakeExtras (shakeExtra argShakeOptions)
           }
       rules = mainRules args
   shake opts $ want [argTarget] >> rules
@@ -164,7 +161,6 @@ mainRules :: Args -> Rules ()
 mainRules Args {..} = do
   "clean" ~> do
     getShakeDir >>= flip removeFilesAfter ["//*"]
-    whenJust argOutputFilePath $ \out -> removeFilesAfter "." [out]
     argActionAfterClean
 
   "build" ~> do
@@ -181,12 +177,6 @@ mainRules Args {..} = do
     putVerbose $ "Generating " <> genPath
     writeFileChanged genPath $ T.unpack $ srouces (T.unlines body) <> "\n"
     need [genPath]
-    whenJust argOutputFilePath $ \out -> do
-      let outDir = takeDirectory out
-      liftIO $ createDirectoryIfMissing True outDir
-      liftIO $ CE.catch @IOError (removeFile out) (const $ pure ())
-      putVerbose $ "Symlinking " <> out
-      liftIO $ createFileLink genPath out
     argActionAfterBuild
 
   argRules

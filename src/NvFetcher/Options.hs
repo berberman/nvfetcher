@@ -19,14 +19,13 @@ import qualified Paths_nvfetcher as Paths
 
 -- | Options for nvfetcher CLI
 data CLIOptions = CLIOptions
-  { outputPath :: FilePath,
+  { buildDir :: FilePath,
     commit :: Bool,
     logPath :: Maybe FilePath,
     threads :: Int,
     retries :: Int,
     timing :: Bool,
     verbose :: Bool,
-    noOutput :: Bool,
     target :: String
   }
   deriving (Show)
@@ -35,13 +34,13 @@ cliOptionsParser :: Parser CLIOptions
 cliOptionsParser =
   CLIOptions
     <$> strOption
-      ( long "output"
+      ( long "build-dir"
           <> short 'o'
-          <> metavar "FILE"
-          <> help "Path to output nix file"
+          <> metavar "DIR"
+          <> help "Directory that nvfetcher puts artifacts to"
           <> showDefault
-          <> value "sources.nix"
-          <> completer (bashCompleter "file")
+          <> value "_sources"
+          <> completer (bashCompleter "directory")
       )
     <*> switch
       ( long "commit-changes"
@@ -75,7 +74,6 @@ cliOptionsParser =
       )
     <*> switch (long "timing" <> short 't' <> help "Show build time")
     <*> switch (long "verbose" <> short 'v' <> help "Verbose mode")
-    <*> switch (long "no-output" <> help "Don't symlink generated.nix to the output path")
     <*> strArgument
       ( metavar "TARGET"
           <> help "Two targets are available: 1.build  2.clean"
@@ -93,13 +91,8 @@ getCLIOptions parser = do
   (opts, ()) <-
     simpleOptions
       version
-      "nvfetcher - generate nix sources expr for the latest version of packages"
-      ( unlines
-          [ "It's important to keep _sources dir.",
-            "If you change any field of an existing package, you may have to run target \"clean\" to invalidate the databse,",
-            "making sure the consistency of our build system."
-          ]
-      )
+      "nvfetcher"
+      "generate nix sources expr for the latest version of packages"
       parser
       empty
   pure opts
