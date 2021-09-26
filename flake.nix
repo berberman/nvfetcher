@@ -12,6 +12,7 @@
         pkgs = import nixpkgs {
           inherit system;
           overlays = [ self.overlay ];
+          config = { allowBroken = true; };
         };
       in with pkgs; rec {
         defaultPackage = nvfetcher-bin;
