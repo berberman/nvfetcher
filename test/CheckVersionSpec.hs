@@ -51,13 +51,13 @@ spec = aroundShake' (Map.singleton fakePackageKey fakePackage) $
       runNvcheckerRule (Manual "Meow") `shouldReturnJust` Version "Meow"
 
     specifyChan "openvsx" $
-      runNvcheckerRule (OpenVsx "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.2.6"
+      runNvcheckerRule (OpenVsx "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.2.7"
 
     specifyChan "repology" $
       runNvcheckerRule (Repology "ssed" "aur") `shouldReturnJust` Version "3.62"
 
     specifyChan "vsmarketplace" $
-      runNvcheckerRule (VscodeMarketplace "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.2.6"
+      runNvcheckerRule (VscodeMarketplace "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.2.8"
 
 --------------------------------------------------------------------------------
 
