@@ -78,18 +78,21 @@ data ParsedGitSrc = ParsedGitSrc
   }
   deriving (Show, Eq, Ord)
 
--- | Parse src in lock: git\+([^?]+)(\?rev=(.*))?#(.*)?
+-- | Parse git src in cargo lock file
 -- >>> parse gitSrcParser "test" "git+https://github.com/rust-random/rand.git?rev=0.8.3#6ecbe2626b2cc6110a25c97b1702b347574febc7"
 -- Right (ParsedGitSrc {pgurl = "https://github.com/rust-random/rand.git", pgsha = "6ecbe2626b2cc6110a25c97b1702b347574febc7"})
 --
 -- >>> parse gitSrcParser "test" "git+https://github.com/rust-random/rand.git#f0e01ee0a7257753cc51b291f62666f4765923ef"
 -- Right (ParsedGitSrc {pgurl = "https://github.com/rust-random/rand.git", pgsha = "f0e01ee0a7257753cc51b291f62666f4765923ef"})
+--
+-- >>> parse gitSrcParser "test" "git+https://github.com/rust-lang/cargo?branch=rust-1.53.0#4369396ce7d270972955d876eaa4954bea56bcd9"
+-- Right (ParsedGitSrc {pgurl = "https://github.com/rust-lang/cargo", pgsha = "4369396ce7d270972955d876eaa4954bea56bcd9"})
 gitSrcParser :: Parser ParsedGitSrc
 gitSrcParser = do
   _ <- string "git+"
   pgurl <- many1 $ noneOf ['?', '#']
-  let revParser = string "?rev=" >> many1 (noneOf ['#'])
-  _rev <- optionMaybe revParser
+  -- skip things like ?rev and ?branch
+  skipMany (noneOf ['#'])
   _ <- char '#'
   pgsha <- manyTill anyChar eof
   pure $ ParsedGitSrc (T.pack pgurl) (coerce $ T.pack pgsha)
