@@ -36,7 +36,7 @@ cliOptionsParser =
     <$> strOption
       ( long "build-dir"
           <> short 'o'
-          <> metavar "FILE"
+          <> metavar "DIR"
           <> help "Directory that nvfetcher puts artifacts to"
           <> showDefault
           <> value "_sources"
