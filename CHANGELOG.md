@@ -1,9 +1,21 @@
 # Revision history for nvfetcher
 
-## unreleased
+## 0.4.0.0
 
 * Rename `_build` to `_sources`
-
+* Remove the symlink `sources.nix -> _sources/generated.nix`
+  * Remove CLI option `--output` (was used to set the symlink source name, `sources.nix` by default)
+  * Add CLI option `build-dir` to specify build directory (`_sources` by default)
+* Add CLI option `--commit-changes` to commit changes of build directory
+* Support openvsx and vsmarketplace version sources (needs new version of nvchecker)
+* Support attributes pass through
+* Fix the bug that Core rule was cut off even if the configuration has changed
+(no longer needs to use `nvfetcher clean` to keep the build system consistency manually)
+* Fix the parser of git source in Cargo.lock
+* Fix wrong trailing white spances in generated nix expr
+* Fix missing semicolon in generated nix expr that reads Cargo.lock file
+* Enhance eDSL experience
+* Add some unit tests
 
 ## 0.3.0.0
 
