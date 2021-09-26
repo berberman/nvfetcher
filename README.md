@@ -54,12 +54,8 @@ it can create `sources.nix` like:
 ```
 
 We tell nvfetcher how to get the latest version number of packages and how to fetch their sources given version numbers,
-and nvfetcher will help us keep their version and prefetched SHA256 sums up-to-date, stored in `sources.nix`.
-Shake will handle necessary rebuilds -- we check versions of packages during each run, but only prefetch them when needed.
-
-
-`sources.nix` is a symlink of `_sources/generated.nix`, which means that the "build" results produced by `nvfetcher` are under `_sources`,
-so you have to keep this directory for further use.
+and nvfetcher will help us keep their version and prefetched SHA256 sums up-to-date, stored in `_sources/generated.nix`.
+Shake will handle necessary rebuilds as long as you keep `_sources` directory -- we check versions of packages during each run, but only prefetch them when needed.
 
 ### Live examples
 
@@ -107,7 +103,8 @@ To run nvfetcher as a CLI program, you'll need to provide package sources define
 Available options:
   --version                Show version
   --help                   Show this help text
-  -o,--output FILE         Path to output nix file (default: "sources.nix")
+  -o,--build-dir FILE      Directory that nvfetcher puts artifacts to
+                           (default: "_sources")
   --commit-changes         `git commit` changes in this run (with shake db)
   -l,--changelog FILE      Dump version changes to a file
   -j NUM                   Number of threads (0: detected number of processors)
@@ -116,7 +113,6 @@ Available options:
                            nix-instantiate, etc.) (default: 3)
   -t,--timing              Show build time
   -v,--verbose             Verbose mode
-  --no-output              Don't symlink generated.nix to the output path
   TARGET                   Two targets are available: 1.build 2.clean
                            (default: "build")
   -c,--config FILE         Path to nvfetcher TOML config
