@@ -167,7 +167,7 @@ How do we fetch the package source if we have the target version number?
 * `fetch.vsmarketplace = publisher.ext_name`
 
 
-Optional `nix-prefetch-git` config, which make sense only when the fetcher equals to `fetch.github` or `fetch.git`.
+Optional `nix-prefetch fetchgit` config, which make sense only when the fetcher equals to `fetch.github` or `fetch.git`.
 They can exist simultanesouly.
   * `git.deepClone`
   * `git.fetchSubmodules`

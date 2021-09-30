@@ -59,6 +59,14 @@ _GitOptions f x@FetchGit {..} =
         & leaveDotGit .~ fromMaybe False goLeaveDotGit
   )
     <$> f (GitOptions (Just _deepClone) (Just _fetchSubmodules) (Just _leaveDotGit))
+_GitOptions f x@FetchGitHub {..} =
+  ( \GitOptions {..} ->
+      x
+        & deepClone .~ fromMaybe False goDeepClone
+        & fetchSubmodules .~ fromMaybe False goFetchSubmodules
+        & leaveDotGit .~ fromMaybe False goLeaveDotGit
+  )
+    <$> f (GitOptions (Just _deepClone) (Just _fetchSubmodules) (Just _leaveDotGit))
 _GitOptions _ x@FetchUrl {} = pure x
 
 --------------------------------------------------------------------------------

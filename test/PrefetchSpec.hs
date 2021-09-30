@@ -26,11 +26,11 @@ spec = aroundShake $
 
     specifyChan "git" $
       runPrefetchRule (gitFetcher "https://gitlab.com/gitlab-org/gitlab-test.git" "ddd0f15ae83993f5cb66a927a28673882e99100b")
-        `shouldReturnJust` Checksum "10d0yqa0h00pd5a36nwx3hb4apd4f9hki0pi545ffgrpf9nzzg92"
+        `shouldReturnJust` Checksum "sha256-LHRlNq6YKUXAKjr2m+BOmzK7veLadIUk998ycxahVn4="
 
     specifyChan "github" $
       runPrefetchRule (gitHubFetcher ("harry-sanabria", "ReleaseTestRepo") "release3")
-        `shouldReturnJust` Checksum "1a8qv2h9ji6w5p4ljwwkgvk49w6hj9j7hgmw0ahw10y1i45s0b3i"
+        `shouldReturnJust` Checksum "sha256-cSygC4nBg8ChArw+eGSS0PBE5n6Tc0nJLdxEmaDYGKk="
 
 --------------------------------------------------------------------------------
 

@@ -5,7 +5,7 @@ fetch.pypi = "feeluown"
 [qliveplayer]
 src.github = "IsoaSFlus/QLivePlayer"
 fetch.github = "IsoaSFlus/QLivePlayer"
-# nix-prefetch-git options
+# fetchgit options
 git.fetchSubmodules = true
 
 [apple-emoji]

@@ -26,7 +26,7 @@ spec = aroundShake $
       shouldBeJust prefetched
       runFetchRustGitDepsRule (fromJust prefetched) "Cargo.lock"
         `shouldReturnJust` HMap.fromList
-          [ ("rand-0.8.3", Checksum "1khg0rnz8xxd389cprqmy9vq9sggzz78lb9n7hh2w6xfsl4xfyyc")
+          [ ("rand-0.8.3", Checksum "sha256-zHvXCdWuGy4gPDYtis7/7+mEd/IV58sSGq139G0GD84=")
           ]
 
 runPrefetchRule :: NixFetcher Fresh -> ReaderT ActionQueue IO (Maybe (NixFetcher Fetched))
