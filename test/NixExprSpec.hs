@@ -44,12 +44,7 @@ spec = describe "toNixExpr" $ do
         rev = "fake_rev";
         fetchSubmodules = false;
         sha256 = lib.fakeSha256;
-      } // (
-        if (false || false || false) then {
-          deepClone = false;
-          leaveDotGit = false;
-        } else { }
-      ))
+      })
     |]
 
   it "renders fresh urlFetcher" $
