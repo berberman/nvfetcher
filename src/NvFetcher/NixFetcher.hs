@@ -88,7 +88,9 @@ runFetcher = \case
       _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
   FetchUrl {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
-      command [EchoStderr False] "nix-prefetch-url" $ [T.unpack _furl]
+      command [EchoStderr False] "nix-prefetch" $
+        ["fetchurl"]
+          <> ["--url", T.unpack _furl]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
       [x] -> pure $ coerce x
