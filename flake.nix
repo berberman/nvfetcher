@@ -7,7 +7,8 @@
   };
   outputs = { self, nixpkgs, flake-utils, flake-compat, ... }:
     with flake-utils.lib;
-    eachDefaultSystem (system:
+    # FIXME: ghc currently doesn't build on aarch64-darwin
+    eachSystem (nixpkgs.lib.remove "aarch64-darwin" defaultSystems) (system:
       let
         pkgs = import nixpkgs {
           inherit system;
