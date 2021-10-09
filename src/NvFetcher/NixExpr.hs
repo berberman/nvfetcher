@@ -77,6 +77,38 @@ nixFetcher sha256 = \case
             sha256 = $sha256;
           }
     |]
+  FetchGitHub
+    { _sha256 = _,
+      _rev = asString . toNixExpr -> rev,
+      _fetchSubmodules = toNixExpr -> fetchSubmodules,
+      _deepClone = toNixExpr -> deepClone,
+      _leaveDotGit = toNixExpr -> leaveDotGit,
+      _fowner = asString -> owner,
+      _frepo = asString -> repo
+    } ->
+      -- TODO: fix fetchFromGitHub in Nixpkgs so that deepClone and
+      -- leaveDotGit won't get passed to fetchzip
+      if (deepClone == "true") || (leaveDotGit == "true")
+      then [trimming|
+               fetchFromGitHub ({
+                 owner = $owner;
+                 repo = $repo;
+                 rev = $rev;
+                 fetchSubmodules = $fetchSubmodules;
+                 deepClone = $deepClone;
+                 leaveDotGit = $leaveDotGit;
+                 sha256 = $sha256;
+               })
+         |]
+      else [trimming|
+               fetchFromGitHub ({
+                 owner = $owner;
+                 repo = $repo;
+                 rev = $rev;
+                 fetchSubmodules = $fetchSubmodules;
+                 sha256 = $sha256;
+               })
+         |]
   (FetchUrl (asString -> url) _) ->
     [trimming|
           fetchurl {

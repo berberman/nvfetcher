@@ -194,6 +194,15 @@ data NixFetcher (k :: FetchStatus)
         _leaveDotGit :: Bool,
         _sha256 :: FetchResult k
       }
+  | FetchGitHub
+      { _fowner :: Text,
+        _frepo :: Text,
+        _rev :: Version,
+        _deepClone :: Bool,
+        _fetchSubmodules :: Bool,
+        _leaveDotGit :: Bool,
+        _sha256 :: FetchResult k
+      }
   | FetchUrl {_furl :: Text, _sha256 :: FetchResult k}
   deriving (Typeable, Generic)
 

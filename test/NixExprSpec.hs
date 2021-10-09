@@ -35,6 +35,18 @@ spec = describe "toNixExpr" $ do
       }
     |]
 
+  it "renders fresh gitHubFetcher" $
+    toNixExpr (gitHubFetcher ("owner", "repo") "fake_rev")
+      `shouldBe` [trimming|
+      fetchFromGitHub ({
+        owner = "owner";
+        repo = "repo";
+        rev = "fake_rev";
+        fetchSubmodules = false;
+        sha256 = lib.fakeSha256;
+      })
+    |]
+
   it "renders fresh urlFetcher" $
     toNixExpr (urlFetcher "https://example.com")
       `shouldBe` [trimming|
