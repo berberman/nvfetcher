@@ -20,7 +20,7 @@
 --
 -- 1. 'FetchGit' -- nix-prefetch fetchgit
 -- 2. 'FetchGitHub' -- nix-prefetch fetchFromGitHub
--- 3. 'FetchUrl' -- nix-prefetch-url
+-- 3. 'FetchUrl' -- nix-prefetch fetchurl
 --
 -- As you can see the type signature of 'prefetch':
 -- a fetcher will be filled with the fetch result (hash) after the prefetch.
