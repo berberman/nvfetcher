@@ -129,6 +129,14 @@ FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> FetchResult k -> NixFetch
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
 [_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
+FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
+[_fowner] :: NixFetcher (k :: FetchStatus) -> Text
+[_frepo] :: NixFetcher (k :: FetchStatus) -> Text
+[_rev] :: NixFetcher (k :: FetchStatus) -> Version
+[_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
+[_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
+[_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
 FetchUrl :: Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
@@ -340,12 +348,14 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_ab5T k_aAlC. Lens (NixFetcher k_ab5T) (NixFetcher k_aAlC) (FetchResult k_ab5T) (FetchResult k_aAlC)
-rev :: forall k_ab5T. Traversal' (NixFetcher k_ab5T) Version
-leaveDotGit :: forall k_ab5T. Traversal' (NixFetcher k_ab5T) Bool
-furl :: forall k_ab5T. Lens' (NixFetcher k_ab5T) Text
-fetchSubmodules :: forall k_ab5T. Traversal' (NixFetcher k_ab5T) Bool
-deepClone :: forall k_ab5T. Traversal' (NixFetcher k_ab5T) Bool
+sha256 :: forall k_ab5W k_aByy. Lens (NixFetcher k_ab5W) (NixFetcher k_aByy) (FetchResult k_ab5W) (FetchResult k_aByy)
+rev :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Version
+leaveDotGit :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Bool
+furl :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Text
+frepo :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Text
+fowner :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Text
+fetchSubmodules :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Bool
+deepClone :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Bool
 pversion :: Lens' Package NvcheckerQ
 ppassthru :: Lens' Package PackagePassthru
 pname :: Lens' Package PackageName
@@ -393,11 +403,12 @@ withRetries :: Action a -> Action a
 
 -- | <a>NixFetcher</a> is used to describe how to fetch package sources.
 --   
---   There are two types of fetchers overall:
+--   There are three types of fetchers overall:
 --   
 --   <ol>
---   <li><a>FetchGit</a> -- nix-prefetch-git</li>
---   <li><a>FetchUrl</a> -- nix-prefetch-url</li>
+--   <li><a>FetchGit</a> -- nix-prefetch fetchgit</li>
+--   <li><a>FetchGitHub</a> -- nix-prefetch fetchFromGitHub</li>
+--   <li><a>FetchUrl</a> -- nix-prefetch fetchurl</li>
 --   </ol>
 --   
 --   As you can see the type signature of <a>prefetch</a>: a fetcher will
@@ -408,6 +419,14 @@ module NvFetcher.NixFetcher
 data NixFetcher (k :: FetchStatus)
 FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
+[_rev] :: NixFetcher (k :: FetchStatus) -> Version
+[_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
+[_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
+[_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
+FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
+[_fowner] :: NixFetcher (k :: FetchStatus) -> Text
+[_frepo] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
 [_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
@@ -611,7 +630,7 @@ fetchGitHub :: Attach PackageFetcher (Text, Text)
 --   For example, you can enable fetch submodules like:
 --   
 --   <pre>
---   define $ package "qliveplayer" <a>sourceGitHub</a> (<a>IsoaSFlus</a>, <a>QLivePlayer</a>) <a>fetchGitHub</a>` (<a>IsoaSFlus</a>, <a>QLivePlayer</a>, fetchSubmodules .~ True)
+--   define $ package "qliveplayer" <a>sourceGitHub</a> (<a>THMonster</a>, <a>QLivePlayer</a>) <a>fetchGitHub</a>` (<a>THMonster</a>, <a>QLivePlayer</a>, fetchSubmodules .~ True)
 --   </pre>
 fetchGitHub' :: Attach PackageFetcher (Text, Text, NixFetcher Fresh -> NixFetcher Fresh)
 
@@ -1060,7 +1079,7 @@ instance GHC.Show.Show NvFetcher.Options.CLIOptions
 --   packageSet :: PackageSet ()
 --   packageSet = do
 --     define $ package "feeluown-core" <a>fromPypi</a> "feeluown"
---     define $ package "qliveplayer" <a>fromGitHub</a> (<a>IsoaSFlus</a>, <a>QLivePlayer</a>)
+--     define $ package "qliveplayer" <a>fromGitHub</a> (<a>THMonster</a>, <a>QLivePlayer</a>)
 --   </pre>
 --   
 --   You can find more examples of packages in <tt>Main_example.hs</tt>.
