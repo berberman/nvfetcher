@@ -15,7 +15,7 @@ packageSet = do
 
   define $ package "feeluown-core" `fromPypi` "feeluown"
 
-  define $ package "qliveplayer" `fromGitHub'` ("IsoaSFlus", "QLivePlayer", fetchSubmodules .~ True)
+  define $ package "qliveplayer" `fromGitHub'` ("THMonster", "QLivePlayer", fetchSubmodules .~ True)
 
   define $
     package "apple-emoji"

@@ -3,8 +3,8 @@ src.pypi = "feeluown"
 fetch.pypi = "feeluown"
 
 [qliveplayer]
-src.github = "IsoaSFlus/QLivePlayer"
-fetch.github = "IsoaSFlus/QLivePlayer"
+src.github = "THMonster/QLivePlayer"
+fetch.github = "THMonster/QLivePlayer"
 # fetchgit options
 git.fetchSubmodules = true
 

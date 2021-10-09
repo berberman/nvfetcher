@@ -25,7 +25,7 @@
 -- packageSet :: PackageSet ()
 -- packageSet = do
 --   define $ package "feeluown-core" `fromPypi` "feeluown"
---   define $ package "qliveplayer" `fromGitHub` ("IsoaSFlus", "QLivePlayer")
+--   define $ package "qliveplayer" `fromGitHub` ("THMonster", "QLivePlayer")
 -- @
 --
 -- You can find more examples of packages in @Main_example.hs@.

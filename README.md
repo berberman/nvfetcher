@@ -19,8 +19,8 @@ src.pypi = "feeluown"
 fetch.pypi = "feeluown"
 
 [qliveplayer]
-src.github = "IsoaSFlus/QLivePlayer"
-fetch.github = "IsoaSFlus/QLivePlayer"
+src.github = "THMonster/QLivePlayer"
+fetch.github = "THMonster/QLivePlayer"
 git.fetchSubmodules = true
 ```
 
@@ -42,7 +42,7 @@ it can create `sources.nix` like:
     pname = "qliveplayer";
     version = "3.22.1";
     src = fetchgit {
-      url = "https://github.com/IsoaSFlus/QLivePlayer";
+      url = "https://github.com/THMonster/QLivePlayer";
       rev = "3.22.1";
       fetchSubmodules = true;
       deepClone = false;

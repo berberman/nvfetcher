@@ -450,7 +450,7 @@ fetchGitHub e (owner, repo) = fetchGitHub' e (owner, repo, id)
 -- For example, you can enable fetch submodules like:
 --
 -- @
--- define $ package "qliveplayer" `sourceGitHub` ("IsoaSFlus", "QLivePlayer") `fetchGitHub'` ("IsoaSFlus", "QLivePlayer", fetchSubmodules .~ True)
+-- define $ package "qliveplayer" `sourceGitHub` ("THMonster", "QLivePlayer") `fetchGitHub'` ("THMonster", "QLivePlayer", fetchSubmodules .~ True)
 -- @
 fetchGitHub' :: Attach PackageFetcher (Text, Text, NixFetcher Fresh -> NixFetcher Fresh)
 fetchGitHub' e (owner, repo, f) = fetch e $ f . gitHubFetcher (owner, repo)
