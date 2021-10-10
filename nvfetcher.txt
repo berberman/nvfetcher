@@ -98,6 +98,8 @@ OpenVsx :: Text -> Text -> VersionSource
 VscodeMarketplace :: Text -> Text -> VersionSource
 [_vsmPublisher] :: VersionSource -> Text
 [_vsmExtName] :: VersionSource -> Text
+Cmd :: Text -> VersionSource
+[_vcmd] :: VersionSource -> Text
 
 -- | The result of running nvchecker
 data NvcheckerA
@@ -336,6 +338,7 @@ fromPattern :: Lens' NvcheckerOptions (Maybe Text)
 vurl :: Traversal' VersionSource Text
 vsmPublisher :: Traversal' VersionSource Text
 vsmExtName :: Traversal' VersionSource Text
+vcmd :: Traversal' VersionSource Text
 vbranch :: Traversal' VersionSource Branch
 repology :: Traversal' VersionSource Text
 repo :: Traversal' VersionSource Text
@@ -348,14 +351,14 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_ab5W k_aByy. Lens (NixFetcher k_ab5W) (NixFetcher k_aByy) (FetchResult k_ab5W) (FetchResult k_aByy)
-rev :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Version
-leaveDotGit :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Bool
-furl :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Text
-frepo :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Text
-fowner :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Text
-fetchSubmodules :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Bool
-deepClone :: forall k_ab5W. Traversal' (NixFetcher k_ab5W) Bool
+sha256 :: forall k_ab5Y k_aBVQ. Lens (NixFetcher k_ab5Y) (NixFetcher k_aBVQ) (FetchResult k_ab5Y) (FetchResult k_aBVQ)
+rev :: forall k_ab5Y. Traversal' (NixFetcher k_ab5Y) Version
+leaveDotGit :: forall k_ab5Y. Traversal' (NixFetcher k_ab5Y) Bool
+furl :: forall k_ab5Y. Traversal' (NixFetcher k_ab5Y) Text
+frepo :: forall k_ab5Y. Traversal' (NixFetcher k_ab5Y) Text
+fowner :: forall k_ab5Y. Traversal' (NixFetcher k_ab5Y) Text
+fetchSubmodules :: forall k_ab5Y. Traversal' (NixFetcher k_ab5Y) Bool
+deepClone :: forall k_ab5Y. Traversal' (NixFetcher k_ab5Y) Bool
 pversion :: Lens' Package NvcheckerQ
 ppassthru :: Lens' Package PackagePassthru
 pname :: Lens' Package PackageName
@@ -618,6 +621,11 @@ sourceOpenVsx :: Attach VersionSource (Text, Text)
 --   
 --   Args are publisher and extension name
 sourceVscodeMarketplace :: Attach VersionSource (Text, Text)
+
+-- | This package follows a version from a shell command
+--   
+--   Arg is the command to run
+sourceCmd :: Attach VersionSource Text
 
 -- | This package is fetched from a github repo
 --   
@@ -919,6 +927,8 @@ OpenVsx :: Text -> Text -> VersionSource
 VscodeMarketplace :: Text -> Text -> VersionSource
 [_vsmPublisher] :: VersionSource -> Text
 [_vsmExtName] :: VersionSource -> Text
+Cmd :: Text -> VersionSource
+[_vcmd] :: VersionSource -> Text
 
 -- | The result of running nvchecker
 data NvcheckerA
