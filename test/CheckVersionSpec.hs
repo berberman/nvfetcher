@@ -59,6 +59,9 @@ spec = aroundShake' (Map.singleton fakePackageKey fakePackage) $
     specifyChan "vsmarketplace" $
       runNvcheckerRule (VscodeMarketplace "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.2.8"
 
+    specifyChan "cmd" $
+      runNvcheckerRule (Cmd "echo Meow") `shouldReturnJust` Version "Meow"
+
 --------------------------------------------------------------------------------
 
 runNvcheckerRule :: VersionSource -> ReaderT ActionQueue IO (Maybe Version)

@@ -162,6 +162,7 @@ data VersionSource
   | HttpHeader {_vurl :: Text, _regex :: Text, _listOptions :: ListOptions}
   | OpenVsx {_ovPublisher :: Text, _ovExtName :: Text}
   | VscodeMarketplace {_vsmPublisher :: Text, _vsmExtName :: Text}
+  | Cmd {_vcmd :: Text}
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 -- | The input of nvchecker

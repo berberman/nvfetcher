@@ -138,6 +138,7 @@ Version source -- how do we track upstream version updates?
 * `src.httpheader = request_url` and `src.regex` -- a string in http header that matches with regex
 * `src.openvsx = publisher.ext_name` -- the latest version of a vscode extension from open vsx
 * `src.vsmarketplace = publisher.ext_name` -- the latest version of a vscode extension from vscode marketplace
+* `src.cmd = cmd` -- the version from a shell command (e.g. `echo Meow`)
 
 
 Optional list options for some version sources (`src.github_tag`, `src.webpage`, and `src.httpheader`),
