@@ -133,6 +133,9 @@ genNvConfig pkg options versionSource = table (fromString $ T.unpack $ coerce pk
       VscodeMarketplace {..} -> do
         "source" =: "vsmarketplace"
         "vsmarketplace" =: Text (_vsmPublisher <> "." <> _vsmExtName)
+      Cmd {..} -> do
+        "source" =: "cmd"
+        "cmd" =: Text _vcmd
     genListOptions ListOptions {..} = do
       "include_regex" =:? _includeRegex
       "exclude_regex" =:? _excludeRegex

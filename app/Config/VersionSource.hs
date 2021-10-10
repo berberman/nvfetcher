@@ -28,7 +28,8 @@ versionSourceCodec =
       webpageCodec,
       httpHeaderCodec,
       openVsxCodec,
-      vscodeMarketplaceCodec
+      vscodeMarketplaceCodec,
+      cmdCodec
     ]
 
 --------------------------------------------------------------------------------
@@ -215,3 +216,11 @@ vscodeMarketplaceICodec =
 
 vscodeMarketplaceCodec :: TomlCodec VersionSource
 vscodeMarketplaceCodec = dimatch matchVscodeMarketplace (uncurry VscodeMarketplace) vscodeMarketplaceICodec
+
+--------------------------------------------------------------------------------
+
+matchCmd :: VersionSource -> Maybe Text
+matchCmd x = x ^? vcmd
+
+cmdCodec :: TomlCodec VersionSource
+cmdCodec = dimatch matchCmd Cmd (text "src.cmd")

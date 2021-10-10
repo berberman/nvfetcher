@@ -66,6 +66,7 @@ module NvFetcher.PackageSet
     sourceHttpHeader,
     sourceOpenVsx,
     sourceVscodeMarketplace,
+    sourceCmd,
 
     -- ** Fetchers
     fetchGitHub,
@@ -435,6 +436,12 @@ sourceOpenVsx e (_ovPublisher, _ovExtName) = src e OpenVsx {..}
 -- Args are publisher and extension name
 sourceVscodeMarketplace :: Attach VersionSource (Text, Text)
 sourceVscodeMarketplace e (_vsmPublisher, _vsmExtName) = src e VscodeMarketplace {..}
+
+-- | This package follows a version from a shell command
+--
+-- Arg is the command to run
+sourceCmd :: Attach VersionSource Text
+sourceCmd e _vcmd = src e Cmd {..}
 
 --------------------------------------------------------------------------------
 
