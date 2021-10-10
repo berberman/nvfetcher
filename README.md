@@ -193,6 +193,12 @@ extracting the lock file to build and calculating `cargoLock.outputHashes`, as l
 
   * `passthru = { k1 = "v1", k2 = "v2", ... }`
 
+#### Pinned
+
+If a package is pinned, we call nvchecker to check the new version iff there's no existing version.
+
+* `pinned = true`
+
 ### Haskell library
 
 nvfetcher itsetlf is a Haskell library as well, whereas the CLI program is just a trivial wrapper of the library.

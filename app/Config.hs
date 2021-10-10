@@ -39,7 +39,8 @@ data PackageConfig = PackageConfig
     pcExtractFiles :: Maybe PackageExtractSrc,
     pcCargoLockPath :: Maybe PackageCargoFilePath,
     pcNvcheckerOptions :: NvcheckerOptions,
-    pcPassthru :: PackagePassthru
+    pcPassthru :: PackagePassthru,
+    pcUseStale :: UseStaleVersion
   }
 
 toPackage :: PackageKey -> PackageConfig -> Package
@@ -51,6 +52,7 @@ toPackage k PackageConfig {..} =
     pcExtractFiles
     pcCargoLockPath
     pcPassthru
+    pcUseStale
 
 packageConfigCodec :: TomlCodec PackageConfig
 packageConfigCodec =
@@ -61,6 +63,7 @@ packageConfigCodec =
     <*> cargoLockPathCodec .= pcCargoLockPath
     <*> nvcheckerOptionsCodec .= pcNvcheckerOptions
     <*> passthruCodec .= pcPassthru
+    <*> pinnedCodec .= pcUseStale
 
 --------------------------------------------------------------------------------
 
@@ -83,3 +86,6 @@ nvcheckerOptionsCodec =
 
 passthruCodec :: TomlCodec PackagePassthru
 passthruCodec = diwrap $ tableHashMap _KeyText text "passthru"
+
+pinnedCodec :: TomlCodec UseStaleVersion
+pinnedCodec = dimap (Just . coerce) (maybe (UseStaleVersion False) coerce) $ dioptional $ bool "pinned"
