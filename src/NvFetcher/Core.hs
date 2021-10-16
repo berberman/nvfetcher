@@ -61,7 +61,7 @@ coreRules = do
             -- it's important to always rerun
             -- since the package definition is not tracked at all
             alwaysRerun
-            (NvcheckerA version mOldV) <- checkVersion versionSource options pkg
+            (NvcheckerA version mOldV _isStale) <- checkVersion versionSource options pkg
             prefetched <- prefetch $ _pfetcher version
             shakeDir <- getShakeDir
             -- extract src

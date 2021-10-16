@@ -33,7 +33,7 @@ where
 
 import qualified Data.Aeson as A
 import Data.Coerce (coerce)
-import Data.Maybe (mapMaybe)
+import Data.Maybe (mapMaybe, fromJust)
 import Data.String (fromString)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
@@ -57,25 +57,38 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (NvcheckerQ 
       let oldVer = decode' <$> old
       recordVersionChange (coerce pkg) oldVer "∅"
       pure $ RunResult ChangedRecomputeDiff mempty undefined -- skip running, returning a never consumed result
-    _ ->
-      withTempFile $ \config -> withRetries $ do
-        writeFile' config $ T.unpack $ pretty $ mkToml $ genNvConfig pkg options versionSource
-        need [config]
-        (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
-        putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
-        let out' = T.decodeUtf8 out
-            result = mapMaybe (A.decodeStrict . T.encodeUtf8) (T.lines out')
-        now <- case result of
-          [x] -> pure x
-          _ -> fail $ "Failed to parse output from nvchecker: " <> T.unpack out'
-        pure $ case old of
-          Just lastRun
-            | cachedResult <- decode' lastRun ->
-              if cachedResult == nvNow now
-                then -- try to get the version in last run from store, filling it into 'now'
-                  RunResult ChangedRecomputeSame lastRun now {nvOld = Just cachedResult}
-                else RunResult ChangedRecomputeDiff (encode' $ nvNow now) now {nvOld = Just cachedResult}
-          Nothing -> RunResult ChangedRecomputeDiff (encode' $ nvNow now) now
+    _ -> do
+      let lastRun = decode' <$> old
+      useStale <- _ppinned .  fromJust <$> lookupPackage pkg
+      case useStale of
+        (UseStaleVersion True)
+          | Just cachedResult <- lastRun -> do
+            -- use the stale version if we have
+            putInfo $ T.unpack $ "Skip running nvchecker, use stale version " <> coerce (nvNow cachedResult) <> " for " <> coerce pkg
+            let result = cachedResult {nvStale = True}
+            pure $ RunResult ChangedRecomputeSame (encode' result) result
+
+        -- run nvchecker
+        _ -> withTempFile $ \config -> withRetries $ do
+          writeFile' config $ T.unpack $ pretty $ mkToml $ genNvConfig pkg options versionSource
+          need [config]
+          (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
+          putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
+          let out' = T.decodeUtf8 out
+              result = mapMaybe (A.decodeStrict . T.encodeUtf8) (T.lines out')
+          now <- case result of
+            [x] -> pure x
+            _ -> fail $ "Failed to parse output from nvchecker: " <> T.unpack out'
+
+          let runChanged = case lastRun of
+                Just cachedResult
+                  | nvNow cachedResult == nvNow now -> ChangedRecomputeSame
+                _ -> ChangedRecomputeDiff
+              modifiedNow = case lastRun of
+                -- fill the old version to result
+                Just cachedResult -> now {nvOld = Just $ nvNow cachedResult}
+                _ -> now
+          pure $ RunResult runChanged (encode' modifiedNow) modifiedNow
 
 genNvConfig :: PackageKey -> NvcheckerOptions -> VersionSource -> TDSL
 genNvConfig pkg options versionSource = table (fromString $ T.unpack $ coerce pkg) $ do

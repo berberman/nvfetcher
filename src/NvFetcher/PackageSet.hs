@@ -84,6 +84,7 @@ module NvFetcher.PackageSet
     hasCargoLock,
     tweakVersion,
     passthru,
+    pinned,
 
     -- ** Miscellaneous
     Prod,
@@ -155,8 +156,10 @@ newPackage ::
   Maybe PackageExtractSrc ->
   Maybe PackageCargoFilePath ->
   PackagePassthru ->
+  UseStaleVersion ->
   PackageSet ()
-newPackage name source fetcher extract cargo pasthru = liftF $ NewPackage (Package name source fetcher extract cargo pasthru) ()
+newPackage name source fetcher extract cargo pasthru useStale =
+  liftF $ NewPackage (Package name source fetcher extract cargo pasthru useStale) ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -253,7 +256,8 @@ class PkgDSL f where
         '[ PackageExtractSrc,
            PackageCargoFilePath,
            NvcheckerOptions,
-           PackagePassthru
+           PackagePassthru,
+           UseStaleVersion
          ]
         r
     ) =>
@@ -277,6 +281,7 @@ instance PkgDSL PackageSet where
       (projMaybe p)
       (projMaybe p)
       (fromMaybe mempty (projMaybe p))
+      (fromMaybe (UseStaleVersion False) (projMaybe p))
 
 -- | 'PkgDSL' version of 'newPackage'
 --
@@ -296,7 +301,8 @@ define ::
       '[ PackageExtractSrc,
          PackageCargoFilePath,
          PackagePassthru,
-         NvcheckerOptions
+         NvcheckerOptions,
+         UseStaleVersion
        ]
       r
   ) =>
@@ -526,3 +532,9 @@ tweakVersion = (. pure . ($ def)) . andThen
 -- Arg is a list of kv pairs
 passthru :: Attach PackagePassthru [(Text, Text)]
 passthru = (. pure . PackagePassthru . HMap.fromList) . andThen
+
+-- | Pin a package
+--
+-- new version won't be checked if we have a stale version
+pinned :: PackageSet (Prod r) -> PackageSet (Prod (UseStaleVersion : r))
+pinned = flip andThen . pure $ UseStaleVersion True

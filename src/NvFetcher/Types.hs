@@ -36,6 +36,7 @@ module NvFetcher.Types
     NvcheckerA (..),
     NvcheckerQ (..),
     NvcheckerOptions (..),
+    UseStaleVersion (..),
 
     -- * Nix fetcher types
     NixFetcher (..),
@@ -173,13 +174,15 @@ data NvcheckerQ = NvcheckerQ VersionSource NvcheckerOptions
 data NvcheckerA = NvcheckerA
   { nvNow :: Version,
     -- | nvchecker doesn't give this value, but shake restores it from last run
-    nvOld :: Maybe Version
+    nvOld :: Maybe Version,
+    -- | stale means even 'nvNow' comes from shake, where we actually didn't run nvchecker
+    nvStale :: Bool
   }
   deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
 
 instance A.FromJSON NvcheckerA where
   parseJSON = A.withObject "NvcheckerResult" $ \o ->
-    NvcheckerA <$> o A..: "version" <*> pure Nothing
+    NvcheckerA <$> o A..: "version" <*> pure Nothing <*> pure False
 
 type instance RuleResult NvcheckerQ = NvcheckerA
 
@@ -264,6 +267,15 @@ newtype PackageCargoFilePath = PackageCargoFilePath FilePath
 newtype PackagePassthru = PackagePassthru (HashMap Text Text)
   deriving newtype (Semigroup, Monoid)
 
+-- | This bool value means whether or not to use stale value.
+-- Using stale value indicates that we will /NOT/ check for new versions if
+-- there is a known version in shake. Normally you don't want a stale version
+-- unless you need pin a package.
+newtype UseStaleVersion = UseStaleVersion Bool
+  deriving newtype (Eq, Show, Ord)
+  deriving stock (Typeable, Generic)
+  deriving anyclass (Hashable, Binary, NFData)
+
 -- | A package is defined with:
 --
 -- 1. its name
@@ -272,6 +284,7 @@ newtype PackagePassthru = PackagePassthru (HashMap Text Text)
 -- 4. optional file paths to extract (dump to shake dir)
 -- 5. optional @Cargo.lock@ path (if it's a rust package)
 -- 6. an optional pass through map
+-- 7. if the package version was pinned
 --
 -- /INVARIANT: 'Version' passed to 'PackageFetcher' MUST be used textually,/
 -- /i.e. can only be concatenated with other strings,/
@@ -282,7 +295,8 @@ data Package = Package
     _pfetcher :: PackageFetcher,
     _pextract :: Maybe PackageExtractSrc,
     _pcargo :: Maybe PackageCargoFilePath,
-    _ppassthru :: PackagePassthru
+    _ppassthru :: PackagePassthru,
+    _ppinned :: UseStaleVersion
   }
 
 -- | Package key is the name of a package.
