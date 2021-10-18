@@ -164,7 +164,7 @@ forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span id="line-141"></span><span class="hs-comment">-- 1. Carry defined packages</span><span>
 </span><span id="line-142"></span><span class="hs-comment">-- 2. Run IO actions</span><span>
 </span><span id="line-143"></span><span class="hs-comment">--</span><span>
-</span><span id="line-144"></span><span class="hs-comment">-- Package set is evaluated be for shake runs.</span><span>
+</span><span id="line-144"></span><span class="hs-comment">-- Package set is evaluated before shake runs.</span><span>
 </span><span id="line-145"></span><span class="hs-comment">-- Use 'newPackage' to add a new package, 'liftIO' to run an IO action.</span><span>
 </span><span id="line-146"></span><span class="hs-keyword">type</span><span> </span><span id="PackageSet"><span class="annot"><a href="NvFetcher.PackageSet.html#PackageSet"><span class="hs-identifier hs-var">PackageSet</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Free</span></span><span> </span><span class="annot"><a href="NvFetcher.PackageSet.html#PackageSetF"><span class="hs-identifier hs-type">PackageSetF</span></a></span><span>
 </span><span id="line-147"></span><span>

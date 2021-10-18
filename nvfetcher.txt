@@ -515,7 +515,7 @@ data PackageSetF f
 --   <li>Run IO actions</li>
 --   </ol>
 --   
---   Package set is evaluated be for shake runs. Use <a>newPackage</a> to
+--   Package set is evaluated before shake runs. Use <a>newPackage</a> to
 --   add a new package, <a>liftIO</a> to run an IO action.
 type PackageSet = Free PackageSetF
 
