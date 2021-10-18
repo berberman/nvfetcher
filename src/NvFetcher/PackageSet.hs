@@ -141,7 +141,7 @@ instance Functor PackageSetF where
 -- 1. Carry defined packages
 -- 2. Run IO actions
 --
--- Package set is evaluated be for shake runs.
+-- Package set is evaluated before shake runs.
 -- Use 'newPackage' to add a new package, 'liftIO' to run an IO action.
 type PackageSet = Free PackageSetF
 
