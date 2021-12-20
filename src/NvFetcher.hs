@@ -20,7 +20,7 @@
 -- import NvFetcher
 --
 -- main :: IO ()
--- main = runNvFetcher defaultArgs packageSet
+-- main = runNvFetcher packageSet
 --
 -- packageSet :: PackageSet ()
 -- packageSet = do
@@ -35,7 +35,6 @@
 -- * @main@ -- abbreviation of @main build@
 -- * @main build@ -- build nix sources expr from given @packageSet@
 -- * @main clean@ -- delete .shake dir and generated nix file
--- * @main -j@ -- build with parallelism
 --
 -- All shake options are inherited.
 module NvFetcher
@@ -51,6 +50,7 @@ module NvFetcher
 where
 
 import Control.Monad.Extra (when, whenJust)
+import qualified Data.Map.Strict as Map
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
@@ -64,6 +64,7 @@ import NvFetcher.PackageSet
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
 import NvFetcher.Utils (getShakeDir)
+import Text.Regex.TDFA ((=~))
 
 -- | Arguments for running nvfetcher
 data Args = Args
@@ -80,7 +81,9 @@ data Args = Args
     -- | Action run after clean rule
     argActionAfterClean :: Action (),
     -- | Retry times
-    argRetries :: Int
+    argRetries :: Int,
+    -- | Package whose name matches might be updated
+    argFilterRegex :: Maybe String
   }
 
 -- | Default arguments of 'defaultMain'
@@ -100,6 +103,7 @@ defaultArgs =
     (pure ())
     (pure ())
     3
+    Nothing
 
 -- | Run nvfetcher with CLI options
 --
@@ -123,7 +127,8 @@ cliOptionsToArgs CLIOptions {..} =
             shakeVerbosity = if verbose then Verbose else Info,
             shakeThreads = threads,
             shakeFiles = buildDir
-          }
+          },
+      argFilterRegex = pkgNameFilter
     }
 
 logChangesToFile :: FilePath -> Action ()
@@ -146,7 +151,8 @@ commitChanges = do
 -- | Entry point of nvfetcher
 runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
 runNvFetcherNoCLI args@Args {..} packageSet = do
-  pkgs <- runPackageSet packageSet
+  pkgs <- Map.map pinIfUnmatch <$> runPackageSet packageSet
+  print $ (\Package {..} -> _pname <> ": " <> T.pack (show _ppinned)) <$> pkgs
   shakeExtras <- initShakeExtras pkgs argRetries
   let opts =
         argShakeOptions
@@ -154,6 +160,17 @@ runNvFetcherNoCLI args@Args {..} packageSet = do
           }
       rules = mainRules args
   shake opts $ want [argTarget] >> rules
+  where
+    -- Don't touch already pinned packages
+    pinIfUnmatch x@Package {..}
+      | Just regex <- argFilterRegex =
+        x
+          { _ppinned =
+              if coerce _ppinned || not (_pname =~ regex)
+                then UseStaleVersion True
+                else UseStaleVersion False
+          }
+      | otherwise = x
 
 --------------------------------------------------------------------------------
 

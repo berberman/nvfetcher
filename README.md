@@ -103,7 +103,7 @@ To run nvfetcher as a CLI program, you'll need to provide package sources define
 Available options:
   --version                Show version
   --help                   Show this help text
-  -o,--build-dir FILE      Directory that nvfetcher puts artifacts to
+  -o,--build-dir DIR       Directory that nvfetcher puts artifacts to
                            (default: "_sources")
   --commit-changes         `git commit` changes in this run (with shake db)
   -l,--changelog FILE      Dump version changes to a file
@@ -113,6 +113,7 @@ Available options:
                            nix-instantiate, etc.) (default: 3)
   -t,--timing              Show build time
   -v,--verbose             Verbose mode
+  -f,--filter REGEX        Regex to filter packages to be updated
   TARGET                   Two targets are available: 1.build 2.clean
                            (default: "build")
   -c,--config FILE         Path to nvfetcher TOML config
