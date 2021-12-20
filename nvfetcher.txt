@@ -374,15 +374,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_ab89 k_aDev. Lens (NixFetcher k_ab89) (NixFetcher k_aDev) (FetchResult k_ab89) (FetchResult k_aDev)
-rev :: forall k_ab89. Traversal' (NixFetcher k_ab89) Version
-name :: forall k_ab89. Lens' (NixFetcher k_ab89) (Maybe Text)
-leaveDotGit :: forall k_ab89. Traversal' (NixFetcher k_ab89) Bool
-furl :: forall k_ab89. Traversal' (NixFetcher k_ab89) Text
-frepo :: forall k_ab89. Traversal' (NixFetcher k_ab89) Text
-fowner :: forall k_ab89. Traversal' (NixFetcher k_ab89) Text
-fetchSubmodules :: forall k_ab89. Traversal' (NixFetcher k_ab89) Bool
-deepClone :: forall k_ab89. Traversal' (NixFetcher k_ab89) Bool
+sha256 :: forall k_abih k_aDoD. Lens (NixFetcher k_abih) (NixFetcher k_aDoD) (FetchResult k_abih) (FetchResult k_aDoD)
+rev :: forall k_abih. Traversal' (NixFetcher k_abih) Version
+name :: forall k_abih. Lens' (NixFetcher k_abih) (Maybe Text)
+leaveDotGit :: forall k_abih. Traversal' (NixFetcher k_abih) Bool
+furl :: forall k_abih. Traversal' (NixFetcher k_abih) Text
+frepo :: forall k_abih. Traversal' (NixFetcher k_abih) Text
+fowner :: forall k_abih. Traversal' (NixFetcher k_abih) Text
+fetchSubmodules :: forall k_abih. Traversal' (NixFetcher k_abih) Bool
+deepClone :: forall k_abih. Traversal' (NixFetcher k_abih) Bool
 pversion :: Lens' Package NvcheckerQ
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -1094,7 +1094,7 @@ module NvFetcher.Options
 
 -- | Options for nvfetcher CLI
 data CLIOptions
-CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> String -> CLIOptions
+CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> String -> CLIOptions
 [buildDir] :: CLIOptions -> FilePath
 [commit] :: CLIOptions -> Bool
 [logPath] :: CLIOptions -> Maybe FilePath
@@ -1102,6 +1102,7 @@ CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -
 [retries] :: CLIOptions -> Int
 [timing] :: CLIOptions -> Bool
 [verbose] :: CLIOptions -> Bool
+[pkgNameFilter] :: CLIOptions -> Maybe String
 [target] :: CLIOptions -> String
 cliOptionsParser :: Parser CLIOptions
 
@@ -1121,7 +1122,7 @@ instance GHC.Show.Show NvFetcher.Options.CLIOptions
 --   import NvFetcher
 --   
 --   main :: IO ()
---   main = runNvFetcher defaultArgs packageSet
+--   main = runNvFetcher packageSet
 --   
 --   packageSet :: PackageSet ()
 --   packageSet = do
@@ -1139,7 +1140,6 @@ instance GHC.Show.Show NvFetcher.Options.CLIOptions
 --   <tt>packageSet</tt></li>
 --   <li><tt>main clean</tt> -- delete .shake dir and generated nix
 --   file</li>
---   <li><tt>main -j</tt> -- build with parallelism</li>
 --   </ul>
 --   
 --   All shake options are inherited.
@@ -1147,7 +1147,7 @@ module NvFetcher
 
 -- | Arguments for running nvfetcher
 data Args
-Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action () -> Int -> Args
+Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Args
 
 -- | Shake options
 [argShakeOptions] :: Args -> ShakeOptions
@@ -1169,6 +1169,9 @@ Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action ()
 
 -- | Retry times
 [argRetries] :: Args -> Int
+
+-- | Package whose name matches might be updated
+[argFilterRegex] :: Args -> Maybe String
 
 -- | Default arguments of <tt>defaultMain</tt>
 --   
