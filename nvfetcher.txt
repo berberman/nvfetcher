@@ -135,23 +135,26 @@ UseStaleVersion :: Bool -> UseStaleVersion
 
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
-FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
+FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
 [_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
+[_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
 [_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
-FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
+FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_fowner] :: NixFetcher (k :: FetchStatus) -> Text
 [_frepo] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
 [_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
+[_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
 [_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
-FetchUrl :: Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+FetchUrl :: Text -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
+[_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
 [_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
 
 -- | Prefetched fetchers hold hashes
@@ -371,14 +374,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_ab62 k_aCIk. Lens (NixFetcher k_ab62) (NixFetcher k_aCIk) (FetchResult k_ab62) (FetchResult k_aCIk)
-rev :: forall k_ab62. Traversal' (NixFetcher k_ab62) Version
-leaveDotGit :: forall k_ab62. Traversal' (NixFetcher k_ab62) Bool
-furl :: forall k_ab62. Traversal' (NixFetcher k_ab62) Text
-frepo :: forall k_ab62. Traversal' (NixFetcher k_ab62) Text
-fowner :: forall k_ab62. Traversal' (NixFetcher k_ab62) Text
-fetchSubmodules :: forall k_ab62. Traversal' (NixFetcher k_ab62) Bool
-deepClone :: forall k_ab62. Traversal' (NixFetcher k_ab62) Bool
+sha256 :: forall k_ab89 k_aDev. Lens (NixFetcher k_ab89) (NixFetcher k_aDev) (FetchResult k_ab89) (FetchResult k_aDev)
+rev :: forall k_ab89. Traversal' (NixFetcher k_ab89) Version
+name :: forall k_ab89. Lens' (NixFetcher k_ab89) (Maybe Text)
+leaveDotGit :: forall k_ab89. Traversal' (NixFetcher k_ab89) Bool
+furl :: forall k_ab89. Traversal' (NixFetcher k_ab89) Text
+frepo :: forall k_ab89. Traversal' (NixFetcher k_ab89) Text
+fowner :: forall k_ab89. Traversal' (NixFetcher k_ab89) Text
+fetchSubmodules :: forall k_ab89. Traversal' (NixFetcher k_ab89) Bool
+deepClone :: forall k_ab89. Traversal' (NixFetcher k_ab89) Bool
 pversion :: Lens' Package NvcheckerQ
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -441,23 +445,26 @@ module NvFetcher.NixFetcher
 
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
-FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
+FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
 [_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
+[_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
 [_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
-FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> FetchResult k -> NixFetcher (k :: FetchStatus)
+FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_fowner] :: NixFetcher (k :: FetchStatus) -> Text
 [_frepo] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
 [_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
+[_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
 [_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
-FetchUrl :: Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+FetchUrl :: Text -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
+[_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
 [_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
 
 -- | Fetch status
