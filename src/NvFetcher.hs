@@ -152,7 +152,6 @@ commitChanges = do
 runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
 runNvFetcherNoCLI args@Args {..} packageSet = do
   pkgs <- Map.map pinIfUnmatch <$> runPackageSet packageSet
-  print $ (\Package {..} -> _pname <> ": " <> T.pack (show _ppinned)) <$> pkgs
   shakeExtras <- initShakeExtras pkgs argRetries
   let opts =
         argShakeOptions
