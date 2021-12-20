@@ -26,7 +26,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import NeatInterpolation (trimming)
 import NvFetcher.Types
-import NvFetcher.Utils (asString)
+import NvFetcher.Utils (quote)
 
 -- | Types can be converted into nix expr
 class ToNixExpr a where
@@ -36,7 +36,7 @@ instance ToNixExpr (NixFetcher Fresh) where
   toNixExpr = nixFetcher "lib.fakeSha256"
 
 instance ToNixExpr (NixFetcher Fetched) where
-  toNixExpr f = nixFetcher (asString $ coerce $ _sha256 f) f
+  toNixExpr f = nixFetcher (quote $ coerce $ _sha256 f) f
 
 instance ToNixExpr Bool where
   toNixExpr True = "true"
@@ -61,11 +61,12 @@ nixFetcher :: Text -> NixFetcher k -> NixExpr
 nixFetcher sha256 = \case
   FetchGit
     { _sha256 = _,
-      _rev = asString . toNixExpr -> rev,
+      _rev = quote . toNixExpr -> rev,
       _fetchSubmodules = toNixExpr -> fetchSubmodules,
       _deepClone = toNixExpr -> deepClone,
       _leaveDotGit = toNixExpr -> leaveDotGit,
-      _furl = asString -> url
+      _furl = quote -> url,
+      _name = nameField -> n
     } ->
       [trimming|
           fetchgit {
@@ -73,49 +74,54 @@ nixFetcher sha256 = \case
             rev = $rev;
             fetchSubmodules = $fetchSubmodules;
             deepClone = $deepClone;
-            leaveDotGit = $leaveDotGit;
+            leaveDotGit = $leaveDotGit;$n
             sha256 = $sha256;
           }
     |]
   FetchGitHub
     { _sha256 = _,
-      _rev = asString . toNixExpr -> rev,
+      _rev = quote . toNixExpr -> rev,
       _fetchSubmodules = toNixExpr -> fetchSubmodules,
       _deepClone = toNixExpr -> deepClone,
       _leaveDotGit = toNixExpr -> leaveDotGit,
-      _fowner = asString -> owner,
-      _frepo = asString -> repo
+      _fowner = quote -> owner,
+      _frepo = quote -> repo,
+      _name = nameField -> n
     } ->
       -- TODO: fix fetchFromGitHub in Nixpkgs so that deepClone and
       -- leaveDotGit won't get passed to fetchzip
       if (deepClone == "true") || (leaveDotGit == "true")
-      then [trimming|
+        then
+          [trimming|
                fetchFromGitHub ({
                  owner = $owner;
                  repo = $repo;
                  rev = $rev;
                  fetchSubmodules = $fetchSubmodules;
                  deepClone = $deepClone;
-                 leaveDotGit = $leaveDotGit;
+                 leaveDotGit = $leaveDotGit;$n
                  sha256 = $sha256;
                })
          |]
-      else [trimming|
+        else
+          [trimming|
                fetchFromGitHub ({
                  owner = $owner;
                  repo = $repo;
                  rev = $rev;
-                 fetchSubmodules = $fetchSubmodules;
+                 fetchSubmodules = $fetchSubmodules;$n
                  sha256 = $sha256;
                })
          |]
-  (FetchUrl (asString -> url) _) ->
+  (FetchUrl (quote -> url) (nameField -> n) _) ->
     [trimming|
           fetchurl {
-            url = $url;
+            url = $url;$n
             sha256 = $sha256;
           }
     |]
+  where
+    nameField = maybe "" (\x -> "\nname = " <> quote x <> ";")
 
 instance ToNixExpr ExtractSrcQ where
   toNixExpr (ExtractSrcQ fetcher files) = extractFiles fetcher files

@@ -90,7 +90,7 @@ coreRules = do
                 Just (PackageCargoFilePath lockPath) -> do
                   (_, lockData) <- head . HMap.toList <$> extractSrc prefetched lockPath
                   result <- fetchRustGitDeps prefetched lockPath
-                  let body = T.unlines [asString k <> " = " <> coerce (asString $ coerce v) <> ";" | (k, v) <- HMap.toList result]
+                  let body = T.unlines [quote k <> " = " <> coerce (quote $ coerce v) <> ";" | (k, v) <- HMap.toList result]
                       lockPath' =
                         T.unpack _pname
                           <> "-"
@@ -110,7 +110,7 @@ coreRules = do
                 |]
                 _ -> pure ""
             -- passthru
-            let appending3 = T.unlines [k <> " = " <> v <> ";" | (k, asString -> v) <- HMap.toList passthruMap]
+            let appending3 = T.unlines [k <> " = " <> v <> ";" | (k, quote -> v) <- HMap.toList passthruMap]
 
             -- update changelog
             case mOldV of

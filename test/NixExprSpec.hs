@@ -56,10 +56,20 @@ spec = describe "toNixExpr" $ do
       }
     |]
 
+  it "renders filename for vsc extension" $
+    toNixExpr (openVsxFetcher ("publisher", "extension") "fake_version")
+      `shouldBe` [trimming|
+      fetchurl {
+        url = "https://open-vsx.org/api/publisher/extension/fake_version/file/publisher.extension-fake_version.vsix";
+        name = "extension-fake_version.zip";
+        sha256 = lib.fakeSha256;
+      }
+    |]
+
   it "renders IFD of ExtractSrcQ" $
     toNixExpr
       ( ExtractSrcQ
-          (FetchUrl "https://example.com" (Checksum "calculated sha256"))
+          (FetchUrl "https://example.com" Nothing (Checksum "calculated sha256"))
           (NE.fromList ["a.txt", "b.txt"])
       )
       `shouldBe` [trimming|

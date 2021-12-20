@@ -116,14 +116,14 @@ prefetch = askOracle
 
 -- | Create a fetcher from git url
 gitFetcher :: Text -> PackageFetcher
-gitFetcher furl rev = FetchGit furl rev False False False ()
+gitFetcher furl rev = FetchGit furl rev False False False Nothing ()
 
 -- | Create a fetcher from github repo
 gitHubFetcher ::
   -- | owner and repo
   (Text, Text) ->
   PackageFetcher
-gitHubFetcher (owner, repo) rev = FetchGitHub owner repo rev False False False ()
+gitHubFetcher (owner, repo) rev = FetchGitHub owner repo rev False False False Nothing ()
 
 -- | Create a fetcher from pypi
 pypiFetcher :: Text -> PackageFetcher
@@ -142,7 +142,7 @@ gitHubReleaseFetcher (owner, repo) fp (coerce -> ver) =
 
 -- | Create a fetcher from url
 urlFetcher :: Text -> NixFetcher Fresh
-urlFetcher = flip FetchUrl ()
+urlFetcher url = FetchUrl url Nothing ()
 
 -- | Create a fetcher from openvsx
 openVsxFetcher ::
@@ -150,8 +150,11 @@ openVsxFetcher ::
   (Text, Text) ->
   PackageFetcher
 openVsxFetcher (publisher, extName) (coerce -> ver) =
-  urlFetcher
-    [trimming|https://open-vsx.org/api/$publisher/$extName/$ver/file/$publisher.$extName-$ver.vsix|]
+  ( urlFetcher
+      [trimming|https://open-vsx.org/api/$publisher/$extName/$ver/file/$publisher.$extName-$ver.vsix|]
+  )
+    { _name = Just [trimming|$extName-$ver.zip|]
+    }
 
 -- | Create a fetcher from vscode marketplace
 vscodeMarketplaceFetcher ::
@@ -159,5 +162,8 @@ vscodeMarketplaceFetcher ::
   (Text, Text) ->
   PackageFetcher
 vscodeMarketplaceFetcher (publisher, extName) (coerce -> ver) =
-  urlFetcher
-    [trimming|https://$publisher.gallery.vsassets.io/_apis/public/gallery/publisher/$publisher/extension/$extName/$ver/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage|]
+  ( urlFetcher
+      [trimming|https://$publisher.gallery.vsassets.io/_apis/public/gallery/publisher/$publisher/extension/$extName/$ver/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage|]
+  )
+    { _name = Just [trimming|$extName-$ver.zip|]
+    }
