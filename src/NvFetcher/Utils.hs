@@ -13,8 +13,8 @@ encode' = BS.concat . LBS.toChunks . encode
 decode' :: Binary a => BS.ByteString -> a
 decode' = decode . LBS.fromChunks . pure
 
-asString :: Text -> Text
-asString = T.pack . show
+quote :: Text -> Text
+quote = T.pack . show
 
 getShakeDir :: Action FilePath
 getShakeDir = shakeFiles <$> getShakeOptions

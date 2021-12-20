@@ -8,10 +8,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE ViewPatterns #-}
 
 -- | Copyright: (c) 2021 berberman
 -- SPDX-License-Identifier: MIT
@@ -196,6 +194,7 @@ data NixFetcher (k :: FetchStatus)
         _deepClone :: Bool,
         _fetchSubmodules :: Bool,
         _leaveDotGit :: Bool,
+        _name :: Maybe Text,
         _sha256 :: FetchResult k
       }
   | FetchGitHub
@@ -205,9 +204,14 @@ data NixFetcher (k :: FetchStatus)
         _deepClone :: Bool,
         _fetchSubmodules :: Bool,
         _leaveDotGit :: Bool,
+        _name :: Maybe Text,
         _sha256 :: FetchResult k
       }
-  | FetchUrl {_furl :: Text, _sha256 :: FetchResult k}
+  | FetchUrl
+      { _furl :: Text,
+        _name :: Maybe Text,
+        _sha256 :: FetchResult k
+      }
   deriving (Typeable, Generic)
 
 -- | Fetch status
