@@ -1173,9 +1173,7 @@ Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action ()
 -- | Package whose name matches might be updated
 [argFilterRegex] :: Args -> Maybe String
 
--- | Default arguments of <tt>defaultMain</tt>
---   
---   Build dir is <tt>_sources</tt>.
+-- | Default <a>Args</a>
 defaultArgs :: Args
 
 -- | Run nvfetcher with CLI options
@@ -1185,8 +1183,12 @@ defaultArgs :: Args
 --   executable program.
 runNvFetcher :: PackageSet () -> IO ()
 
+-- | Similar to <a>runNvFetcher</a>, but uses custom <tt>args</tt> instead
+--   of <a>defaultArgs</a>
+runNvFetcher' :: Args -> PackageSet () -> IO ()
+
 -- | Entry point of nvfetcher
 runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
 
--- | Apply <a>CLIOptions</a> to <a>defaultArgs</a>
-cliOptionsToArgs :: CLIOptions -> Args
+-- | Apply <a>CLIOptions</a> to <a>Args</a>
+applyCliOptions :: Args -> CLIOptions -> Args

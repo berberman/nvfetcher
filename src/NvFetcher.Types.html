@@ -77,8 +77,8 @@
 </span><span id="line-77"></span><span class="hs-comment">--------------------------------------------------------------------------------</span><span>
 </span><span id="line-78"></span><span>
 </span><span id="line-79"></span><span class="hs-comment">-- | Package version</span><span>
-</span><span id="line-80"></span><span id="local-6989586621679277544"><span id="local-6989586621679277545"></span></span><span class="hs-keyword">newtype</span><span> </span><span id="Version"><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-var">Version</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Version"><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-var">Version</span></a></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
-</span><span id="line-81"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277539"><span id="local-6989586621679277541"><span class="annot"><span class="annottext">Version -&gt; Version -&gt; Bool
+</span><span id="line-80"></span><span id="local-6989586621679277600"><span id="local-6989586621679277601"></span></span><span class="hs-keyword">newtype</span><span> </span><span id="Version"><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-var">Version</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Version"><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-var">Version</span></a></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
+</span><span id="line-81"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277595"><span id="local-6989586621679277597"><span class="annot"><span class="annottext">Version -&gt; Version -&gt; Bool
 (Version -&gt; Version -&gt; Bool)
 -&gt; (Version -&gt; Version -&gt; Bool) -&gt; Eq Version
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -86,7 +86,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: Version -&gt; Version -&gt; Bool
 == :: Version -&gt; Version -&gt; Bool
 $c== :: Version -&gt; Version -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277532"><span id="local-6989586621679277534"><span id="local-6989586621679277536"><span class="annot"><span class="annottext">Int -&gt; Version -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277588"><span id="local-6989586621679277590"><span id="local-6989586621679277592"><span class="annot"><span class="annottext">Int -&gt; Version -&gt; ShowS
 [Version] -&gt; ShowS
 Version -&gt; String
 (Int -&gt; Version -&gt; ShowS)
@@ -99,7 +99,7 @@ show :: Version -&gt; String
 $cshow :: Version -&gt; String
 showsPrec :: Int -&gt; Version -&gt; ShowS
 $cshowsPrec :: Int -&gt; Version -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277516"><span id="local-6989586621679277518"><span id="local-6989586621679277520"><span id="local-6989586621679277522"><span id="local-6989586621679277524"><span id="local-6989586621679277526"><span id="local-6989586621679277528"><span class="annot"><span class="annottext">Eq Version
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277572"><span id="local-6989586621679277574"><span id="local-6989586621679277576"><span id="local-6989586621679277578"><span id="local-6989586621679277580"><span id="local-6989586621679277582"><span id="local-6989586621679277584"><span class="annot"><span class="annottext">Eq Version
 Eq Version
 -&gt; (Version -&gt; Version -&gt; Ordering)
 -&gt; (Version -&gt; Version -&gt; Bool)
@@ -137,12 +137,12 @@ $c&lt; :: Version -&gt; Version -&gt; Bool
 compare :: Version -&gt; Version -&gt; Ordering
 $ccompare :: Version -&gt; Version -&gt; Ordering
 $cp1Ord :: Eq Version
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277513"><span class="annot"><span class="annottext">String -&gt; Version
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277569"><span class="annot"><span class="annottext">String -&gt; Version
 (String -&gt; Version) -&gt; IsString Version
 forall a. (String -&gt; a) -&gt; IsString a
 fromString :: String -&gt; Version
 $cfromString :: String -&gt; Version
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">IsString</span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277506"><span id="local-6989586621679277508"><span id="local-6989586621679277510"><span class="annot"><span class="annottext">b -&gt; Version -&gt; Version
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">IsString</span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277562"><span id="local-6989586621679277564"><span id="local-6989586621679277566"><span class="annot"><span class="annottext">b -&gt; Version -&gt; Version
 NonEmpty Version -&gt; Version
 Version -&gt; Version -&gt; Version
 (Version -&gt; Version -&gt; Version)
@@ -161,7 +161,7 @@ sconcat :: NonEmpty Version -&gt; Version
 $csconcat :: NonEmpty Version -&gt; Version
 &lt;&gt; :: Version -&gt; Version -&gt; Version
 $c&lt;&gt; :: Version -&gt; Version -&gt; Version
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Semigroup</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277498"><span id="local-6989586621679277500"><span id="local-6989586621679277502"><span class="annot"><span class="annottext">Semigroup Version
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Semigroup</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277554"><span id="local-6989586621679277556"><span id="local-6989586621679277558"><span class="annot"><span class="annottext">Semigroup Version
 Version
 Semigroup Version
 -&gt; Version
@@ -179,7 +179,7 @@ $cmappend :: Version -&gt; Version -&gt; Version
 mempty :: Version
 $cmempty :: Version
 $cp1Monoid :: Semigroup Version
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Monoid</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277493"><span id="local-6989586621679277495"><span class="annot"><span class="annottext">Value -&gt; Parser [Version]
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Monoid</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277549"><span id="local-6989586621679277551"><span class="annot"><span class="annottext">Value -&gt; Parser [Version]
 Value -&gt; Parser Version
 (Value -&gt; Parser Version)
 -&gt; (Value -&gt; Parser [Version]) -&gt; FromJSON Version
@@ -189,7 +189,7 @@ parseJSONList :: Value -&gt; Parser [Version]
 $cparseJSONList :: Value -&gt; Parser [Version]
 parseJSON :: Value -&gt; Parser Version
 $cparseJSON :: Value -&gt; Parser Version
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">A.FromJSON</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277484"><span id="local-6989586621679277486"><span id="local-6989586621679277488"><span id="local-6989586621679277490"><span class="annot"><span class="annottext">[Version] -&gt; Encoding
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">A.FromJSON</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277540"><span id="local-6989586621679277542"><span id="local-6989586621679277544"><span id="local-6989586621679277546"><span class="annot"><span class="annottext">[Version] -&gt; Encoding
 [Version] -&gt; Value
 Version -&gt; Encoding
 Version -&gt; Value
@@ -222,7 +222,7 @@ forall a.
 $cto :: forall x. Rep Version x -&gt; Version
 $cfrom :: forall x. Version -&gt; Rep Version x
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
-</span><span id="line-83"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277476"><span id="local-6989586621679277478"><span class="annot"><span class="annottext">Int -&gt; Version -&gt; Int
+</span><span id="line-83"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277532"><span id="local-6989586621679277534"><span class="annot"><span class="annottext">Int -&gt; Version -&gt; Int
 Version -&gt; Int
 (Int -&gt; Version -&gt; Int) -&gt; (Version -&gt; Int) -&gt; Hashable Version
 forall a. (Int -&gt; a -&gt; Int) -&gt; (a -&gt; Int) -&gt; Hashable a
@@ -230,7 +230,7 @@ hash :: Version -&gt; Int
 $chash :: Version -&gt; Int
 hashWithSalt :: Int -&gt; Version -&gt; Int
 $chashWithSalt :: Int -&gt; Version -&gt; Int
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277469"><span id="local-6989586621679277471"><span id="local-6989586621679277473"><span class="annot"><span class="annottext">Get Version
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277525"><span id="local-6989586621679277527"><span id="local-6989586621679277529"><span class="annot"><span class="annottext">Get Version
 [Version] -&gt; Put
 Version -&gt; Put
 (Version -&gt; Put)
@@ -242,7 +242,7 @@ get :: Get Version
 $cget :: Get Version
 put :: Version -&gt; Put
 $cput :: Version -&gt; Put
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277466"><span class="annot"><span class="annottext">Version -&gt; ()
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277522"><span class="annot"><span class="annottext">Version -&gt; ()
 (Version -&gt; ()) -&gt; NFData Version
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: Version -&gt; ()
@@ -250,8 +250,8 @@ $crnf :: Version -&gt; ()
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></span></span><span class="hs-special">)</span><span>
 </span><span id="line-84"></span><span>
 </span><span id="line-85"></span><span class="hs-comment">-- | Check sum, sha256, sri or base32, etc.</span><span>
-</span><span id="line-86"></span><span id="local-6989586621679277463"><span id="local-6989586621679277464"></span></span><span class="hs-keyword">newtype</span><span> </span><span id="Checksum"><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-var">Checksum</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Checksum"><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-var">Checksum</span></a></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
-</span><span id="line-87"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277456"><span id="local-6989586621679277458"><span id="local-6989586621679277460"><span class="annot"><span class="annottext">Int -&gt; Checksum -&gt; ShowS
+</span><span id="line-86"></span><span id="local-6989586621679277519"><span id="local-6989586621679277520"></span></span><span class="hs-keyword">newtype</span><span> </span><span id="Checksum"><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-var">Checksum</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Checksum"><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-var">Checksum</span></a></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
+</span><span id="line-87"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277512"><span id="local-6989586621679277514"><span id="local-6989586621679277516"><span class="annot"><span class="annottext">Int -&gt; Checksum -&gt; ShowS
 [Checksum] -&gt; ShowS
 Checksum -&gt; String
 (Int -&gt; Checksum -&gt; ShowS)
@@ -264,7 +264,7 @@ show :: Checksum -&gt; String
 $cshow :: Checksum -&gt; String
 showsPrec :: Int -&gt; Checksum -&gt; ShowS
 $cshowsPrec :: Int -&gt; Checksum -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277452"><span id="local-6989586621679277454"><span class="annot"><span class="annottext">Checksum -&gt; Checksum -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277508"><span id="local-6989586621679277510"><span class="annot"><span class="annottext">Checksum -&gt; Checksum -&gt; Bool
 (Checksum -&gt; Checksum -&gt; Bool)
 -&gt; (Checksum -&gt; Checksum -&gt; Bool) -&gt; Eq Checksum
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -272,7 +272,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: Checksum -&gt; Checksum -&gt; Bool
 == :: Checksum -&gt; Checksum -&gt; Bool
 $c== :: Checksum -&gt; Checksum -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277437"><span id="local-6989586621679277439"><span id="local-6989586621679277441"><span id="local-6989586621679277443"><span id="local-6989586621679277445"><span id="local-6989586621679277447"><span id="local-6989586621679277449"><span class="annot"><span class="annottext">Eq Checksum
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277493"><span id="local-6989586621679277495"><span id="local-6989586621679277497"><span id="local-6989586621679277499"><span id="local-6989586621679277501"><span id="local-6989586621679277503"><span id="local-6989586621679277505"><span class="annot"><span class="annottext">Eq Checksum
 Eq Checksum
 -&gt; (Checksum -&gt; Checksum -&gt; Ordering)
 -&gt; (Checksum -&gt; Checksum -&gt; Bool)
@@ -320,7 +320,7 @@ forall a.
 $cto :: forall x. Rep Checksum x -&gt; Checksum
 $cfrom :: forall x. Checksum -&gt; Rep Checksum x
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
-</span><span id="line-89"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277431"><span id="local-6989586621679277433"><span class="annot"><span class="annottext">Int -&gt; Checksum -&gt; Int
+</span><span id="line-89"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277487"><span id="local-6989586621679277489"><span class="annot"><span class="annottext">Int -&gt; Checksum -&gt; Int
 Checksum -&gt; Int
 (Int -&gt; Checksum -&gt; Int) -&gt; (Checksum -&gt; Int) -&gt; Hashable Checksum
 forall a. (Int -&gt; a -&gt; Int) -&gt; (a -&gt; Int) -&gt; Hashable a
@@ -328,7 +328,7 @@ hash :: Checksum -&gt; Int
 $chash :: Checksum -&gt; Int
 hashWithSalt :: Int -&gt; Checksum -&gt; Int
 $chashWithSalt :: Int -&gt; Checksum -&gt; Int
-</span><a href="#local-6989586621679277431"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277425"><span id="local-6989586621679277427"><span id="local-6989586621679277429"><span class="annot"><span class="annottext">Get Checksum
+</span><a href="#local-6989586621679277487"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277481"><span id="local-6989586621679277483"><span id="local-6989586621679277485"><span class="annot"><span class="annottext">Get Checksum
 [Checksum] -&gt; Put
 Checksum -&gt; Put
 (Checksum -&gt; Put)
@@ -340,16 +340,16 @@ get :: Get Checksum
 $cget :: Get Checksum
 put :: Checksum -&gt; Put
 $cput :: Checksum -&gt; Put
-</span><a href="#local-6989586621679277425"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277423"><span class="annot"><span class="annottext">Checksum -&gt; ()
+</span><a href="#local-6989586621679277481"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277479"><span class="annot"><span class="annottext">Checksum -&gt; ()
 (Checksum -&gt; ()) -&gt; NFData Checksum
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: Checksum -&gt; ()
 $crnf :: Checksum -&gt; ()
-</span><a href="#local-6989586621679277423"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679277479"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-90"></span><span>
 </span><span id="line-91"></span><span class="hs-comment">-- | Git branch ('Nothing': master)</span><span>
-</span><span id="line-92"></span><span id="local-6989586621679277421"><span id="local-6989586621679277422"></span></span><span class="hs-keyword">newtype</span><span> </span><span id="Branch"><span class="annot"><a href="NvFetcher.Types.html#Branch"><span class="hs-identifier hs-var">Branch</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Branch"><span class="annot"><a href="NvFetcher.Types.html#Branch"><span class="hs-identifier hs-var">Branch</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">)</span><span>
-</span><span id="line-93"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277414"><span id="local-6989586621679277416"><span id="local-6989586621679277418"><span class="annot"><span class="annottext">Int -&gt; Branch -&gt; ShowS
+</span><span id="line-92"></span><span id="local-6989586621679277477"><span id="local-6989586621679277478"></span></span><span class="hs-keyword">newtype</span><span> </span><span id="Branch"><span class="annot"><a href="NvFetcher.Types.html#Branch"><span class="hs-identifier hs-var">Branch</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Branch"><span class="annot"><a href="NvFetcher.Types.html#Branch"><span class="hs-identifier hs-var">Branch</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">)</span><span>
+</span><span id="line-93"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277470"><span id="local-6989586621679277472"><span id="local-6989586621679277474"><span class="annot"><span class="annottext">Int -&gt; Branch -&gt; ShowS
 [Branch] -&gt; ShowS
 Branch -&gt; String
 (Int -&gt; Branch -&gt; ShowS)
@@ -362,7 +362,7 @@ show :: Branch -&gt; String
 $cshow :: Branch -&gt; String
 showsPrec :: Int -&gt; Branch -&gt; ShowS
 $cshowsPrec :: Int -&gt; Branch -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277410"><span id="local-6989586621679277412"><span class="annot"><span class="annottext">Branch -&gt; Branch -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277466"><span id="local-6989586621679277468"><span class="annot"><span class="annottext">Branch -&gt; Branch -&gt; Bool
 (Branch -&gt; Branch -&gt; Bool)
 -&gt; (Branch -&gt; Branch -&gt; Bool) -&gt; Eq Branch
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -370,7 +370,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: Branch -&gt; Branch -&gt; Bool
 == :: Branch -&gt; Branch -&gt; Bool
 $c== :: Branch -&gt; Branch -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277395"><span id="local-6989586621679277397"><span id="local-6989586621679277399"><span id="local-6989586621679277401"><span id="local-6989586621679277403"><span id="local-6989586621679277405"><span id="local-6989586621679277407"><span class="annot"><span class="annottext">Eq Branch
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277451"><span id="local-6989586621679277453"><span id="local-6989586621679277455"><span id="local-6989586621679277457"><span id="local-6989586621679277459"><span id="local-6989586621679277461"><span id="local-6989586621679277463"><span class="annot"><span class="annottext">Eq Branch
 Eq Branch
 -&gt; (Branch -&gt; Branch -&gt; Ordering)
 -&gt; (Branch -&gt; Branch -&gt; Bool)
@@ -408,7 +408,7 @@ $c&lt; :: Branch -&gt; Branch -&gt; Bool
 compare :: Branch -&gt; Branch -&gt; Ordering
 $ccompare :: Branch -&gt; Branch -&gt; Ordering
 $cp1Ord :: Eq Branch
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277393"><span class="annot"><span class="annottext">Branch
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277449"><span class="annot"><span class="annottext">Branch
 Branch -&gt; Default Branch
 forall a. a -&gt; Default a
 def :: Branch
@@ -423,7 +423,7 @@ forall a.
 $cto :: forall x. Rep Branch x -&gt; Branch
 $cfrom :: forall x. Branch -&gt; Rep Branch x
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
-</span><span id="line-95"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277386"><span id="local-6989586621679277388"><span class="annot"><span class="annottext">Int -&gt; Branch -&gt; Int
+</span><span id="line-95"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277442"><span id="local-6989586621679277444"><span class="annot"><span class="annottext">Int -&gt; Branch -&gt; Int
 Branch -&gt; Int
 (Int -&gt; Branch -&gt; Int) -&gt; (Branch -&gt; Int) -&gt; Hashable Branch
 forall a. (Int -&gt; a -&gt; Int) -&gt; (a -&gt; Int) -&gt; Hashable a
@@ -431,7 +431,7 @@ hash :: Branch -&gt; Int
 $chash :: Branch -&gt; Int
 hashWithSalt :: Int -&gt; Branch -&gt; Int
 $chashWithSalt :: Int -&gt; Branch -&gt; Int
-</span><a href="#local-6989586621679277386"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277380"><span id="local-6989586621679277382"><span id="local-6989586621679277384"><span class="annot"><span class="annottext">Get Branch
+</span><a href="#local-6989586621679277442"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277436"><span id="local-6989586621679277438"><span id="local-6989586621679277440"><span class="annot"><span class="annottext">Get Branch
 [Branch] -&gt; Put
 Branch -&gt; Put
 (Branch -&gt; Put) -&gt; Get Branch -&gt; ([Branch] -&gt; Put) -&gt; Binary Branch
@@ -442,12 +442,12 @@ get :: Get Branch
 $cget :: Get Branch
 put :: Branch -&gt; Put
 $cput :: Branch -&gt; Put
-</span><a href="#local-6989586621679277380"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277378"><span class="annot"><span class="annottext">Branch -&gt; ()
+</span><a href="#local-6989586621679277436"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277434"><span class="annot"><span class="annottext">Branch -&gt; ()
 (Branch -&gt; ()) -&gt; NFData Branch
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: Branch -&gt; ()
 $crnf :: Branch -&gt; ()
-</span><a href="#local-6989586621679277378"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679277434"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-96"></span><span>
 </span><span id="line-97"></span><span class="hs-comment">-- | Version change of a package</span><span>
 </span><span id="line-98"></span><span class="hs-comment">--</span><span>
@@ -464,7 +464,7 @@ $crnf :: Branch -&gt; ()
 </span><span id="line-107"></span><span>    </span><span id="vcNew"><span class="annot"><span class="annottext">VersionChange -&gt; Version
 </span><a href="NvFetcher.Types.html#vcNew"><span class="hs-identifier hs-var hs-var">vcNew</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span>
 </span><span id="line-108"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-109"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277370"><span id="local-6989586621679277372"><span class="annot"><span class="annottext">VersionChange -&gt; VersionChange -&gt; Bool
+</span><span id="line-109"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277426"><span id="local-6989586621679277428"><span class="annot"><span class="annottext">VersionChange -&gt; VersionChange -&gt; Bool
 (VersionChange -&gt; VersionChange -&gt; Bool)
 -&gt; (VersionChange -&gt; VersionChange -&gt; Bool) -&gt; Eq VersionChange
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -474,9 +474,9 @@ $c/= :: VersionChange -&gt; VersionChange -&gt; Bool
 $c== :: VersionChange -&gt; VersionChange -&gt; Bool
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">)</span><span>
 </span><span id="line-110"></span><span>
-</span><span id="line-111"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679277365"><span id="local-6989586621679277368"><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionChange"><span class="hs-identifier hs-type">VersionChange</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-112"></span><span>  </span><span id="local-6989586621679277364"><span class="annot"><span class="annottext">show :: VersionChange -&gt; String
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">show</span></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionChange"><span class="hs-identifier hs-type">VersionChange</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679277360"><span id="local-6989586621679277361"><span id="local-6989586621679277362"><span class="annot"><span class="annottext">Maybe Version
+</span><span id="line-111"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679277421"><span id="local-6989586621679277424"><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionChange"><span class="hs-identifier hs-type">VersionChange</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-112"></span><span>  </span><span id="local-6989586621679277420"><span class="annot"><span class="annottext">show :: VersionChange -&gt; String
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">show</span></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionChange"><span class="hs-identifier hs-type">VersionChange</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679277416"><span id="local-6989586621679277417"><span id="local-6989586621679277418"><span class="annot"><span class="annottext">Maybe Version
 PackageName
 Version
 vcNew :: Version
@@ -485,12 +485,12 @@ vcName :: PackageName
 vcNew :: VersionChange -&gt; Version
 vcOld :: VersionChange -&gt; Maybe Version
 vcName :: VersionChange -&gt; PackageName
-</span><a href="#local-6989586621679277360"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span>
+</span><a href="#local-6989586621679277416"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-113"></span><span>    </span><span class="annot"><span class="annottext">PackageName -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">(PackageName -&gt; String) -&gt; PackageName -&gt; String
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679277362"><span class="hs-identifier hs-var">vcName</span></a></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><a href="#local-6989586621679277418"><span class="hs-identifier hs-var">vcName</span></a></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
 </span><span class="hs-string">&quot;: &quot;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
@@ -500,22 +500,22 @@ forall a. a -&gt; Maybe a -&gt; a
 </span><span class="hs-identifier hs-var">fromMaybe</span></span><span> </span><span class="annot"><span class="annottext">PackageName
 </span><span class="hs-string">&quot;&#8709;&quot;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Maybe Version -&gt; Maybe PackageName
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679277361"><span class="hs-identifier hs-var">vcOld</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><a href="#local-6989586621679277417"><span class="hs-identifier hs-var">vcOld</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
 </span><span class="hs-string">&quot; &#8594; &quot;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; PackageName
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679277360"><span class="hs-identifier hs-var">vcNew</span></a></span><span>
+</span><a href="#local-6989586621679277416"><span class="hs-identifier hs-var">vcNew</span></a></span><span>
 </span><span id="line-114"></span><span>
 </span><span id="line-115"></span><span class="hs-comment">-- | Nix expression</span><span>
 </span><span id="line-116"></span><span class="hs-keyword">type</span><span> </span><span id="NixExpr"><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-var">NixExpr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
 </span><span id="line-117"></span><span>
 </span><span id="line-118"></span><span class="hs-comment">--------------------------------------------------------------------------------</span><span>
 </span><span id="line-119"></span><span>
-</span><span id="line-120"></span><span id="local-6989586621679277357"><span id="local-6989586621679277358"></span></span><span class="hs-keyword">data</span><span> </span><span id="VersionSortMethod"><span class="annot"><a href="NvFetcher.Types.html#VersionSortMethod"><span class="hs-identifier hs-var">VersionSortMethod</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ParseVersion"><span class="annot"><a href="NvFetcher.Types.html#ParseVersion"><span class="hs-identifier hs-var">ParseVersion</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="Vercmp"><span class="annot"><a href="NvFetcher.Types.html#Vercmp"><span class="hs-identifier hs-var">Vercmp</span></a></span></span><span>
-</span><span id="line-121"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277351"><span id="local-6989586621679277353"><span class="annot"><span class="annottext">VersionSortMethod -&gt; VersionSortMethod -&gt; Bool
+</span><span id="line-120"></span><span id="local-6989586621679277413"><span id="local-6989586621679277414"></span></span><span class="hs-keyword">data</span><span> </span><span id="VersionSortMethod"><span class="annot"><a href="NvFetcher.Types.html#VersionSortMethod"><span class="hs-identifier hs-var">VersionSortMethod</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ParseVersion"><span class="annot"><a href="NvFetcher.Types.html#ParseVersion"><span class="hs-identifier hs-var">ParseVersion</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="Vercmp"><span class="annot"><a href="NvFetcher.Types.html#Vercmp"><span class="hs-identifier hs-var">Vercmp</span></a></span></span><span>
+</span><span id="line-121"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277407"><span id="local-6989586621679277409"><span class="annot"><span class="annottext">VersionSortMethod -&gt; VersionSortMethod -&gt; Bool
 (VersionSortMethod -&gt; VersionSortMethod -&gt; Bool)
 -&gt; (VersionSortMethod -&gt; VersionSortMethod -&gt; Bool)
 -&gt; Eq VersionSortMethod
@@ -524,7 +524,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: VersionSortMethod -&gt; VersionSortMethod -&gt; Bool
 == :: VersionSortMethod -&gt; VersionSortMethod -&gt; Bool
 $c== :: VersionSortMethod -&gt; VersionSortMethod -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277336"><span id="local-6989586621679277338"><span id="local-6989586621679277340"><span id="local-6989586621679277342"><span id="local-6989586621679277344"><span id="local-6989586621679277346"><span id="local-6989586621679277348"><span class="annot"><span class="annottext">Eq VersionSortMethod
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277392"><span id="local-6989586621679277394"><span id="local-6989586621679277396"><span id="local-6989586621679277398"><span id="local-6989586621679277400"><span id="local-6989586621679277402"><span id="local-6989586621679277404"><span class="annot"><span class="annottext">Eq VersionSortMethod
 Eq VersionSortMethod
 -&gt; (VersionSortMethod -&gt; VersionSortMethod -&gt; Ordering)
 -&gt; (VersionSortMethod -&gt; VersionSortMethod -&gt; Bool)
@@ -562,7 +562,7 @@ $c&lt; :: VersionSortMethod -&gt; VersionSortMethod -&gt; Bool
 compare :: VersionSortMethod -&gt; VersionSortMethod -&gt; Ordering
 $ccompare :: VersionSortMethod -&gt; VersionSortMethod -&gt; Ordering
 $cp1Ord :: Eq VersionSortMethod
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277320"><span id="local-6989586621679277322"><span id="local-6989586621679277324"><span id="local-6989586621679277326"><span id="local-6989586621679277328"><span id="local-6989586621679277330"><span id="local-6989586621679277332"><span id="local-6989586621679277334"><span class="annot"><span class="annottext">Int -&gt; VersionSortMethod
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277376"><span id="local-6989586621679277378"><span id="local-6989586621679277380"><span id="local-6989586621679277382"><span id="local-6989586621679277384"><span id="local-6989586621679277386"><span id="local-6989586621679277388"><span id="local-6989586621679277390"><span class="annot"><span class="annottext">Int -&gt; VersionSortMethod
 VersionSortMethod -&gt; Int
 VersionSortMethod -&gt; [VersionSortMethod]
 VersionSortMethod -&gt; VersionSortMethod
@@ -616,7 +616,7 @@ forall a.
 (forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
 $cto :: forall x. Rep VersionSortMethod x -&gt; VersionSortMethod
 $cfrom :: forall x. VersionSortMethod -&gt; Rep VersionSortMethod x
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277313"><span id="local-6989586621679277315"><span class="annot"><span class="annottext">Int -&gt; VersionSortMethod -&gt; Int
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277369"><span id="local-6989586621679277371"><span class="annot"><span class="annottext">Int -&gt; VersionSortMethod -&gt; Int
 VersionSortMethod -&gt; Int
 (Int -&gt; VersionSortMethod -&gt; Int)
 -&gt; (VersionSortMethod -&gt; Int) -&gt; Hashable VersionSortMethod
@@ -625,7 +625,7 @@ hash :: VersionSortMethod -&gt; Int
 $chash :: VersionSortMethod -&gt; Int
 hashWithSalt :: Int -&gt; VersionSortMethod -&gt; Int
 $chashWithSalt :: Int -&gt; VersionSortMethod -&gt; Int
-</span><a href="#local-6989586621679277313"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277307"><span id="local-6989586621679277309"><span id="local-6989586621679277311"><span class="annot"><span class="annottext">Get VersionSortMethod
+</span><a href="#local-6989586621679277369"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277363"><span id="local-6989586621679277365"><span id="local-6989586621679277367"><span class="annot"><span class="annottext">Get VersionSortMethod
 [VersionSortMethod] -&gt; Put
 VersionSortMethod -&gt; Put
 (VersionSortMethod -&gt; Put)
@@ -639,16 +639,16 @@ get :: Get VersionSortMethod
 $cget :: Get VersionSortMethod
 put :: VersionSortMethod -&gt; Put
 $cput :: VersionSortMethod -&gt; Put
-</span><a href="#local-6989586621679277307"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277305"><span class="annot"><span class="annottext">VersionSortMethod -&gt; ()
+</span><a href="#local-6989586621679277363"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277361"><span class="annot"><span class="annottext">VersionSortMethod -&gt; ()
 (VersionSortMethod -&gt; ()) -&gt; NFData VersionSortMethod
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: VersionSortMethod -&gt; ()
 $crnf :: VersionSortMethod -&gt; ()
-</span><a href="#local-6989586621679277305"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679277361"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-122"></span><span>
-</span><span id="line-123"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679277300"><span id="local-6989586621679277303"><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSortMethod"><span class="hs-identifier hs-type">VersionSortMethod</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-124"></span><span>  </span><span id="local-6989586621679277299"><span class="annot"><span class="annottext">show :: VersionSortMethod -&gt; String
-</span><a href="#local-6989586621679277299"><span class="hs-identifier hs-var hs-var hs-var hs-var">show</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
+</span><span id="line-123"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679277356"><span id="local-6989586621679277359"><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSortMethod"><span class="hs-identifier hs-type">VersionSortMethod</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-124"></span><span>  </span><span id="local-6989586621679277355"><span class="annot"><span class="annottext">show :: VersionSortMethod -&gt; String
+</span><a href="#local-6989586621679277355"><span class="hs-identifier hs-var hs-var hs-var hs-var">show</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
 </span><span id="line-125"></span><span>    </span><span class="annot"><span class="annottext">VersionSortMethod
 </span><a href="NvFetcher.Types.html#ParseVersion"><span class="hs-identifier hs-var">ParseVersion</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;parse_version&quot;</span></span><span>
@@ -657,13 +657,13 @@ $crnf :: VersionSortMethod -&gt; ()
 </span><span class="hs-string">&quot;vercmp&quot;</span></span><span>
 </span><span id="line-127"></span><span>
 </span><span id="line-128"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Default</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSortMethod"><span class="hs-identifier hs-type">VersionSortMethod</span></a></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-129"></span><span>  </span><span id="local-6989586621679277297"><span class="annot"><span class="annottext">def :: VersionSortMethod
+</span><span id="line-129"></span><span>  </span><span id="local-6989586621679277353"><span class="annot"><span class="annottext">def :: VersionSortMethod
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">def</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">VersionSortMethod
 </span><a href="NvFetcher.Types.html#ParseVersion"><span class="hs-identifier hs-var">ParseVersion</span></a></span><span>
 </span><span id="line-130"></span><span>
 </span><span id="line-131"></span><span class="hs-comment">-- | Filter-like configuration for some version sources.</span><span>
 </span><span id="line-132"></span><span class="hs-comment">-- See &lt;https://nvchecker.readthedocs.io/en/latest/usage.html#list-options&gt; for details.</span><span>
-</span><span id="line-133"></span><span id="local-6989586621679277294"><span id="local-6989586621679277295"></span></span><span class="hs-keyword">data</span><span> </span><span id="ListOptions"><span class="annot"><a href="NvFetcher.Types.html#ListOptions"><span class="hs-identifier hs-var">ListOptions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ListOptions"><span class="annot"><a href="NvFetcher.Types.html#ListOptions"><span class="hs-identifier hs-var">ListOptions</span></a></span></span><span>
+</span><span id="line-133"></span><span id="local-6989586621679277350"><span id="local-6989586621679277351"></span></span><span class="hs-keyword">data</span><span> </span><span id="ListOptions"><span class="annot"><a href="NvFetcher.Types.html#ListOptions"><span class="hs-identifier hs-var">ListOptions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ListOptions"><span class="annot"><a href="NvFetcher.Types.html#ListOptions"><span class="hs-identifier hs-var">ListOptions</span></a></span></span><span>
 </span><span id="line-134"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="_includeRegex"><span class="annot"><span class="annottext">ListOptions -&gt; Maybe PackageName
 </span><a href="NvFetcher.Types.html#_includeRegex"><span class="hs-identifier hs-var hs-var">_includeRegex</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
 </span><span id="line-135"></span><span>    </span><span id="_excludeRegex"><span class="annot"><span class="annottext">ListOptions -&gt; Maybe PackageName
@@ -673,7 +673,7 @@ $crnf :: VersionSortMethod -&gt; ()
 </span><span id="line-137"></span><span>    </span><span id="_ignored"><span class="annot"><span class="annottext">ListOptions -&gt; Maybe PackageName
 </span><a href="NvFetcher.Types.html#_ignored"><span class="hs-identifier hs-var hs-var">_ignored</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
 </span><span id="line-138"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-139"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277283"><span id="local-6989586621679277285"><span id="local-6989586621679277287"><span class="annot"><span class="annottext">Int -&gt; ListOptions -&gt; ShowS
+</span><span id="line-139"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277339"><span id="local-6989586621679277341"><span id="local-6989586621679277343"><span class="annot"><span class="annottext">Int -&gt; ListOptions -&gt; ShowS
 [ListOptions] -&gt; ShowS
 ListOptions -&gt; String
 (Int -&gt; ListOptions -&gt; ShowS)
@@ -688,7 +688,7 @@ show :: ListOptions -&gt; String
 $cshow :: ListOptions -&gt; String
 showsPrec :: Int -&gt; ListOptions -&gt; ShowS
 $cshowsPrec :: Int -&gt; ListOptions -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277279"><span id="local-6989586621679277281"><span class="annot"><span class="annottext">ListOptions -&gt; ListOptions -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277335"><span id="local-6989586621679277337"><span class="annot"><span class="annottext">ListOptions -&gt; ListOptions -&gt; Bool
 (ListOptions -&gt; ListOptions -&gt; Bool)
 -&gt; (ListOptions -&gt; ListOptions -&gt; Bool) -&gt; Eq ListOptions
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -696,7 +696,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: ListOptions -&gt; ListOptions -&gt; Bool
 == :: ListOptions -&gt; ListOptions -&gt; Bool
 $c== :: ListOptions -&gt; ListOptions -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277264"><span id="local-6989586621679277266"><span id="local-6989586621679277268"><span id="local-6989586621679277270"><span id="local-6989586621679277272"><span id="local-6989586621679277274"><span id="local-6989586621679277276"><span class="annot"><span class="annottext">Eq ListOptions
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277320"><span id="local-6989586621679277322"><span id="local-6989586621679277324"><span id="local-6989586621679277326"><span id="local-6989586621679277328"><span id="local-6989586621679277330"><span id="local-6989586621679277332"><span class="annot"><span class="annottext">Eq ListOptions
 Eq ListOptions
 -&gt; (ListOptions -&gt; ListOptions -&gt; Ordering)
 -&gt; (ListOptions -&gt; ListOptions -&gt; Bool)
@@ -743,7 +743,7 @@ forall a.
 (forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
 $cto :: forall x. Rep ListOptions x -&gt; ListOptions
 $cfrom :: forall x. ListOptions -&gt; Rep ListOptions x
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277258"><span id="local-6989586621679277260"><span class="annot"><span class="annottext">Int -&gt; ListOptions -&gt; Int
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277314"><span id="local-6989586621679277316"><span class="annot"><span class="annottext">Int -&gt; ListOptions -&gt; Int
 ListOptions -&gt; Int
 (Int -&gt; ListOptions -&gt; Int)
 -&gt; (ListOptions -&gt; Int) -&gt; Hashable ListOptions
@@ -752,7 +752,7 @@ hash :: ListOptions -&gt; Int
 $chash :: ListOptions -&gt; Int
 hashWithSalt :: Int -&gt; ListOptions -&gt; Int
 $chashWithSalt :: Int -&gt; ListOptions -&gt; Int
-</span><a href="#local-6989586621679277258"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277252"><span id="local-6989586621679277254"><span id="local-6989586621679277256"><span class="annot"><span class="annottext">Get ListOptions
+</span><a href="#local-6989586621679277314"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277308"><span id="local-6989586621679277310"><span id="local-6989586621679277312"><span class="annot"><span class="annottext">Get ListOptions
 [ListOptions] -&gt; Put
 ListOptions -&gt; Put
 (ListOptions -&gt; Put)
@@ -764,21 +764,21 @@ get :: Get ListOptions
 $cget :: Get ListOptions
 put :: ListOptions -&gt; Put
 $cput :: ListOptions -&gt; Put
-</span><a href="#local-6989586621679277252"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277250"><span class="annot"><span class="annottext">ListOptions -&gt; ()
+</span><a href="#local-6989586621679277308"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277306"><span class="annot"><span class="annottext">ListOptions -&gt; ()
 (ListOptions -&gt; ()) -&gt; NFData ListOptions
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: ListOptions -&gt; ()
 $crnf :: ListOptions -&gt; ()
-</span><a href="#local-6989586621679277250"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277248"><span class="annot"><span class="annottext">ListOptions
+</span><a href="#local-6989586621679277306"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277304"><span class="annot"><span class="annottext">ListOptions
 ListOptions -&gt; Default ListOptions
 forall a. a -&gt; Default a
 def :: ListOptions
 $cdef :: ListOptions
-</span><a href="#local-6989586621679277248"><span class="hs-identifier hs-var hs-var hs-var hs-var">Default</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679277304"><span class="hs-identifier hs-var hs-var hs-var hs-var">Default</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-140"></span><span>
 </span><span id="line-141"></span><span class="hs-comment">-- | Configuration available for evey version sourece.</span><span>
 </span><span id="line-142"></span><span class="hs-comment">-- See &lt;https://nvchecker.readthedocs.io/en/latest/usage.html#global-options&gt; for details.</span><span>
-</span><span id="line-143"></span><span id="local-6989586621679277246"><span id="local-6989586621679277247"></span></span><span class="hs-keyword">data</span><span> </span><span id="NvcheckerOptions"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-var">NvcheckerOptions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="NvcheckerOptions"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-var">NvcheckerOptions</span></a></span></span><span>
+</span><span id="line-143"></span><span id="local-6989586621679277302"><span id="local-6989586621679277303"></span></span><span class="hs-keyword">data</span><span> </span><span id="NvcheckerOptions"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-var">NvcheckerOptions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="NvcheckerOptions"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-var">NvcheckerOptions</span></a></span></span><span>
 </span><span id="line-144"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="_stripPrefix"><span class="annot"><span class="annottext">NvcheckerOptions -&gt; Maybe PackageName
 </span><a href="NvFetcher.Types.html#_stripPrefix"><span class="hs-identifier hs-var hs-var">_stripPrefix</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
 </span><span id="line-145"></span><span>    </span><span id="_fromPattern"><span class="annot"><span class="annottext">NvcheckerOptions -&gt; Maybe PackageName
@@ -786,7 +786,7 @@ $cdef :: ListOptions
 </span><span id="line-146"></span><span>    </span><span id="_toPattern"><span class="annot"><span class="annottext">NvcheckerOptions -&gt; Maybe PackageName
 </span><a href="NvFetcher.Types.html#_toPattern"><span class="hs-identifier hs-var hs-var">_toPattern</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
 </span><span id="line-147"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-148"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277236"><span id="local-6989586621679277238"><span id="local-6989586621679277240"><span class="annot"><span class="annottext">Int -&gt; NvcheckerOptions -&gt; ShowS
+</span><span id="line-148"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277292"><span id="local-6989586621679277294"><span id="local-6989586621679277296"><span class="annot"><span class="annottext">Int -&gt; NvcheckerOptions -&gt; ShowS
 [NvcheckerOptions] -&gt; ShowS
 NvcheckerOptions -&gt; String
 (Int -&gt; NvcheckerOptions -&gt; ShowS)
@@ -801,7 +801,7 @@ show :: NvcheckerOptions -&gt; String
 $cshow :: NvcheckerOptions -&gt; String
 showsPrec :: Int -&gt; NvcheckerOptions -&gt; ShowS
 $cshowsPrec :: Int -&gt; NvcheckerOptions -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277232"><span id="local-6989586621679277234"><span class="annot"><span class="annottext">NvcheckerOptions -&gt; NvcheckerOptions -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277288"><span id="local-6989586621679277290"><span class="annot"><span class="annottext">NvcheckerOptions -&gt; NvcheckerOptions -&gt; Bool
 (NvcheckerOptions -&gt; NvcheckerOptions -&gt; Bool)
 -&gt; (NvcheckerOptions -&gt; NvcheckerOptions -&gt; Bool)
 -&gt; Eq NvcheckerOptions
@@ -810,7 +810,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: NvcheckerOptions -&gt; NvcheckerOptions -&gt; Bool
 == :: NvcheckerOptions -&gt; NvcheckerOptions -&gt; Bool
 $c== :: NvcheckerOptions -&gt; NvcheckerOptions -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277217"><span id="local-6989586621679277219"><span id="local-6989586621679277221"><span id="local-6989586621679277223"><span id="local-6989586621679277225"><span id="local-6989586621679277227"><span id="local-6989586621679277229"><span class="annot"><span class="annottext">Eq NvcheckerOptions
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277273"><span id="local-6989586621679277275"><span id="local-6989586621679277277"><span id="local-6989586621679277279"><span id="local-6989586621679277281"><span id="local-6989586621679277283"><span id="local-6989586621679277285"><span class="annot"><span class="annottext">Eq NvcheckerOptions
 Eq NvcheckerOptions
 -&gt; (NvcheckerOptions -&gt; NvcheckerOptions -&gt; Ordering)
 -&gt; (NvcheckerOptions -&gt; NvcheckerOptions -&gt; Bool)
@@ -857,7 +857,7 @@ forall a.
 (forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
 $cto :: forall x. Rep NvcheckerOptions x -&gt; NvcheckerOptions
 $cfrom :: forall x. NvcheckerOptions -&gt; Rep NvcheckerOptions x
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277211"><span id="local-6989586621679277213"><span class="annot"><span class="annottext">Int -&gt; NvcheckerOptions -&gt; Int
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277267"><span id="local-6989586621679277269"><span class="annot"><span class="annottext">Int -&gt; NvcheckerOptions -&gt; Int
 NvcheckerOptions -&gt; Int
 (Int -&gt; NvcheckerOptions -&gt; Int)
 -&gt; (NvcheckerOptions -&gt; Int) -&gt; Hashable NvcheckerOptions
@@ -866,7 +866,7 @@ hash :: NvcheckerOptions -&gt; Int
 $chash :: NvcheckerOptions -&gt; Int
 hashWithSalt :: Int -&gt; NvcheckerOptions -&gt; Int
 $chashWithSalt :: Int -&gt; NvcheckerOptions -&gt; Int
-</span><a href="#local-6989586621679277211"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277205"><span id="local-6989586621679277207"><span id="local-6989586621679277209"><span class="annot"><span class="annottext">Get NvcheckerOptions
+</span><a href="#local-6989586621679277267"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277261"><span id="local-6989586621679277263"><span id="local-6989586621679277265"><span class="annot"><span class="annottext">Get NvcheckerOptions
 [NvcheckerOptions] -&gt; Put
 NvcheckerOptions -&gt; Put
 (NvcheckerOptions -&gt; Put)
@@ -880,20 +880,20 @@ get :: Get NvcheckerOptions
 $cget :: Get NvcheckerOptions
 put :: NvcheckerOptions -&gt; Put
 $cput :: NvcheckerOptions -&gt; Put
-</span><a href="#local-6989586621679277205"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277203"><span class="annot"><span class="annottext">NvcheckerOptions -&gt; ()
+</span><a href="#local-6989586621679277261"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277259"><span class="annot"><span class="annottext">NvcheckerOptions -&gt; ()
 (NvcheckerOptions -&gt; ()) -&gt; NFData NvcheckerOptions
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: NvcheckerOptions -&gt; ()
 $crnf :: NvcheckerOptions -&gt; ()
-</span><a href="#local-6989586621679277203"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277201"><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679277259"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277257"><span class="annot"><span class="annottext">NvcheckerOptions
 NvcheckerOptions -&gt; Default NvcheckerOptions
 forall a. a -&gt; Default a
 def :: NvcheckerOptions
 $cdef :: NvcheckerOptions
-</span><a href="#local-6989586621679277201"><span class="hs-identifier hs-var hs-var hs-var hs-var">Default</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679277257"><span class="hs-identifier hs-var hs-var hs-var hs-var">Default</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-149"></span><span>
 </span><span id="line-150"></span><span class="hs-comment">-- | Upstream version source for nvchecker to check</span><span>
-</span><span id="line-151"></span><span id="local-6989586621679277199"><span id="local-6989586621679277200"></span></span><span class="hs-keyword">data</span><span> </span><span id="VersionSource"><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-var">VersionSource</span></a></span></span><span>
+</span><span id="line-151"></span><span id="local-6989586621679277255"><span id="local-6989586621679277256"></span></span><span class="hs-keyword">data</span><span> </span><span id="VersionSource"><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-var">VersionSource</span></a></span></span><span>
 </span><span id="line-152"></span><span>  </span><span class="hs-glyph">=</span><span> </span><span id="GitHubRelease"><span class="annot"><a href="NvFetcher.Types.html#GitHubRelease"><span class="hs-identifier hs-var">GitHubRelease</span></a></span></span><span> </span><span class="hs-special">{</span><span id="_owner"><span class="annot"><span class="annottext">VersionSource -&gt; PackageName
 </span><a href="NvFetcher.Types.html#_owner"><span class="hs-identifier hs-var hs-var">_owner</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span> </span><span id="_repo"><span class="annot"><span class="annottext">VersionSource -&gt; PackageName
 </span><a href="NvFetcher.Types.html#_repo"><span class="hs-identifier hs-var hs-var">_repo</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">}</span><span>
@@ -923,7 +923,7 @@ $cdef :: NvcheckerOptions
 </span><a href="NvFetcher.Types.html#_vsmExtName"><span class="hs-identifier hs-var hs-var">_vsmExtName</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">}</span><span>
 </span><span id="line-164"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="Cmd"><span class="annot"><a href="NvFetcher.Types.html#Cmd"><span class="hs-identifier hs-var">Cmd</span></a></span></span><span> </span><span class="hs-special">{</span><span id="_vcmd"><span class="annot"><span class="annottext">VersionSource -&gt; PackageName
 </span><a href="NvFetcher.Types.html#_vcmd"><span class="hs-identifier hs-var hs-var">_vcmd</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">}</span><span>
-</span><span id="line-165"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277164"><span id="local-6989586621679277166"><span id="local-6989586621679277168"><span class="annot"><span class="annottext">Int -&gt; VersionSource -&gt; ShowS
+</span><span id="line-165"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277220"><span id="local-6989586621679277222"><span id="local-6989586621679277224"><span class="annot"><span class="annottext">Int -&gt; VersionSource -&gt; ShowS
 [VersionSource] -&gt; ShowS
 VersionSource -&gt; String
 (Int -&gt; VersionSource -&gt; ShowS)
@@ -938,7 +938,7 @@ show :: VersionSource -&gt; String
 $cshow :: VersionSource -&gt; String
 showsPrec :: Int -&gt; VersionSource -&gt; ShowS
 $cshowsPrec :: Int -&gt; VersionSource -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277160"><span id="local-6989586621679277162"><span class="annot"><span class="annottext">VersionSource -&gt; VersionSource -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277216"><span id="local-6989586621679277218"><span class="annot"><span class="annottext">VersionSource -&gt; VersionSource -&gt; Bool
 (VersionSource -&gt; VersionSource -&gt; Bool)
 -&gt; (VersionSource -&gt; VersionSource -&gt; Bool) -&gt; Eq VersionSource
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -946,7 +946,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: VersionSource -&gt; VersionSource -&gt; Bool
 == :: VersionSource -&gt; VersionSource -&gt; Bool
 $c== :: VersionSource -&gt; VersionSource -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277145"><span id="local-6989586621679277147"><span id="local-6989586621679277149"><span id="local-6989586621679277151"><span id="local-6989586621679277153"><span id="local-6989586621679277155"><span id="local-6989586621679277157"><span class="annot"><span class="annottext">Eq VersionSource
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277201"><span id="local-6989586621679277203"><span id="local-6989586621679277205"><span id="local-6989586621679277207"><span id="local-6989586621679277209"><span id="local-6989586621679277211"><span id="local-6989586621679277213"><span class="annot"><span class="annottext">Eq VersionSource
 Eq VersionSource
 -&gt; (VersionSource -&gt; VersionSource -&gt; Ordering)
 -&gt; (VersionSource -&gt; VersionSource -&gt; Bool)
@@ -993,7 +993,7 @@ forall a.
 (forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
 $cto :: forall x. Rep VersionSource x -&gt; VersionSource
 $cfrom :: forall x. VersionSource -&gt; Rep VersionSource x
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277139"><span id="local-6989586621679277141"><span class="annot"><span class="annottext">Int -&gt; VersionSource -&gt; Int
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277195"><span id="local-6989586621679277197"><span class="annot"><span class="annottext">Int -&gt; VersionSource -&gt; Int
 VersionSource -&gt; Int
 (Int -&gt; VersionSource -&gt; Int)
 -&gt; (VersionSource -&gt; Int) -&gt; Hashable VersionSource
@@ -1002,7 +1002,7 @@ hash :: VersionSource -&gt; Int
 $chash :: VersionSource -&gt; Int
 hashWithSalt :: Int -&gt; VersionSource -&gt; Int
 $chashWithSalt :: Int -&gt; VersionSource -&gt; Int
-</span><a href="#local-6989586621679277139"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277133"><span id="local-6989586621679277135"><span id="local-6989586621679277137"><span class="annot"><span class="annottext">Get VersionSource
+</span><a href="#local-6989586621679277195"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277189"><span id="local-6989586621679277191"><span id="local-6989586621679277193"><span class="annot"><span class="annottext">Get VersionSource
 [VersionSource] -&gt; Put
 VersionSource -&gt; Put
 (VersionSource -&gt; Put)
@@ -1016,16 +1016,16 @@ get :: Get VersionSource
 $cget :: Get VersionSource
 put :: VersionSource -&gt; Put
 $cput :: VersionSource -&gt; Put
-</span><a href="#local-6989586621679277133"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277131"><span class="annot"><span class="annottext">VersionSource -&gt; ()
+</span><a href="#local-6989586621679277189"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277187"><span class="annot"><span class="annottext">VersionSource -&gt; ()
 (VersionSource -&gt; ()) -&gt; NFData VersionSource
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: VersionSource -&gt; ()
 $crnf :: VersionSource -&gt; ()
-</span><a href="#local-6989586621679277131"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679277187"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-166"></span><span>
 </span><span id="line-167"></span><span class="hs-comment">-- | The input of nvchecker</span><span>
-</span><span id="line-168"></span><span id="local-6989586621679277129"><span id="local-6989586621679277130"></span></span><span class="hs-keyword">data</span><span> </span><span id="NvcheckerQ"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerQ"><span class="hs-identifier hs-var">NvcheckerQ</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="NvcheckerQ"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerQ"><span class="hs-identifier hs-var">NvcheckerQ</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-type">VersionSource</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span>
-</span><span id="line-169"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277122"><span id="local-6989586621679277124"><span id="local-6989586621679277126"><span class="annot"><span class="annottext">Int -&gt; NvcheckerQ -&gt; ShowS
+</span><span id="line-168"></span><span id="local-6989586621679277185"><span id="local-6989586621679277186"></span></span><span class="hs-keyword">data</span><span> </span><span id="NvcheckerQ"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerQ"><span class="hs-identifier hs-var">NvcheckerQ</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="NvcheckerQ"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerQ"><span class="hs-identifier hs-var">NvcheckerQ</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-type">VersionSource</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span>
+</span><span id="line-169"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277178"><span id="local-6989586621679277180"><span id="local-6989586621679277182"><span class="annot"><span class="annottext">Int -&gt; NvcheckerQ -&gt; ShowS
 [NvcheckerQ] -&gt; ShowS
 NvcheckerQ -&gt; String
 (Int -&gt; NvcheckerQ -&gt; ShowS)
@@ -1040,7 +1040,7 @@ show :: NvcheckerQ -&gt; String
 $cshow :: NvcheckerQ -&gt; String
 showsPrec :: Int -&gt; NvcheckerQ -&gt; ShowS
 $cshowsPrec :: Int -&gt; NvcheckerQ -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277118"><span id="local-6989586621679277120"><span class="annot"><span class="annottext">NvcheckerQ -&gt; NvcheckerQ -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277174"><span id="local-6989586621679277176"><span class="annot"><span class="annottext">NvcheckerQ -&gt; NvcheckerQ -&gt; Bool
 (NvcheckerQ -&gt; NvcheckerQ -&gt; Bool)
 -&gt; (NvcheckerQ -&gt; NvcheckerQ -&gt; Bool) -&gt; Eq NvcheckerQ
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -1048,7 +1048,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: NvcheckerQ -&gt; NvcheckerQ -&gt; Bool
 == :: NvcheckerQ -&gt; NvcheckerQ -&gt; Bool
 $c== :: NvcheckerQ -&gt; NvcheckerQ -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277103"><span id="local-6989586621679277105"><span id="local-6989586621679277107"><span id="local-6989586621679277109"><span id="local-6989586621679277111"><span id="local-6989586621679277113"><span id="local-6989586621679277115"><span class="annot"><span class="annottext">Eq NvcheckerQ
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277159"><span id="local-6989586621679277161"><span id="local-6989586621679277163"><span id="local-6989586621679277165"><span id="local-6989586621679277167"><span id="local-6989586621679277169"><span id="local-6989586621679277171"><span class="annot"><span class="annottext">Eq NvcheckerQ
 Eq NvcheckerQ
 -&gt; (NvcheckerQ -&gt; NvcheckerQ -&gt; Ordering)
 -&gt; (NvcheckerQ -&gt; NvcheckerQ -&gt; Bool)
@@ -1094,7 +1094,7 @@ forall a.
 (forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
 $cto :: forall x. Rep NvcheckerQ x -&gt; NvcheckerQ
 $cfrom :: forall x. NvcheckerQ -&gt; Rep NvcheckerQ x
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277097"><span id="local-6989586621679277099"><span class="annot"><span class="annottext">Int -&gt; NvcheckerQ -&gt; Int
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277153"><span id="local-6989586621679277155"><span class="annot"><span class="annottext">Int -&gt; NvcheckerQ -&gt; Int
 NvcheckerQ -&gt; Int
 (Int -&gt; NvcheckerQ -&gt; Int)
 -&gt; (NvcheckerQ -&gt; Int) -&gt; Hashable NvcheckerQ
@@ -1103,7 +1103,7 @@ hash :: NvcheckerQ -&gt; Int
 $chash :: NvcheckerQ -&gt; Int
 hashWithSalt :: Int -&gt; NvcheckerQ -&gt; Int
 $chashWithSalt :: Int -&gt; NvcheckerQ -&gt; Int
-</span><a href="#local-6989586621679277097"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277091"><span id="local-6989586621679277093"><span id="local-6989586621679277095"><span class="annot"><span class="annottext">Get NvcheckerQ
+</span><a href="#local-6989586621679277153"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277147"><span id="local-6989586621679277149"><span id="local-6989586621679277151"><span class="annot"><span class="annottext">Get NvcheckerQ
 [NvcheckerQ] -&gt; Put
 NvcheckerQ -&gt; Put
 (NvcheckerQ -&gt; Put)
@@ -1115,15 +1115,15 @@ get :: Get NvcheckerQ
 $cget :: Get NvcheckerQ
 put :: NvcheckerQ -&gt; Put
 $cput :: NvcheckerQ -&gt; Put
-</span><a href="#local-6989586621679277091"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277089"><span class="annot"><span class="annottext">NvcheckerQ -&gt; ()
+</span><a href="#local-6989586621679277147"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277145"><span class="annot"><span class="annottext">NvcheckerQ -&gt; ()
 (NvcheckerQ -&gt; ()) -&gt; NFData NvcheckerQ
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: NvcheckerQ -&gt; ()
 $crnf :: NvcheckerQ -&gt; ()
-</span><a href="#local-6989586621679277089"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679277145"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-170"></span><span>
 </span><span id="line-171"></span><span class="hs-comment">-- | The result of running nvchecker</span><span>
-</span><span id="line-172"></span><span id="local-6989586621679277087"><span id="local-6989586621679277088"></span></span><span class="hs-keyword">data</span><span> </span><span id="NvcheckerA"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerA"><span class="hs-identifier hs-var">NvcheckerA</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="NvcheckerA"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerA"><span class="hs-identifier hs-var">NvcheckerA</span></a></span></span><span>
+</span><span id="line-172"></span><span id="local-6989586621679277143"><span id="local-6989586621679277144"></span></span><span class="hs-keyword">data</span><span> </span><span id="NvcheckerA"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerA"><span class="hs-identifier hs-var">NvcheckerA</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="NvcheckerA"><span class="annot"><a href="NvFetcher.Types.html#NvcheckerA"><span class="hs-identifier hs-var">NvcheckerA</span></a></span></span><span>
 </span><span id="line-173"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="nvNow"><span class="annot"><span class="annottext">NvcheckerA -&gt; Version
 </span><a href="NvFetcher.Types.html#nvNow"><span class="hs-identifier hs-var hs-var">nvNow</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span class="hs-special">,</span><span>
 </span><span id="line-174"></span><span>    </span><span class="hs-comment">-- | nvchecker doesn't give this value, but shake restores it from last run</span><span>
@@ -1133,7 +1133,7 @@ $crnf :: NvcheckerQ -&gt; ()
 </span><span id="line-177"></span><span>    </span><span id="nvStale"><span class="annot"><span class="annottext">NvcheckerA -&gt; Bool
 </span><a href="NvFetcher.Types.html#nvStale"><span class="hs-identifier hs-var hs-var">nvStale</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span>
 </span><span id="line-178"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-179"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277077"><span id="local-6989586621679277079"><span id="local-6989586621679277081"><span class="annot"><span class="annottext">Int -&gt; NvcheckerA -&gt; ShowS
+</span><span id="line-179"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277133"><span id="local-6989586621679277135"><span id="local-6989586621679277137"><span class="annot"><span class="annottext">Int -&gt; NvcheckerA -&gt; ShowS
 [NvcheckerA] -&gt; ShowS
 NvcheckerA -&gt; String
 (Int -&gt; NvcheckerA -&gt; ShowS)
@@ -1148,7 +1148,7 @@ show :: NvcheckerA -&gt; String
 $cshow :: NvcheckerA -&gt; String
 showsPrec :: Int -&gt; NvcheckerA -&gt; ShowS
 $cshowsPrec :: Int -&gt; NvcheckerA -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277073"><span id="local-6989586621679277075"><span class="annot"><span class="annottext">NvcheckerA -&gt; NvcheckerA -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277129"><span id="local-6989586621679277131"><span class="annot"><span class="annottext">NvcheckerA -&gt; NvcheckerA -&gt; Bool
 (NvcheckerA -&gt; NvcheckerA -&gt; Bool)
 -&gt; (NvcheckerA -&gt; NvcheckerA -&gt; Bool) -&gt; Eq NvcheckerA
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -1164,7 +1164,7 @@ forall a.
 (forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
 $cto :: forall x. Rep NvcheckerA x -&gt; NvcheckerA
 $cfrom :: forall x. NvcheckerA -&gt; Rep NvcheckerA x
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277067"><span id="local-6989586621679277069"><span class="annot"><span class="annottext">Int -&gt; NvcheckerA -&gt; Int
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277123"><span id="local-6989586621679277125"><span class="annot"><span class="annottext">Int -&gt; NvcheckerA -&gt; Int
 NvcheckerA -&gt; Int
 (Int -&gt; NvcheckerA -&gt; Int)
 -&gt; (NvcheckerA -&gt; Int) -&gt; Hashable NvcheckerA
@@ -1173,7 +1173,7 @@ hash :: NvcheckerA -&gt; Int
 $chash :: NvcheckerA -&gt; Int
 hashWithSalt :: Int -&gt; NvcheckerA -&gt; Int
 $chashWithSalt :: Int -&gt; NvcheckerA -&gt; Int
-</span><a href="#local-6989586621679277067"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277061"><span id="local-6989586621679277063"><span id="local-6989586621679277065"><span class="annot"><span class="annottext">Get NvcheckerA
+</span><a href="#local-6989586621679277123"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277117"><span id="local-6989586621679277119"><span id="local-6989586621679277121"><span class="annot"><span class="annottext">Get NvcheckerA
 [NvcheckerA] -&gt; Put
 NvcheckerA -&gt; Put
 (NvcheckerA -&gt; Put)
@@ -1185,15 +1185,15 @@ get :: Get NvcheckerA
 $cget :: Get NvcheckerA
 put :: NvcheckerA -&gt; Put
 $cput :: NvcheckerA -&gt; Put
-</span><a href="#local-6989586621679277061"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277059"><span class="annot"><span class="annottext">NvcheckerA -&gt; ()
+</span><a href="#local-6989586621679277117"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277115"><span class="annot"><span class="annottext">NvcheckerA -&gt; ()
 (NvcheckerA -&gt; ()) -&gt; NFData NvcheckerA
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: NvcheckerA -&gt; ()
 $crnf :: NvcheckerA -&gt; ()
-</span><a href="#local-6989586621679277059"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679277115"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-180"></span><span>
-</span><span id="line-181"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679277056"><span class="annot"><span class="hs-identifier hs-type">A.FromJSON</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerA"><span class="hs-identifier hs-type">NvcheckerA</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-182"></span><span>  </span><span id="local-6989586621679277055"><span class="annot"><span class="annottext">parseJSON :: Value -&gt; Parser NvcheckerA
+</span><span id="line-181"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679277112"><span class="annot"><span class="hs-identifier hs-type">A.FromJSON</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerA"><span class="hs-identifier hs-type">NvcheckerA</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-182"></span><span>  </span><span id="local-6989586621679277111"><span class="annot"><span class="annottext">parseJSON :: Value -&gt; Parser NvcheckerA
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">parseJSON</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
 -&gt; (Object -&gt; Parser NvcheckerA) -&gt; Value -&gt; Parser NvcheckerA
 forall a. String -&gt; (Object -&gt; Parser a) -&gt; Value -&gt; Parser a
@@ -1201,14 +1201,14 @@ forall a. String -&gt; (Object -&gt; Parser a) -&gt; Value -&gt; Parser a
 </span><span class="hs-string">&quot;NvcheckerResult&quot;</span></span><span> </span><span class="annot"><span class="annottext">((Object -&gt; Parser NvcheckerA) -&gt; Value -&gt; Parser NvcheckerA)
 -&gt; (Object -&gt; Parser NvcheckerA) -&gt; Value -&gt; Parser NvcheckerA
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679277052"><span class="annot"><span class="annottext">Object
-</span><a href="#local-6989586621679277052"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679277108"><span class="annot"><span class="annottext">Object
+</span><a href="#local-6989586621679277108"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-183"></span><span>    </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version -&gt; Bool -&gt; NvcheckerA
 </span><a href="NvFetcher.Types.html#NvcheckerA"><span class="hs-identifier hs-var">NvcheckerA</span></a></span><span> </span><span class="annot"><span class="annottext">(Version -&gt; Maybe Version -&gt; Bool -&gt; NvcheckerA)
 -&gt; Parser Version -&gt; Parser (Maybe Version -&gt; Bool -&gt; NvcheckerA)
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">Object
-</span><a href="#local-6989586621679277052"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">Object -&gt; PackageName -&gt; Parser Version
+</span><a href="#local-6989586621679277108"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">Object -&gt; PackageName -&gt; Parser Version
 forall a. FromJSON a =&gt; Object -&gt; PackageName -&gt; Parser a
 </span><span class="hs-operator hs-var">A..:</span></span><span> </span><span class="annot"><span class="annottext">PackageName
 </span><span class="hs-string">&quot;version&quot;</span></span><span> </span><span class="annot"><span class="annottext">Parser (Maybe Version -&gt; Bool -&gt; NvcheckerA)
@@ -1230,7 +1230,7 @@ forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span id="line-187"></span><span class="hs-comment">--------------------------------------------------------------------------------</span><span>
 </span><span id="line-188"></span><span>
 </span><span id="line-189"></span><span class="hs-comment">-- | If the package is prefetched, then we can obtain the SHA256</span><span>
-</span><span id="line-190"></span><span id="local-6989586621679277047"><span id="local-6989586621679277048"></span></span><span class="hs-keyword">data</span><span> </span><span id="NixFetcher"><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-var">NixFetcher</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277046"><span class="annot"><a href="#local-6989586621679277046"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#FetchStatus"><span class="hs-identifier hs-type">FetchStatus</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-190"></span><span id="local-6989586621679277103"><span id="local-6989586621679277104"></span></span><span class="hs-keyword">data</span><span> </span><span id="NixFetcher"><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-var">NixFetcher</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277102"><span class="annot"><a href="#local-6989586621679277102"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#FetchStatus"><span class="hs-identifier hs-type">FetchStatus</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-191"></span><span>  </span><span class="hs-glyph">=</span><span> </span><span id="FetchGit"><span class="annot"><a href="NvFetcher.Types.html#FetchGit"><span class="hs-identifier hs-var">FetchGit</span></a></span></span><span>
 </span><span id="line-192"></span><span>      </span><span class="hs-special">{</span><span> </span><span id="_furl"><span class="annot"><span class="annottext">NixFetcher k -&gt; PackageName
 </span><a href="NvFetcher.Types.html#_furl"><span class="hs-identifier hs-var hs-var">_furl</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
@@ -1245,7 +1245,7 @@ forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span id="line-197"></span><span>        </span><span id="_name"><span class="annot"><span class="annottext">NixFetcher k -&gt; Maybe PackageName
 </span><a href="NvFetcher.Types.html#_name"><span class="hs-identifier hs-var hs-var">_name</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
 </span><span id="line-198"></span><span>        </span><span id="_sha256"><span class="annot"><span class="annottext">NixFetcher k -&gt; FetchResult k
-</span><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var hs-var">_sha256</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277046"><span class="hs-identifier hs-type">k</span></a></span><span>
+</span><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var hs-var">_sha256</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277102"><span class="hs-identifier hs-type">k</span></a></span><span>
 </span><span id="line-199"></span><span>      </span><span class="hs-special">}</span><span>
 </span><span id="line-200"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="FetchGitHub"><span class="annot"><a href="NvFetcher.Types.html#FetchGitHub"><span class="hs-identifier hs-var">FetchGitHub</span></a></span></span><span>
 </span><span id="line-201"></span><span>      </span><span class="hs-special">{</span><span> </span><span id="_fowner"><span class="annot"><span class="annottext">NixFetcher k -&gt; PackageName
@@ -1257,12 +1257,12 @@ forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span id="line-205"></span><span>        </span><span id="_fetchSubmodules"><span class="annot"><a href="NvFetcher.Types.html#_fetchSubmodules"><span class="hs-identifier hs-var">_fetchSubmodules</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
 </span><span id="line-206"></span><span>        </span><span id="_leaveDotGit"><span class="annot"><a href="NvFetcher.Types.html#_leaveDotGit"><span class="hs-identifier hs-var">_leaveDotGit</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
 </span><span id="line-207"></span><span>        </span><span id="_name"><span class="annot"><a href="NvFetcher.Types.html#_name"><span class="hs-identifier hs-var">_name</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
-</span><span id="line-208"></span><span>        </span><span id="_sha256"><span class="annot"><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var">_sha256</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277046"><span class="hs-identifier hs-type">k</span></a></span><span>
+</span><span id="line-208"></span><span>        </span><span id="_sha256"><span class="annot"><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var">_sha256</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277102"><span class="hs-identifier hs-type">k</span></a></span><span>
 </span><span id="line-209"></span><span>      </span><span class="hs-special">}</span><span>
 </span><span id="line-210"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="FetchUrl"><span class="annot"><a href="NvFetcher.Types.html#FetchUrl"><span class="hs-identifier hs-var">FetchUrl</span></a></span></span><span>
 </span><span id="line-211"></span><span>      </span><span class="hs-special">{</span><span> </span><span id="_furl"><span class="annot"><a href="NvFetcher.Types.html#_furl"><span class="hs-identifier hs-var">_furl</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
 </span><span id="line-212"></span><span>        </span><span id="_name"><span class="annot"><a href="NvFetcher.Types.html#_name"><span class="hs-identifier hs-var">_name</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
-</span><span id="line-213"></span><span>        </span><span id="_sha256"><span class="annot"><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var">_sha256</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277046"><span class="hs-identifier hs-type">k</span></a></span><span>
+</span><span id="line-213"></span><span>        </span><span id="_sha256"><span class="annot"><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var">_sha256</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277102"><span class="hs-identifier hs-type">k</span></a></span><span>
 </span><span id="line-214"></span><span>      </span><span class="hs-special">}</span><span>
 </span><span id="line-215"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. NixFetcher k -&gt; Rep (NixFetcher k) x)
 -&gt; (forall x. Rep (NixFetcher k) x -&gt; NixFetcher k)
@@ -1281,30 +1281,30 @@ $cfrom :: forall (k :: FetchStatus) x. NixFetcher k -&gt; Rep (NixFetcher k) x
 </span><span id="line-218"></span><span class="hs-keyword">data</span><span> </span><span id="FetchStatus"><span class="annot"><a href="NvFetcher.Types.html#FetchStatus"><span class="hs-identifier hs-var">FetchStatus</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Fresh"><span class="annot"><a href="NvFetcher.Types.html#Fresh"><span class="hs-identifier hs-var">Fresh</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="Fetched"><span class="annot"><a href="NvFetcher.Types.html#Fetched"><span class="hs-identifier hs-var">Fetched</span></a></span></span><span>
 </span><span id="line-219"></span><span>
 </span><span id="line-220"></span><span class="hs-comment">-- | Prefetched fetchers hold hashes</span><span>
-</span><span id="line-221"></span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">family</span><span> </span><span id="FetchResult"><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-var">FetchResult</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277029"><span class="annot"><a href="#local-6989586621679277029"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#FetchStatus"><span class="hs-identifier hs-type">FetchStatus</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-221"></span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">family</span><span> </span><span id="FetchResult"><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-var">FetchResult</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277085"><span class="annot"><a href="#local-6989586621679277085"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#FetchStatus"><span class="hs-identifier hs-type">FetchStatus</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
 </span><span id="line-222"></span><span>  </span><span id="FetchResult"><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-var">FetchResult</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fresh"><span class="hs-identifier hs-type">Fresh</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
 </span><span id="line-223"></span><span>  </span><span id="FetchResult"><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-var">FetchResult</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fetched"><span class="hs-identifier hs-type">Fetched</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-type">Checksum</span></a></span><span>
 </span><span id="line-224"></span><span>
 </span><span id="line-225"></span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">instance</span><span> </span><span id="RuleResult"><span class="annot"><span class="hs-identifier hs-var">RuleResult</span></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fresh"><span class="hs-identifier hs-type">Fresh</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fetched"><span class="hs-identifier hs-type">Fetched</span></a></span><span>
 </span><span id="line-226"></span><span>
-</span><span id="line-227"></span><span id="local-6989586621679277022"><span id="local-6989586621679277024"><span id="local-6989586621679277026"><span id="local-6989586621679277028"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277028"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277028"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span></span><span>
+</span><span id="line-227"></span><span id="local-6989586621679277078"><span id="local-6989586621679277080"><span id="local-6989586621679277082"><span id="local-6989586621679277084"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277084"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277084"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span></span><span>
 </span><span id="line-228"></span><span>
-</span><span id="line-229"></span><span id="local-6989586621679277017"><span id="local-6989586621679277019"><span id="local-6989586621679277021"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Eq</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277021"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Eq</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277021"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span><span>
+</span><span id="line-229"></span><span id="local-6989586621679277073"><span id="local-6989586621679277075"><span id="local-6989586621679277077"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Eq</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277077"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Eq</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277077"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span><span>
 </span><span id="line-230"></span><span>
-</span><span id="line-231"></span><span id="local-6989586621679277001"><span id="local-6989586621679277003"><span id="local-6989586621679277005"><span id="local-6989586621679277007"><span id="local-6989586621679277009"><span id="local-6989586621679277011"><span id="local-6989586621679277013"><span id="local-6989586621679277016"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Ord</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277016"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Ord</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277016"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span></span></span></span></span></span><span>
+</span><span id="line-231"></span><span id="local-6989586621679277057"><span id="local-6989586621679277059"><span id="local-6989586621679277061"><span id="local-6989586621679277063"><span id="local-6989586621679277065"><span id="local-6989586621679277067"><span id="local-6989586621679277069"><span id="local-6989586621679277072"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Ord</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277072"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Ord</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277072"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span></span></span></span></span></span><span>
 </span><span id="line-232"></span><span>
-</span><span id="line-233"></span><span id="local-6989586621679276996"><span id="local-6989586621679276998"><span id="local-6989586621679277000"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Hashable</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277000"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Hashable</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277000"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span><span>
+</span><span id="line-233"></span><span id="local-6989586621679277052"><span id="local-6989586621679277054"><span id="local-6989586621679277056"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Hashable</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277056"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Hashable</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277056"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span><span>
 </span><span id="line-234"></span><span>
-</span><span id="line-235"></span><span id="local-6989586621679276989"><span id="local-6989586621679276991"><span id="local-6989586621679276993"><span id="local-6989586621679276995"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679276995"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679276995"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span></span><span>
+</span><span id="line-235"></span><span id="local-6989586621679277045"><span id="local-6989586621679277047"><span id="local-6989586621679277049"><span id="local-6989586621679277051"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277051"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277051"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span></span><span>
 </span><span id="line-236"></span><span>
-</span><span id="line-237"></span><span id="local-6989586621679276986"><span id="local-6989586621679276988"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">NFData</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679276988"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">NFData</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679276988"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span>
+</span><span id="line-237"></span><span id="local-6989586621679277042"><span id="local-6989586621679277044"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">NFData</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchResult"><span class="hs-identifier hs-type">FetchResult</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277044"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">NFData</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679277044"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span>
 </span><span id="line-238"></span><span>
 </span><span id="line-239"></span><span class="hs-comment">--------------------------------------------------------------------------------</span><span>
 </span><span id="line-240"></span><span>
 </span><span id="line-241"></span><span class="hs-comment">-- | Extract file contents from package source</span><span>
 </span><span id="line-242"></span><span class="hs-comment">-- e.g. @Cargo.lock@</span><span>
-</span><span id="line-243"></span><span id="local-6989586621679276984"><span id="local-6989586621679276985"></span></span><span class="hs-keyword">data</span><span> </span><span id="ExtractSrcQ"><span class="annot"><a href="NvFetcher.Types.html#ExtractSrcQ"><span class="hs-identifier hs-var">ExtractSrcQ</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ExtractSrcQ"><span class="annot"><a href="NvFetcher.Types.html#ExtractSrcQ"><span class="hs-identifier hs-var">ExtractSrcQ</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fetched"><span class="hs-identifier hs-type">Fetched</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">NE.NonEmpty</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span class="hs-special">)</span><span>
-</span><span id="line-244"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276976"><span id="local-6989586621679276978"><span id="local-6989586621679276980"><span class="annot"><span class="annottext">Int -&gt; ExtractSrcQ -&gt; ShowS
+</span><span id="line-243"></span><span id="local-6989586621679277040"><span id="local-6989586621679277041"></span></span><span class="hs-keyword">data</span><span> </span><span id="ExtractSrcQ"><span class="annot"><a href="NvFetcher.Types.html#ExtractSrcQ"><span class="hs-identifier hs-var">ExtractSrcQ</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ExtractSrcQ"><span class="annot"><a href="NvFetcher.Types.html#ExtractSrcQ"><span class="hs-identifier hs-var">ExtractSrcQ</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fetched"><span class="hs-identifier hs-type">Fetched</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">NE.NonEmpty</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span class="hs-special">)</span><span>
+</span><span id="line-244"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679277032"><span id="local-6989586621679277034"><span id="local-6989586621679277036"><span class="annot"><span class="annottext">Int -&gt; ExtractSrcQ -&gt; ShowS
 [ExtractSrcQ] -&gt; ShowS
 ExtractSrcQ -&gt; String
 (Int -&gt; ExtractSrcQ -&gt; ShowS)
@@ -1319,7 +1319,7 @@ show :: ExtractSrcQ -&gt; String
 $cshow :: ExtractSrcQ -&gt; String
 showsPrec :: Int -&gt; ExtractSrcQ -&gt; ShowS
 $cshowsPrec :: Int -&gt; ExtractSrcQ -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276972"><span id="local-6989586621679276974"><span class="annot"><span class="annottext">ExtractSrcQ -&gt; ExtractSrcQ -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277028"><span id="local-6989586621679277030"><span class="annot"><span class="annottext">ExtractSrcQ -&gt; ExtractSrcQ -&gt; Bool
 (ExtractSrcQ -&gt; ExtractSrcQ -&gt; Bool)
 -&gt; (ExtractSrcQ -&gt; ExtractSrcQ -&gt; Bool) -&gt; Eq ExtractSrcQ
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -1327,7 +1327,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: ExtractSrcQ -&gt; ExtractSrcQ -&gt; Bool
 == :: ExtractSrcQ -&gt; ExtractSrcQ -&gt; Bool
 $c== :: ExtractSrcQ -&gt; ExtractSrcQ -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276957"><span id="local-6989586621679276959"><span id="local-6989586621679276961"><span id="local-6989586621679276963"><span id="local-6989586621679276965"><span id="local-6989586621679276967"><span id="local-6989586621679276969"><span class="annot"><span class="annottext">Eq ExtractSrcQ
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277013"><span id="local-6989586621679277015"><span id="local-6989586621679277017"><span id="local-6989586621679277019"><span id="local-6989586621679277021"><span id="local-6989586621679277023"><span id="local-6989586621679277025"><span class="annot"><span class="annottext">Eq ExtractSrcQ
 Eq ExtractSrcQ
 -&gt; (ExtractSrcQ -&gt; ExtractSrcQ -&gt; Ordering)
 -&gt; (ExtractSrcQ -&gt; ExtractSrcQ -&gt; Bool)
@@ -1365,7 +1365,7 @@ $c&lt; :: ExtractSrcQ -&gt; ExtractSrcQ -&gt; Bool
 compare :: ExtractSrcQ -&gt; ExtractSrcQ -&gt; Ordering
 $ccompare :: ExtractSrcQ -&gt; ExtractSrcQ -&gt; Ordering
 $cp1Ord :: Eq ExtractSrcQ
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276953"><span id="local-6989586621679276955"><span class="annot"><span class="annottext">Int -&gt; ExtractSrcQ -&gt; Int
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277009"><span id="local-6989586621679277011"><span class="annot"><span class="annottext">Int -&gt; ExtractSrcQ -&gt; Int
 ExtractSrcQ -&gt; Int
 (Int -&gt; ExtractSrcQ -&gt; Int)
 -&gt; (ExtractSrcQ -&gt; Int) -&gt; Hashable ExtractSrcQ
@@ -1374,12 +1374,12 @@ hash :: ExtractSrcQ -&gt; Int
 $chash :: ExtractSrcQ -&gt; Int
 hashWithSalt :: Int -&gt; ExtractSrcQ -&gt; Int
 $chashWithSalt :: Int -&gt; ExtractSrcQ -&gt; Int
-</span><a href="#local-6989586621679276953"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276951"><span class="annot"><span class="annottext">ExtractSrcQ -&gt; ()
+</span><a href="#local-6989586621679277009"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277007"><span class="annot"><span class="annottext">ExtractSrcQ -&gt; ()
 (ExtractSrcQ -&gt; ()) -&gt; NFData ExtractSrcQ
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: ExtractSrcQ -&gt; ()
 $crnf :: ExtractSrcQ -&gt; ()
-</span><a href="#local-6989586621679276951"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276945"><span id="local-6989586621679276947"><span id="local-6989586621679276949"><span class="annot"><span class="annottext">Get ExtractSrcQ
+</span><a href="#local-6989586621679277007"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679277001"><span id="local-6989586621679277003"><span id="local-6989586621679277005"><span class="annot"><span class="annottext">Get ExtractSrcQ
 [ExtractSrcQ] -&gt; Put
 ExtractSrcQ -&gt; Put
 (ExtractSrcQ -&gt; Put)
@@ -1391,7 +1391,7 @@ get :: Get ExtractSrcQ
 $cget :: Get ExtractSrcQ
 put :: ExtractSrcQ -&gt; Put
 $cput :: ExtractSrcQ -&gt; Put
-</span><a href="#local-6989586621679276945"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. ExtractSrcQ -&gt; Rep ExtractSrcQ x)
+</span><a href="#local-6989586621679277001"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. ExtractSrcQ -&gt; Rep ExtractSrcQ x)
 -&gt; (forall x. Rep ExtractSrcQ x -&gt; ExtractSrcQ)
 -&gt; Generic ExtractSrcQ
 forall x. Rep ExtractSrcQ x -&gt; ExtractSrcQ
@@ -1409,8 +1409,8 @@ $cfrom :: forall x. ExtractSrcQ -&gt; Rep ExtractSrcQ x
 </span><span id="line-250"></span><span class="hs-comment">-- | Fetch @outputHashes@ for git dependencies in @Cargo.lock@.</span><span>
 </span><span id="line-251"></span><span class="hs-comment">-- See &lt;https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file&gt; for details.</span><span>
 </span><span id="line-252"></span><span class="hs-comment">-- We need fetched source and the file path to @Cargo.lock@.</span><span>
-</span><span id="line-253"></span><span id="local-6989586621679276941"><span id="local-6989586621679276942"></span></span><span class="hs-keyword">data</span><span> </span><span id="FetchRustGitDepsQ"><span class="annot"><a href="NvFetcher.Types.html#FetchRustGitDepsQ"><span class="hs-identifier hs-var">FetchRustGitDepsQ</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="FetchRustGitDepsQ"><span class="annot"><a href="NvFetcher.Types.html#FetchRustGitDepsQ"><span class="hs-identifier hs-var">FetchRustGitDepsQ</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fetched"><span class="hs-identifier hs-type">Fetched</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
-</span><span id="line-254"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276934"><span id="local-6989586621679276936"><span id="local-6989586621679276938"><span class="annot"><span class="annottext">Int -&gt; FetchRustGitDepsQ -&gt; ShowS
+</span><span id="line-253"></span><span id="local-6989586621679276997"><span id="local-6989586621679276998"></span></span><span class="hs-keyword">data</span><span> </span><span id="FetchRustGitDepsQ"><span class="annot"><a href="NvFetcher.Types.html#FetchRustGitDepsQ"><span class="hs-identifier hs-var">FetchRustGitDepsQ</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="FetchRustGitDepsQ"><span class="annot"><a href="NvFetcher.Types.html#FetchRustGitDepsQ"><span class="hs-identifier hs-var">FetchRustGitDepsQ</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fetched"><span class="hs-identifier hs-type">Fetched</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
+</span><span id="line-254"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276990"><span id="local-6989586621679276992"><span id="local-6989586621679276994"><span class="annot"><span class="annottext">Int -&gt; FetchRustGitDepsQ -&gt; ShowS
 [FetchRustGitDepsQ] -&gt; ShowS
 FetchRustGitDepsQ -&gt; String
 (Int -&gt; FetchRustGitDepsQ -&gt; ShowS)
@@ -1425,7 +1425,7 @@ show :: FetchRustGitDepsQ -&gt; String
 $cshow :: FetchRustGitDepsQ -&gt; String
 showsPrec :: Int -&gt; FetchRustGitDepsQ -&gt; ShowS
 $cshowsPrec :: Int -&gt; FetchRustGitDepsQ -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276930"><span id="local-6989586621679276932"><span class="annot"><span class="annottext">FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276986"><span id="local-6989586621679276988"><span class="annot"><span class="annottext">FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Bool
 (FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Bool)
 -&gt; (FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Bool)
 -&gt; Eq FetchRustGitDepsQ
@@ -1434,7 +1434,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Bool
 == :: FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Bool
 $c== :: FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276915"><span id="local-6989586621679276917"><span id="local-6989586621679276919"><span id="local-6989586621679276921"><span id="local-6989586621679276923"><span id="local-6989586621679276925"><span id="local-6989586621679276927"><span class="annot"><span class="annottext">Eq FetchRustGitDepsQ
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276971"><span id="local-6989586621679276973"><span id="local-6989586621679276975"><span id="local-6989586621679276977"><span id="local-6989586621679276979"><span id="local-6989586621679276981"><span id="local-6989586621679276983"><span class="annot"><span class="annottext">Eq FetchRustGitDepsQ
 Eq FetchRustGitDepsQ
 -&gt; (FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Ordering)
 -&gt; (FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Bool)
@@ -1472,7 +1472,7 @@ $c&lt; :: FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Bool
 compare :: FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Ordering
 $ccompare :: FetchRustGitDepsQ -&gt; FetchRustGitDepsQ -&gt; Ordering
 $cp1Ord :: Eq FetchRustGitDepsQ
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276911"><span id="local-6989586621679276913"><span class="annot"><span class="annottext">Int -&gt; FetchRustGitDepsQ -&gt; Int
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276967"><span id="local-6989586621679276969"><span class="annot"><span class="annottext">Int -&gt; FetchRustGitDepsQ -&gt; Int
 FetchRustGitDepsQ -&gt; Int
 (Int -&gt; FetchRustGitDepsQ -&gt; Int)
 -&gt; (FetchRustGitDepsQ -&gt; Int) -&gt; Hashable FetchRustGitDepsQ
@@ -1481,12 +1481,12 @@ hash :: FetchRustGitDepsQ -&gt; Int
 $chash :: FetchRustGitDepsQ -&gt; Int
 hashWithSalt :: Int -&gt; FetchRustGitDepsQ -&gt; Int
 $chashWithSalt :: Int -&gt; FetchRustGitDepsQ -&gt; Int
-</span><a href="#local-6989586621679276911"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276909"><span class="annot"><span class="annottext">FetchRustGitDepsQ -&gt; ()
+</span><a href="#local-6989586621679276967"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276965"><span class="annot"><span class="annottext">FetchRustGitDepsQ -&gt; ()
 (FetchRustGitDepsQ -&gt; ()) -&gt; NFData FetchRustGitDepsQ
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: FetchRustGitDepsQ -&gt; ()
 $crnf :: FetchRustGitDepsQ -&gt; ()
-</span><a href="#local-6989586621679276909"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276903"><span id="local-6989586621679276905"><span id="local-6989586621679276907"><span class="annot"><span class="annottext">Get FetchRustGitDepsQ
+</span><a href="#local-6989586621679276965"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276959"><span id="local-6989586621679276961"><span id="local-6989586621679276963"><span class="annot"><span class="annottext">Get FetchRustGitDepsQ
 [FetchRustGitDepsQ] -&gt; Put
 FetchRustGitDepsQ -&gt; Put
 (FetchRustGitDepsQ -&gt; Put)
@@ -1500,7 +1500,7 @@ get :: Get FetchRustGitDepsQ
 $cget :: Get FetchRustGitDepsQ
 put :: FetchRustGitDepsQ -&gt; Put
 $cput :: FetchRustGitDepsQ -&gt; Put
-</span><a href="#local-6989586621679276903"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. FetchRustGitDepsQ -&gt; Rep FetchRustGitDepsQ x)
+</span><a href="#local-6989586621679276959"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Typeable</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. FetchRustGitDepsQ -&gt; Rep FetchRustGitDepsQ x)
 -&gt; (forall x. Rep FetchRustGitDepsQ x -&gt; FetchRustGitDepsQ)
 -&gt; Generic FetchRustGitDepsQ
 forall x. Rep FetchRustGitDepsQ x -&gt; FetchRustGitDepsQ
@@ -1527,7 +1527,7 @@ $cfrom :: forall x. FetchRustGitDepsQ -&gt; Rep FetchRustGitDepsQ x
 </span><span id="line-269"></span><span class="hs-keyword">newtype</span><span> </span><span id="PackageCargoFilePath"><span class="annot"><a href="NvFetcher.Types.html#PackageCargoFilePath"><span class="hs-identifier hs-var">PackageCargoFilePath</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="PackageCargoFilePath"><span class="annot"><a href="NvFetcher.Types.html#PackageCargoFilePath"><span class="hs-identifier hs-var">PackageCargoFilePath</span></a></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
 </span><span id="line-270"></span><span>
 </span><span id="line-271"></span><span class="hs-keyword">newtype</span><span> </span><span id="PackagePassthru"><span class="annot"><a href="NvFetcher.Types.html#PackagePassthru"><span class="hs-identifier hs-var">PackagePassthru</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="PackagePassthru"><span class="annot"><a href="NvFetcher.Types.html#PackagePassthru"><span class="hs-identifier hs-var">PackagePassthru</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">HashMap</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">)</span><span>
-</span><span id="line-272"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276892"><span id="local-6989586621679276894"><span id="local-6989586621679276896"><span class="annot"><span class="annottext">b -&gt; PackagePassthru -&gt; PackagePassthru
+</span><span id="line-272"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276948"><span id="local-6989586621679276950"><span id="local-6989586621679276952"><span class="annot"><span class="annottext">b -&gt; PackagePassthru -&gt; PackagePassthru
 NonEmpty PackagePassthru -&gt; PackagePassthru
 PackagePassthru -&gt; PackagePassthru -&gt; PackagePassthru
 (PackagePassthru -&gt; PackagePassthru -&gt; PackagePassthru)
@@ -1548,7 +1548,7 @@ sconcat :: NonEmpty PackagePassthru -&gt; PackagePassthru
 $csconcat :: NonEmpty PackagePassthru -&gt; PackagePassthru
 &lt;&gt; :: PackagePassthru -&gt; PackagePassthru -&gt; PackagePassthru
 $c&lt;&gt; :: PackagePassthru -&gt; PackagePassthru -&gt; PackagePassthru
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Semigroup</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276885"><span id="local-6989586621679276887"><span id="local-6989586621679276889"><span class="annot"><span class="annottext">Semigroup PackagePassthru
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Semigroup</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276941"><span id="local-6989586621679276943"><span id="local-6989586621679276945"><span class="annot"><span class="annottext">Semigroup PackagePassthru
 PackagePassthru
 Semigroup PackagePassthru
 -&gt; PackagePassthru
@@ -1572,8 +1572,8 @@ $cp1Monoid :: Semigroup PackagePassthru
 </span><span id="line-275"></span><span class="hs-comment">-- Using stale value indicates that we will /NOT/ check for new versions if</span><span>
 </span><span id="line-276"></span><span class="hs-comment">-- there is a known version in shake. Normally you don't want a stale version</span><span>
 </span><span id="line-277"></span><span class="hs-comment">-- unless you need pin a package.</span><span>
-</span><span id="line-278"></span><span id="local-6989586621679276883"><span id="local-6989586621679276884"></span></span><span class="hs-keyword">newtype</span><span> </span><span id="UseStaleVersion"><span class="annot"><a href="NvFetcher.Types.html#UseStaleVersion"><span class="hs-identifier hs-var">UseStaleVersion</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="UseStaleVersion"><span class="annot"><a href="NvFetcher.Types.html#UseStaleVersion"><span class="hs-identifier hs-var">UseStaleVersion</span></a></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span>
-</span><span id="line-279"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276878"><span id="local-6989586621679276880"><span class="annot"><span class="annottext">UseStaleVersion -&gt; UseStaleVersion -&gt; Bool
+</span><span id="line-278"></span><span id="local-6989586621679276939"><span id="local-6989586621679276940"></span></span><span class="hs-keyword">newtype</span><span> </span><span id="UseStaleVersion"><span class="annot"><a href="NvFetcher.Types.html#UseStaleVersion"><span class="hs-identifier hs-var">UseStaleVersion</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="UseStaleVersion"><span class="annot"><a href="NvFetcher.Types.html#UseStaleVersion"><span class="hs-identifier hs-var">UseStaleVersion</span></a></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span>
+</span><span id="line-279"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276934"><span id="local-6989586621679276936"><span class="annot"><span class="annottext">UseStaleVersion -&gt; UseStaleVersion -&gt; Bool
 (UseStaleVersion -&gt; UseStaleVersion -&gt; Bool)
 -&gt; (UseStaleVersion -&gt; UseStaleVersion -&gt; Bool)
 -&gt; Eq UseStaleVersion
@@ -1582,7 +1582,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: UseStaleVersion -&gt; UseStaleVersion -&gt; Bool
 == :: UseStaleVersion -&gt; UseStaleVersion -&gt; Bool
 $c== :: UseStaleVersion -&gt; UseStaleVersion -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276872"><span id="local-6989586621679276874"><span id="local-6989586621679276876"><span class="annot"><span class="annottext">Int -&gt; UseStaleVersion -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276928"><span id="local-6989586621679276930"><span id="local-6989586621679276932"><span class="annot"><span class="annottext">Int -&gt; UseStaleVersion -&gt; ShowS
 [UseStaleVersion] -&gt; ShowS
 UseStaleVersion -&gt; String
 (Int -&gt; UseStaleVersion -&gt; ShowS)
@@ -1597,7 +1597,7 @@ show :: UseStaleVersion -&gt; String
 $cshow :: UseStaleVersion -&gt; String
 showsPrec :: Int -&gt; UseStaleVersion -&gt; ShowS
 $cshowsPrec :: Int -&gt; UseStaleVersion -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276857"><span id="local-6989586621679276859"><span id="local-6989586621679276861"><span id="local-6989586621679276863"><span id="local-6989586621679276865"><span id="local-6989586621679276867"><span id="local-6989586621679276869"><span class="annot"><span class="annottext">Eq UseStaleVersion
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276913"><span id="local-6989586621679276915"><span id="local-6989586621679276917"><span id="local-6989586621679276919"><span id="local-6989586621679276921"><span id="local-6989586621679276923"><span id="local-6989586621679276925"><span class="annot"><span class="annottext">Eq UseStaleVersion
 Eq UseStaleVersion
 -&gt; (UseStaleVersion -&gt; UseStaleVersion -&gt; Ordering)
 -&gt; (UseStaleVersion -&gt; UseStaleVersion -&gt; Bool)
@@ -1646,7 +1646,7 @@ forall a.
 $cto :: forall x. Rep UseStaleVersion x -&gt; UseStaleVersion
 $cfrom :: forall x. UseStaleVersion -&gt; Rep UseStaleVersion x
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
-</span><span id="line-281"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276851"><span id="local-6989586621679276853"><span class="annot"><span class="annottext">Int -&gt; UseStaleVersion -&gt; Int
+</span><span id="line-281"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276907"><span id="local-6989586621679276909"><span class="annot"><span class="annottext">Int -&gt; UseStaleVersion -&gt; Int
 UseStaleVersion -&gt; Int
 (Int -&gt; UseStaleVersion -&gt; Int)
 -&gt; (UseStaleVersion -&gt; Int) -&gt; Hashable UseStaleVersion
@@ -1655,7 +1655,7 @@ hash :: UseStaleVersion -&gt; Int
 $chash :: UseStaleVersion -&gt; Int
 hashWithSalt :: Int -&gt; UseStaleVersion -&gt; Int
 $chashWithSalt :: Int -&gt; UseStaleVersion -&gt; Int
-</span><a href="#local-6989586621679276851"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276845"><span id="local-6989586621679276847"><span id="local-6989586621679276849"><span class="annot"><span class="annottext">Get UseStaleVersion
+</span><a href="#local-6989586621679276907"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276901"><span id="local-6989586621679276903"><span id="local-6989586621679276905"><span class="annot"><span class="annottext">Get UseStaleVersion
 [UseStaleVersion] -&gt; Put
 UseStaleVersion -&gt; Put
 (UseStaleVersion -&gt; Put)
@@ -1669,12 +1669,12 @@ get :: Get UseStaleVersion
 $cget :: Get UseStaleVersion
 put :: UseStaleVersion -&gt; Put
 $cput :: UseStaleVersion -&gt; Put
-</span><a href="#local-6989586621679276845"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276843"><span class="annot"><span class="annottext">UseStaleVersion -&gt; ()
+</span><a href="#local-6989586621679276901"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276899"><span class="annot"><span class="annottext">UseStaleVersion -&gt; ()
 (UseStaleVersion -&gt; ()) -&gt; NFData UseStaleVersion
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: UseStaleVersion -&gt; ()
 $crnf :: UseStaleVersion -&gt; ()
-</span><a href="#local-6989586621679276843"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679276899"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-282"></span><span>
 </span><span id="line-283"></span><span class="hs-comment">-- | A package is defined with:</span><span>
 </span><span id="line-284"></span><span class="hs-comment">--</span><span>
@@ -1708,8 +1708,8 @@ $crnf :: UseStaleVersion -&gt; ()
 </span><span id="line-305"></span><span>
 </span><span id="line-306"></span><span class="hs-comment">-- | Package key is the name of a package.</span><span>
 </span><span id="line-307"></span><span class="hs-comment">-- We use this type to index packages.</span><span>
-</span><span id="line-308"></span><span id="local-6989586621679276833"><span id="local-6989586621679276834"></span></span><span class="hs-keyword">newtype</span><span> </span><span id="PackageKey"><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-var">PackageKey</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="PackageKey"><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-var">PackageKey</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageName"><span class="hs-identifier hs-type">PackageName</span></a></span><span>
-</span><span id="line-309"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276828"><span id="local-6989586621679276830"><span class="annot"><span class="annottext">PackageKey -&gt; PackageKey -&gt; Bool
+</span><span id="line-308"></span><span id="local-6989586621679276889"><span id="local-6989586621679276890"></span></span><span class="hs-keyword">newtype</span><span> </span><span id="PackageKey"><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-var">PackageKey</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="PackageKey"><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-var">PackageKey</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageName"><span class="hs-identifier hs-type">PackageName</span></a></span><span>
+</span><span id="line-309"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276884"><span id="local-6989586621679276886"><span class="annot"><span class="annottext">PackageKey -&gt; PackageKey -&gt; Bool
 (PackageKey -&gt; PackageKey -&gt; Bool)
 -&gt; (PackageKey -&gt; PackageKey -&gt; Bool) -&gt; Eq PackageKey
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -1717,7 +1717,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: PackageKey -&gt; PackageKey -&gt; Bool
 == :: PackageKey -&gt; PackageKey -&gt; Bool
 $c== :: PackageKey -&gt; PackageKey -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276822"><span id="local-6989586621679276824"><span id="local-6989586621679276826"><span class="annot"><span class="annottext">Int -&gt; PackageKey -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276878"><span id="local-6989586621679276880"><span id="local-6989586621679276882"><span class="annot"><span class="annottext">Int -&gt; PackageKey -&gt; ShowS
 [PackageKey] -&gt; ShowS
 PackageKey -&gt; String
 (Int -&gt; PackageKey -&gt; ShowS)
@@ -1732,7 +1732,7 @@ show :: PackageKey -&gt; String
 $cshow :: PackageKey -&gt; String
 showsPrec :: Int -&gt; PackageKey -&gt; ShowS
 $cshowsPrec :: Int -&gt; PackageKey -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276807"><span id="local-6989586621679276809"><span id="local-6989586621679276811"><span id="local-6989586621679276813"><span id="local-6989586621679276815"><span id="local-6989586621679276817"><span id="local-6989586621679276819"><span class="annot"><span class="annottext">Eq PackageKey
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276863"><span id="local-6989586621679276865"><span id="local-6989586621679276867"><span id="local-6989586621679276869"><span id="local-6989586621679276871"><span id="local-6989586621679276873"><span id="local-6989586621679276875"><span class="annot"><span class="annottext">Eq PackageKey
 Eq PackageKey
 -&gt; (PackageKey -&gt; PackageKey -&gt; Ordering)
 -&gt; (PackageKey -&gt; PackageKey -&gt; Bool)
@@ -1780,7 +1780,7 @@ forall a.
 $cto :: forall x. Rep PackageKey x -&gt; PackageKey
 $cfrom :: forall x. PackageKey -&gt; Rep PackageKey x
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
-</span><span id="line-311"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276801"><span id="local-6989586621679276803"><span class="annot"><span class="annottext">Int -&gt; PackageKey -&gt; Int
+</span><span id="line-311"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276857"><span id="local-6989586621679276859"><span class="annot"><span class="annottext">Int -&gt; PackageKey -&gt; Int
 PackageKey -&gt; Int
 (Int -&gt; PackageKey -&gt; Int)
 -&gt; (PackageKey -&gt; Int) -&gt; Hashable PackageKey
@@ -1789,7 +1789,7 @@ hash :: PackageKey -&gt; Int
 $chash :: PackageKey -&gt; Int
 hashWithSalt :: Int -&gt; PackageKey -&gt; Int
 $chashWithSalt :: Int -&gt; PackageKey -&gt; Int
-</span><a href="#local-6989586621679276801"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276795"><span id="local-6989586621679276797"><span id="local-6989586621679276799"><span class="annot"><span class="annottext">Get PackageKey
+</span><a href="#local-6989586621679276857"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276851"><span id="local-6989586621679276853"><span id="local-6989586621679276855"><span class="annot"><span class="annottext">Get PackageKey
 [PackageKey] -&gt; Put
 PackageKey -&gt; Put
 (PackageKey -&gt; Put)
@@ -1801,25 +1801,25 @@ get :: Get PackageKey
 $cget :: Get PackageKey
 put :: PackageKey -&gt; Put
 $cput :: PackageKey -&gt; Put
-</span><a href="#local-6989586621679276795"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276793"><span class="annot"><span class="annottext">PackageKey -&gt; ()
+</span><a href="#local-6989586621679276851"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276849"><span class="annot"><span class="annottext">PackageKey -&gt; ()
 (PackageKey -&gt; ()) -&gt; NFData PackageKey
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: PackageKey -&gt; ()
 $crnf :: PackageKey -&gt; ()
-</span><a href="#local-6989586621679276793"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679276849"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-312"></span><span>
 </span><span id="line-313"></span><span class="hs-comment">--------------------------------------------------------------------------------</span><span>
 </span><span id="line-314"></span><span>
 </span><span id="line-315"></span><span class="hs-comment">-- | The key type of nvfetcher rule. See &quot;NvFetcher.Core&quot;</span><span>
-</span><span id="line-316"></span><span id="local-6989586621679276791"><span id="local-6989586621679276792"></span></span><span class="hs-keyword">data</span><span> </span><span id="Core"><span class="annot"><a href="NvFetcher.Types.html#Core"><span class="hs-identifier hs-var">Core</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Core"><span class="annot"><a href="NvFetcher.Types.html#Core"><span class="hs-identifier hs-var">Core</span></a></span></span><span>
-</span><span id="line-317"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276786"><span id="local-6989586621679276788"><span class="annot"><span class="annottext">Core -&gt; Core -&gt; Bool
+</span><span id="line-316"></span><span id="local-6989586621679276847"><span id="local-6989586621679276848"></span></span><span class="hs-keyword">data</span><span> </span><span id="Core"><span class="annot"><a href="NvFetcher.Types.html#Core"><span class="hs-identifier hs-var">Core</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Core"><span class="annot"><a href="NvFetcher.Types.html#Core"><span class="hs-identifier hs-var">Core</span></a></span></span><span>
+</span><span id="line-317"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276842"><span id="local-6989586621679276844"><span class="annot"><span class="annottext">Core -&gt; Core -&gt; Bool
 (Core -&gt; Core -&gt; Bool) -&gt; (Core -&gt; Core -&gt; Bool) -&gt; Eq Core
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 /= :: Core -&gt; Core -&gt; Bool
 $c/= :: Core -&gt; Core -&gt; Bool
 == :: Core -&gt; Core -&gt; Bool
 $c== :: Core -&gt; Core -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276780"><span id="local-6989586621679276782"><span id="local-6989586621679276784"><span class="annot"><span class="annottext">Int -&gt; Core -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276836"><span id="local-6989586621679276838"><span id="local-6989586621679276840"><span class="annot"><span class="annottext">Int -&gt; Core -&gt; ShowS
 [Core] -&gt; ShowS
 Core -&gt; String
 (Int -&gt; Core -&gt; ShowS)
@@ -1832,7 +1832,7 @@ show :: Core -&gt; String
 $cshow :: Core -&gt; String
 showsPrec :: Int -&gt; Core -&gt; ShowS
 $cshowsPrec :: Int -&gt; Core -&gt; ShowS
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276765"><span id="local-6989586621679276767"><span id="local-6989586621679276769"><span id="local-6989586621679276771"><span id="local-6989586621679276773"><span id="local-6989586621679276775"><span id="local-6989586621679276777"><span class="annot"><span class="annottext">Eq Core
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276821"><span id="local-6989586621679276823"><span id="local-6989586621679276825"><span id="local-6989586621679276827"><span id="local-6989586621679276829"><span id="local-6989586621679276831"><span id="local-6989586621679276833"><span class="annot"><span class="annottext">Eq Core
 Eq Core
 -&gt; (Core -&gt; Core -&gt; Ordering)
 -&gt; (Core -&gt; Core -&gt; Bool)
@@ -1878,7 +1878,7 @@ forall a.
 (forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
 $cto :: forall x. Rep Core x -&gt; Core
 $cfrom :: forall x. Core -&gt; Rep Core x
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276759"><span id="local-6989586621679276761"><span class="annot"><span class="annottext">Int -&gt; Core -&gt; Int
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276815"><span id="local-6989586621679276817"><span class="annot"><span class="annottext">Int -&gt; Core -&gt; Int
 Core -&gt; Int
 (Int -&gt; Core -&gt; Int) -&gt; (Core -&gt; Int) -&gt; Hashable Core
 forall a. (Int -&gt; a -&gt; Int) -&gt; (a -&gt; Int) -&gt; Hashable a
@@ -1886,7 +1886,7 @@ hash :: Core -&gt; Int
 $chash :: Core -&gt; Int
 hashWithSalt :: Int -&gt; Core -&gt; Int
 $chashWithSalt :: Int -&gt; Core -&gt; Int
-</span><a href="#local-6989586621679276759"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276753"><span id="local-6989586621679276755"><span id="local-6989586621679276757"><span class="annot"><span class="annottext">Get Core
+</span><a href="#local-6989586621679276815"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276809"><span id="local-6989586621679276811"><span id="local-6989586621679276813"><span class="annot"><span class="annottext">Get Core
 [Core] -&gt; Put
 Core -&gt; Put
 (Core -&gt; Put) -&gt; Get Core -&gt; ([Core] -&gt; Put) -&gt; Binary Core
@@ -1897,18 +1897,18 @@ get :: Get Core
 $cget :: Get Core
 put :: Core -&gt; Put
 $cput :: Core -&gt; Put
-</span><a href="#local-6989586621679276753"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276751"><span class="annot"><span class="annottext">Core -&gt; ()
+</span><a href="#local-6989586621679276809"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276807"><span class="annot"><span class="annottext">Core -&gt; ()
 (Core -&gt; ()) -&gt; NFData Core
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: Core -&gt; ()
 $crnf :: Core -&gt; ()
-</span><a href="#local-6989586621679276751"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679276807"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-318"></span><span>
 </span><span id="line-319"></span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">instance</span><span> </span><span id="RuleResult"><span class="annot"><span class="hs-identifier hs-var">RuleResult</span></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Core"><span class="hs-identifier hs-type">Core</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span>
 </span><span id="line-320"></span><span>
 </span><span id="line-321"></span><span class="hs-comment">-- | Decorate a rule's key with 'PackageKey'</span><span>
-</span><span id="line-322"></span><span class="hs-keyword">newtype</span><span> </span><span id="WithPackageKey"><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-var">WithPackageKey</span></a></span></span><span> </span><span id="local-6989586621679276750"><span class="annot"><a href="#local-6989586621679276750"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="WithPackageKey"><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-var">WithPackageKey</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679276750"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-323"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276745"><span id="local-6989586621679276747"><span class="annot"><span class="annottext">WithPackageKey k -&gt; WithPackageKey k -&gt; Bool
+</span><span id="line-322"></span><span class="hs-keyword">newtype</span><span> </span><span id="WithPackageKey"><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-var">WithPackageKey</span></a></span></span><span> </span><span id="local-6989586621679276806"><span class="annot"><a href="#local-6989586621679276806"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="WithPackageKey"><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-var">WithPackageKey</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679276806"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-323"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">newtype</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276801"><span id="local-6989586621679276803"><span class="annot"><span class="annottext">WithPackageKey k -&gt; WithPackageKey k -&gt; Bool
 (WithPackageKey k -&gt; WithPackageKey k -&gt; Bool)
 -&gt; (WithPackageKey k -&gt; WithPackageKey k -&gt; Bool)
 -&gt; Eq (WithPackageKey k)
@@ -1918,7 +1918,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: forall k. Eq k =&gt; WithPackageKey k -&gt; WithPackageKey k -&gt; Bool
 == :: WithPackageKey k -&gt; WithPackageKey k -&gt; Bool
 $c== :: forall k. Eq k =&gt; WithPackageKey k -&gt; WithPackageKey k -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276741"><span id="local-6989586621679276743"><span class="annot"><span class="annottext">Int -&gt; WithPackageKey k -&gt; Int
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276797"><span id="local-6989586621679276799"><span class="annot"><span class="annottext">Int -&gt; WithPackageKey k -&gt; Int
 WithPackageKey k -&gt; Int
 (Int -&gt; WithPackageKey k -&gt; Int)
 -&gt; (WithPackageKey k -&gt; Int) -&gt; Hashable (WithPackageKey k)
@@ -1929,7 +1929,7 @@ hash :: WithPackageKey k -&gt; Int
 $chash :: forall k. Hashable k =&gt; WithPackageKey k -&gt; Int
 hashWithSalt :: Int -&gt; WithPackageKey k -&gt; Int
 $chashWithSalt :: forall k. Hashable k =&gt; Int -&gt; WithPackageKey k -&gt; Int
-</span><a href="#local-6989586621679276741"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276735"><span id="local-6989586621679276737"><span id="local-6989586621679276739"><span class="annot"><span class="annottext">Get (WithPackageKey k)
+</span><a href="#local-6989586621679276797"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276791"><span id="local-6989586621679276793"><span id="local-6989586621679276795"><span class="annot"><span class="annottext">Get (WithPackageKey k)
 [WithPackageKey k] -&gt; Put
 WithPackageKey k -&gt; Put
 (WithPackageKey k -&gt; Put)
@@ -1946,22 +1946,22 @@ get :: Get (WithPackageKey k)
 $cget :: forall k. Binary k =&gt; Get (WithPackageKey k)
 put :: WithPackageKey k -&gt; Put
 $cput :: forall k. Binary k =&gt; WithPackageKey k -&gt; Put
-</span><a href="#local-6989586621679276735"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276733"><span class="annot"><span class="annottext">WithPackageKey k -&gt; ()
+</span><a href="#local-6989586621679276791"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Binary</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276789"><span class="annot"><span class="annottext">WithPackageKey k -&gt; ()
 (WithPackageKey k -&gt; ()) -&gt; NFData (WithPackageKey k)
 forall k. NFData k =&gt; WithPackageKey k -&gt; ()
 forall a. (a -&gt; ()) -&gt; NFData a
 rnf :: WithPackageKey k -&gt; ()
 $crnf :: forall k. NFData k =&gt; WithPackageKey k -&gt; ()
-</span><a href="#local-6989586621679276733"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679276789"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-324"></span><span>
-</span><span id="line-325"></span><span id="local-6989586621679276732"><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679276727"><span id="local-6989586621679276730"><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="annot"><a href="#local-6989586621679276732"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-type">WithPackageKey</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679276732"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-326"></span><span>  </span><span id="local-6989586621679276726"><span class="annot"><span class="annottext">show :: WithPackageKey k -&gt; String
-</span><a href="#local-6989586621679276726"><span class="hs-identifier hs-var hs-var hs-var hs-var">show</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-type">WithPackageKey</span></a></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276725"><span class="annot"><span class="annottext">k
-</span><a href="#local-6989586621679276725"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276724"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679276724"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">k -&gt; String
+</span><span id="line-325"></span><span id="local-6989586621679276788"><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679276783"><span id="local-6989586621679276786"><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="annot"><a href="#local-6989586621679276788"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-type">WithPackageKey</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679276788"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-326"></span><span>  </span><span id="local-6989586621679276782"><span class="annot"><span class="annottext">show :: WithPackageKey k -&gt; String
+</span><a href="#local-6989586621679276782"><span class="hs-identifier hs-var hs-var hs-var hs-var">show</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-type">WithPackageKey</span></a></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679276781"><span class="annot"><span class="annottext">k
+</span><a href="#local-6989586621679276781"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679276780"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679276780"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">k -&gt; String
 forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">k
-</span><a href="#local-6989586621679276725"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+</span><a href="#local-6989586621679276781"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot; (&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
@@ -1969,10 +1969,10 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; String
 forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679276724"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
+</span><a href="#local-6989586621679276780"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; ShowS
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;)&quot;</span></span></span><span>
 </span><span id="line-327"></span><span>
-</span><span id="line-328"></span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">instance</span><span> </span><span id="RuleResult"><span class="annot"><span class="hs-identifier hs-var">RuleResult</span></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-type">WithPackageKey</span></a></span><span> </span><span id="local-6989586621679276723"><span class="annot"><a href="#local-6989586621679276723"><span class="hs-identifier hs-type hs-type">k</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">RuleResult</span></span><span> </span><span class="annot"><a href="#local-6989586621679276723"><span class="hs-identifier hs-type">k</span></a></span><span>
+</span><span id="line-328"></span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">instance</span><span> </span><span id="RuleResult"><span class="annot"><span class="hs-identifier hs-var">RuleResult</span></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-type">WithPackageKey</span></a></span><span> </span><span id="local-6989586621679276779"><span class="annot"><a href="#local-6989586621679276779"><span class="hs-identifier hs-type hs-type">k</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">RuleResult</span></span><span> </span><span class="annot"><a href="#local-6989586621679276779"><span class="hs-identifier hs-type">k</span></a></span><span>
 </span><span id="line-329"></span></pre></body></html>
