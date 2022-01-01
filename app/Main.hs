@@ -32,4 +32,4 @@ main = do
     Left e -> error $ T.unpack $ Toml.prettyTomlDecodeError $ Toml.ParseError e
     Right x -> case parseConfig x of
       Left e -> error $ T.unpack $ Toml.prettyTomlDecodeErrors e
-      Right pkgs -> runNvFetcherNoCLI (cliOptionsToArgs opt) $ purePackageSet pkgs
+      Right pkgs -> runNvFetcherNoCLI (applyCliOptions defaultArgs opt) $ purePackageSet pkgs
