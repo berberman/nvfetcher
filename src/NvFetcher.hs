@@ -41,8 +41,9 @@ module NvFetcher
   ( Args (..),
     defaultArgs,
     runNvFetcher,
+    runNvFetcher',
     runNvFetcherNoCLI,
-    cliOptionsToArgs,
+    applyCliOptions,
     module NvFetcher.PackageSet,
     module NvFetcher.Types,
     module NvFetcher.Types.ShakeExtras,
@@ -86,9 +87,7 @@ data Args = Args
     argFilterRegex :: Maybe String
   }
 
--- | Default arguments of 'defaultMain'
---
--- Build dir is @_sources@.
+-- | Default 'Args'
 defaultArgs :: Args
 defaultArgs =
   Args
@@ -110,13 +109,17 @@ defaultArgs =
 -- This function calls 'runNvFetcherNoCLI', using 'Args' from 'CLIOptions'.
 -- Use this function to create your own Haskell executable program.
 runNvFetcher :: PackageSet () -> IO ()
-runNvFetcher packageSet =
-  getCLIOptions cliOptionsParser >>= flip runNvFetcherNoCLI packageSet . cliOptionsToArgs
+runNvFetcher = runNvFetcher' defaultArgs
 
--- | Apply 'CLIOptions' to 'defaultArgs'
-cliOptionsToArgs :: CLIOptions -> Args
-cliOptionsToArgs CLIOptions {..} =
-  defaultArgs
+-- | Similar to 'runNvFetcher', but uses custom @args@ instead of 'defaultArgs'
+runNvFetcher' :: Args -> PackageSet () -> IO ()
+runNvFetcher' args packageSet =
+  getCLIOptions cliOptionsParser >>= flip runNvFetcherNoCLI packageSet . applyCliOptions args
+
+-- | Apply 'CLIOptions' to 'Args'
+applyCliOptions :: Args -> CLIOptions -> Args
+applyCliOptions args CLIOptions {..} =
+  args
     { argActionAfterBuild = do
         whenJust logPath logChangesToFile
         when commit commitChanges,
