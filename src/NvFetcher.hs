@@ -122,7 +122,8 @@ applyCliOptions args CLIOptions {..} =
   args
     { argActionAfterBuild = do
         whenJust logPath logChangesToFile
-        when commit commitChanges,
+        when commit commitChanges
+        argActionAfterBuild args,
       argTarget = target,
       argShakeOptions =
         (argShakeOptions defaultArgs)
