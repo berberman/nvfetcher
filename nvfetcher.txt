@@ -101,21 +101,25 @@ VscodeMarketplace :: Text -> Text -> VersionSource
 Cmd :: Text -> VersionSource
 [_vcmd] :: VersionSource -> Text
 
--- | The result of running nvchecker
-data NvcheckerA
-NvcheckerA :: Version -> Maybe Version -> Bool -> NvcheckerA
-[nvNow] :: NvcheckerA -> Version
+-- | The result of nvchecker rule
+data NvcheckerResult
+NvcheckerResult :: Version -> Maybe Version -> Bool -> NvcheckerResult
+[nvNow] :: NvcheckerResult -> Version
 
--- | nvchecker doesn't give this value, but shake restores it from last run
-[nvOld] :: NvcheckerA -> Maybe Version
+-- | shake restores it from last run
+[nvOld] :: NvcheckerResult -> Maybe Version
 
 -- | stale means even <a>nvNow</a> comes from shake, where we actually
 --   didn't run nvchecker
-[nvStale] :: NvcheckerA -> Bool
+[nvStale] :: NvcheckerResult -> Bool
+
+-- | Parsed JSON output from nvchecker
+newtype NvcheckerRaw
+NvcheckerRaw :: Version -> NvcheckerRaw
 
 -- | The input of nvchecker
-data NvcheckerQ
-NvcheckerQ :: VersionSource -> NvcheckerOptions -> NvcheckerQ
+data CheckVersion
+CheckVersion :: VersionSource -> NvcheckerOptions -> CheckVersion
 
 -- | Configuration available for evey version sourece. See
 --   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#global-options</a>
@@ -210,9 +214,9 @@ PackagePassthru :: HashMap Text Text -> PackagePassthru
 --   strings,</i> <i>in case we can't check the equality between fetcher
 --   functions.</i>
 data Package
-Package :: PackageName -> NvcheckerQ -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoFilePath -> PackagePassthru -> UseStaleVersion -> Package
+Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoFilePath -> PackagePassthru -> UseStaleVersion -> Package
 [_pname] :: Package -> PackageName
-[_pversion] :: Package -> NvcheckerQ
+[_pversion] :: Package -> CheckVersion
 [_pfetcher] :: Package -> PackageFetcher
 [_pextract] :: Package -> Maybe PackageExtractSrc
 [_pcargo] :: Package -> Maybe PackageCargoFilePath
@@ -280,19 +284,22 @@ instance GHC.Generics.Generic NvFetcher.Types.VersionSource
 instance GHC.Classes.Ord NvFetcher.Types.VersionSource
 instance GHC.Classes.Eq NvFetcher.Types.VersionSource
 instance GHC.Show.Show NvFetcher.Types.VersionSource
-instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerQ
-instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerQ
-instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerQ
-instance GHC.Generics.Generic NvFetcher.Types.NvcheckerQ
-instance GHC.Classes.Ord NvFetcher.Types.NvcheckerQ
-instance GHC.Classes.Eq NvFetcher.Types.NvcheckerQ
-instance GHC.Show.Show NvFetcher.Types.NvcheckerQ
-instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerA
-instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerA
-instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerA
-instance GHC.Generics.Generic NvFetcher.Types.NvcheckerA
-instance GHC.Classes.Eq NvFetcher.Types.NvcheckerA
-instance GHC.Show.Show NvFetcher.Types.NvcheckerA
+instance Control.DeepSeq.NFData NvFetcher.Types.CheckVersion
+instance Data.Binary.Class.Binary NvFetcher.Types.CheckVersion
+instance Data.Hashable.Class.Hashable NvFetcher.Types.CheckVersion
+instance GHC.Generics.Generic NvFetcher.Types.CheckVersion
+instance GHC.Classes.Ord NvFetcher.Types.CheckVersion
+instance GHC.Classes.Eq NvFetcher.Types.CheckVersion
+instance GHC.Show.Show NvFetcher.Types.CheckVersion
+instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerResult
+instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerResult
+instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerResult
+instance GHC.Generics.Generic NvFetcher.Types.NvcheckerResult
+instance GHC.Classes.Eq NvFetcher.Types.NvcheckerResult
+instance GHC.Show.Show NvFetcher.Types.NvcheckerResult
+instance GHC.Generics.Generic NvFetcher.Types.NvcheckerRaw
+instance GHC.Classes.Eq NvFetcher.Types.NvcheckerRaw
+instance GHC.Show.Show NvFetcher.Types.NvcheckerRaw
 instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
 instance GHC.Generics.Generic NvFetcher.Types.ExtractSrcQ
 instance Data.Binary.Class.Binary NvFetcher.Types.ExtractSrcQ
@@ -344,7 +351,7 @@ instance Data.Binary.Class.Binary (NvFetcher.Types.FetchResult k) => Data.Binary
 instance Control.DeepSeq.NFData (NvFetcher.Types.FetchResult k) => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
 instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
 instance GHC.Show.Show NvFetcher.Types.VersionChange
-instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerA
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerRaw
 instance GHC.Show.Show NvFetcher.Types.VersionSortMethod
 instance Data.Default.Class.Default NvFetcher.Types.VersionSortMethod
 
@@ -374,16 +381,16 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_abih k_aDoD. Lens (NixFetcher k_abih) (NixFetcher k_aDoD) (FetchResult k_abih) (FetchResult k_aDoD)
-rev :: forall k_abih. Traversal' (NixFetcher k_abih) Version
-name :: forall k_abih. Lens' (NixFetcher k_abih) (Maybe Text)
-leaveDotGit :: forall k_abih. Traversal' (NixFetcher k_abih) Bool
-furl :: forall k_abih. Traversal' (NixFetcher k_abih) Text
-frepo :: forall k_abih. Traversal' (NixFetcher k_abih) Text
-fowner :: forall k_abih. Traversal' (NixFetcher k_abih) Text
-fetchSubmodules :: forall k_abih. Traversal' (NixFetcher k_abih) Bool
-deepClone :: forall k_abih. Traversal' (NixFetcher k_abih) Bool
-pversion :: Lens' Package NvcheckerQ
+sha256 :: forall k_abij k_aDws. Lens (NixFetcher k_abij) (NixFetcher k_aDws) (FetchResult k_abij) (FetchResult k_aDws)
+rev :: forall k_abij. Traversal' (NixFetcher k_abij) Version
+name :: forall k_abij. Lens' (NixFetcher k_abij) (Maybe Text)
+leaveDotGit :: forall k_abij. Traversal' (NixFetcher k_abij) Bool
+furl :: forall k_abij. Traversal' (NixFetcher k_abij) Text
+frepo :: forall k_abij. Traversal' (NixFetcher k_abij) Text
+fowner :: forall k_abij. Traversal' (NixFetcher k_abij) Text
+fetchSubmodules :: forall k_abij. Traversal' (NixFetcher k_abij) Bool
+deepClone :: forall k_abij. Traversal' (NixFetcher k_abij) Bool
+pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
 pname :: Lens' Package PackageName
@@ -527,7 +534,7 @@ data PackageSetF f
 type PackageSet = Free PackageSetF
 
 -- | Add a package to package set
-newPackage :: PackageName -> NvcheckerQ -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoFilePath -> PackagePassthru -> UseStaleVersion -> PackageSet ()
+newPackage :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoFilePath -> PackagePassthru -> UseStaleVersion -> PackageSet ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -911,8 +918,8 @@ ListOptions :: Maybe Text -> Maybe Text -> Maybe VersionSortMethod -> Maybe Text
 [_ignored] :: ListOptions -> Maybe Text
 
 -- | The input of nvchecker
-data NvcheckerQ
-NvcheckerQ :: VersionSource -> NvcheckerOptions -> NvcheckerQ
+data CheckVersion
+CheckVersion :: VersionSource -> NvcheckerOptions -> CheckVersion
 
 -- | Configuration available for evey version sourece. See
 --   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#global-options</a>
@@ -963,23 +970,27 @@ VscodeMarketplace :: Text -> Text -> VersionSource
 Cmd :: Text -> VersionSource
 [_vcmd] :: VersionSource -> Text
 
--- | The result of running nvchecker
-data NvcheckerA
-NvcheckerA :: Version -> Maybe Version -> Bool -> NvcheckerA
-[nvNow] :: NvcheckerA -> Version
+-- | The result of nvchecker rule
+data NvcheckerResult
+NvcheckerResult :: Version -> Maybe Version -> Bool -> NvcheckerResult
+[nvNow] :: NvcheckerResult -> Version
 
--- | nvchecker doesn't give this value, but shake restores it from last run
-[nvOld] :: NvcheckerA -> Maybe Version
+-- | shake restores it from last run
+[nvOld] :: NvcheckerResult -> Maybe Version
 
 -- | stale means even <a>nvNow</a> comes from shake, where we actually
 --   didn't run nvchecker
-[nvStale] :: NvcheckerA -> Bool
+[nvStale] :: NvcheckerResult -> Bool
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()
 
--- | Run nvchecker
-checkVersion :: VersionSource -> NvcheckerOptions -> PackageKey -> Action NvcheckerA
+-- | Run nvchecker given <a>PackageKey</a> Recording version changes and
+--   using stale version are available.
+checkVersion :: VersionSource -> NvcheckerOptions -> PackageKey -> Action NvcheckerResult
+
+-- | Run nvchecker without cache
+checkVersion' :: VersionSource -> NvcheckerOptions -> Action NvcheckerResult
 
 
 -- | This module contains a type class <a>ToNixExpr</a> and some its
