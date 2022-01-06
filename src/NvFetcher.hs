@@ -196,7 +196,6 @@ mainRules Args {..} = do
     let genPath = shakeDir </> "generated.nix"
     putVerbose $ "Generating " <> genPath
     writeFileChanged genPath $ T.unpack $ srouces (T.unlines body) <> "\n"
-    need [genPath]
     argActionAfterBuild
 
   argRules

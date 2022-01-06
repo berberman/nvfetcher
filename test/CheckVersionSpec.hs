@@ -23,7 +23,7 @@ spec = do
 
 -- | We need a fakePackageKey here; otherwise the nvchecker rule would be cutoff
 versionSourcesSpec :: Spec
-versionSourcesSpec = aroundShake' (Map.singleton fakePackageKey fakePackage) $
+versionSourcesSpec = aroundShake $
   describe "nvchecker" $ do
     specifyChan "pypi" $
       runNvcheckerRule (Pypi "example") `shouldReturnJust` Version "0.1.0"
@@ -82,36 +82,24 @@ useStaleSpec = aroundShake' (Map.singleton fakePackageKey pinnedPackage) $
 
     specifyChan "needs run" $ do
       liftIO $ writeFile temp "Meow"
-      runNvcheckerRule' versionSource `shouldReturnJust` NvcheckerA {nvNow = "Meow", nvOld = Nothing, nvStale = False}
+      runNvcheckerRuleOnFakePackage versionSource `shouldReturnJust` NvcheckerResult {nvNow = "Meow", nvOld = Nothing, nvStale = False}
 
     specifyChan "stale" $ do
       liftIO $ writeFile temp "Bark"
-      runNvcheckerRule' versionSource `shouldReturnJust` NvcheckerA {nvNow = "Meow", nvOld = Nothing, nvStale = True}
+      runNvcheckerRuleOnFakePackage versionSource `shouldReturnJust` NvcheckerResult {nvNow = "Meow", nvOld = Nothing, nvStale = True}
 
     runIO cleanup
 
 --------------------------------------------------------------------------------
 
 runNvcheckerRule :: VersionSource -> ReaderT ActionQueue IO (Maybe Version)
-runNvcheckerRule v = fmap nvNow <$> runNvcheckerRule' v
+runNvcheckerRule v = fmap nvNow <$> runActionChan (checkVersion' v def)
 
-runNvcheckerRule' :: VersionSource -> ReaderT ActionQueue IO (Maybe NvcheckerA)
-runNvcheckerRule' v = runActionChan $ checkVersion v def fakePackageKey
+runNvcheckerRuleOnFakePackage :: VersionSource -> ReaderT ActionQueue IO (Maybe NvcheckerResult)
+runNvcheckerRuleOnFakePackage v = runActionChan $ checkVersion v def fakePackageKey
 
 fakePackageKey :: PackageKey
 fakePackageKey = PackageKey "a-fake-package"
-
-fakePackage :: Package
-fakePackage =
-  Package
-    { _pname = coerce fakePackageKey,
-      _pversion = undefined,
-      _pfetcher = undefined,
-      _pcargo = undefined,
-      _pextract = undefined,
-      _ppassthru = undefined,
-      _ppinned = UseStaleVersion False
-    }
 
 pinnedPackage :: Package
 pinnedPackage =
