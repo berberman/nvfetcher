@@ -91,7 +91,7 @@ persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (CheckVersio
           pure $ RunResult runChanged (encode' modifiedNow) modifiedNow
 
 -- | Nvchecker rule without cache
--- Rule this rule by calling
+-- Rule this rule by calling 'checkVersion''
 oneShotRule :: Rules ()
 oneShotRule = void $
   addOracle $ \(CheckVersion versionSource options) -> do
