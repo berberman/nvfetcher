@@ -44,7 +44,6 @@ extractSrcRule :: Rules ()
 extractSrcRule = void $
   addOracleCache $ \(q :: ExtractSrcQ) -> withTempFile $ \fp -> withRetries $ do
     writeFile' fp $ T.unpack $ wrap $ toNixExpr q
-    need [fp]
     -- TODO: Avoid using NIX_PATH
     (CmdTime t, StdoutTrim out, CmdLine c) <- cmd Shell $ "nix-instantiate --eval --strict --json --read-write-mode -E 'let pkgs = import <nixpkgs> { }; in ((import " <> fp <> ") pkgs)'"
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"

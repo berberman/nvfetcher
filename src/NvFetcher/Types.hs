@@ -31,8 +31,9 @@ module NvFetcher.Types
     VersionSortMethod (..),
     ListOptions (..),
     VersionSource (..),
-    NvcheckerA (..),
-    NvcheckerQ (..),
+    NvcheckerResult (..),
+    NvcheckerRaw (..),
+    CheckVersion (..),
     NvcheckerOptions (..),
     UseStaleVersion (..),
 
@@ -165,24 +166,28 @@ data VersionSource
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 -- | The input of nvchecker
-data NvcheckerQ = NvcheckerQ VersionSource NvcheckerOptions
+data CheckVersion = CheckVersion VersionSource NvcheckerOptions
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
--- | The result of running nvchecker
-data NvcheckerA = NvcheckerA
+-- | The result of nvchecker rule
+data NvcheckerResult = NvcheckerResult
   { nvNow :: Version,
-    -- | nvchecker doesn't give this value, but shake restores it from last run
+    -- | shake restores it from last run
     nvOld :: Maybe Version,
     -- | stale means even 'nvNow' comes from shake, where we actually didn't run nvchecker
     nvStale :: Bool
   }
   deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
 
-instance A.FromJSON NvcheckerA where
-  parseJSON = A.withObject "NvcheckerResult" $ \o ->
-    NvcheckerA <$> o A..: "version" <*> pure Nothing <*> pure False
+-- | Parsed JSON output from nvchecker
+newtype NvcheckerRaw = NvcheckerRaw Version
+  deriving (Show, Typeable, Eq, Generic)
 
-type instance RuleResult NvcheckerQ = NvcheckerA
+instance A.FromJSON NvcheckerRaw where
+  parseJSON = A.withObject "NvcheckerRaw" $ \o ->
+    NvcheckerRaw <$> o A..: "version"
+
+type instance RuleResult CheckVersion = NvcheckerResult
 
 --------------------------------------------------------------------------------
 
@@ -295,7 +300,7 @@ newtype UseStaleVersion = UseStaleVersion Bool
 -- /in case we can't check the equality between fetcher functions./
 data Package = Package
   { _pname :: PackageName,
-    _pversion :: NvcheckerQ,
+    _pversion :: CheckVersion,
     _pfetcher :: PackageFetcher,
     _pextract :: Maybe PackageExtractSrc,
     _pcargo :: Maybe PackageCargoFilePath,

@@ -1,7 +1,6 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE ViewPatterns #-}
 
 -- | Copyright: (c) 2021 berberman
 -- SPDX-License-Identifier: MIT
@@ -20,20 +19,22 @@ module NvFetcher.Nvchecker
   ( -- * Types
     VersionSortMethod (..),
     ListOptions (..),
-    NvcheckerQ (..),
+    CheckVersion (..),
     NvcheckerOptions (..),
     VersionSource (..),
-    NvcheckerA (..),
+    NvcheckerResult (..),
 
     -- * Rules
     nvcheckerRule,
     checkVersion,
+    checkVersion',
   )
 where
 
+import Control.Monad (void)
 import qualified Data.Aeson as A
 import Data.Coerce (coerce)
-import Data.Maybe (mapMaybe, fromJust)
+import Data.Maybe (fromJust, mapMaybe)
 import Data.String (fromString)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
@@ -47,7 +48,15 @@ import Toml.Type.Edsl
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()
-nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (NvcheckerQ versionSource options, pkg)) old _mode ->
+nvcheckerRule = do
+  persistedRule
+  oneShotRule
+
+-- | Nvchecker rule which is aware of version changes and supports using stale version
+-- 'PackageKey' is required for caching.
+-- Run this rule by calling 'checkVersion'
+persistedRule :: Rules ()
+persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (CheckVersion versionSource options, pkg)) old _mode ->
   -- If the package was removed after the last run,
   -- shake still runs the nvchecker rule for this package.
   -- So we record a version change here, indicating that the package has been removed.
@@ -59,7 +68,7 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (NvcheckerQ 
       pure $ RunResult ChangedRecomputeDiff mempty undefined -- skip running, returning a never consumed result
     _ -> do
       let lastRun = decode' <$> old
-      useStale <- _ppinned .  fromJust <$> lookupPackage pkg
+      useStale <- _ppinned . fromJust <$> lookupPackage pkg
       case useStale of
         (UseStaleVersion True)
           | Just cachedResult <- lastRun -> do
@@ -69,26 +78,36 @@ nvcheckerRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (NvcheckerQ 
             pure $ RunResult ChangedRecomputeSame (encode' result) result
 
         -- run nvchecker
-        _ -> withTempFile $ \config -> withRetries $ do
-          writeFile' config $ T.unpack $ pretty $ mkToml $ genNvConfig pkg options versionSource
-          need [config]
-          (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
-          putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
-          let out' = T.decodeUtf8 out
-              result = mapMaybe (A.decodeStrict . T.encodeUtf8) (T.lines out')
-          now <- case result of
-            [x] -> pure x
-            _ -> fail $ "Failed to parse output from nvchecker: " <> T.unpack out'
-
+        _ -> do
+          NvcheckerRaw now <- runNvchecker pkg options versionSource
           let runChanged = case lastRun of
                 Just cachedResult
-                  | nvNow cachedResult == nvNow now -> ChangedRecomputeSame
+                  | nvNow cachedResult == now -> ChangedRecomputeSame
                 _ -> ChangedRecomputeDiff
               modifiedNow = case lastRun of
                 -- fill the old version to result
-                Just cachedResult -> now {nvOld = Just $ nvNow cachedResult}
-                _ -> now
+                Just cachedResult -> NvcheckerResult now (Just $ nvNow cachedResult) False
+                _ -> NvcheckerResult now Nothing False
           pure $ RunResult runChanged (encode' modifiedNow) modifiedNow
+
+-- | Nvchecker rule without cache
+-- Rule this rule by calling
+oneShotRule :: Rules ()
+oneShotRule = void $
+  addOracle $ \(CheckVersion versionSource options) -> do
+    NvcheckerRaw now <- runNvchecker (PackageKey "pkg") options versionSource
+    pure $ NvcheckerResult now Nothing False
+
+runNvchecker :: PackageKey -> NvcheckerOptions -> VersionSource -> Action NvcheckerRaw
+runNvchecker pkg options versionSource = withTempFile $ \config -> withRetries $ do
+  writeFile' config $ T.unpack $ pretty $ mkToml $ genNvConfig pkg options versionSource
+  (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
+  putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
+  let out' = T.decodeUtf8 out
+      result = mapMaybe (A.decodeStrict . T.encodeUtf8) (T.lines out')
+  case result of
+    [x] -> pure x
+    _ -> fail $ "Failed to parse output from nvchecker: " <> T.unpack out'
 
 genNvConfig :: PackageKey -> NvcheckerOptions -> VersionSource -> TDSL
 genNvConfig pkg options versionSource = table (fromString $ T.unpack $ coerce pkg) $ do
@@ -159,6 +178,11 @@ genNvConfig pkg options versionSource = table (fromString $ T.unpack $ coerce pk
       "from_pattern" =:? _fromPattern
       "to_pattern" =:? _toPattern
 
--- | Run nvchecker
-checkVersion :: VersionSource -> NvcheckerOptions -> PackageKey -> Action NvcheckerA
-checkVersion v o k = apply1 $ WithPackageKey (NvcheckerQ v o, k)
+-- | Run nvchecker given 'PackageKey'
+-- Recording version changes and using stale version are available.
+checkVersion :: VersionSource -> NvcheckerOptions -> PackageKey -> Action NvcheckerResult
+checkVersion v o k = apply1 $ WithPackageKey (CheckVersion v o, k)
+
+-- | Run nvchecker without cache
+checkVersion' :: VersionSource -> NvcheckerOptions -> Action NvcheckerResult
+checkVersion' v o = askOracle $ CheckVersion v o

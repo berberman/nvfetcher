@@ -54,14 +54,15 @@ coreRules = do
         Nothing -> fail $ "Unkown package key: " <> show pkg
         Just
           Package
-            { _pversion = NvcheckerQ versionSource options,
+            { _pversion = CheckVersion versionSource options,
               _ppassthru = PackagePassthru passthruMap,
               ..
             } -> do
             -- it's important to always rerun
             -- since the package definition is not tracked at all
             alwaysRerun
-            (NvcheckerA version mOldV _isStale) <- checkVersion versionSource options pkg
+            (NvcheckerResult
+             version mOldV _isStale) <- checkVersion versionSource options pkg
             prefetched <- prefetch $ _pfetcher version
             shakeDir <- getShakeDir
             -- extract src
