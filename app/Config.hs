@@ -1,7 +1,4 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
@@ -47,7 +44,7 @@ toPackage :: PackageKey -> PackageConfig -> Package
 toPackage k PackageConfig {..} =
   Package
     (coerce k)
-    (NvcheckerQ pcVersionSource pcNvcheckerOptions)
+    (CheckVersion pcVersionSource pcNvcheckerOptions)
     pcFetcher
     pcExtractFiles
     pcCargoLockPath
