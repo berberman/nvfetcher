@@ -63,7 +63,7 @@ persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (CheckVersio
   -- Ideally, this should be done in the core rule
   isPackageKeyTarget pkg >>= \case
     False -> do
-      let oldVer = decode' <$> old
+      let oldVer = nvNow . decode' <$> old
       recordVersionChange (coerce pkg) oldVer "∅"
       pure $ RunResult ChangedRecomputeDiff mempty undefined -- skip running, returning a never consumed result
     _ -> do
