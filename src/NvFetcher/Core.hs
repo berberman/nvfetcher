@@ -18,13 +18,13 @@ module NvFetcher.Core
   )
 where
 
+import Control.Monad (void)
 import Data.Coerce (coerce)
 import qualified Data.HashMap.Strict as HMap
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
 import Development.Shake.FilePath
-import Development.Shake.Rule
 import NeatInterpolation (trimming)
 import NvFetcher.ExtractSrc
 import NvFetcher.FetchRustGitDeps
@@ -43,13 +43,11 @@ coreRules = do
   prefetchRule
   extractSrcRule
   fetchRustGitDepsRule
-  -- TODO: maybe an oracle rule is enough
-  addBuiltinRule noLint noIdentity $ \(WithPackageKey (Core, pkg)) mOld mode -> case mode of
-    RunDependenciesSame
-      | Just old <- mOld,
-        (expr, _) <- decode' @(NixExpr, Version) old ->
-        pure $ RunResult ChangedNothing old expr
-    _ ->
+  void $
+    addOracle $ \(WithPackageKey (Core, pkg)) -> do
+      -- it's important to always rerun
+      -- since the package definition is not tracked at all
+      alwaysRerun
       lookupPackage pkg >>= \case
         Nothing -> fail $ "Unkown package key: " <> show pkg
         Just
@@ -58,11 +56,7 @@ coreRules = do
               _ppassthru = PackagePassthru passthruMap,
               ..
             } -> do
-            -- it's important to always rerun
-            -- since the package definition is not tracked at all
-            alwaysRerun
-            (NvcheckerResult
-             version mOldV _isStale) <- checkVersion versionSource options pkg
+            (NvcheckerResult version mOldV _isStale) <- checkVersion versionSource options pkg
             prefetched <- prefetch $ _pfetcher version
             shakeDir <- getShakeDir
             -- extract src
@@ -122,8 +116,7 @@ coreRules = do
                   recordVersionChange _pname (Just old) version
               _ -> pure ()
 
-            let result = gen _pname version prefetched $ appending1 <> appending2 <> appending3
-            pure $ RunResult ChangedRecomputeDiff (encode' (result, version)) result
+            pure $ gen _pname version prefetched $ appending1 <> appending2 <> appending3
 
 -- | Run the core rule.
 -- Given a 'PackageKey', run "NvFetcher.Nvchecker", "NvFetcher.NixFetcher"
@@ -154,7 +147,7 @@ coreRules = do
 --   };
 -- @
 generateNixSourceExpr :: PackageKey -> Action NixExpr
-generateNixSourceExpr k = apply1 $ WithPackageKey (Core, k)
+generateNixSourceExpr k = askOracle $ WithPackageKey (Core, k)
 
 gen :: PackageName -> Version -> NixFetcher Fetched -> Text -> Text
 gen name (coerce -> ver) (toNixExpr -> srcP) appending =
