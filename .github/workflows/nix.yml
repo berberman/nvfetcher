@@ -16,6 +16,9 @@ jobs:
           experimental-features = nix-command flakes
         nix_path: nixpkgs=channel:nixos-unstable
 
+    - name: Replace git://github.com/ with https://github.com/
+      run: git config --global url."https://github.com/".insteadOf git://github.com/
+
     - name: Run Nix Flake Check
       run: nix flake check
 
