@@ -160,6 +160,9 @@ FetchUrl :: Text -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
 [_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
+FetchTarball :: Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+[_furl] :: NixFetcher (k :: FetchStatus) -> Text
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
 
 -- | Prefetched fetchers hold hashes
 type family FetchResult (k :: FetchStatus)
@@ -381,15 +384,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_abij k_aDws. Lens (NixFetcher k_abij) (NixFetcher k_aDws) (FetchResult k_abij) (FetchResult k_aDws)
-rev :: forall k_abij. Traversal' (NixFetcher k_abij) Version
-name :: forall k_abij. Lens' (NixFetcher k_abij) (Maybe Text)
-leaveDotGit :: forall k_abij. Traversal' (NixFetcher k_abij) Bool
-furl :: forall k_abij. Traversal' (NixFetcher k_abij) Text
-frepo :: forall k_abij. Traversal' (NixFetcher k_abij) Text
-fowner :: forall k_abij. Traversal' (NixFetcher k_abij) Text
-fetchSubmodules :: forall k_abij. Traversal' (NixFetcher k_abij) Bool
-deepClone :: forall k_abij. Traversal' (NixFetcher k_abij) Bool
+sha256 :: forall k_abik k_aDAa. Lens (NixFetcher k_abik) (NixFetcher k_aDAa) (FetchResult k_abik) (FetchResult k_aDAa)
+rev :: forall k_abik. Traversal' (NixFetcher k_abik) Version
+name :: forall k_abik. Traversal' (NixFetcher k_abik) (Maybe Text)
+leaveDotGit :: forall k_abik. Traversal' (NixFetcher k_abik) Bool
+furl :: forall k_abik. Traversal' (NixFetcher k_abik) Text
+frepo :: forall k_abik. Traversal' (NixFetcher k_abik) Text
+fowner :: forall k_abik. Traversal' (NixFetcher k_abik) Text
+fetchSubmodules :: forall k_abik. Traversal' (NixFetcher k_abik) Bool
+deepClone :: forall k_abik. Traversal' (NixFetcher k_abik) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -473,6 +476,9 @@ FetchUrl :: Text -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
 [_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
+FetchTarball :: Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+[_furl] :: NixFetcher (k :: FetchStatus) -> Text
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
 
 -- | Fetch status
 data FetchStatus
@@ -508,6 +514,9 @@ openVsxFetcher :: (Text, Text) -> PackageFetcher
 
 -- | Create a fetcher from vscode marketplace
 vscodeMarketplaceFetcher :: (Text, Text) -> PackageFetcher
+
+-- | Create a fetcher from url, using fetchTarball
+tarballFetcher :: Text -> NixFetcher Fresh
 
 
 -- | This module mainly contains two things: <a>PackageSet</a> and
@@ -712,6 +721,11 @@ fetchOpenVsx :: Attach PackageFetcher (Text, Text)
 --   
 --   Args are publisher and extension name
 fetchVscodeMarketplace :: Attach PackageFetcher (Text, Text)
+
+-- | This package is a tarball, fetched from url
+--   
+--   Arg is a function which constructs the url from a version
+fetchTarball :: Attach PackageFetcher (Version -> Text)
 
 -- | Extract files from fetched package source
 extractSource :: Attach PackageExtractSrc [FilePath]
