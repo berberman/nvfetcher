@@ -53,3 +53,7 @@ passthru = { publisher = "ritwickdey", name = "LiveServer" }
 [cmd-example]
 src.cmd = "echo v2.5"
 fetch.github = "lilydjwg/nvchecker"
+
+[nixpkgs]
+src.git = "https://github.com/NixOS/nixpkgs"
+fetch.tarball = "https://github.com/nixos/nixpkgs/archive/$ver.tar.gz"

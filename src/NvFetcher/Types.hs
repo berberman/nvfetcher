@@ -217,6 +217,10 @@ data NixFetcher (k :: FetchStatus)
         _name :: Maybe Text,
         _sha256 :: FetchResult k
       }
+  | FetchTarball
+      { _furl :: Text,
+        _sha256 :: FetchResult k
+      }
   deriving (Typeable, Generic)
 
 -- | Fetch status

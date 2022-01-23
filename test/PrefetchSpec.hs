@@ -32,6 +32,10 @@ spec = aroundShake $
       runPrefetchRule (gitHubFetcher ("harry-sanabria", "ReleaseTestRepo") "release3")
         `shouldReturnJust` Checksum "sha256-cSygC4nBg8ChArw+eGSS0PBE5n6Tc0nJLdxEmaDYGKk="
 
+    specifyChan "tarball" $
+      runPrefetchRule (tarballFetcher "https://github.com/nixos/nixpkgs/archive/3d35529a48d3ad50ad959463755b0b7fe392cfa7.tar.gz")
+        `shouldReturnJust` Checksum "0la68sv52zz1kjw5s5sn6qslzz9mi9sakhzwi873gp4dhc8df1sg"
+
 --------------------------------------------------------------------------------
 
 runPrefetchRule :: NixFetcher Fresh -> ReaderT ActionQueue IO (Maybe Checksum)

@@ -120,6 +120,13 @@ nixFetcher sha256 = \case
             sha256 = $sha256;
           }
     |]
+  (FetchTarball (quote -> url) _) ->
+    [trimming|
+          fetchTarball {
+            url = $url;
+            sha256 = $sha256;
+          }
+    |]
   where
     nameField = maybe "" (\x -> "\nname = " <> quote x <> ";")
 

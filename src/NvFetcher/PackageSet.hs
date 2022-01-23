@@ -76,6 +76,7 @@ module NvFetcher.PackageSet
     fetchUrl,
     fetchOpenVsx,
     fetchVscodeMarketplace,
+    fetchTarball,
 
     -- * Addons
     extractSource,
@@ -508,6 +509,12 @@ fetchOpenVsx e = fetch e . vscodeMarketplaceFetcher
 -- Args are publisher and extension name
 fetchVscodeMarketplace :: Attach PackageFetcher (Text, Text)
 fetchVscodeMarketplace e = fetch e . vscodeMarketplaceFetcher
+
+-- | This package is a tarball, fetched from url
+--
+-- Arg is a function which constructs the url from a version
+fetchTarball :: Attach PackageFetcher (Version -> Text)
+fetchTarball e f = fetch e (tarballFetcher . f)
 
 --------------------------------------------------------------------------------
 

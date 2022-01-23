@@ -42,6 +42,7 @@ module NvFetcher.NixFetcher
     urlFetcher,
     openVsxFetcher,
     vscodeMarketplaceFetcher,
+    tarballFetcher,
   )
 where
 
@@ -89,6 +90,13 @@ runFetcher = \case
   FetchUrl {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
       command [EchoStderr False] "nix-prefetch" ["fetchurl", "--url", T.unpack _furl]
+    putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
+    case takeWhile (not . T.null) $ reverse $ T.lines out of
+      [x] -> pure $ coerce x
+      _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
+  FetchTarball {..} -> do
+    (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
+      command [EchoStderr False] "nix-prefetch" ["fetchTarball", "--url", T.unpack _furl]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
       [x] -> pure $ coerce x
@@ -150,11 +158,10 @@ openVsxFetcher ::
   (Text, Text) ->
   PackageFetcher
 openVsxFetcher (publisher, extName) (coerce -> ver) =
-  ( urlFetcher
-      [trimming|https://open-vsx.org/api/$publisher/$extName/$ver/file/$publisher.$extName-$ver.vsix|]
-  )
-    { _name = Just [trimming|$extName-$ver.zip|]
-    }
+  FetchUrl
+    [trimming|https://open-vsx.org/api/$publisher/$extName/$ver/file/$publisher.$extName-$ver.vsix|]
+    (Just [trimming|$extName-$ver.zip|])
+    ()
 
 -- | Create a fetcher from vscode marketplace
 vscodeMarketplaceFetcher ::
@@ -162,8 +169,11 @@ vscodeMarketplaceFetcher ::
   (Text, Text) ->
   PackageFetcher
 vscodeMarketplaceFetcher (publisher, extName) (coerce -> ver) =
-  ( urlFetcher
-      [trimming|https://$publisher.gallery.vsassets.io/_apis/public/gallery/publisher/$publisher/extension/$extName/$ver/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage|]
-  )
-    { _name = Just [trimming|$extName-$ver.zip|]
-    }
+  FetchUrl
+    [trimming|https://$publisher.gallery.vsassets.io/_apis/public/gallery/publisher/$publisher/extension/$extName/$ver/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage|]
+    (Just [trimming|$extName-$ver.zip|])
+    ()
+
+-- | Create a fetcher from url, using fetchTarball
+tarballFetcher :: Text -> NixFetcher Fresh
+tarballFetcher url = FetchTarball url ()

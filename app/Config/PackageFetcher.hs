@@ -31,7 +31,8 @@ fetcherCodec =
       openVsxCodec,
       vscodeMarketplaceCodec,
       gitCodec,
-      urlCodec
+      urlCodec,
+      tarballCodec
     ]
 
 --------------------------------------------------------------------------------
@@ -67,7 +68,7 @@ _GitOptions f x@FetchGitHub {..} =
         & leaveDotGit .~ fromMaybe False goLeaveDotGit
   )
     <$> f (GitOptions (Just _deepClone) (Just _fetchSubmodules) (Just _leaveDotGit))
-_GitOptions _ x@FetchUrl {} = pure x
+_GitOptions _ x = pure x
 
 --------------------------------------------------------------------------------
 
@@ -146,3 +147,12 @@ urlCodec =
     unsupportError
     (\t -> Right $ \(coerce -> v) -> urlFetcher $ T.replace "$ver" v t)
     "fetch.url"
+
+--------------------------------------------------------------------------------
+
+tarballCodec :: TomlCodec PackageFetcher
+tarballCodec =
+  Toml.textBy
+    unsupportError
+    (\t -> Right $ \(coerce -> v) -> tarballFetcher $ T.replace "$ver" v t)
+    "fetch.tarball"
