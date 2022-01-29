@@ -21,7 +21,7 @@ packageSet = do
     package "apple-emoji"
       `sourceManual` "0.0.0.20200413"
       `fetchUrl` const
-        "https://github.com/samuelngs/apple-emoji-linux/releases/download/latest/AppleColorEmoji.ttf"
+        "https://github.com/samuelngs/apple-emoji-linux/releases/download/alpha-release-v1.0.0/AppleColorEmoji.ttf"
 
   define $
     package "nvfetcher-git"

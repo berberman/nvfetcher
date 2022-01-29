@@ -11,7 +11,7 @@ git.fetchSubmodules = true
 [apple-emoji]
 # A fake version, which is unused in the fetcher
 src.manual = "0.0.0.20200413"
-fetch.url = "https://github.com/samuelngs/apple-emoji-linux/releases/download/latest/AppleColorEmoji.ttf"
+fetch.url = "https://github.com/samuelngs/apple-emoji-linux/releases/download/alpha-release-v1.0.0/AppleColorEmoji.ttf"
 
 [nvfetcher-git]
 # Follow the latest git commit
