@@ -256,7 +256,8 @@ instance A.ToJSON (NixFetcher Fetched) where
         "fetchSubmodules" A..= _fetchSubmodules,
         "leaveDotGit" A..= _leaveDotGit,
         "name" A..= _name,
-        "sha256" A..= _sha256
+        "sha256" A..= _sha256,
+        "type" A..= A.String "git"
       ]
   toJSON FetchGitHub {..} =
     A.object
@@ -267,18 +268,21 @@ instance A.ToJSON (NixFetcher Fetched) where
         "fetchSubmodules" A..= _fetchSubmodules,
         "leaveDotGit" A..= _leaveDotGit,
         "name" A..= _name,
-        "sha256" A..= _sha256
+        "sha256" A..= _sha256,
+        "type" A..= A.String "github"
       ]
   toJSON FetchUrl {..} =
     A.object
       [ "url" A..= _furl,
         "name" A..= _name,
-        "sha256" A..= _sha256
+        "sha256" A..= _sha256,
+        "type" A..= A.String "url"
       ]
   toJSON FetchTarball {..} =
     A.object
       [ "url" A..= _furl,
-        "sha256" A..= _sha256
+        "sha256" A..= _sha256,
+        "type" A..= A.String "tarball"
       ]
 
 --------------------------------------------------------------------------------
