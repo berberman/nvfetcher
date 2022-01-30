@@ -26,6 +26,12 @@ module NvFetcher.Types.ShakeExtras
 
     -- * Retries
     withRetries,
+
+    -- * Build dir
+    getBuildDir,
+
+    -- * Last versions
+    getLastVersion,
   )
 where
 
@@ -39,7 +45,9 @@ import NvFetcher.Types
 data ShakeExtras = ShakeExtras
   { versionChanges :: Var [VersionChange],
     targetPackages :: Map PackageKey Package,
-    retries :: Int
+    retries :: Int,
+    buildDir :: FilePath,
+    lastVersions :: Map PackageKey Version
   }
 
 -- | Get our values from shake
@@ -49,9 +57,10 @@ getShakeExtras =
     Just x -> pure x
     _ -> fail "ShakeExtras is missing!"
 
--- | Create an empty 'ShakeExtras' from packages to build and times to retry for each rule
-initShakeExtras :: Map PackageKey Package -> Int -> IO ShakeExtras
-initShakeExtras targetPackages retries = do
+-- | Create an empty 'ShakeExtras' from packages to build, times to retry for each rule,
+-- build dir, and last versions
+initShakeExtras :: Map PackageKey Package -> Int -> FilePath -> Map PackageKey Version -> IO ShakeExtras
+initShakeExtras targetPackages retries buildDir lastVersions = do
   versionChanges <- newVar mempty
   pure ShakeExtras {..}
 
@@ -86,3 +95,13 @@ getVersionChanges = do
 -- | Run an action, retry at most 'retries' times if it throws an exception
 withRetries :: Action a -> Action a
 withRetries a = getShakeExtras >>= \ShakeExtras {..} -> actionRetry retries a
+
+-- | Get build dir
+getBuildDir :: Action FilePath
+getBuildDir = buildDir <$> getShakeExtras
+
+-- | Get last version of a package
+getLastVersion :: PackageKey -> Action (Maybe Version)
+getLastVersion k = do
+  ShakeExtras {..} <- getShakeExtras
+  pure $ lastVersions Map.!? k

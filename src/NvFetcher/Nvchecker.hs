@@ -56,39 +56,26 @@ nvcheckerRule = do
 -- 'PackageKey' is required for caching.
 -- Run this rule by calling 'checkVersion'
 persistedRule :: Rules ()
-persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (CheckVersion versionSource options, pkg)) old _mode ->
-  -- If the package was removed after the last run,
-  -- shake still runs the nvchecker rule for this package.
-  -- So we record a version change here, indicating that the package has been removed.
-  -- Ideally, this should be done in the core rule
-  isPackageKeyTarget pkg >>= \case
-    False -> do
-      let oldVer = nvNow . decode' <$> old
-      recordVersionChange (coerce pkg) oldVer "∅"
-      pure $ RunResult ChangedRecomputeDiff mempty undefined -- skip running, returning a never consumed result
-    _ -> do
-      let lastRun = decode' <$> old
-      useStale <- _ppinned . fromJust <$> lookupPackage pkg
-      case useStale of
-        (UseStaleVersion True)
-          | Just cachedResult <- lastRun -> do
-            -- use the stale version if we have
-            putInfo $ T.unpack $ "Skip running nvchecker, use stale version " <> coerce (nvNow cachedResult) <> " for " <> coerce pkg
-            let result = cachedResult {nvStale = True}
-            pure $ RunResult ChangedRecomputeSame (encode' result) result
+persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (CheckVersion versionSource options, pkg)) _old _mode -> do
+  oldVer <- getLastVersion pkg
+  useStale <- _ppinned . fromJust <$> lookupPackage pkg
+  case useStale of
+    (UseStaleVersion True)
+      | Just oldVer' <- oldVer -> do
+        -- use the stale version if we have
+        putInfo $ T.unpack $ "Skip running nvchecker, use stale version " <> coerce oldVer' <> " for " <> coerce pkg
+        let result = NvcheckerResult {nvNow = oldVer', nvOld = oldVer, nvStale = True}
+        pure $ RunResult ChangedRecomputeSame (encode' result) result
 
-        -- run nvchecker
-        _ -> do
-          NvcheckerRaw now <- runNvchecker pkg options versionSource
-          let runChanged = case lastRun of
-                Just cachedResult
-                  | nvNow cachedResult == now -> ChangedRecomputeSame
-                _ -> ChangedRecomputeDiff
-              modifiedNow = case lastRun of
-                -- fill the old version to result
-                Just cachedResult -> NvcheckerResult now (Just $ nvNow cachedResult) False
-                _ -> NvcheckerResult now Nothing False
-          pure $ RunResult runChanged (encode' modifiedNow) modifiedNow
+    -- run nvchecker
+    _ -> do
+      NvcheckerRaw now <- runNvchecker pkg options versionSource
+      let runChanged = case oldVer of
+            Just oldVer'
+              | oldVer' == now -> ChangedRecomputeSame
+            _ -> ChangedRecomputeDiff
+          result = NvcheckerResult {nvNow = now, nvOld = oldVer, nvStale = False}
+      pure $ RunResult runChanged mempty result
 
 -- | Nvchecker rule without cache
 -- Rule this rule by calling 'checkVersion''
