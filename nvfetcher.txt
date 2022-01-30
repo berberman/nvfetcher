@@ -230,6 +230,24 @@ Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtract
 --   packages.
 newtype PackageKey
 PackageKey :: PackageName -> PackageKey
+
+-- | Result type of <a>Core</a>
+data PackageResult
+PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe (HashMap Text Text) -> Maybe (HashMap FilePath NixExpr) -> Maybe NixExpr -> Maybe (HashMap Text Checksum) -> Bool -> PackageResult
+[_prname] :: PackageResult -> PackageName
+[_prversion] :: PackageResult -> NvcheckerResult
+[_prfetched] :: PackageResult -> NixFetcher 'Fetched
+[_prpassthru] :: PackageResult -> Maybe (HashMap Text Text)
+
+-- | extracted file name -&gt; file path in build dir
+[_prextract] :: PackageResult -> Maybe (HashMap FilePath NixExpr)
+
+-- | cargo lock file path in build dir
+[_prcargolock] :: PackageResult -> Maybe NixExpr
+
+-- | rust git deps name -&gt; checksum
+[_prrustgitdeps] :: PackageResult -> Maybe (HashMap Text Checksum)
+[_prpinned] :: PackageResult -> Bool
 instance Control.DeepSeq.NFData NvFetcher.Types.Version
 instance Data.Binary.Class.Binary NvFetcher.Types.Version
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Version
@@ -246,6 +264,8 @@ instance Control.DeepSeq.NFData NvFetcher.Types.Checksum
 instance Data.Binary.Class.Binary NvFetcher.Types.Checksum
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Checksum
 instance GHC.Generics.Generic NvFetcher.Types.Checksum
+instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.Checksum
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.Checksum
 instance GHC.Classes.Ord NvFetcher.Types.Checksum
 instance GHC.Classes.Eq NvFetcher.Types.Checksum
 instance GHC.Show.Show NvFetcher.Types.Checksum
@@ -346,14 +366,19 @@ instance Control.DeepSeq.NFData k => Control.DeepSeq.NFData (NvFetcher.Types.Wit
 instance Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.WithPackageKey k)
 instance Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.WithPackageKey k)
 instance GHC.Classes.Eq k => GHC.Classes.Eq (NvFetcher.Types.WithPackageKey k)
+instance Control.DeepSeq.NFData NvFetcher.Types.PackageResult
+instance GHC.Generics.Generic NvFetcher.Types.PackageResult
+instance GHC.Show.Show NvFetcher.Types.PackageResult
 instance GHC.Show.Show (NvFetcher.Types.FetchResult k) => GHC.Show.Show (NvFetcher.Types.NixFetcher k)
 instance GHC.Classes.Eq (NvFetcher.Types.FetchResult k) => GHC.Classes.Eq (NvFetcher.Types.NixFetcher k)
 instance GHC.Classes.Ord (NvFetcher.Types.FetchResult k) => GHC.Classes.Ord (NvFetcher.Types.NixFetcher k)
 instance Data.Hashable.Class.Hashable (NvFetcher.Types.FetchResult k) => Data.Hashable.Class.Hashable (NvFetcher.Types.NixFetcher k)
 instance Data.Binary.Class.Binary (NvFetcher.Types.FetchResult k) => Data.Binary.Class.Binary (NvFetcher.Types.NixFetcher k)
 instance Control.DeepSeq.NFData (NvFetcher.Types.FetchResult k) => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
+instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.PackageResult
 instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
 instance GHC.Show.Show NvFetcher.Types.VersionChange
+instance Data.Aeson.Types.ToJSON.ToJSON (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerRaw
 instance GHC.Show.Show NvFetcher.Types.VersionSortMethod
 instance Data.Default.Class.Default NvFetcher.Types.VersionSortMethod
@@ -384,15 +409,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_abik k_aDAa. Lens (NixFetcher k_abik) (NixFetcher k_aDAa) (FetchResult k_abik) (FetchResult k_aDAa)
-rev :: forall k_abik. Traversal' (NixFetcher k_abik) Version
-name :: forall k_abik. Traversal' (NixFetcher k_abik) (Maybe Text)
-leaveDotGit :: forall k_abik. Traversal' (NixFetcher k_abik) Bool
-furl :: forall k_abik. Traversal' (NixFetcher k_abik) Text
-frepo :: forall k_abik. Traversal' (NixFetcher k_abik) Text
-fowner :: forall k_abik. Traversal' (NixFetcher k_abik) Text
-fetchSubmodules :: forall k_abik. Traversal' (NixFetcher k_abik) Bool
-deepClone :: forall k_abik. Traversal' (NixFetcher k_abik) Bool
+sha256 :: forall k_abJh k_aG6Q. Lens (NixFetcher k_abJh) (NixFetcher k_aG6Q) (FetchResult k_abJh) (FetchResult k_aG6Q)
+rev :: forall k_abJh. Traversal' (NixFetcher k_abJh) Version
+name :: forall k_abJh. Traversal' (NixFetcher k_abJh) (Maybe Text)
+leaveDotGit :: forall k_abJh. Traversal' (NixFetcher k_abJh) Bool
+furl :: forall k_abJh. Traversal' (NixFetcher k_abJh) Text
+frepo :: forall k_abJh. Traversal' (NixFetcher k_abJh) Text
+fowner :: forall k_abJh. Traversal' (NixFetcher k_abJh) Text
+fetchSubmodules :: forall k_abJh. Traversal' (NixFetcher k_abJh) Bool
+deepClone :: forall k_abJh. Traversal' (NixFetcher k_abJh) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -1027,6 +1052,7 @@ instance NvFetcher.NixExpr.ToNixExpr GHC.Base.String
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.NixExpr
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.Version
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.ExtractSrcQ
+instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.PackageResult
 
 
 -- | This module provides function that extracs files contents from package
@@ -1083,35 +1109,9 @@ Core :: Core
 -- | The core rule of nvchecker. all rules are wired here.
 coreRules :: Rules ()
 
--- | Run the core rule. Given a <a>PackageKey</a>, run
---   <a>NvFetcher.Nvchecker</a>, <a>NvFetcher.NixFetcher</a> (may also run
---   <a>NvFetcher.ExtractSrc</a> or <a>NvFetrcher.FetchRustGitDeps</a>)
---   
---   <pre>
---   Package
---   { _pname = "feeluown-core",
---     _pversion = NvcheckerQ (Pypi "feeluown") def,
---     _pfetcher = pypiFetcher "feeluown",
---     _pextract = Nothing,
---     _pcargo = Nothing,
---     _ppassthru = PackagePassthru (HashMap.fromList [("a", <a>B</a>)])
---   }
---   </pre>
---   
---   resulting a nix exprs snippet like:
---   
---   <pre>
---   feeluown-core = {
---       pname = "feeluown-core";
---       version = "3.7.7";
---       src = fetchurl {
---         sha256 = "06d3j39ff9znqxkhp9ly81lcgajkhg30hyqxy2809yn23xixg3x2";
---         url = "<a>https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";</a>
---       };
---       a = <a>B</a>;
---     };
---   </pre>
-generateNixSourceExpr :: PackageKey -> Action NixExpr
+-- | <a>Core</a> rule take a <a>PackageKey</a>, find the corresponding
+--   <a>Package</a>, and run all needed rules to get <a>PackageResult</a>
+runPackage :: PackageKey -> Action PackageResult
 
 
 -- | CLI interface of nvfetcher
