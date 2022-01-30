@@ -27,7 +27,6 @@ import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
-import NvFetcher.Utils
 
 -- | The core rule of nvchecker.
 -- all rules are wired here.
@@ -52,7 +51,7 @@ coreRules = do
           } -> do
           _prversion@(NvcheckerResult version mOldV _isStale) <- checkVersion versionSource options pkg
           _prfetched <- prefetch $ _pfetcher version
-          shakeDir <- getShakeDir
+          buildDir <- getBuildDir
           -- extract src
           _prextract <-
             case _pextract of
@@ -61,9 +60,9 @@ coreRules = do
                 Just . HMap.fromList
                   <$> sequence
                     [ do
-                        -- write extracted files to shake dir
+                        -- write extracted files to build dir
                         -- and read them in nix using 'builtins.readFile'
-                        writeFile' (shakeDir </> path) (T.unpack v)
+                        writeFile' (buildDir </> path) (T.unpack v)
                         pure (k, T.pack path)
                       | (k, v) <- result,
                         let path =
@@ -86,8 +85,8 @@ coreRules = do
                         <> T.unpack (coerce version)
                         </> lockPath
                     lockPathNix = "./" <> T.pack lockPath'
-                -- similar to extract src, write lock file to shake dir
-                writeFile' (shakeDir </> lockPath') $ T.unpack lockData
+                -- similar to extract src, write lock file to build dir
+                writeFile' (buildDir </> lockPath') $ T.unpack lockData
                 pure (Just lockPathNix, Just result)
               _ -> pure (Nothing, Nothing)
 
