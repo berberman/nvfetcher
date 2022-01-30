@@ -3,6 +3,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -59,6 +60,7 @@ module NvFetcher.Types
     PackagePassthru (..),
     Package (..),
     PackageKey (..),
+    PackageResult (..),
   )
 where
 
@@ -85,7 +87,7 @@ newtype Version = Version Text
 
 -- | Check sum, sha256, sri or base32, etc.
 newtype Checksum = Checksum Text
-  deriving newtype (Show, Eq, Ord)
+  deriving newtype (Show, Eq, Ord, A.FromJSON, A.ToJSON)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
@@ -245,6 +247,44 @@ deriving instance Binary (FetchResult k) => Binary (NixFetcher k)
 
 deriving instance NFData (FetchResult k) => NFData (NixFetcher k)
 
+instance A.ToJSON (NixFetcher Fetched) where
+  toJSON FetchGit {..} =
+    A.object
+      [ "url" A..= _furl,
+        "rev" A..= _rev,
+        "deepClone" A..= _deepClone,
+        "fetchSubmodules" A..= _fetchSubmodules,
+        "leaveDotGit" A..= _leaveDotGit,
+        "name" A..= _name,
+        "sha256" A..= _sha256,
+        "type" A..= A.String "git"
+      ]
+  toJSON FetchGitHub {..} =
+    A.object
+      [ "owner" A..= _fowner,
+        "repo" A..= _frepo,
+        "rev" A..= _rev,
+        "deepClone" A..= _deepClone,
+        "fetchSubmodules" A..= _fetchSubmodules,
+        "leaveDotGit" A..= _leaveDotGit,
+        "name" A..= _name,
+        "sha256" A..= _sha256,
+        "type" A..= A.String "github"
+      ]
+  toJSON FetchUrl {..} =
+    A.object
+      [ "url" A..= _furl,
+        "name" A..= _name,
+        "sha256" A..= _sha256,
+        "type" A..= A.String "url"
+      ]
+  toJSON FetchTarball {..} =
+    A.object
+      [ "url" A..= _furl,
+        "sha256" A..= _sha256,
+        "type" A..= A.String "tarball"
+      ]
+
 --------------------------------------------------------------------------------
 
 -- | Extract file contents from package source
@@ -325,7 +365,7 @@ newtype PackageKey = PackageKey PackageName
 data Core = Core
   deriving (Eq, Show, Ord, Typeable, Generic, Hashable, Binary, NFData)
 
-type instance RuleResult Core = NixExpr
+type instance RuleResult Core = PackageResult
 
 -- | Decorate a rule's key with 'PackageKey'
 newtype WithPackageKey k = WithPackageKey (k, PackageKey)
@@ -335,3 +375,32 @@ instance Show k => Show (WithPackageKey k) where
   show (WithPackageKey (k, n)) = show k <> " (" <> show n <> ")"
 
 type instance RuleResult (WithPackageKey k) = RuleResult k
+
+-- | Result type of 'Core'
+data PackageResult = PackageResult
+  { _prname :: PackageName,
+    _prversion :: NvcheckerResult,
+    _prfetched :: NixFetcher 'Fetched,
+    _prpassthru :: Maybe (HashMap Text Text),
+    -- | extracted file name -> file path in build dir
+    _prextract :: Maybe (HashMap FilePath NixExpr),
+    -- | cargo lock file path in build dir
+    _prcargolock :: Maybe NixExpr,
+    -- | rust git deps name -> checksum
+    _prrustgitdeps :: Maybe (HashMap Text Checksum),
+    _prpinned :: Bool
+  }
+  deriving (Show, Typeable, Generic, NFData)
+
+instance A.ToJSON PackageResult where
+  toJSON PackageResult {..} =
+    A.object
+      [ "name" A..= _prname,
+        "version" A..= nvNow _prversion,
+        "src" A..= _prfetched,
+        "extract" A..= _prextract,
+        "passthru" A..= _prpassthru,
+        "cargoLock" A..= _prcargolock,
+        "rustGitDeps" A..= _prrustgitdeps,
+        "pinned" A..= _prpinned
+      ]

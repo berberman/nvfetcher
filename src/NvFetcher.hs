@@ -51,6 +51,9 @@ module NvFetcher
 where
 
 import Control.Monad.Extra (when, whenJust)
+import qualified Data.Aeson as A
+import qualified Data.Aeson.Encode.Pretty as A
+import qualified Data.ByteString.Lazy.Char8 as LBS
 import qualified Data.Map.Strict as Map
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -58,6 +61,7 @@ import Development.Shake
 import Development.Shake.FilePath
 import NeatInterpolation (trimming)
 import NvFetcher.Core
+import NvFetcher.NixExpr (ToNixExpr (toNixExpr))
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
 import NvFetcher.Options
@@ -185,7 +189,7 @@ mainRules Args {..} = do
 
   "build" ~> do
     allKeys <- getAllPackageKeys
-    body <- parallel $ generateNixSourceExpr <$> allKeys
+    results <- parallel $ runPackage <$> allKeys
     getVersionChanges >>= \changes ->
       if null changes
         then putInfo "Up to date"
@@ -193,9 +197,12 @@ mainRules Args {..} = do
           putInfo "Changes:"
           putInfo $ unlines $ show <$> changes
     shakeDir <- getShakeDir
-    let genPath = shakeDir </> "generated.nix"
-    putVerbose $ "Generating " <> genPath
-    writeFileChanged genPath $ T.unpack $ srouces (T.unlines body) <> "\n"
+    let generatedNixPath = shakeDir </> "generated.nix"
+        generatedJSONPath = shakeDir </> "generated.json"
+    putVerbose $ "Generating " <> generatedNixPath
+    writeFileChanged generatedNixPath $ T.unpack $ srouces (T.unlines $ toNixExpr <$> results) <> "\n"
+    putVerbose $ "Generating " <> generatedJSONPath
+    writeFileChanged generatedJSONPath $ LBS.unpack $ A.encodePretty $ A.object [_prname r A..= r | r <- results]
     argActionAfterBuild
 
   argRules

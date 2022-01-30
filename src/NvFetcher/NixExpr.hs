@@ -21,12 +21,14 @@ module NvFetcher.NixExpr
 where
 
 import Data.Coerce (coerce)
+import qualified Data.HashMap.Strict as HMap
 import qualified Data.List.NonEmpty as NE
+import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
 import NeatInterpolation (trimming)
 import NvFetcher.Types
-import NvFetcher.Utils (quote)
+import NvFetcher.Utils (quote, quoteIfNeeds)
 
 -- | Types can be converted into nix expr
 class ToNixExpr a where
@@ -149,3 +151,81 @@ extractFiles (toNixExpr -> fetcherExpr) (toNixExpr -> fileNames) =
       value = toFile x;
     }) fileNames)
   |]
+
+-- | nix expr snippet like:
+--
+-- @
+-- feeluown-core = {
+--     pname = "feeluown-core";
+--     version = "3.7.7";
+--     src = fetchurl {
+--       sha256 = "06d3j39ff9znqxkhp9ly81lcgajkhg30hyqxy2809yn23xixg3x2";
+--       url = "https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";
+--     };
+--     a = "B";
+--   };
+-- @
+instance ToNixExpr PackageResult where
+  toNixExpr PackageResult {..} =
+    [trimming|
+        $name = {
+          pname = $nameString;
+          version = $version;
+          src = $src;$appending
+        };
+    |]
+    where
+      name = quoteIfNeeds _prname
+      nameString = quote _prname
+      version = quote . coerce . nvNow $ _prversion
+      src = toNixExpr _prfetched
+      extract =
+        maybe
+          ""
+          ( \ex ->
+              T.unlines
+                [ quoteIfNeeds (T.pack name)
+                    <> " = builtins.readFile "
+                    <> fp
+                    <> ";"
+                  | (name, fp) <- HMap.toList ex
+                ]
+          )
+          _prextract
+      cargo = fromMaybe "" $ do
+        fp <- _prcargolock
+        deps <-
+          ( \deps ->
+              T.unlines
+                [ quoteIfNeeds name
+                    <> " = "
+                    <> quote (coerce sum)
+                    <> ";"
+                  | (name, sum) <- HMap.toList deps
+                ]
+            )
+            <$> _prrustgitdeps
+        pure
+          [trimming|
+            cargoLock = {
+              lockFile = $fp;
+              outputHashes = {
+                $deps
+              };
+            };
+          |]
+      passthru =
+        maybe
+          ""
+          ( \pt ->
+              T.unlines
+                [ quoteIfNeeds k
+                    <> " = "
+                    <> v
+                    <> ";"
+                  | (k, quote -> v) <- HMap.toList pt
+                ]
+          )
+          _prpassthru
+      joined = extract <> cargo <> passthru
+      appending = if T.null joined then "" else "\n" <> joined

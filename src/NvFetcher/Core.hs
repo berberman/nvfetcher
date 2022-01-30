@@ -1,10 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE ViewPatterns #-}
 
 -- | Copyright: (c) 2021 berberman
 -- SPDX-License-Identifier: MIT
@@ -14,21 +11,18 @@
 module NvFetcher.Core
   ( Core (..),
     coreRules,
-    generateNixSourceExpr,
+    runPackage,
   )
 where
 
 import Data.Coerce (coerce)
 import qualified Data.HashMap.Strict as HMap
-import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
 import Development.Shake.FilePath
 import Development.Shake.Rule
-import NeatInterpolation (trimming)
 import NvFetcher.ExtractSrc
 import NvFetcher.FetchRustGitDeps
-import NvFetcher.NixExpr
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
 import NvFetcher.Types
@@ -52,40 +46,41 @@ coreRules = do
       Just
         Package
           { _pversion = CheckVersion versionSource options,
-            _ppassthru = PackagePassthru passthruMap,
+            _ppassthru = (PackagePassthru passthru),
+            _ppinned = (UseStaleVersion pinned),
             ..
           } -> do
-          (NvcheckerResult version mOldV _isStale) <- checkVersion versionSource options pkg
-          prefetched <- prefetch $ _pfetcher version
+          _prversion@(NvcheckerResult version mOldV _isStale) <- checkVersion versionSource options pkg
+          _prfetched <- prefetch $ _pfetcher version
           shakeDir <- getShakeDir
           -- extract src
-          appending1 <-
+          _prextract <-
             case _pextract of
               Just (PackageExtractSrc extract) -> do
-                result <- HMap.toList <$> extractSrcs prefetched extract
-                T.unlines
+                result <- HMap.toList <$> extractSrcs _prfetched extract
+                Just . HMap.fromList
                   <$> sequence
                     [ do
                         -- write extracted files to shake dir
                         -- and read them in nix using 'builtins.readFile'
                         writeFile' (shakeDir </> path) (T.unpack v)
-                        pure $ toNixExpr k <> " = builtins.readFile ./" <> T.pack path <> ";"
+                        pure (k, T.pack path)
                       | (k, v) <- result,
                         let path =
-                              T.unpack _pname
+                              "./"
+                                <> T.unpack _pname
                                 <> "-"
                                 <> T.unpack (coerce version)
                                 </> k
                     ]
-              _ -> pure ""
+              _ -> pure Nothing
           -- cargo lock
-          appending2 <-
+          (_prcargolock, _prrustgitdeps) <-
             case _pcargo of
               Just (PackageCargoFilePath lockPath) -> do
-                (_, lockData) <- head . HMap.toList <$> extractSrc prefetched lockPath
-                result <- fetchRustGitDeps prefetched lockPath
-                let body = T.unlines [quote k <> " = " <> coerce (quote $ coerce v) <> ";" | (k, v) <- HMap.toList result]
-                    lockPath' =
+                (_, lockData) <- head . HMap.toList <$> extractSrc _prfetched lockPath
+                result <- fetchRustGitDeps _prfetched lockPath
+                let lockPath' =
                       T.unpack _pname
                         <> "-"
                         <> T.unpack (coerce version)
@@ -93,18 +88,8 @@ coreRules = do
                     lockPathNix = "./" <> T.pack lockPath'
                 -- similar to extract src, write lock file to shake dir
                 writeFile' (shakeDir </> lockPath') $ T.unpack lockData
-                pure
-                  [trimming|
-                    cargoLock = {
-                      lockFile = $lockPathNix;
-                      outputHashes = {
-                        $body
-                      };
-                    };
-                  |]
-              _ -> pure ""
-          -- passthru
-          let appending3 = T.unlines [k <> " = " <> v <> ";" | (k, quote -> v) <- HMap.toList passthruMap]
+                pure (Just lockPathNix, Just result)
+              _ -> pure (Nothing, Nothing)
 
           -- update changelog
           case mOldV of
@@ -115,50 +100,13 @@ coreRules = do
                 recordVersionChange _pname (Just old) version
             _ -> pure ()
 
-          let result = gen _pname version prefetched $ appending1 <> appending2 <> appending3
+          let _prpassthru = if HMap.null passthru then Nothing else Just passthru
+              _prname = _pname
+              _prpinned = pinned
           -- Since we don't save the previous result, we are not able to know if the result changes
           -- Depending on this rule leads to RunDependenciesChanged
-          pure $ RunResult ChangedRecomputeDiff mempty result
+          pure $ RunResult ChangedRecomputeDiff mempty PackageResult {..}
 
--- | Run the core rule.
--- Given a 'PackageKey', run "NvFetcher.Nvchecker", "NvFetcher.NixFetcher"
--- (may also run "NvFetcher.ExtractSrc" or "NvFetrcher.FetchRustGitDeps")
---
--- @
--- Package
--- { _pname = "feeluown-core",
---   _pversion = NvcheckerQ (Pypi "feeluown") def,
---   _pfetcher = pypiFetcher "feeluown",
---   _pextract = Nothing,
---   _pcargo = Nothing,
---   _ppassthru = PackagePassthru (HashMap.fromList [("a", "B")])
--- }
--- @
---
--- resulting a nix exprs snippet like:
---
--- @
--- feeluown-core = {
---     pname = "feeluown-core";
---     version = "3.7.7";
---     src = fetchurl {
---       sha256 = "06d3j39ff9znqxkhp9ly81lcgajkhg30hyqxy2809yn23xixg3x2";
---       url = "https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";
---     };
---     a = "B";
---   };
--- @
-generateNixSourceExpr :: PackageKey -> Action NixExpr
-generateNixSourceExpr k = apply1 $ WithPackageKey (Core, k)
-
-gen :: PackageName -> Version -> NixFetcher Fetched -> Text -> Text
-gen name (coerce -> ver) (toNixExpr -> srcP) appending =
-  [trimming|
-  $name = {
-    pname = "$name";
-    version = "$ver";
-    src = $srcP;$appending'
-  };
-|]
-  where
-    appending' = if T.null appending then "" else "\n" <> appending
+-- | 'Core' rule take a 'PackageKey', find the corresponding 'Package', and run all needed rules to get 'PackageResult'
+runPackage :: PackageKey -> Action PackageResult
+runPackage k = apply1 $ WithPackageKey (Core, k)

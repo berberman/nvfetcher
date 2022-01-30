@@ -1,8 +1,8 @@
-{ mkDerivation, aeson, async, base, binary, binary-instances
-, bytestring, containers, data-default, extra, free, hspec
-, hspec-discover, lib, microlens, microlens-th, neat-interpolation
-, optparse-simple, parsec, regex-tdfa, shake, stm, text, tomland
-, transformers, unliftio, unordered-containers
+{ mkDerivation, aeson, aeson-pretty, async, base, binary
+, binary-instances, bytestring, containers, data-default, extra
+, free, hspec, hspec-discover, lib, microlens, microlens-th
+, neat-interpolation, optparse-simple, parsec, regex-tdfa, shake
+, stm, text, tomland, transformers, unliftio, unordered-containers
 , validation-selective
 }:
 mkDerivation {
@@ -12,20 +12,20 @@ mkDerivation {
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    aeson base binary binary-instances bytestring containers
-    data-default extra free microlens microlens-th neat-interpolation
-    optparse-simple parsec regex-tdfa shake text tomland transformers
-    unordered-containers
+    aeson aeson-pretty base binary binary-instances bytestring
+    containers data-default extra free microlens microlens-th
+    neat-interpolation optparse-simple parsec regex-tdfa shake text
+    tomland transformers unordered-containers
   ];
   executableHaskellDepends = [
-    aeson base binary binary-instances bytestring containers
-    data-default extra free microlens microlens-th neat-interpolation
-    optparse-simple parsec regex-tdfa shake text tomland transformers
-    unordered-containers validation-selective
+    aeson aeson-pretty base binary binary-instances bytestring
+    containers data-default extra free microlens microlens-th
+    neat-interpolation optparse-simple parsec regex-tdfa shake text
+    tomland transformers unordered-containers validation-selective
   ];
   testHaskellDepends = [
-    aeson async base binary binary-instances bytestring containers
-    data-default extra free hspec microlens microlens-th
+    aeson aeson-pretty async base binary binary-instances bytestring
+    containers data-default extra free hspec microlens microlens-th
     neat-interpolation optparse-simple parsec regex-tdfa shake stm text
     tomland transformers unliftio unordered-containers
   ];
