@@ -45,7 +45,7 @@ cliOptionsParser =
       )
     <*> switch
       ( long "commit-changes"
-          <> help "`git commit` changes in this run (with shake db)"
+          <> help "`git commit` build dir with version changes as commit message"
       )
     <*> optional
       ( strOption
