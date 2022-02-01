@@ -54,9 +54,9 @@ versionSourcesSpec = aroundShake $
       runNvcheckerRule (HttpHeader "https://www.unifiedremote.com/download/linux-x64-deb" "urserver-([\\d.]+).deb" def)
         >>= shouldBeJust
 
-    specifyChan "webpage" $
-      runNvcheckerRule (Webpage "http://ftp.vim.org/pub/vim/patches/7.3/" "7\\.3\\.\\d+" def)
-        `shouldReturnJust` Version "7.3.1314"
+    -- specifyChan "webpage" $
+    --   runNvcheckerRule (Webpage "http://ftp.vim.org/pub/vim/patches/7.3/" "7\\.3\\.\\d+" def)
+    --     `shouldReturnJust` Version "7.3.1314"
 
     specifyChan "manual" $
       runNvcheckerRule (Manual "Meow") `shouldReturnJust` Version "Meow"
