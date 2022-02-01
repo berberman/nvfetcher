@@ -19,8 +19,7 @@ import Utils
 spec :: Spec
 spec = do
   versionSourcesSpec
-  -- TODO
-  before_ (pendingWith "We are relying on generated.json so the old test approach won't work") useStaleSpec
+  useStaleSpec
 
 versionSourcesSpec :: Spec
 versionSourcesSpec = aroundShake $

@@ -216,11 +216,9 @@ mainRules Args {..} = do
     allKeys <- getAllPackageKeys
     results <- parallel $ runPackage <$> allKeys
     -- Record removed packages to version changes
-    getShakeExtras
-      >>= ( \oldPkgs -> forM_ (Map.keys oldPkgs \\ allKeys) $
-              \pkg -> recordVersionChange (coerce pkg) (oldPkgs Map.!? pkg) "∅"
-          )
-        . lastVersions
+    getAllOnDiskVersions
+      >>= \oldPkgs -> forM_ (Map.keys oldPkgs \\ allKeys) $
+        \pkg -> recordVersionChange (coerce pkg) (oldPkgs Map.!? pkg) "∅"
     getVersionChanges >>= \changes ->
       if null changes
         then putInfo "Up to date"
