@@ -78,68 +78,18 @@ forall key value. BuiltinIdentity key value
 -&gt; BuiltinRun (WithPackageKey CheckVersion) NvcheckerResult
 -&gt; Rules ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-type">WithPackageKey</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#CheckVersion"><span class="hs-identifier hs-type">CheckVersion</span></a></span><span> </span><span id="local-6989586621679293546"><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293546"><span class="hs-identifier hs-var">versionSource</span></a></span></span><span> </span><span id="local-6989586621679293545"><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293545"><span class="hs-identifier hs-var">options</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679293544"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293544"><span class="hs-identifier hs-var">pkg</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span id="local-6989586621679293543"><span class="annot"><span class="annottext">Maybe ByteString
-</span><a href="#local-6989586621679293543"><span class="hs-identifier hs-var">old</span></a></span></span><span> </span><span id="local-6989586621679293542"><span class="annot"><span class="annottext">RunMode
-</span><a href="#local-6989586621679293542"><span class="hs-identifier hs-var">_mode</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
-</span><span id="line-60"></span><span>  </span><span class="hs-comment">-- If the package was removed after the last run,</span><span>
-</span><span id="line-61"></span><span>  </span><span class="hs-comment">-- shake still runs the nvchecker rule for this package.</span><span>
-</span><span id="line-62"></span><span>  </span><span class="hs-comment">-- So we record a version change here, indicating that the package has been removed.</span><span>
-</span><span id="line-63"></span><span>  </span><span class="hs-comment">-- Ideally, this should be done in the core rule</span><span>
-</span><span id="line-64"></span><span>  </span><span class="annot"><span class="annottext">PackageKey -&gt; Action Bool
-</span><a href="NvFetcher.Types.ShakeExtras.html#isPackageKeyTarget"><span class="hs-identifier hs-var">isPackageKeyTarget</span></a></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293544"><span class="hs-identifier hs-var">pkg</span></a></span><span> </span><span class="annot"><span class="annottext">Action Bool
--&gt; (Bool -&gt; Action (RunResult NvcheckerResult))
--&gt; Action (RunResult NvcheckerResult)
-forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
-</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
-</span><span id="line-65"></span><span>    </span><span class="annot"><span class="annottext">Bool
-</span><span class="hs-identifier hs-var">False</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-66"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679293540"><span class="annot"><span class="annottext">oldVer :: Maybe Version
-</span><a href="#local-6989586621679293540"><span class="hs-identifier hs-var hs-var">oldVer</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">NvcheckerResult -&gt; Version
-</span><a href="NvFetcher.Types.html#nvNow"><span class="hs-identifier hs-var hs-var">nvNow</span></a></span><span> </span><span class="annot"><span class="annottext">(NvcheckerResult -&gt; Version)
--&gt; (ByteString -&gt; NvcheckerResult) -&gt; ByteString -&gt; Version
-forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
-</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; NvcheckerResult
-forall a. Binary a =&gt; ByteString -&gt; a
-</span><a href="NvFetcher.Utils.html#decode%27"><span class="hs-identifier hs-var">decode'</span></a></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; Version) -&gt; Maybe ByteString -&gt; Maybe Version
-forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
-</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">Maybe ByteString
-</span><a href="#local-6989586621679293543"><span class="hs-identifier hs-var">old</span></a></span><span>
-</span><span id="line-67"></span><span>      </span><span class="annot"><span class="annottext">PackageName -&gt; Maybe Version -&gt; Version -&gt; Action ()
-</span><a href="NvFetcher.Types.ShakeExtras.html#recordVersionChange"><span class="hs-identifier hs-var">recordVersionChange</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageKey -&gt; PackageName
-</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293544"><span class="hs-identifier hs-var">pkg</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679293540"><span class="hs-identifier hs-var">oldVer</span></a></span><span> </span><span class="annot"><span class="annottext">Version
-</span><span class="hs-string">&quot;&#8709;&quot;</span></span><span>
-</span><span id="line-68"></span><span>      </span><span class="annot"><span class="annottext">RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult)
-forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
-</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult))
--&gt; RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult)
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">RunChanged
--&gt; ByteString -&gt; NvcheckerResult -&gt; RunResult NvcheckerResult
-forall value. RunChanged -&gt; ByteString -&gt; value -&gt; RunResult value
-</span><span class="hs-identifier hs-var">RunResult</span></span><span> </span><span class="annot"><span class="annottext">RunChanged
-</span><span class="hs-identifier hs-var">ChangedRecomputeDiff</span></span><span> </span><span class="annot"><span class="annottext">ByteString
-forall a. Monoid a =&gt; a
-</span><span class="hs-identifier hs-var">mempty</span></span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
-forall a. Partial =&gt; a
-</span><span class="hs-identifier hs-var">undefined</span></span><span> </span><span class="hs-comment">-- skip running, returning a never consumed result</span><span>
-</span><span id="line-69"></span><span>    </span><span class="annot"><span class="annottext">Bool
-</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-70"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679293531"><span class="annot"><span class="annottext">lastRun :: Maybe NvcheckerResult
-</span><a href="#local-6989586621679293531"><span class="hs-identifier hs-var hs-var">lastRun</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; NvcheckerResult
-forall a. Binary a =&gt; ByteString -&gt; a
-</span><a href="NvFetcher.Utils.html#decode%27"><span class="hs-identifier hs-var">decode'</span></a></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; NvcheckerResult)
--&gt; Maybe ByteString -&gt; Maybe NvcheckerResult
-forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
-</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">Maybe ByteString
-</span><a href="#local-6989586621679293543"><span class="hs-identifier hs-var">old</span></a></span><span>
-</span><span id="line-71"></span><span>      </span><span id="local-6989586621679293530"><span class="annot"><span class="annottext">UseStaleVersion
-</span><a href="#local-6989586621679293530"><span class="hs-identifier hs-var">useStale</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Package -&gt; UseStaleVersion
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-type">WithPackageKey</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#CheckVersion"><span class="hs-identifier hs-type">CheckVersion</span></a></span><span> </span><span id="local-6989586621679297554"><span class="annot"><span class="annottext">VersionSource
+</span><a href="#local-6989586621679297554"><span class="hs-identifier hs-var">versionSource</span></a></span></span><span> </span><span id="local-6989586621679297553"><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297553"><span class="hs-identifier hs-var">options</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679297552"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679297552"><span class="hs-identifier hs-var">pkg</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span id="local-6989586621679297551"><span class="annot"><span class="annottext">Maybe ByteString
+</span><a href="#local-6989586621679297551"><span class="hs-identifier hs-var">_old</span></a></span></span><span> </span><span id="local-6989586621679297550"><span class="annot"><span class="annottext">RunMode
+</span><a href="#local-6989586621679297550"><span class="hs-identifier hs-var">_mode</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-60"></span><span>  </span><span id="local-6989586621679297549"><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679297549"><span class="hs-identifier hs-var">oldVer</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; Action (Maybe Version)
+</span><a href="NvFetcher.Types.ShakeExtras.html#getRecentLastVersion"><span class="hs-identifier hs-var">getRecentLastVersion</span></a></span><span> </span><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679297552"><span class="hs-identifier hs-var">pkg</span></a></span><span>
+</span><span id="line-61"></span><span>  </span><span id="local-6989586621679297547"><span class="annot"><span class="annottext">UseStaleVersion
+</span><a href="#local-6989586621679297547"><span class="hs-identifier hs-var">useStale</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Package -&gt; UseStaleVersion
 </span><a href="NvFetcher.Types.html#_ppinned"><span class="hs-identifier hs-var hs-var">_ppinned</span></a></span><span> </span><span class="annot"><span class="annottext">(Package -&gt; UseStaleVersion)
 -&gt; (Maybe Package -&gt; Package) -&gt; Maybe Package -&gt; UseStaleVersion
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -150,41 +100,45 @@ forall a. Partial =&gt; Maybe a -&gt; a
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; Action (Maybe Package)
 </span><a href="NvFetcher.Types.ShakeExtras.html#lookupPackage"><span class="hs-identifier hs-var">lookupPackage</span></a></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293544"><span class="hs-identifier hs-var">pkg</span></a></span><span>
-</span><span id="line-72"></span><span>      </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">UseStaleVersion
-</span><a href="#local-6989586621679293530"><span class="hs-identifier hs-var">useStale</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-73"></span><span>        </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#UseStaleVersion"><span class="hs-identifier hs-type">UseStaleVersion</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679297552"><span class="hs-identifier hs-var">pkg</span></a></span><span>
+</span><span id="line-62"></span><span>  </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">UseStaleVersion
+</span><a href="#local-6989586621679297547"><span class="hs-identifier hs-var">useStale</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-63"></span><span>    </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#UseStaleVersion"><span class="hs-identifier hs-type">UseStaleVersion</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span class="hs-special">)</span><span>
-</span><span id="line-74"></span><span>          </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679293526"><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293526"><span class="hs-identifier hs-var">cachedResult</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Maybe NvcheckerResult
-</span><a href="#local-6989586621679293531"><span class="hs-identifier hs-var">lastRun</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-75"></span><span>            </span><span class="hs-comment">-- use the stale version if we have</span><span>
-</span><span id="line-76"></span><span>            </span><span class="annot"><span class="annottext">String -&gt; Action ()
+</span><span id="line-64"></span><span>      </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679297541"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679297541"><span class="hs-identifier hs-var">oldVer'</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679297549"><span class="hs-identifier hs-var">oldVer</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-65"></span><span>        </span><span class="hs-comment">-- use the stale version if we have</span><span>
+</span><span id="line-66"></span><span>        </span><span class="annot"><span class="annottext">String -&gt; Action ()
 </span><span class="hs-identifier hs-var">putInfo</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ()) -&gt; String -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; String
-</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">(PackageName -&gt; String) -&gt; PackageName -&gt; String
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; String) -&gt; Text -&gt; String
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><span class="hs-string">&quot;Skip running nvchecker, use stale version &quot;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;Skip running nvchecker, use stale version &quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; PackageName
-</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">NvcheckerResult -&gt; Version
-</span><a href="NvFetcher.Types.html#nvNow"><span class="hs-identifier hs-var hs-var">nvNow</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293526"><span class="hs-identifier hs-var">cachedResult</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Text
+</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679297541"><span class="hs-identifier hs-var">oldVer'</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><span class="hs-string">&quot; for &quot;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot; for &quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; Text
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293544"><span class="hs-identifier hs-var">pkg</span></a></span><span>
-</span><span id="line-77"></span><span>            </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679293523"><span class="annot"><span class="annottext">result :: NvcheckerResult
-</span><a href="#local-6989586621679293523"><span class="hs-identifier hs-var hs-var">result</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293526"><span class="hs-identifier hs-var">cachedResult</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><span class="annottext">nvStale :: Bool
+</span><a href="#local-6989586621679297552"><span class="hs-identifier hs-var">pkg</span></a></span><span>
+</span><span id="line-67"></span><span>        </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679297538"><span class="annot"><span class="annottext">result :: NvcheckerResult
+</span><a href="#local-6989586621679297538"><span class="hs-identifier hs-var hs-var">result</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">NvcheckerResult :: Version -&gt; Maybe Version -&gt; Bool -&gt; NvcheckerResult
+</span><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-type">NvcheckerResult</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><span class="annottext">nvNow :: Version
+</span><a href="NvFetcher.Types.html#nvNow"><span class="hs-identifier hs-var">nvNow</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679297541"><span class="hs-identifier hs-var">oldVer'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">nvOld :: Maybe Version
+</span><a href="NvFetcher.Types.html#nvOld"><span class="hs-identifier hs-var">nvOld</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe Version
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">nvStale :: Bool
 </span><a href="NvFetcher.Types.html#nvStale"><span class="hs-identifier hs-var">nvStale</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span class="hs-special">}</span><span>
-</span><span id="line-78"></span><span>            </span><span class="annot"><span class="annottext">RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult)
+</span><span id="line-68"></span><span>        </span><span class="annot"><span class="annottext">RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult)
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult))
 -&gt; RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult)
@@ -196,57 +150,48 @@ forall value. RunChanged -&gt; ByteString -&gt; value -&gt; RunResult value
 </span><span class="hs-identifier hs-var">ChangedRecomputeSame</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">NvcheckerResult -&gt; ByteString
 forall a. Binary a =&gt; a -&gt; ByteString
 </span><a href="NvFetcher.Utils.html#encode%27"><span class="hs-identifier hs-var">encode'</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293523"><span class="hs-identifier hs-var">result</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293523"><span class="hs-identifier hs-var">result</span></a></span><span>
-</span><span id="line-79"></span><span>
-</span><span id="line-80"></span><span>        </span><span class="hs-comment">-- run nvchecker</span><span>
-</span><span id="line-81"></span><span>        </span><span class="annot"><span class="annottext">UseStaleVersion
+</span><a href="#local-6989586621679297538"><span class="hs-identifier hs-var">result</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
+</span><a href="#local-6989586621679297538"><span class="hs-identifier hs-var">result</span></a></span><span>
+</span><span id="line-69"></span><span>
+</span><span id="line-70"></span><span>    </span><span class="hs-comment">-- run nvchecker</span><span>
+</span><span id="line-71"></span><span>    </span><span class="annot"><span class="annottext">UseStaleVersion
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-82"></span><span>          </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerRaw"><span class="hs-identifier hs-type">NvcheckerRaw</span></a></span><span> </span><span id="local-6989586621679293518"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679293518"><span class="hs-identifier hs-var">now</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">PackageKey
+</span><span id="line-72"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerRaw"><span class="hs-identifier hs-type">NvcheckerRaw</span></a></span><span> </span><span id="local-6989586621679297529"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679297529"><span class="hs-identifier hs-var">now</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">PackageKey
 -&gt; NvcheckerOptions -&gt; VersionSource -&gt; Action NvcheckerRaw
 </span><a href="NvFetcher.Nvchecker.html#runNvchecker"><span class="hs-identifier hs-var">runNvchecker</span></a></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293544"><span class="hs-identifier hs-var">pkg</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293545"><span class="hs-identifier hs-var">options</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293546"><span class="hs-identifier hs-var">versionSource</span></a></span><span>
-</span><span id="line-83"></span><span>          </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679293516"><span class="annot"><span class="annottext">runChanged :: RunChanged
-</span><a href="#local-6989586621679293516"><span class="hs-identifier hs-var hs-var">runChanged</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Maybe NvcheckerResult
-</span><a href="#local-6989586621679293531"><span class="hs-identifier hs-var">lastRun</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-84"></span><span>                </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679293515"><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293515"><span class="hs-identifier hs-var">cachedResult</span></a></span></span><span>
-</span><span id="line-85"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">NvcheckerResult -&gt; Version
-</span><a href="NvFetcher.Types.html#nvNow"><span class="hs-identifier hs-var hs-var">nvNow</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293515"><span class="hs-identifier hs-var">cachedResult</span></a></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Version -&gt; Bool
+</span><a href="#local-6989586621679297552"><span class="hs-identifier hs-var">pkg</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297553"><span class="hs-identifier hs-var">options</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
+</span><a href="#local-6989586621679297554"><span class="hs-identifier hs-var">versionSource</span></a></span><span>
+</span><span id="line-73"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679297527"><span class="annot"><span class="annottext">runChanged :: RunChanged
+</span><a href="#local-6989586621679297527"><span class="hs-identifier hs-var hs-var">runChanged</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679297549"><span class="hs-identifier hs-var">oldVer</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-74"></span><span>            </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679297526"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679297526"><span class="hs-identifier hs-var">oldVer'</span></a></span></span><span>
+</span><span id="line-75"></span><span>              </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679297526"><span class="hs-identifier hs-var">oldVer'</span></a></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Version -&gt; Bool
 forall a. Eq a =&gt; a -&gt; a -&gt; Bool
 </span><span class="hs-operator hs-var">==</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679293518"><span class="hs-identifier hs-var">now</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">RunChanged
+</span><a href="#local-6989586621679297529"><span class="hs-identifier hs-var">now</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">RunChanged
 </span><span class="hs-identifier hs-var">ChangedRecomputeSame</span></span><span>
-</span><span id="line-86"></span><span>                </span><span class="annot"><span class="annottext">Maybe NvcheckerResult
+</span><span id="line-76"></span><span>            </span><span class="annot"><span class="annottext">Maybe Version
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">RunChanged
 </span><span class="hs-identifier hs-var">ChangedRecomputeDiff</span></span><span>
-</span><span id="line-87"></span><span>              </span><span id="local-6989586621679293514"><span class="annot"><span class="annottext">modifiedNow :: NvcheckerResult
-</span><a href="#local-6989586621679293514"><span class="hs-identifier hs-var hs-var">modifiedNow</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Maybe NvcheckerResult
-</span><a href="#local-6989586621679293531"><span class="hs-identifier hs-var">lastRun</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-88"></span><span>                </span><span class="hs-comment">-- fill the old version to result</span><span>
-</span><span id="line-89"></span><span>                </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679293513"><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293513"><span class="hs-identifier hs-var">cachedResult</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version -&gt; Bool -&gt; NvcheckerResult
-</span><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-var">NvcheckerResult</span></a></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679293518"><span class="hs-identifier hs-var">now</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
-forall a. a -&gt; Maybe a
-</span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">(Version -&gt; Maybe Version) -&gt; Version -&gt; Maybe Version
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">NvcheckerResult -&gt; Version
-</span><a href="NvFetcher.Types.html#nvNow"><span class="hs-identifier hs-var hs-var">nvNow</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293513"><span class="hs-identifier hs-var">cachedResult</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Bool
-</span><span class="hs-identifier hs-var">False</span></span><span>
-</span><span id="line-90"></span><span>                </span><span class="annot"><span class="annottext">Maybe NvcheckerResult
-</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version -&gt; Bool -&gt; NvcheckerResult
-</span><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-var">NvcheckerResult</span></a></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679293518"><span class="hs-identifier hs-var">now</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Version
-forall a. Maybe a
-</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="annot"><span class="annottext">Bool
-</span><span class="hs-identifier hs-var">False</span></span><span>
-</span><span id="line-91"></span><span>          </span><span class="annot"><span class="annottext">RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult)
+</span><span id="line-77"></span><span>          </span><span id="local-6989586621679297524"><span class="annot"><span class="annottext">result :: NvcheckerResult
+</span><a href="#local-6989586621679297524"><span class="hs-identifier hs-var hs-var">result</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">NvcheckerResult :: Version -&gt; Maybe Version -&gt; Bool -&gt; NvcheckerResult
+</span><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-type">NvcheckerResult</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><span class="annottext">nvNow :: Version
+</span><a href="NvFetcher.Types.html#nvNow"><span class="hs-identifier hs-var">nvNow</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679297529"><span class="hs-identifier hs-var">now</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">nvOld :: Maybe Version
+</span><a href="NvFetcher.Types.html#nvOld"><span class="hs-identifier hs-var">nvOld</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679297549"><span class="hs-identifier hs-var">oldVer</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">nvStale :: Bool
+</span><a href="NvFetcher.Types.html#nvStale"><span class="hs-identifier hs-var">nvStale</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">False</span></span><span class="hs-special">}</span><span>
+</span><span id="line-78"></span><span>      </span><span class="hs-comment">-- always update</span><span>
+</span><span id="line-79"></span><span>      </span><span class="annot"><span class="annottext">PackageKey -&gt; Version -&gt; Action ()
+</span><a href="NvFetcher.Types.ShakeExtras.html#updateLastVersion"><span class="hs-identifier hs-var">updateLastVersion</span></a></span><span> </span><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679297552"><span class="hs-identifier hs-var">pkg</span></a></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679297529"><span class="hs-identifier hs-var">now</span></a></span><span>
+</span><span id="line-80"></span><span>      </span><span class="annot"><span class="annottext">RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult)
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult))
 -&gt; RunResult NvcheckerResult -&gt; Action (RunResult NvcheckerResult)
@@ -255,23 +200,22 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 -&gt; ByteString -&gt; NvcheckerResult -&gt; RunResult NvcheckerResult
 forall value. RunChanged -&gt; ByteString -&gt; value -&gt; RunResult value
 </span><span class="hs-identifier hs-var">RunResult</span></span><span> </span><span class="annot"><span class="annottext">RunChanged
-</span><a href="#local-6989586621679293516"><span class="hs-identifier hs-var">runChanged</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">NvcheckerResult -&gt; ByteString
-forall a. Binary a =&gt; a -&gt; ByteString
-</span><a href="NvFetcher.Utils.html#encode%27"><span class="hs-identifier hs-var">encode'</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293514"><span class="hs-identifier hs-var">modifiedNow</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679293514"><span class="hs-identifier hs-var">modifiedNow</span></a></span><span>
-</span><span id="line-92"></span><span>
-</span><span id="line-93"></span><span class="hs-comment">-- | Nvchecker rule without cache</span><span>
-</span><span id="line-94"></span><span class="hs-comment">-- Rule this rule by calling 'checkVersion''</span><span>
-</span><span id="line-95"></span><span class="annot"><a href="NvFetcher.Nvchecker.html#oneShotRule"><span class="hs-identifier hs-type">oneShotRule</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Rules</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
-</span><span id="line-96"></span><span id="oneShotRule"><span class="annot"><span class="annottext">oneShotRule :: Rules ()
+</span><a href="#local-6989586621679297527"><span class="hs-identifier hs-var">runChanged</span></a></span><span> </span><span class="annot"><span class="annottext">ByteString
+forall a. Monoid a =&gt; a
+</span><span class="hs-identifier hs-var">mempty</span></span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
+</span><a href="#local-6989586621679297524"><span class="hs-identifier hs-var">result</span></a></span><span>
+</span><span id="line-81"></span><span>
+</span><span id="line-82"></span><span class="hs-comment">-- | Nvchecker rule without cache</span><span>
+</span><span id="line-83"></span><span class="hs-comment">-- Rule this rule by calling 'checkVersion''</span><span>
+</span><span id="line-84"></span><span class="annot"><a href="NvFetcher.Nvchecker.html#oneShotRule"><span class="hs-identifier hs-type">oneShotRule</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Rules</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-85"></span><span id="oneShotRule"><span class="annot"><span class="annottext">oneShotRule :: Rules ()
 </span><a href="NvFetcher.Nvchecker.html#oneShotRule"><span class="hs-identifier hs-var hs-var">oneShotRule</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Rules (CheckVersion -&gt; Action NvcheckerResult) -&gt; Rules ()
 forall (f :: * -&gt; *) a. Functor f =&gt; f a -&gt; f ()
 </span><span class="hs-identifier hs-var">void</span></span><span> </span><span class="annot"><span class="annottext">(Rules (CheckVersion -&gt; Action NvcheckerResult) -&gt; Rules ())
 -&gt; Rules (CheckVersion -&gt; Action NvcheckerResult) -&gt; Rules ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span>
-</span><span id="line-97"></span><span>  </span><span class="annot"><span class="annottext">(CheckVersion -&gt; Action NvcheckerResult)
+</span><span id="line-86"></span><span>  </span><span class="annot"><span class="annottext">(CheckVersion -&gt; Action NvcheckerResult)
 -&gt; Rules (CheckVersion -&gt; Action NvcheckerResult)
 forall q a.
 (RuleResult q ~ a, ShakeValue q, ShakeValue a, Partial) =&gt;
@@ -281,72 +225,72 @@ forall q a.
 -&gt; (CheckVersion -&gt; Action NvcheckerResult)
 -&gt; Rules (CheckVersion -&gt; Action NvcheckerResult)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#CheckVersion"><span class="hs-identifier hs-type">CheckVersion</span></a></span><span> </span><span id="local-6989586621679293510"><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293510"><span class="hs-identifier hs-var">versionSource</span></a></span></span><span> </span><span id="local-6989586621679293509"><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293509"><span class="hs-identifier hs-var">options</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-98"></span><span>    </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerRaw"><span class="hs-identifier hs-type">NvcheckerRaw</span></a></span><span> </span><span id="local-6989586621679293508"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679293508"><span class="hs-identifier hs-var">now</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">PackageKey
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#CheckVersion"><span class="hs-identifier hs-type">CheckVersion</span></a></span><span> </span><span id="local-6989586621679297521"><span class="annot"><span class="annottext">VersionSource
+</span><a href="#local-6989586621679297521"><span class="hs-identifier hs-var">versionSource</span></a></span></span><span> </span><span id="local-6989586621679297520"><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297520"><span class="hs-identifier hs-var">options</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-87"></span><span>    </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerRaw"><span class="hs-identifier hs-type">NvcheckerRaw</span></a></span><span> </span><span id="local-6989586621679297519"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679297519"><span class="hs-identifier hs-var">now</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">PackageKey
 -&gt; NvcheckerOptions -&gt; VersionSource -&gt; Action NvcheckerRaw
-</span><a href="NvFetcher.Nvchecker.html#runNvchecker"><span class="hs-identifier hs-var">runNvchecker</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageName -&gt; PackageKey
-</span><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-var">PackageKey</span></a></span><span> </span><span class="annot"><span class="annottext">PackageName
+</span><a href="NvFetcher.Nvchecker.html#runNvchecker"><span class="hs-identifier hs-var">runNvchecker</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; PackageKey
+</span><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-var">PackageKey</span></a></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;pkg&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293509"><span class="hs-identifier hs-var">options</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293510"><span class="hs-identifier hs-var">versionSource</span></a></span><span>
-</span><span id="line-99"></span><span>    </span><span class="annot"><span class="annottext">NvcheckerResult -&gt; Action NvcheckerResult
+</span><a href="#local-6989586621679297520"><span class="hs-identifier hs-var">options</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
+</span><a href="#local-6989586621679297521"><span class="hs-identifier hs-var">versionSource</span></a></span><span>
+</span><span id="line-88"></span><span>    </span><span class="annot"><span class="annottext">NvcheckerResult -&gt; Action NvcheckerResult
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(NvcheckerResult -&gt; Action NvcheckerResult)
 -&gt; NvcheckerResult -&gt; Action NvcheckerResult
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version -&gt; Bool -&gt; NvcheckerResult
 </span><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-var">NvcheckerResult</span></a></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679293508"><span class="hs-identifier hs-var">now</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679297519"><span class="hs-identifier hs-var">now</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Version
 forall a. Maybe a
 </span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span>
-</span><span id="line-100"></span><span>
-</span><span id="line-101"></span><span class="annot"><a href="NvFetcher.Nvchecker.html#runNvchecker"><span class="hs-identifier hs-type">runNvchecker</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-type">VersionSource</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerRaw"><span class="hs-identifier hs-type">NvcheckerRaw</span></a></span><span>
-</span><span id="line-102"></span><span id="runNvchecker"><span class="annot"><span class="annottext">runNvchecker :: PackageKey
+</span><span id="line-89"></span><span>
+</span><span id="line-90"></span><span class="annot"><a href="NvFetcher.Nvchecker.html#runNvchecker"><span class="hs-identifier hs-type">runNvchecker</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-type">VersionSource</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerRaw"><span class="hs-identifier hs-type">NvcheckerRaw</span></a></span><span>
+</span><span id="line-91"></span><span id="runNvchecker"><span class="annot"><span class="annottext">runNvchecker :: PackageKey
 -&gt; NvcheckerOptions -&gt; VersionSource -&gt; Action NvcheckerRaw
-</span><a href="NvFetcher.Nvchecker.html#runNvchecker"><span class="hs-identifier hs-var hs-var">runNvchecker</span></a></span></span><span> </span><span id="local-6989586621679293506"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293506"><span class="hs-identifier hs-var">pkg</span></a></span></span><span> </span><span id="local-6989586621679293505"><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293505"><span class="hs-identifier hs-var">options</span></a></span></span><span> </span><span id="local-6989586621679293504"><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293504"><span class="hs-identifier hs-var">versionSource</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action NvcheckerRaw) -&gt; Action NvcheckerRaw
+</span><a href="NvFetcher.Nvchecker.html#runNvchecker"><span class="hs-identifier hs-var hs-var">runNvchecker</span></a></span></span><span> </span><span id="local-6989586621679297517"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679297517"><span class="hs-identifier hs-var">pkg</span></a></span></span><span> </span><span id="local-6989586621679297516"><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297516"><span class="hs-identifier hs-var">options</span></a></span></span><span> </span><span id="local-6989586621679297515"><span class="annot"><span class="annottext">VersionSource
+</span><a href="#local-6989586621679297515"><span class="hs-identifier hs-var">versionSource</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action NvcheckerRaw) -&gt; Action NvcheckerRaw
 forall a. (String -&gt; Action a) -&gt; Action a
 </span><span class="hs-identifier hs-var">withTempFile</span></span><span> </span><span class="annot"><span class="annottext">((String -&gt; Action NvcheckerRaw) -&gt; Action NvcheckerRaw)
 -&gt; (String -&gt; Action NvcheckerRaw) -&gt; Action NvcheckerRaw
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679293502"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679293502"><span class="hs-identifier hs-var">config</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Action NvcheckerRaw -&gt; Action NvcheckerRaw
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679297513"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679297513"><span class="hs-identifier hs-var">config</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Action NvcheckerRaw -&gt; Action NvcheckerRaw
 forall a. Action a -&gt; Action a
 </span><a href="NvFetcher.Types.ShakeExtras.html#withRetries"><span class="hs-identifier hs-var">withRetries</span></a></span><span> </span><span class="annot"><span class="annottext">(Action NvcheckerRaw -&gt; Action NvcheckerRaw)
 -&gt; Action NvcheckerRaw -&gt; Action NvcheckerRaw
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-103"></span><span>  </span><span class="annot"><span class="annottext">String -&gt; String -&gt; Action ()
+</span><span id="line-92"></span><span>  </span><span class="annot"><span class="annottext">String -&gt; String -&gt; Action ()
 forall (m :: * -&gt; *).
 (MonadIO m, Partial) =&gt;
 String -&gt; String -&gt; m ()
 </span><span class="hs-identifier hs-var">writeFile'</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679293502"><span class="hs-identifier hs-var">config</span></a></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ()) -&gt; String -&gt; Action ()
+</span><a href="#local-6989586621679297513"><span class="hs-identifier hs-var">config</span></a></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ()) -&gt; String -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; String
-</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">(PackageName -&gt; String) -&gt; PackageName -&gt; String
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; String) -&gt; Text -&gt; String
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">TOML -&gt; PackageName
-</span><span class="hs-identifier hs-var">pretty</span></span><span> </span><span class="annot"><span class="annottext">(TOML -&gt; PackageName) -&gt; TOML -&gt; PackageName
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">TOML -&gt; Text
+</span><span class="hs-identifier hs-var">pretty</span></span><span> </span><span class="annot"><span class="annottext">(TOML -&gt; Text) -&gt; TOML -&gt; Text
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">TDSL -&gt; TOML
 </span><span class="hs-identifier hs-var">mkToml</span></span><span> </span><span class="annot"><span class="annottext">(TDSL -&gt; TOML) -&gt; TDSL -&gt; TOML
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; NvcheckerOptions -&gt; VersionSource -&gt; TDSL
 </span><a href="NvFetcher.Nvchecker.html#genNvConfig"><span class="hs-identifier hs-var">genNvConfig</span></a></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293506"><span class="hs-identifier hs-var">pkg</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293505"><span class="hs-identifier hs-var">options</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293504"><span class="hs-identifier hs-var">versionSource</span></a></span><span>
-</span><span id="line-104"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679293496"><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679293496"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Stdout</span></span><span> </span><span id="local-6989586621679293494"><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679293494"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679293492"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679293492"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action (CmdTime, Stdout ByteString, CmdLine))
+</span><a href="#local-6989586621679297517"><span class="hs-identifier hs-var">pkg</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297516"><span class="hs-identifier hs-var">options</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
+</span><a href="#local-6989586621679297515"><span class="hs-identifier hs-var">versionSource</span></a></span><span>
+</span><span id="line-93"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679297507"><span class="annot"><span class="annottext">Double
+</span><a href="#local-6989586621679297507"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Stdout</span></span><span> </span><span id="local-6989586621679297505"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679297505"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679297503"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679297503"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action (CmdTime, Stdout ByteString, CmdLine))
 :-&gt; Action Any
 forall args r. (Partial, CmdArguments args) =&gt; args
 </span><span class="hs-identifier hs-var">cmd</span></span><span> </span><span class="annot"><span class="annottext">((String -&gt; Action (CmdTime, Stdout ByteString, CmdLine))
@@ -358,15 +302,15 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-string">&quot;nvchecker --logger json -c &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679293502"><span class="hs-identifier hs-var">config</span></a></span><span>
-</span><span id="line-105"></span><span>  </span><span class="annot"><span class="annottext">String -&gt; Action ()
+</span><a href="#local-6989586621679297513"><span class="hs-identifier hs-var">config</span></a></span><span>
+</span><span id="line-94"></span><span>  </span><span class="annot"><span class="annottext">String -&gt; Action ()
 </span><span class="hs-identifier hs-var">putVerbose</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ()) -&gt; String -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;Finishing running &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679293492"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679297503"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;, took &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
@@ -374,35 +318,34 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Double -&gt; String
 forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679293496"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679297507"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;s&quot;</span></span><span>
-</span><span id="line-106"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679293488"><span class="annot"><span class="annottext">out' :: PackageName
-</span><a href="#local-6989586621679293488"><span class="hs-identifier hs-var hs-var">out'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; PackageName
+</span><span id="line-95"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679297499"><span class="annot"><span class="annottext">out' :: Text
+</span><a href="#local-6989586621679297499"><span class="hs-identifier hs-var hs-var">out'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; Text
 </span><span class="hs-identifier hs-var">T.decodeUtf8</span></span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679293494"><span class="hs-identifier hs-var">out</span></a></span><span>
-</span><span id="line-107"></span><span>      </span><span id="local-6989586621679293486"><span class="annot"><span class="annottext">result :: [NvcheckerRaw]
-</span><a href="#local-6989586621679293486"><span class="hs-identifier hs-var hs-var">result</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(PackageName -&gt; Maybe NvcheckerRaw)
--&gt; [PackageName] -&gt; [NvcheckerRaw]
+</span><a href="#local-6989586621679297505"><span class="hs-identifier hs-var">out</span></a></span><span>
+</span><span id="line-96"></span><span>      </span><span id="local-6989586621679297497"><span class="annot"><span class="annottext">result :: [NvcheckerRaw]
+</span><a href="#local-6989586621679297497"><span class="hs-identifier hs-var hs-var">result</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Maybe NvcheckerRaw) -&gt; [Text] -&gt; [NvcheckerRaw]
 forall a b. (a -&gt; Maybe b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">mapMaybe</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; Maybe NvcheckerRaw
 forall a. FromJSON a =&gt; ByteString -&gt; Maybe a
 </span><span class="hs-identifier hs-var">A.decodeStrict</span></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; Maybe NvcheckerRaw)
--&gt; (PackageName -&gt; ByteString) -&gt; PackageName -&gt; Maybe NvcheckerRaw
+-&gt; (Text -&gt; ByteString) -&gt; Text -&gt; Maybe NvcheckerRaw
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
-</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; ByteString
-</span><span class="hs-identifier hs-var">T.encodeUtf8</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageName -&gt; [PackageName]
-</span><span class="hs-identifier hs-var">T.lines</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293488"><span class="hs-identifier hs-var">out'</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-108"></span><span>  </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">[NvcheckerRaw]
-</span><a href="#local-6989586621679293486"><span class="hs-identifier hs-var">result</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-109"></span><span>    </span><span class="hs-special">[</span><span id="local-6989586621679293482"><span class="annot"><span class="annottext">NvcheckerRaw
-</span><a href="#local-6989586621679293482"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">NvcheckerRaw -&gt; Action NvcheckerRaw
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; ByteString
+</span><span class="hs-identifier hs-var">T.encodeUtf8</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; [Text]
+</span><span class="hs-identifier hs-var">T.lines</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297499"><span class="hs-identifier hs-var">out'</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-97"></span><span>  </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">[NvcheckerRaw]
+</span><a href="#local-6989586621679297497"><span class="hs-identifier hs-var">result</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-98"></span><span>    </span><span class="hs-special">[</span><span id="local-6989586621679297493"><span class="annot"><span class="annottext">NvcheckerRaw
+</span><a href="#local-6989586621679297493"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">NvcheckerRaw -&gt; Action NvcheckerRaw
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">NvcheckerRaw
-</span><a href="#local-6989586621679293482"><span class="hs-identifier hs-var">x</span></a></span><span>
-</span><span id="line-110"></span><span>    </span><span class="annot"><span class="annottext">[NvcheckerRaw]
+</span><a href="#local-6989586621679297493"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-99"></span><span>    </span><span class="annot"><span class="annottext">[NvcheckerRaw]
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Action NvcheckerRaw
 forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; m a
 </span><span class="hs-identifier hs-var">fail</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action NvcheckerRaw) -&gt; String -&gt; Action NvcheckerRaw
@@ -410,428 +353,426 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;Failed to parse output from nvchecker: &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; String
-</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293488"><span class="hs-identifier hs-var">out'</span></a></span><span>
-</span><span id="line-111"></span><span>
-</span><span id="line-112"></span><span class="annot"><a href="NvFetcher.Nvchecker.html#genNvConfig"><span class="hs-identifier hs-type">genNvConfig</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-type">VersionSource</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">TDSL</span></span><span>
-</span><span id="line-113"></span><span id="genNvConfig"><span class="annot"><span class="annottext">genNvConfig :: PackageKey -&gt; NvcheckerOptions -&gt; VersionSource -&gt; TDSL
-</span><a href="NvFetcher.Nvchecker.html#genNvConfig"><span class="hs-identifier hs-var hs-var">genNvConfig</span></a></span></span><span> </span><span id="local-6989586621679293481"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293481"><span class="hs-identifier hs-var">pkg</span></a></span></span><span> </span><span id="local-6989586621679293480"><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293480"><span class="hs-identifier hs-var">options</span></a></span></span><span> </span><span id="local-6989586621679293479"><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293479"><span class="hs-identifier hs-var">versionSource</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Key -&gt; TDSL -&gt; TDSL
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297499"><span class="hs-identifier hs-var">out'</span></a></span><span>
+</span><span id="line-100"></span><span>
+</span><span id="line-101"></span><span class="annot"><a href="NvFetcher.Nvchecker.html#genNvConfig"><span class="hs-identifier hs-type">genNvConfig</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-type">VersionSource</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">TDSL</span></span><span>
+</span><span id="line-102"></span><span id="genNvConfig"><span class="annot"><span class="annottext">genNvConfig :: PackageKey -&gt; NvcheckerOptions -&gt; VersionSource -&gt; TDSL
+</span><a href="NvFetcher.Nvchecker.html#genNvConfig"><span class="hs-identifier hs-var hs-var">genNvConfig</span></a></span></span><span> </span><span id="local-6989586621679297492"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679297492"><span class="hs-identifier hs-var">pkg</span></a></span></span><span> </span><span id="local-6989586621679297491"><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297491"><span class="hs-identifier hs-var">options</span></a></span></span><span> </span><span id="local-6989586621679297490"><span class="annot"><span class="annottext">VersionSource
+</span><a href="#local-6989586621679297490"><span class="hs-identifier hs-var">versionSource</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Key -&gt; TDSL -&gt; TDSL
 </span><span class="hs-identifier hs-var">table</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Key
 forall a. IsString a =&gt; String -&gt; a
 </span><span class="hs-identifier hs-var">fromString</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Key) -&gt; String -&gt; Key
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; String
-</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">(PackageName -&gt; String) -&gt; PackageName -&gt; String
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; String) -&gt; Text -&gt; String
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; PackageName
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; Text
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293481"><span class="hs-identifier hs-var">pkg</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(TDSL -&gt; TDSL) -&gt; TDSL -&gt; TDSL
+</span><a href="#local-6989586621679297492"><span class="hs-identifier hs-var">pkg</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(TDSL -&gt; TDSL) -&gt; TDSL -&gt; TDSL
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-114"></span><span>  </span><span class="annot"><span class="annottext">VersionSource -&gt; TDSL
-</span><a href="#local-6989586621679293477"><span class="hs-identifier hs-var">genVersionSource</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293479"><span class="hs-identifier hs-var">versionSource</span></a></span><span>
-</span><span id="line-115"></span><span>  </span><span class="annot"><span class="annottext">NvcheckerOptions -&gt; TDSL
-</span><a href="#local-6989586621679293476"><span class="hs-identifier hs-var">genOptions</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293480"><span class="hs-identifier hs-var">options</span></a></span><span>
-</span><span id="line-116"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-117"></span><span>    </span><span id="local-6989586621679293475"><span class="annot"><span class="annottext">Key
-</span><a href="#local-6989586621679293475"><span class="hs-identifier hs-var">key</span></a></span></span><span> </span><span id="local-6989586621679293474"><span class="annot"><span class="annottext">=:? :: Key -&gt; Maybe PackageName -&gt; TDSL
-</span><a href="#local-6989586621679293474"><span class="hs-operator hs-var hs-var">=:?</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679293473"><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293473"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Key
-</span><a href="#local-6989586621679293475"><span class="hs-identifier hs-var">key</span></a></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
+</span><span id="line-103"></span><span>  </span><span class="annot"><span class="annottext">VersionSource -&gt; TDSL
+</span><a href="#local-6989586621679297488"><span class="hs-identifier hs-var">genVersionSource</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
+</span><a href="#local-6989586621679297490"><span class="hs-identifier hs-var">versionSource</span></a></span><span>
+</span><span id="line-104"></span><span>  </span><span class="annot"><span class="annottext">NvcheckerOptions -&gt; TDSL
+</span><a href="#local-6989586621679297487"><span class="hs-identifier hs-var">genOptions</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297491"><span class="hs-identifier hs-var">options</span></a></span><span>
+</span><span id="line-105"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-106"></span><span>    </span><span id="local-6989586621679297486"><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679297486"><span class="hs-identifier hs-var">key</span></a></span></span><span> </span><span id="local-6989586621679297485"><span class="annot"><span class="annottext">=:? :: Key -&gt; Maybe Text -&gt; TDSL
+</span><a href="#local-6989586621679297485"><span class="hs-operator hs-var hs-var">=:?</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679297484"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297484"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679297486"><span class="hs-identifier hs-var">key</span></a></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293473"><span class="hs-identifier hs-var">x</span></a></span><span>
-</span><span id="line-118"></span><span>    </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><a href="#local-6989586621679293474"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297484"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-107"></span><span>    </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><a href="#local-6989586621679297485"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Text
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">() -&gt; TDSL
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
-</span><span id="line-119"></span><span>    </span><span id="local-6989586621679293477"><span class="annot"><span class="annottext">genVersionSource :: VersionSource -&gt; TDSL
-</span><a href="#local-6989586621679293477"><span class="hs-identifier hs-var hs-var">genVersionSource</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
-</span><span id="line-120"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#GitHubRelease"><span class="hs-identifier hs-type">GitHubRelease</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293469"><span id="local-6989586621679293470"><span class="annot"><span class="annottext">PackageName
-_repo :: VersionSource -&gt; PackageName
-_owner :: VersionSource -&gt; PackageName
-_repo :: PackageName
-_owner :: PackageName
+</span><span id="line-108"></span><span>    </span><span id="local-6989586621679297488"><span class="annot"><span class="annottext">genVersionSource :: VersionSource -&gt; TDSL
+</span><a href="#local-6989586621679297488"><span class="hs-identifier hs-var hs-var">genVersionSource</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
+</span><span id="line-109"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#GitHubRelease"><span class="hs-identifier hs-type">GitHubRelease</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297480"><span id="local-6989586621679297481"><span class="annot"><span class="annottext">Text
+_repo :: VersionSource -&gt; Text
+_owner :: VersionSource -&gt; Text
+_repo :: Text
+_owner :: Text
 </span><a href="NvFetcher.Types.html#_repo"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-121"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-110"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;github&quot;</span></span><span>
-</span><span id="line-122"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-111"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;github&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293470"><span class="hs-identifier hs-var">_owner</span></a></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297481"><span class="hs-identifier hs-var">_owner</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><span class="hs-string">&quot;/&quot;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;/&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293469"><span class="hs-identifier hs-var">_repo</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-123"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297480"><span class="hs-identifier hs-var">_repo</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-112"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;use_latest_release&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TBool -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Value 'TBool
 </span><span class="hs-identifier hs-var">Bool</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span>
-</span><span id="line-124"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#GitHubTag"><span class="hs-identifier hs-type">GitHubTag</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293463"><span id="local-6989586621679293464"><span id="local-6989586621679293465"><span class="annot"><span class="annottext">PackageName
+</span><span id="line-113"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#GitHubTag"><span class="hs-identifier hs-type">GitHubTag</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297474"><span id="local-6989586621679297475"><span id="local-6989586621679297476"><span class="annot"><span class="annottext">Text
 ListOptions
 _listOptions :: VersionSource -&gt; ListOptions
 _listOptions :: ListOptions
-_repo :: PackageName
-_owner :: PackageName
-_repo :: VersionSource -&gt; PackageName
-_owner :: VersionSource -&gt; PackageName
+_repo :: Text
+_owner :: Text
+_repo :: VersionSource -&gt; Text
+_owner :: VersionSource -&gt; Text
 </span><a href="NvFetcher.Types.html#_listOptions"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-125"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-114"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;github&quot;</span></span><span>
-</span><span id="line-126"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-115"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;github&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293465"><span class="hs-identifier hs-var">_owner</span></a></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297476"><span class="hs-identifier hs-var">_owner</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><span class="hs-string">&quot;/&quot;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;/&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293464"><span class="hs-identifier hs-var">_repo</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-127"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297475"><span class="hs-identifier hs-var">_repo</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-116"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;use_max_tag&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TBool -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Value 'TBool
 </span><span class="hs-identifier hs-var">Bool</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span>
-</span><span id="line-128"></span><span>        </span><span class="annot"><span class="annottext">ListOptions -&gt; TDSL
-</span><a href="#local-6989586621679293461"><span class="hs-identifier hs-var">genListOptions</span></a></span><span> </span><span class="annot"><span class="annottext">ListOptions
-</span><a href="#local-6989586621679293463"><span class="hs-identifier hs-var">_listOptions</span></a></span><span>
-</span><span id="line-129"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Git"><span class="hs-identifier hs-type">Git</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293458"><span id="local-6989586621679293459"><span class="annot"><span class="annottext">PackageName
+</span><span id="line-117"></span><span>        </span><span class="annot"><span class="annottext">ListOptions -&gt; TDSL
+</span><a href="#local-6989586621679297472"><span class="hs-identifier hs-var">genListOptions</span></a></span><span> </span><span class="annot"><span class="annottext">ListOptions
+</span><a href="#local-6989586621679297474"><span class="hs-identifier hs-var">_listOptions</span></a></span><span>
+</span><span id="line-118"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Git"><span class="hs-identifier hs-type">Git</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297469"><span id="local-6989586621679297470"><span class="annot"><span class="annottext">Text
 Branch
 _vbranch :: VersionSource -&gt; Branch
-_vurl :: VersionSource -&gt; PackageName
+_vurl :: VersionSource -&gt; Text
 _vbranch :: Branch
-_vurl :: PackageName
+_vurl :: Text
 </span><a href="NvFetcher.Types.html#_vbranch"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-130"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-119"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;git&quot;</span></span><span>
-</span><span id="line-131"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-120"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;git&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293459"><span class="hs-identifier hs-var">_vurl</span></a></span><span>
-</span><span id="line-132"></span><span>        </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;branch&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe PackageName -&gt; TDSL
-</span><a href="#local-6989586621679293474"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Branch -&gt; Maybe PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297470"><span class="hs-identifier hs-var">_vurl</span></a></span><span>
+</span><span id="line-121"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;branch&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe Text -&gt; TDSL
+</span><a href="#local-6989586621679297485"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Branch -&gt; Maybe Text
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Branch
-</span><a href="#local-6989586621679293458"><span class="hs-identifier hs-var">_vbranch</span></a></span><span>
-</span><span id="line-133"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679297469"><span class="hs-identifier hs-var">_vbranch</span></a></span><span>
+</span><span id="line-122"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;use_commit&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TBool -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Value 'TBool
 </span><span class="hs-identifier hs-var">Bool</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span>
-</span><span id="line-134"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Aur"><span class="hs-identifier hs-type">Aur</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293454"><span class="annot"><span class="annottext">PackageName
-_aur :: VersionSource -&gt; PackageName
-_aur :: PackageName
+</span><span id="line-123"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Aur"><span class="hs-identifier hs-type">Aur</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297465"><span class="annot"><span class="annottext">Text
+_aur :: VersionSource -&gt; Text
+_aur :: Text
 </span><a href="NvFetcher.Types.html#_aur"><span class="hs-glyph hs-var hs-var">..</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-135"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-124"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;aur&quot;</span></span><span>
-</span><span id="line-136"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-125"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;aur&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293454"><span class="hs-identifier hs-var">_aur</span></a></span><span>
-</span><span id="line-137"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297465"><span class="hs-identifier hs-var">_aur</span></a></span><span>
+</span><span id="line-126"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;strip_release&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TBool -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Value 'TBool
 </span><span class="hs-identifier hs-var">Bool</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span>
-</span><span id="line-138"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#ArchLinux"><span class="hs-identifier hs-type">ArchLinux</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293451"><span class="annot"><span class="annottext">PackageName
-_archpkg :: VersionSource -&gt; PackageName
-_archpkg :: PackageName
+</span><span id="line-127"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#ArchLinux"><span class="hs-identifier hs-type">ArchLinux</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297462"><span class="annot"><span class="annottext">Text
+_archpkg :: VersionSource -&gt; Text
+_archpkg :: Text
 </span><a href="NvFetcher.Types.html#_archpkg"><span class="hs-glyph hs-var hs-var">..</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-139"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-128"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;archpkg&quot;</span></span><span>
-</span><span id="line-140"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-129"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;archpkg&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293451"><span class="hs-identifier hs-var">_archpkg</span></a></span><span>
-</span><span id="line-141"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297462"><span class="hs-identifier hs-var">_archpkg</span></a></span><span>
+</span><span id="line-130"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;strip_release&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TBool -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Value 'TBool
 </span><span class="hs-identifier hs-var">Bool</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span>
-</span><span id="line-142"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Pypi"><span class="hs-identifier hs-type">Pypi</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293448"><span class="annot"><span class="annottext">PackageName
-_pypi :: VersionSource -&gt; PackageName
-_pypi :: PackageName
+</span><span id="line-131"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Pypi"><span class="hs-identifier hs-type">Pypi</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297459"><span class="annot"><span class="annottext">Text
+_pypi :: VersionSource -&gt; Text
+_pypi :: Text
 </span><a href="NvFetcher.Types.html#_pypi"><span class="hs-glyph hs-var hs-var">..</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-143"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-132"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;pypi&quot;</span></span><span>
-</span><span id="line-144"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-133"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;pypi&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293448"><span class="hs-identifier hs-var">_pypi</span></a></span><span>
-</span><span id="line-145"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Manual"><span class="hs-identifier hs-type">Manual</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293445"><span class="annot"><span class="annottext">PackageName
-_manual :: VersionSource -&gt; PackageName
-_manual :: PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297459"><span class="hs-identifier hs-var">_pypi</span></a></span><span>
+</span><span id="line-134"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Manual"><span class="hs-identifier hs-type">Manual</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297456"><span class="annot"><span class="annottext">Text
+_manual :: VersionSource -&gt; Text
+_manual :: Text
 </span><a href="NvFetcher.Types.html#_manual"><span class="hs-glyph hs-var hs-var">..</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-146"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-135"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;manual&quot;</span></span><span>
-</span><span id="line-147"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-136"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;manual&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293445"><span class="hs-identifier hs-var">_manual</span></a></span><span>
-</span><span id="line-148"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Repology"><span class="hs-identifier hs-type">Repology</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293441"><span id="local-6989586621679293442"><span class="annot"><span class="annottext">PackageName
-_repology :: VersionSource -&gt; PackageName
-_repo :: PackageName
-_repology :: PackageName
-_repo :: VersionSource -&gt; PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297456"><span class="hs-identifier hs-var">_manual</span></a></span><span>
+</span><span id="line-137"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Repology"><span class="hs-identifier hs-type">Repology</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297452"><span id="local-6989586621679297453"><span class="annot"><span class="annottext">Text
+_repology :: VersionSource -&gt; Text
+_repo :: Text
+_repology :: Text
+_repo :: VersionSource -&gt; Text
 </span><a href="NvFetcher.Types.html#_repology"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-149"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-138"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;repology&quot;</span></span><span>
-</span><span id="line-150"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-139"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;repology&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293442"><span class="hs-identifier hs-var">_repology</span></a></span><span>
-</span><span id="line-151"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297453"><span class="hs-identifier hs-var">_repology</span></a></span><span>
+</span><span id="line-140"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;repo&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293441"><span class="hs-identifier hs-var">_repo</span></a></span><span>
-</span><span id="line-152"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Webpage"><span class="hs-identifier hs-type">Webpage</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293436"><span id="local-6989586621679293437"><span id="local-6989586621679293438"><span class="annot"><span class="annottext">PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297452"><span class="hs-identifier hs-var">_repo</span></a></span><span>
+</span><span id="line-141"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Webpage"><span class="hs-identifier hs-type">Webpage</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297447"><span id="local-6989586621679297448"><span id="local-6989586621679297449"><span class="annot"><span class="annottext">Text
 ListOptions
-_regex :: VersionSource -&gt; PackageName
+_regex :: VersionSource -&gt; Text
 _listOptions :: ListOptions
-_regex :: PackageName
-_vurl :: PackageName
-_vurl :: VersionSource -&gt; PackageName
+_regex :: Text
+_vurl :: Text
+_vurl :: VersionSource -&gt; Text
 _listOptions :: VersionSource -&gt; ListOptions
 </span><a href="NvFetcher.Types.html#_regex"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-153"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-142"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;regex&quot;</span></span><span>
-</span><span id="line-154"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-143"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;url&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293438"><span class="hs-identifier hs-var">_vurl</span></a></span><span>
-</span><span id="line-155"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297449"><span class="hs-identifier hs-var">_vurl</span></a></span><span>
+</span><span id="line-144"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;regex&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293437"><span class="hs-identifier hs-var">_regex</span></a></span><span>
-</span><span id="line-156"></span><span>        </span><span class="annot"><span class="annottext">ListOptions -&gt; TDSL
-</span><a href="#local-6989586621679293461"><span class="hs-identifier hs-var">genListOptions</span></a></span><span> </span><span class="annot"><span class="annottext">ListOptions
-</span><a href="#local-6989586621679293436"><span class="hs-identifier hs-var">_listOptions</span></a></span><span>
-</span><span id="line-157"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#HttpHeader"><span class="hs-identifier hs-type">HttpHeader</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293431"><span id="local-6989586621679293432"><span id="local-6989586621679293433"><span class="annot"><span class="annottext">PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297448"><span class="hs-identifier hs-var">_regex</span></a></span><span>
+</span><span id="line-145"></span><span>        </span><span class="annot"><span class="annottext">ListOptions -&gt; TDSL
+</span><a href="#local-6989586621679297472"><span class="hs-identifier hs-var">genListOptions</span></a></span><span> </span><span class="annot"><span class="annottext">ListOptions
+</span><a href="#local-6989586621679297447"><span class="hs-identifier hs-var">_listOptions</span></a></span><span>
+</span><span id="line-146"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#HttpHeader"><span class="hs-identifier hs-type">HttpHeader</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297442"><span id="local-6989586621679297443"><span id="local-6989586621679297444"><span class="annot"><span class="annottext">Text
 ListOptions
 _listOptions :: ListOptions
-_regex :: PackageName
-_vurl :: PackageName
-_regex :: VersionSource -&gt; PackageName
-_vurl :: VersionSource -&gt; PackageName
+_regex :: Text
+_vurl :: Text
+_regex :: VersionSource -&gt; Text
+_vurl :: VersionSource -&gt; Text
 _listOptions :: VersionSource -&gt; ListOptions
-</span><a href="#local-6989586621679293431"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-158"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><a href="#local-6989586621679297442"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-147"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;httpheader&quot;</span></span><span>
-</span><span id="line-159"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-148"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;url&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293433"><span class="hs-identifier hs-var">_vurl</span></a></span><span>
-</span><span id="line-160"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297444"><span class="hs-identifier hs-var">_vurl</span></a></span><span>
+</span><span id="line-149"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;regex&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293432"><span class="hs-identifier hs-var">_regex</span></a></span><span>
-</span><span id="line-161"></span><span>        </span><span class="annot"><span class="annottext">ListOptions -&gt; TDSL
-</span><a href="#local-6989586621679293461"><span class="hs-identifier hs-var">genListOptions</span></a></span><span> </span><span class="annot"><span class="annottext">ListOptions
-</span><a href="#local-6989586621679293431"><span class="hs-identifier hs-var">_listOptions</span></a></span><span>
-</span><span id="line-162"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#OpenVsx"><span class="hs-identifier hs-type">OpenVsx</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293428"><span id="local-6989586621679293429"><span class="annot"><span class="annottext">PackageName
-_ovExtName :: VersionSource -&gt; PackageName
-_ovPublisher :: VersionSource -&gt; PackageName
-_ovExtName :: PackageName
-_ovPublisher :: PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297443"><span class="hs-identifier hs-var">_regex</span></a></span><span>
+</span><span id="line-150"></span><span>        </span><span class="annot"><span class="annottext">ListOptions -&gt; TDSL
+</span><a href="#local-6989586621679297472"><span class="hs-identifier hs-var">genListOptions</span></a></span><span> </span><span class="annot"><span class="annottext">ListOptions
+</span><a href="#local-6989586621679297442"><span class="hs-identifier hs-var">_listOptions</span></a></span><span>
+</span><span id="line-151"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#OpenVsx"><span class="hs-identifier hs-type">OpenVsx</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297439"><span id="local-6989586621679297440"><span class="annot"><span class="annottext">Text
+_ovExtName :: VersionSource -&gt; Text
+_ovPublisher :: VersionSource -&gt; Text
+_ovExtName :: Text
+_ovPublisher :: Text
 </span><a href="NvFetcher.Types.html#_ovExtName"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-163"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-152"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;openvsx&quot;</span></span><span>
-</span><span id="line-164"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-153"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;openvsx&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293429"><span class="hs-identifier hs-var">_ovPublisher</span></a></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297440"><span class="hs-identifier hs-var">_ovPublisher</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><span class="hs-string">&quot;.&quot;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;.&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293428"><span class="hs-identifier hs-var">_ovExtName</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-165"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#VscodeMarketplace"><span class="hs-identifier hs-type">VscodeMarketplace</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293423"><span id="local-6989586621679293424"><span class="annot"><span class="annottext">PackageName
-_vsmExtName :: VersionSource -&gt; PackageName
-_vsmPublisher :: VersionSource -&gt; PackageName
-_vsmExtName :: PackageName
-_vsmPublisher :: PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297439"><span class="hs-identifier hs-var">_ovExtName</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-154"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#VscodeMarketplace"><span class="hs-identifier hs-type">VscodeMarketplace</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297434"><span id="local-6989586621679297435"><span class="annot"><span class="annottext">Text
+_vsmExtName :: VersionSource -&gt; Text
+_vsmPublisher :: VersionSource -&gt; Text
+_vsmExtName :: Text
+_vsmPublisher :: Text
 </span><a href="NvFetcher.Types.html#_vsmExtName"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-166"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-155"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;vsmarketplace&quot;</span></span><span>
-</span><span id="line-167"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-156"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;vsmarketplace&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293424"><span class="hs-identifier hs-var">_vsmPublisher</span></a></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297435"><span class="hs-identifier hs-var">_vsmPublisher</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><span class="hs-string">&quot;.&quot;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;.&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293423"><span class="hs-identifier hs-var">_vsmExtName</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-168"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Cmd"><span class="hs-identifier hs-type">Cmd</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293419"><span class="annot"><span class="annottext">PackageName
-_vcmd :: VersionSource -&gt; PackageName
-_vcmd :: PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297434"><span class="hs-identifier hs-var">_vsmExtName</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-157"></span><span>      </span><span class="annot"><a href="NvFetcher.Types.html#Cmd"><span class="hs-identifier hs-type">Cmd</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297430"><span class="annot"><span class="annottext">Text
+_vcmd :: VersionSource -&gt; Text
+_vcmd :: Text
 </span><a href="NvFetcher.Types.html#_vcmd"><span class="hs-glyph hs-var hs-var">..</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-169"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-158"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;source&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
 </span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Value 'TText
 </span><span class="hs-string">&quot;cmd&quot;</span></span><span>
-</span><span id="line-170"></span><span>        </span><span class="annot"><span class="annottext">Key
+</span><span id="line-159"></span><span>        </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;cmd&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Value 'TText -&gt; TDSL
 forall (a :: TValue). Key -&gt; Value a -&gt; TDSL
-</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Value 'TText
-</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679293419"><span class="hs-identifier hs-var">_vcmd</span></a></span><span>
-</span><span id="line-171"></span><span>    </span><span id="local-6989586621679293461"><span class="annot"><span class="annottext">genListOptions :: ListOptions -&gt; TDSL
-</span><a href="#local-6989586621679293461"><span class="hs-identifier hs-var hs-var">genListOptions</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#ListOptions"><span class="hs-identifier hs-type">ListOptions</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293413"><span id="local-6989586621679293414"><span id="local-6989586621679293415"><span id="local-6989586621679293416"><span class="annot"><span class="annottext">Maybe PackageName
+</span><span class="hs-operator hs-var">=:</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Value 'TText
+</span><span class="hs-identifier hs-var">Text</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679297430"><span class="hs-identifier hs-var">_vcmd</span></a></span><span>
+</span><span id="line-160"></span><span>    </span><span id="local-6989586621679297472"><span class="annot"><span class="annottext">genListOptions :: ListOptions -&gt; TDSL
+</span><a href="#local-6989586621679297472"><span class="hs-identifier hs-var hs-var">genListOptions</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#ListOptions"><span class="hs-identifier hs-type">ListOptions</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297424"><span id="local-6989586621679297425"><span id="local-6989586621679297426"><span id="local-6989586621679297427"><span class="annot"><span class="annottext">Maybe Text
 Maybe VersionSortMethod
-_ignored :: ListOptions -&gt; Maybe PackageName
+_ignored :: ListOptions -&gt; Maybe Text
 _sortVersionKey :: ListOptions -&gt; Maybe VersionSortMethod
-_excludeRegex :: ListOptions -&gt; Maybe PackageName
-_includeRegex :: ListOptions -&gt; Maybe PackageName
-_ignored :: Maybe PackageName
+_excludeRegex :: ListOptions -&gt; Maybe Text
+_includeRegex :: ListOptions -&gt; Maybe Text
+_ignored :: Maybe Text
 _sortVersionKey :: Maybe VersionSortMethod
-_excludeRegex :: Maybe PackageName
-_includeRegex :: Maybe PackageName
+_excludeRegex :: Maybe Text
+_includeRegex :: Maybe Text
 </span><a href="NvFetcher.Types.html#_ignored"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-172"></span><span>      </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;include_regex&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe PackageName -&gt; TDSL
-</span><a href="#local-6989586621679293474"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe PackageName
-</span><a href="#local-6989586621679293416"><span class="hs-identifier hs-var">_includeRegex</span></a></span><span>
-</span><span id="line-173"></span><span>      </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;exclude_regex&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe PackageName -&gt; TDSL
-</span><a href="#local-6989586621679293474"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe PackageName
-</span><a href="#local-6989586621679293415"><span class="hs-identifier hs-var">_excludeRegex</span></a></span><span>
-</span><span id="line-174"></span><span>      </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;sort_version_key&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe PackageName -&gt; TDSL
-</span><a href="#local-6989586621679293474"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">(VersionSortMethod -&gt; PackageName)
--&gt; Maybe VersionSortMethod -&gt; Maybe PackageName
+</span><span id="line-161"></span><span>      </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;include_regex&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe Text -&gt; TDSL
+</span><a href="#local-6989586621679297485"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679297427"><span class="hs-identifier hs-var">_includeRegex</span></a></span><span>
+</span><span id="line-162"></span><span>      </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;exclude_regex&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe Text -&gt; TDSL
+</span><a href="#local-6989586621679297485"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679297426"><span class="hs-identifier hs-var">_excludeRegex</span></a></span><span>
+</span><span id="line-163"></span><span>      </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;sort_version_key&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe Text -&gt; TDSL
+</span><a href="#local-6989586621679297485"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">(VersionSortMethod -&gt; Text)
+-&gt; Maybe VersionSortMethod -&gt; Maybe Text
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
-</span><span class="hs-identifier hs-var">fmap</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; PackageName
-</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; PackageName)
--&gt; (VersionSortMethod -&gt; String)
--&gt; VersionSortMethod
--&gt; PackageName
+</span><span class="hs-identifier hs-var">fmap</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
+</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Text)
+-&gt; (VersionSortMethod -&gt; String) -&gt; VersionSortMethod -&gt; Text
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">VersionSortMethod -&gt; String
 forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Maybe VersionSortMethod
-</span><a href="#local-6989586621679293414"><span class="hs-identifier hs-var">_sortVersionKey</span></a></span><span>
-</span><span id="line-175"></span><span>      </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;ignored&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe PackageName -&gt; TDSL
-</span><a href="#local-6989586621679293474"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe PackageName
-</span><a href="#local-6989586621679293413"><span class="hs-identifier hs-var">_ignored</span></a></span><span>
-</span><span id="line-176"></span><span>    </span><span id="local-6989586621679293476"><span class="annot"><span class="annottext">genOptions :: NvcheckerOptions -&gt; TDSL
-</span><a href="#local-6989586621679293476"><span class="hs-identifier hs-var hs-var">genOptions</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679293404"><span id="local-6989586621679293405"><span id="local-6989586621679293406"><span class="annot"><span class="annottext">Maybe PackageName
-_toPattern :: NvcheckerOptions -&gt; Maybe PackageName
-_fromPattern :: NvcheckerOptions -&gt; Maybe PackageName
-_stripPrefix :: NvcheckerOptions -&gt; Maybe PackageName
-_toPattern :: Maybe PackageName
-_fromPattern :: Maybe PackageName
-_stripPrefix :: Maybe PackageName
+</span><a href="#local-6989586621679297425"><span class="hs-identifier hs-var">_sortVersionKey</span></a></span><span>
+</span><span id="line-164"></span><span>      </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;ignored&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe Text -&gt; TDSL
+</span><a href="#local-6989586621679297485"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679297424"><span class="hs-identifier hs-var">_ignored</span></a></span><span>
+</span><span id="line-165"></span><span>    </span><span id="local-6989586621679297487"><span class="annot"><span class="annottext">genOptions :: NvcheckerOptions -&gt; TDSL
+</span><a href="#local-6989586621679297487"><span class="hs-identifier hs-var hs-var">genOptions</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297415"><span id="local-6989586621679297416"><span id="local-6989586621679297417"><span class="annot"><span class="annottext">Maybe Text
+_toPattern :: NvcheckerOptions -&gt; Maybe Text
+_fromPattern :: NvcheckerOptions -&gt; Maybe Text
+_stripPrefix :: NvcheckerOptions -&gt; Maybe Text
+_toPattern :: Maybe Text
+_fromPattern :: Maybe Text
+_stripPrefix :: Maybe Text
 </span><a href="NvFetcher.Types.html#_toPattern"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-177"></span><span>      </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;prefix&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe PackageName -&gt; TDSL
-</span><a href="#local-6989586621679293474"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe PackageName
-</span><a href="#local-6989586621679293406"><span class="hs-identifier hs-var">_stripPrefix</span></a></span><span>
-</span><span id="line-178"></span><span>      </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;from_pattern&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe PackageName -&gt; TDSL
-</span><a href="#local-6989586621679293474"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe PackageName
-</span><a href="#local-6989586621679293405"><span class="hs-identifier hs-var">_fromPattern</span></a></span><span>
-</span><span id="line-179"></span><span>      </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;to_pattern&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe PackageName -&gt; TDSL
-</span><a href="#local-6989586621679293474"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe PackageName
-</span><a href="#local-6989586621679293404"><span class="hs-identifier hs-var">_toPattern</span></a></span><span>
-</span><span id="line-180"></span><span>
-</span><span id="line-181"></span><span class="hs-comment">-- | Run nvchecker given 'PackageKey'</span><span>
-</span><span id="line-182"></span><span class="hs-comment">-- Recording version changes and using stale version are available.</span><span>
-</span><span id="line-183"></span><span class="annot"><a href="NvFetcher.Nvchecker.html#checkVersion"><span class="hs-identifier hs-type">checkVersion</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-type">VersionSource</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-type">NvcheckerResult</span></a></span><span>
-</span><span id="line-184"></span><span id="checkVersion"><span class="annot"><span class="annottext">checkVersion :: VersionSource
+</span><span id="line-166"></span><span>      </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;prefix&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe Text -&gt; TDSL
+</span><a href="#local-6989586621679297485"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679297417"><span class="hs-identifier hs-var">_stripPrefix</span></a></span><span>
+</span><span id="line-167"></span><span>      </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;from_pattern&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe Text -&gt; TDSL
+</span><a href="#local-6989586621679297485"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679297416"><span class="hs-identifier hs-var">_fromPattern</span></a></span><span>
+</span><span id="line-168"></span><span>      </span><span class="annot"><span class="annottext">Key
+</span><span class="hs-string">&quot;to_pattern&quot;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; Maybe Text -&gt; TDSL
+</span><a href="#local-6989586621679297485"><span class="hs-operator hs-var">=:?</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679297415"><span class="hs-identifier hs-var">_toPattern</span></a></span><span>
+</span><span id="line-169"></span><span>
+</span><span id="line-170"></span><span class="hs-comment">-- | Run nvchecker given 'PackageKey'</span><span>
+</span><span id="line-171"></span><span class="hs-comment">-- Recording version changes and using stale version are available.</span><span>
+</span><span id="line-172"></span><span class="annot"><a href="NvFetcher.Nvchecker.html#checkVersion"><span class="hs-identifier hs-type">checkVersion</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-type">VersionSource</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-type">NvcheckerResult</span></a></span><span>
+</span><span id="line-173"></span><span id="checkVersion"><span class="annot"><span class="annottext">checkVersion :: VersionSource
 -&gt; NvcheckerOptions -&gt; PackageKey -&gt; Action NvcheckerResult
-</span><a href="NvFetcher.Nvchecker.html#checkVersion"><span class="hs-identifier hs-var hs-var">checkVersion</span></a></span></span><span> </span><span id="local-6989586621679293400"><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293400"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span id="local-6989586621679293399"><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293399"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span id="local-6989586621679293398"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293398"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">WithPackageKey CheckVersion -&gt; Action NvcheckerResult
+</span><a href="NvFetcher.Nvchecker.html#checkVersion"><span class="hs-identifier hs-var hs-var">checkVersion</span></a></span></span><span> </span><span id="local-6989586621679297411"><span class="annot"><span class="annottext">VersionSource
+</span><a href="#local-6989586621679297411"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span id="local-6989586621679297410"><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297410"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span id="local-6989586621679297409"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679297409"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">WithPackageKey CheckVersion -&gt; Action NvcheckerResult
 forall key value.
 (Partial, RuleResult key ~ value, ShakeValue key,
  Typeable value) =&gt;
@@ -843,16 +784,16 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 forall k. (k, PackageKey) -&gt; WithPackageKey k
 </span><a href="NvFetcher.Types.html#WithPackageKey"><span class="hs-identifier hs-var">WithPackageKey</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">VersionSource -&gt; NvcheckerOptions -&gt; CheckVersion
 </span><a href="NvFetcher.Types.html#CheckVersion"><span class="hs-identifier hs-var">CheckVersion</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293400"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293399"><span class="hs-identifier hs-var">o</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679293398"><span class="hs-identifier hs-var">k</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-185"></span><span>
-</span><span id="line-186"></span><span class="hs-comment">-- | Run nvchecker without cache</span><span>
-</span><span id="line-187"></span><span class="annot"><a href="NvFetcher.Nvchecker.html#checkVersion%27"><span class="hs-identifier hs-type">checkVersion'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-type">VersionSource</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-type">NvcheckerResult</span></a></span><span>
-</span><span id="line-188"></span><span id="checkVersion%27"><span class="annot"><span class="annottext">checkVersion' :: VersionSource -&gt; NvcheckerOptions -&gt; Action NvcheckerResult
-</span><a href="NvFetcher.Nvchecker.html#checkVersion%27"><span class="hs-identifier hs-var hs-var">checkVersion'</span></a></span></span><span> </span><span id="local-6989586621679293396"><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293396"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span id="local-6989586621679293395"><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293395"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">CheckVersion -&gt; Action NvcheckerResult
+</span><a href="#local-6989586621679297411"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297410"><span class="hs-identifier hs-var">o</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679297409"><span class="hs-identifier hs-var">k</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-174"></span><span>
+</span><span id="line-175"></span><span class="hs-comment">-- | Run nvchecker without cache</span><span>
+</span><span id="line-176"></span><span class="annot"><a href="NvFetcher.Nvchecker.html#checkVersion%27"><span class="hs-identifier hs-type">checkVersion'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#VersionSource"><span class="hs-identifier hs-type">VersionSource</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerOptions"><span class="hs-identifier hs-type">NvcheckerOptions</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NvcheckerResult"><span class="hs-identifier hs-type">NvcheckerResult</span></a></span><span>
+</span><span id="line-177"></span><span id="checkVersion%27"><span class="annot"><span class="annottext">checkVersion' :: VersionSource -&gt; NvcheckerOptions -&gt; Action NvcheckerResult
+</span><a href="NvFetcher.Nvchecker.html#checkVersion%27"><span class="hs-identifier hs-var hs-var">checkVersion'</span></a></span></span><span> </span><span id="local-6989586621679297407"><span class="annot"><span class="annottext">VersionSource
+</span><a href="#local-6989586621679297407"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span id="local-6989586621679297406"><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297406"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">CheckVersion -&gt; Action NvcheckerResult
 forall q a.
 (RuleResult q ~ a, ShakeValue q, ShakeValue a) =&gt;
 q -&gt; Action a
@@ -861,5 +802,6 @@ q -&gt; Action a
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">VersionSource -&gt; NvcheckerOptions -&gt; CheckVersion
 </span><a href="NvFetcher.Types.html#CheckVersion"><span class="hs-identifier hs-var">CheckVersion</span></a></span><span> </span><span class="annot"><span class="annottext">VersionSource
-</span><a href="#local-6989586621679293396"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
-</span><a href="#local-6989586621679293395"><span class="hs-identifier hs-var">o</span></a></span></pre></body></html>
+</span><a href="#local-6989586621679297407"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="annot"><span class="annottext">NvcheckerOptions
+</span><a href="#local-6989586621679297406"><span class="hs-identifier hs-var">o</span></a></span><span>
+</span><span id="line-178"></span></pre></body></html>

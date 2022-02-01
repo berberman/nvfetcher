@@ -14,58 +14,63 @@ For example, feeding the following configuration to`nvfetcher`:
 
 ```toml
 # nvfetcher.toml
-[feeluown-core]
+[feeluown]
 src.pypi = "feeluown"
 fetch.pypi = "feeluown"
-
-[qliveplayer]
-src.github = "THMonster/QLivePlayer"
-fetch.github = "THMonster/QLivePlayer"
-git.fetchSubmodules = true
 ```
 
-it can create `sources.nix` like:
+it will create `_sources/generated.nix`:
 
 ```nix
-# sources.nix
-{ fetchgit, fetchurl }:
+{ fetchgit, fetchurl, fetchFromGitHub }:
 {
-  feeluown-core = {
-    pname = "feeluown-core";
-    version = "3.7.7";
+  feeluown = {
+    pname = "feeluown";
+    version = "3.8.2";
     src = fetchurl {
-      sha256 = "06d3j39ff9znqxkhp9ly81lcgajkhg30hyqxy2809yn23xixg3x2";
-      url = "https://pypi.io/packages/source/f/feeluown/feeluown-3.7.7.tar.gz";
-    };
-  };
-  qliveplayer = {
-    pname = "qliveplayer";
-    version = "3.22.1";
-    src = fetchgit {
-      url = "https://github.com/THMonster/QLivePlayer";
-      rev = "3.22.1";
-      fetchSubmodules = true;
-      deepClone = false;
-      leaveDotGit = false;
-      sha256 = "00zqg28q5xrbgql0kclgkhd15fc02qzsrvi0qg8lg3qf8a53v263";
+      url = "https://pypi.io/packages/source/f/feeluown/feeluown-3.8.2.tar.gz";
+      sha256 = "sha256-V2yzpkmjRkipZOvQGB2mYRhiiEly6QPrTOMJ7BmyWBQ=";
     };
   };
 }
 ```
 
+and `_sources/generated.json`:
+
+```json
+{
+    "feeluown": {
+        "pinned": false,
+        "cargoLock": null,
+        "name": "feeluown-core",
+        "version": "3.8.2",
+        "passthru": null,
+        "src": {
+            "url": "https://pypi.io/packages/source/f/feeluown/feeluown-3.8.2.tar.gz",
+            "name": null,
+            "type": "url",
+            "sha256": "sha256-V2yzpkmjRkipZOvQGB2mYRhiiEly6QPrTOMJ7BmyWBQ="
+        },
+        "extract": null,
+        "rustGitDeps": null
+    }
+}
+```
+
 We tell nvfetcher how to get the latest version number of packages and how to fetch their sources given version numbers,
-and nvfetcher will help us keep their version and prefetched SHA256 sums up-to-date, stored in `_sources/generated.nix`.
-Shake will handle necessary rebuilds as long as you keep `_sources` directory -- we check versions of packages during each run, but only prefetch them when needed.
+and nvfetcher will help us keep their version and prefetched SHA256 sums up-to-date, producing ready-to-use nix expressions in `_sources/generated.nix`.
+Nvfetcher reads `generated.json` to produce version change message, such as `feeluown: 3.8.1 → 3.8.2`.
+We always check versions of packages during each run, but only do prefetch and further operations when needed.
 
 ### Live examples
 
 How to use the generated sources file? Here are several examples:
 
-* [DevOS](https://github.com/divnix/devos/tree/main/pkgs) - Packages are defined in TOML
+* [DevOS](https://github.com/divnix/devos/tree/main/pkgs)
 
-* My [flakes repo](https://github.com/berberman/flakes) - Packages are defined in eDSL
+* My [flakes repo](https://github.com/berberman/flakes)
 
-* Nick Cao's [flakes repo](https://gitlab.com/NickCao/flakes/-/tree/master/pkgs) - Packages are defined in TOML
+* Nick Cao's [flakes repo](https://gitlab.com/NickCao/flakes/-/tree/master/pkgs)
 
 ## Installation
 
@@ -105,7 +110,8 @@ Available options:
   --help                   Show this help text
   -o,--build-dir DIR       Directory that nvfetcher puts artifacts to
                            (default: "_sources")
-  --commit-changes         `git commit` changes in this run (with shake db)
+  --commit-changes         `git commit` build dir with version changes as commit
+                           message
   -l,--changelog FILE      Dump version changes to a file
   -j NUM                   Number of threads (0: detected number of processors)
                            (default: 0)

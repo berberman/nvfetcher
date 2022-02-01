@@ -109,8 +109,9 @@ NvcheckerResult :: Version -> Maybe Version -> Bool -> NvcheckerResult
 -- | shake restores it from last run
 [nvOld] :: NvcheckerResult -> Maybe Version
 
--- | stale means even <a>nvNow</a> comes from shake, where we actually
---   didn't run nvchecker
+-- | stale means even <a>nvNow</a> comes from json file or last run and we
+--   actually didn't run nvchecker this time. <a>nvOld</a> will be
+--   <a>Nothing</a> in this case.
 [nvStale] :: NvcheckerResult -> Bool
 
 -- | Parsed JSON output from nvchecker
@@ -132,8 +133,9 @@ NvcheckerOptions :: Maybe Text -> Maybe Text -> Maybe Text -> NvcheckerOptions
 
 -- | This bool value means whether or not to use stale value. Using stale
 --   value indicates that we will <i>NOT</i> check for new versions if
---   there is a known version in shake. Normally you don't want a stale
---   version unless you need pin a package.
+--   there is a known version recoverd from json file or last use of the
+--   rule. Normally you don't want a stale version unless you need pin a
+--   package.
 newtype UseStaleVersion
 UseStaleVersion :: Bool -> UseStaleVersion
 
@@ -206,7 +208,7 @@ PackagePassthru :: HashMap Text Text -> PackagePassthru
 --   <li>its name</li>
 --   <li>how to track its version</li>
 --   <li>how to fetch it as we have the version</li>
---   <li>optional file paths to extract (dump to shake dir)</li>
+--   <li>optional file paths to extract (dump to build dir)</li>
 --   <li>optional <tt>Cargo.lock</tt> path (if it's a rust package)</li>
 --   <li>an optional pass through map</li>
 --   <li>if the package version was pinned</li>
@@ -432,14 +434,16 @@ module NvFetcher.Types.ShakeExtras
 
 -- | Values we use during the build. It's stored in <a>shakeExtra</a>
 data ShakeExtras
-ShakeExtras :: Var [VersionChange] -> Map PackageKey Package -> Int -> ShakeExtras
+ShakeExtras :: Var [VersionChange] -> Map PackageKey Package -> Int -> FilePath -> Var (Map PackageKey LastVersion) -> ShakeExtras
 [versionChanges] :: ShakeExtras -> Var [VersionChange]
 [targetPackages] :: ShakeExtras -> Map PackageKey Package
 [retries] :: ShakeExtras -> Int
+[buildDir] :: ShakeExtras -> FilePath
+[lastVersions] :: ShakeExtras -> Var (Map PackageKey LastVersion)
 
--- | Create an empty <a>ShakeExtras</a> from packages to build and times to
---   retry for each rule
-initShakeExtras :: Map PackageKey Package -> Int -> IO ShakeExtras
+-- | Create an empty <a>ShakeExtras</a> from packages to build, times to
+--   retry for each rule, build dir, and on disk versions
+initShakeExtras :: Map PackageKey Package -> Int -> FilePath -> Map PackageKey Version -> IO ShakeExtras
 
 -- | Get our values from shake
 getShakeExtras :: Action ShakeExtras
@@ -462,6 +466,21 @@ getVersionChanges :: Action [VersionChange]
 -- | Run an action, retry at most <a>retries</a> times if it throws an
 --   exception
 withRetries :: Action a -> Action a
+
+-- | Get build dir
+getBuildDir :: Action FilePath
+
+-- | Get initial version of a package
+getLastVersionOnDisk :: PackageKey -> Action (Maybe Version)
+
+-- | Get version of a package, no matter it was initial one or rule result
+getRecentLastVersion :: PackageKey -> Action (Maybe Version)
+
+-- | Add nvchecker result of a package
+updateLastVersion :: PackageKey -> Version -> Action ()
+
+-- | Get all initial versions
+getAllOnDiskVersions :: Action (Map PackageKey Version)
 
 
 -- | <a>NixFetcher</a> is used to describe how to fetch package sources.
@@ -1017,8 +1036,9 @@ NvcheckerResult :: Version -> Maybe Version -> Bool -> NvcheckerResult
 -- | shake restores it from last run
 [nvOld] :: NvcheckerResult -> Maybe Version
 
--- | stale means even <a>nvNow</a> comes from shake, where we actually
---   didn't run nvchecker
+-- | stale means even <a>nvNow</a> comes from json file or last run and we
+--   actually didn't run nvchecker this time. <a>nvOld</a> will be
+--   <a>Nothing</a> in this case.
 [nvStale] :: NvcheckerResult -> Bool
 
 -- | Rules of nvchecker
@@ -1180,7 +1200,7 @@ Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action ()
 -- | Build target
 [argTarget] :: Args -> String
 
--- | Shake dir
+-- | Build dir
 [argBuildDir] :: Args -> FilePath
 
 -- | Custom rules
@@ -1217,3 +1237,8 @@ runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
 
 -- | Apply <a>CLIOptions</a> to <a>Args</a>
 applyCliOptions :: Args -> CLIOptions -> Args
+
+-- | <pre>
+--   Parse generated.nix
+--   </pre>
+parseLastVersions :: FilePath -> IO (Maybe (Map PackageKey Version))
