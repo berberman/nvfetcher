@@ -26,6 +26,15 @@ module NvFetcher.Types.ShakeExtras
 
     -- * Retries
     withRetries,
+
+    -- * Build dir
+    getBuildDir,
+
+    -- * Last versions
+    getLastVersionOnDisk,
+    getRecentLastVersion,
+    updateLastVersion,
+    getAllOnDiskVersions,
   )
 where
 
@@ -35,11 +44,20 @@ import qualified Data.Map.Strict as Map
 import Development.Shake
 import NvFetcher.Types
 
+data LastVersion
+  = OnDisk Version
+  | Updated
+      (Maybe Version)
+      -- ^ on disk if has
+      Version
+
 -- | Values we use during the build. It's stored in 'shakeExtra'
 data ShakeExtras = ShakeExtras
   { versionChanges :: Var [VersionChange],
     targetPackages :: Map PackageKey Package,
-    retries :: Int
+    retries :: Int,
+    buildDir :: FilePath,
+    lastVersions :: Var (Map PackageKey LastVersion)
   }
 
 -- | Get our values from shake
@@ -49,10 +67,12 @@ getShakeExtras =
     Just x -> pure x
     _ -> fail "ShakeExtras is missing!"
 
--- | Create an empty 'ShakeExtras' from packages to build and times to retry for each rule
-initShakeExtras :: Map PackageKey Package -> Int -> IO ShakeExtras
-initShakeExtras targetPackages retries = do
+-- | Create an empty 'ShakeExtras' from packages to build, times to retry for each rule,
+-- build dir, and on disk versions
+initShakeExtras :: Map PackageKey Package -> Int -> FilePath -> Map PackageKey Version -> IO ShakeExtras
+initShakeExtras targetPackages retries buildDir lv = do
   versionChanges <- newVar mempty
+  lastVersions <- newVar $ Map.map OnDisk lv
   pure ShakeExtras {..}
 
 -- | Get keys of all packages to build
@@ -86,3 +106,48 @@ getVersionChanges = do
 -- | Run an action, retry at most 'retries' times if it throws an exception
 withRetries :: Action a -> Action a
 withRetries a = getShakeExtras >>= \ShakeExtras {..} -> actionRetry retries a
+
+-- | Get build dir
+getBuildDir :: Action FilePath
+getBuildDir = buildDir <$> getShakeExtras
+
+-- | Get initial version of a package
+getLastVersionOnDisk :: PackageKey -> Action (Maybe Version)
+getLastVersionOnDisk k = do
+  ShakeExtras {..} <- getShakeExtras
+  versions <- liftIO $ readVar lastVersions
+  pure $ case versions Map.!? k of
+    Just (Updated v _) -> v
+    Just (OnDisk v) -> Just v
+    _ -> Nothing
+
+-- | Get version of a package, no matter it was initial one or rule result
+getRecentLastVersion :: PackageKey -> Action (Maybe Version)
+getRecentLastVersion k = do
+  ShakeExtras {..} <- getShakeExtras
+  versions <- liftIO $ readVar lastVersions
+  pure $ case versions Map.!? k of
+    Just (Updated _ v) -> Just v
+    Just (OnDisk v) -> Just v
+    _ -> Nothing
+
+-- | Add nvchecker result of a package
+updateLastVersion :: PackageKey -> Version -> Action ()
+updateLastVersion k v = do
+  ShakeExtras {..} <- getShakeExtras
+  liftIO $
+    modifyVar_ lastVersions $ \versions -> pure $ case versions Map.!? k of
+      Just (Updated o _) -> Map.insert k (Updated o v) versions
+      Just (OnDisk lv) -> Map.insert k (Updated (Just lv) v) versions
+      _ -> Map.insert k (Updated Nothing v) versions
+
+-- | Get all initial versions
+getAllOnDiskVersions :: Action (Map PackageKey Version)
+getAllOnDiskVersions = do
+  ShakeExtras {..} <- getShakeExtras
+  versions <- liftIO $ readVar lastVersions
+  let xs = Map.toList $
+        flip Map.map versions $ \case
+          OnDisk v -> Just v
+          Updated v _ -> v
+  pure $ Map.fromList [(k, v) | (k, Just v) <- xs]

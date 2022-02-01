@@ -1,6 +1,8 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
@@ -44,17 +46,21 @@ module NvFetcher
     runNvFetcher',
     runNvFetcherNoCLI,
     applyCliOptions,
+    parseLastVersions,
     module NvFetcher.PackageSet,
     module NvFetcher.Types,
     module NvFetcher.Types.ShakeExtras,
   )
 where
 
-import Control.Monad.Extra (when, whenJust)
+import Control.Monad.Extra (forM_, when, whenJust)
 import qualified Data.Aeson as A
 import qualified Data.Aeson.Encode.Pretty as A
+import qualified Data.Aeson.Types as A
 import qualified Data.ByteString.Lazy.Char8 as LBS
+import Data.List ((\\))
 import qualified Data.Map.Strict as Map
+import Data.Maybe (catMaybes, fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
@@ -68,7 +74,8 @@ import NvFetcher.Options
 import NvFetcher.PackageSet
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
-import NvFetcher.Utils (getShakeDir)
+import NvFetcher.Utils (getDataDir)
+import qualified System.Directory.Extra as D
 import Text.Regex.TDFA ((=~))
 
 -- | Arguments for running nvfetcher
@@ -77,7 +84,7 @@ data Args = Args
     argShakeOptions :: ShakeOptions,
     -- | Build target
     argTarget :: String,
-    -- | Shake dir
+    -- | Build dir
     argBuildDir :: FilePath,
     -- | Custom rules
     argRules :: Rules (),
@@ -133,8 +140,7 @@ applyCliOptions args CLIOptions {..} =
         (argShakeOptions defaultArgs)
           { shakeTimings = timing,
             shakeVerbosity = if verbose then Verbose else Info,
-            shakeThreads = threads,
-            shakeFiles = buildDir
+            shakeThreads = threads
           },
       argFilterRegex = pkgNameFilter
     }
@@ -153,17 +159,36 @@ commitChanges = do
         [] -> Nothing
   whenJust commitMsg $ \msg -> do
     putInfo "Commiting changes"
-    getShakeDir >>= \dir -> command_ [] "git" ["add", dir]
+    getBuildDir >>= \dir -> command_ [] "git" ["add", dir]
     command_ [] "git" ["commit", "-m", msg]
+
+-- | @Parse generated.nix@
+parseLastVersions :: FilePath -> IO (Maybe (Map.Map PackageKey Version))
+parseLastVersions jsonFile =
+  D.doesFileExist jsonFile >>= \case
+    True -> do
+      objs <- A.decodeFileStrict' jsonFile
+      pure $
+        flip fmap objs $
+          ( \xs ->
+              Map.fromList
+                . catMaybes
+                $ [(PackageKey k,) <$> A.parseMaybe (A..: "version") obj | (k, obj) <- xs]
+          )
+            . Map.toList
+    _ -> pure mempty
 
 -- | Entry point of nvfetcher
 runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
 runNvFetcherNoCLI args@Args {..} packageSet = do
   pkgs <- Map.map pinIfUnmatch <$> runPackageSet packageSet
-  shakeExtras <- initShakeExtras pkgs argRetries
+  lastVersions <- parseLastVersions $ argBuildDir </> "generated.json"
+  shakeExtras <- initShakeExtras pkgs argRetries argBuildDir $ fromMaybe mempty lastVersions
+  shakeDir <- getDataDir
   let opts =
         argShakeOptions
-          { shakeExtra = addShakeExtra shakeExtras (shakeExtra argShakeOptions)
+          { shakeFiles = shakeDir,
+            shakeExtra = addShakeExtra shakeExtras (shakeExtra argShakeOptions)
           }
       rules = mainRules args
   shake opts $ want [argTarget] >> rules
@@ -184,21 +209,25 @@ runNvFetcherNoCLI args@Args {..} packageSet = do
 mainRules :: Args -> Rules ()
 mainRules Args {..} = do
   "clean" ~> do
-    getShakeDir >>= flip removeFilesAfter ["//*"]
+    getBuildDir >>= flip removeFilesAfter ["//*"]
     argActionAfterClean
 
   "build" ~> do
     allKeys <- getAllPackageKeys
     results <- parallel $ runPackage <$> allKeys
+    -- Record removed packages to version changes
+    getAllOnDiskVersions
+      >>= \oldPkgs -> forM_ (Map.keys oldPkgs \\ allKeys) $
+        \pkg -> recordVersionChange (coerce pkg) (oldPkgs Map.!? pkg) "∅"
     getVersionChanges >>= \changes ->
       if null changes
         then putInfo "Up to date"
         else do
           putInfo "Changes:"
           putInfo $ unlines $ show <$> changes
-    shakeDir <- getShakeDir
-    let generatedNixPath = shakeDir </> "generated.nix"
-        generatedJSONPath = shakeDir </> "generated.json"
+    buildDir <- getBuildDir
+    let generatedNixPath = buildDir </> "generated.nix"
+        generatedJSONPath = buildDir </> "generated.json"
     putVerbose $ "Generating " <> generatedNixPath
     writeFileChanged generatedNixPath $ T.unpack $ srouces (T.unlines $ toNixExpr <$> results) <> "\n"
     putVerbose $ "Generating " <> generatedJSONPath

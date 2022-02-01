@@ -37,7 +37,7 @@ type ActionQueue = TQueue (Action ())
 
 newAsyncActionQueue :: Map PackageKey Package -> IO (ActionQueue, Async ())
 newAsyncActionQueue pkgs = Extra.withTempDir $ \dir -> do
-  shakeExtras <- liftIO $ initShakeExtras pkgs 3
+  shakeExtras <- liftIO $ initShakeExtras pkgs 3 dir mempty
   chan <- atomically newTQueue
   (getShakeDb, _) <-
     shakeOpenDatabase

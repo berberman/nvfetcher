@@ -28,11 +28,11 @@ packageSet = do
       `sourceGit` "https://github.com/berberman/nvfetcher"
       `fetchGitHub` ("berberman", "nvfetcher")
 
-  define $
-    package "vim"
-      `sourceWebpage` ("http://ftp.vim.org/pub/vim/patches/7.3/", "7\\.3\\.\\d+", id)
-      `fetchGitHub` ("vim", "vim")
-      `tweakVersion` (\v -> v & fromPattern ?~ "(.+)" & toPattern ?~ "v\\1")
+  -- define $
+  --   package "vim"
+  --     `sourceWebpage` ("http://ftp.vim.org/pub/vim/patches/7.3/", "7\\.3\\.\\d+", id)
+  --     `fetchGitHub` ("vim", "vim")
+  --     `tweakVersion` (\v -> v & fromPattern ?~ "(.+)" & toPattern ?~ "v\\1")
 
   define $
     package "rust-git-dependency-example"

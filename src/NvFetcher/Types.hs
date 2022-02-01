@@ -176,7 +176,8 @@ data NvcheckerResult = NvcheckerResult
   { nvNow :: Version,
     -- | shake restores it from last run
     nvOld :: Maybe Version,
-    -- | stale means even 'nvNow' comes from shake, where we actually didn't run nvchecker
+    -- | stale means even 'nvNow' comes from json file or last run
+    -- and we actually didn't run nvchecker this time. 'nvOld' will be 'Nothing' in this case.
     nvStale :: Bool
   }
   deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
@@ -322,7 +323,8 @@ newtype PackagePassthru = PackagePassthru (HashMap Text Text)
 
 -- | This bool value means whether or not to use stale value.
 -- Using stale value indicates that we will /NOT/ check for new versions if
--- there is a known version in shake. Normally you don't want a stale version
+-- there is a known version recoverd from json file or last use of the rule.
+-- Normally you don't want a stale version
 -- unless you need pin a package.
 newtype UseStaleVersion = UseStaleVersion Bool
   deriving newtype (Eq, Show, Ord)
@@ -334,7 +336,7 @@ newtype UseStaleVersion = UseStaleVersion Bool
 -- 1. its name
 -- 2. how to track its version
 -- 3. how to fetch it as we have the version
--- 4. optional file paths to extract (dump to shake dir)
+-- 4. optional file paths to extract (dump to build dir)
 -- 5. optional @Cargo.lock@ path (if it's a rust package)
 -- 6. an optional pass through map
 -- 7. if the package version was pinned

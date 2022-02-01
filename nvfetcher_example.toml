@@ -25,13 +25,13 @@ src.github_tag = "gcc-mirror/gcc"
 src.include_regex = "releases/gcc-10.*"
 fetch.github = "gcc-mirror/gcc"
 
-[vim]
-src.webpage = "http://ftp.vim.org/pub/vim/patches/7.3/"
-src.regex = "7\\.3\\.\\d+"
-fetch.github = "vim/vim"
-# nvchecker global options, which adds prefix `v` to the version number  
-src.from_pattern = "(.+)"
-src.to_pattern = "v\\1"
+# [vim]
+# src.webpage = "http://ftp.vim.org/pub/vim/patches/7.3/"
+# src.regex = "7\\.3\\.\\d+"
+# fetch.github = "vim/vim"
+# # nvchecker global options, which adds prefix `v` to the version number  
+# src.from_pattern = "(.+)"
+# src.to_pattern = "v\\1"
 
 [fd]
 src.github = "sharkdp/fd"

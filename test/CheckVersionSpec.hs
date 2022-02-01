@@ -21,7 +21,6 @@ spec = do
   versionSourcesSpec
   useStaleSpec
 
--- | We need a fakePackageKey here; otherwise the nvchecker rule would be cutoff
 versionSourcesSpec :: Spec
 versionSourcesSpec = aroundShake $
   describe "nvchecker" $ do
@@ -51,9 +50,13 @@ versionSourcesSpec = aroundShake $
       runNvcheckerRule (GitHubTag "harry-sanabria" "ReleaseTestRepo" $ def & ignored ?~ "second_release release3")
         `shouldReturnJust` Version "first_release"
 
-    specifyChan "http header" $ do
+    specifyChan "http header" $
       runNvcheckerRule (HttpHeader "https://www.unifiedremote.com/download/linux-x64-deb" "urserver-([\\d.]+).deb" def)
         >>= shouldBeJust
+
+    -- specifyChan "webpage" $
+    --   runNvcheckerRule (Webpage "http://ftp.vim.org/pub/vim/patches/7.3/" "7\\.3\\.\\d+" def)
+    --     `shouldReturnJust` Version "7.3.1314"
 
     specifyChan "manual" $
       runNvcheckerRule (Manual "Meow") `shouldReturnJust` Version "Meow"
