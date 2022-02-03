@@ -2,7 +2,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Config.VersionSource (versionSourceCodec) where
+module Config.VersionSource
+  ( versionSourceCodec,
+    versionSourceKeys,
+  )
+where
 
 import Data.Foldable (asum)
 import Data.Text (Text)
@@ -31,6 +35,22 @@ versionSourceCodec =
       vscodeMarketplaceCodec,
       cmdCodec
     ]
+
+versionSourceKeys :: [Key]
+versionSourceKeys =
+  [ "src.github",
+    "src.github_tag",
+    "src.git",
+    "src.pypi",
+    "src.archpkg",
+    "src.aur",
+    "src.manual",
+    "src.webpage",
+    "src.httpheader",
+    "src.openvsx",
+    "src.vsmarketplace",
+    "src.cmd"
+  ]
 
 --------------------------------------------------------------------------------
 
