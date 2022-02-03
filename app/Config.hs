@@ -8,25 +8,47 @@ module Config where
 import Config.PackageFetcher
 import Config.VersionSource
 import Data.Coerce (coerce)
+import Data.Either.Extra (mapLeft)
+import qualified Data.HashMap.Strict as HMap
+import Data.List (intersect)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NE
+import Data.Text (Text)
+import qualified Data.Text as T
 import NvFetcher.Types
 import Toml
 import Validation (validationToEither)
 
-parseConfig :: TOML -> Either [Toml.TomlDecodeError] [Package]
-parseConfig toml = go tables [] []
+data PackageConfigParseError = TomlErrors [TomlDecodeError] | KeyConflicts [[Key]]
+
+instance Semigroup PackageConfigParseError where
+  TomlErrors e <> _ = TomlErrors e
+  _ <> TomlErrors e = TomlErrors e
+  KeyConflicts xs <> KeyConflicts ys = KeyConflicts $ xs <> ys
+
+prettyPackageConfigParseError :: PackageConfigParseError -> Text
+prettyPackageConfigParseError (TomlErrors e) = prettyTomlDecodeErrors e
+prettyPackageConfigParseError (KeyConflicts xs) = "Skip parsing!\n" <> T.unlines ["Key conflict: " <> T.intercalate ", " [prettyKey k | k <- ks] | ks <- xs]
+
+parseConfig :: TOML -> Either PackageConfigParseError [Package]
+parseConfig toml = go tables Nothing []
   where
-    go (Left errs : xs) se sp = go xs (se <> errs) sp
+    go (Left errs : xs) (Just se) sp = go xs (Just (se <> errs)) sp
+    go (Left errs : xs) Nothing sp = go xs (Just errs) sp
     go (Right x : xs) se sp = go xs se (x : sp)
-    go [] [] sp = Right sp
-    go [] se _ = Left se
+    go [] Nothing sp = Right sp
+    go [] (Just se) _ = Left se
     tables =
-      [ fmap (toPackage (coerce k)) $
-          validationToEither $
-            Toml.runTomlCodec packageConfigCodec v
+      [ fmap (toPackage (coerce k)) $ validateKeys v >> mapLeft TomlErrors (validationToEither (Toml.runTomlCodec packageConfigCodec v))
         | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml
       ]
+
+validateKeys :: TOML -> Either PackageConfigParseError ()
+validateKeys toml = if null e then Right () else Left $ foldl1 (<>) e
+  where
+    allKeys = HMap.keys $ Toml.tomlPairs toml
+    go xs = let intersection = xs `intersect` allKeys in if length intersection > 1 then intersection else []
+    e = [KeyConflicts [t] | k <- [versionSourceKeys, fetcherKeys], let t = go k, not $ null t]
 
 --------------------------------------------------------------------------------
 

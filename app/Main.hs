@@ -31,5 +31,5 @@ main = do
   case toml of
     Left e -> error $ T.unpack $ Toml.prettyTomlDecodeError $ Toml.ParseError e
     Right x -> case parseConfig x of
-      Left e -> error $ T.unpack $ Toml.prettyTomlDecodeErrors e
+      Left e -> error $ T.unpack $ prettyPackageConfigParseError e
       Right pkgs -> runNvFetcherNoCLI (applyCliOptions defaultArgs opt) $ purePackageSet pkgs

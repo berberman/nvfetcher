@@ -5,7 +5,11 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
 
-module Config.PackageFetcher (fetcherCodec) where
+module Config.PackageFetcher
+  ( fetcherCodec,
+    fetcherKeys,
+  )
+where
 
 import Data.Coerce (coerce)
 import Data.Default (Default, def)
@@ -34,6 +38,17 @@ fetcherCodec =
       urlCodec,
       tarballCodec
     ]
+
+fetcherKeys :: [Key]
+fetcherKeys =
+  [ "fetch.github",
+    "fetch.pypi",
+    "fetch.openvsx",
+    "fetch.vsmarketplace",
+    "fetch.git",
+    "fetch.url",
+    "fetch.tarball"
+  ]
 
 --------------------------------------------------------------------------------
 
