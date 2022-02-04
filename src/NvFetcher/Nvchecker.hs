@@ -13,7 +13,7 @@
 -- Now we call nvchecker for each 'VersionSource', which seems not to be efficient, but it's tolerable when running in parallel.
 --
 -- Meanwhile, we lose the capabilities of tracking version updates, i.e. normally nvchecker will help us maintain a list of old versions,
--- so that we are able to know which package's version is updated in this run. Fortunately, we can reimplement this using shake database,
+-- so that we are able to know which package's version is updated in this run. Fortunately, we can reimplement this in shake,
 -- see 'nvcheckerRule' for details.
 module NvFetcher.Nvchecker
   ( -- * Types
@@ -32,6 +32,7 @@ module NvFetcher.Nvchecker
 where
 
 import Control.Monad (void)
+import Control.Monad.Extra (fromMaybeM)
 import qualified Data.Aeson as A
 import Data.Coerce (coerce)
 import Data.Maybe (fromJust, mapMaybe)
@@ -52,7 +53,8 @@ nvcheckerRule = do
   persistedRule
   oneShotRule
 
--- | Nvchecker rule which is aware of version changes and supports using stale version
+-- | Nvchecker rule for packages, which is aware of version changes and supports using stale version.
+-- nvchecker will be called at most one time given a package key. Follow-up using of this rule will return cached result.
 -- 'PackageKey' is required for caching.
 -- Run this rule by calling 'checkVersion'
 persistedRule :: Rules ()
@@ -69,7 +71,10 @@ persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (CheckVersio
 
     -- run nvchecker
     _ -> do
-      NvcheckerRaw now <- runNvchecker pkg options versionSource
+      -- if we already run this rule for a package, we can recover the last result from getLastVersionUpdated
+      -- (when cacheNvchecker is enabled)
+      useCache <- nvcheckerCacheEnabled
+      now <- fromMaybeM (coerce <$> runNvchecker pkg options versionSource) (if useCache then getLastVersionUpdated pkg else pure Nothing)
       let runChanged = case oldVer of
             Just oldVer'
               | oldVer' == now -> ChangedRecomputeSame

@@ -11,7 +11,8 @@ data Config = Config
     actionAfterBuild :: Action (),
     actionAfterClean :: Action (),
     retry :: Int,
-    filterRegex :: Maybe String
+    filterRegex :: Maybe String,
+    cacheNvchecker :: Bool
   }
 
 instance Default Config where
@@ -27,5 +28,6 @@ instance Default Config where
         actionAfterBuild = pure (),
         actionAfterClean = pure (),
         retry = 3,
-        filterRegex = Nothing
+        filterRegex = Nothing,
+        cacheNvchecker = True
       }
