@@ -19,26 +19,26 @@
 </span><span id="line-19"></span><span>
 </span><span id="line-20"></span><span class="hs-comment">-- | Options for nvfetcher CLI</span><span>
 </span><span id="line-21"></span><span class="hs-keyword">data</span><span> </span><span id="CLIOptions"><span class="annot"><a href="NvFetcher.Options.html#CLIOptions"><span class="hs-identifier hs-var">CLIOptions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="CLIOptions"><span class="annot"><a href="NvFetcher.Options.html#CLIOptions"><span class="hs-identifier hs-var">CLIOptions</span></a></span></span><span>
-</span><span id="line-22"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="buildDir"><span class="annot"><span class="annottext">CLIOptions -&gt; FilePath
-</span><a href="NvFetcher.Options.html#buildDir"><span class="hs-identifier hs-var hs-var">buildDir</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span class="hs-special">,</span><span>
-</span><span id="line-23"></span><span>    </span><span id="commit"><span class="annot"><span class="annottext">CLIOptions -&gt; Bool
-</span><a href="NvFetcher.Options.html#commit"><span class="hs-identifier hs-var hs-var">commit</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
-</span><span id="line-24"></span><span>    </span><span id="logPath"><span class="annot"><span class="annottext">CLIOptions -&gt; Maybe FilePath
-</span><a href="NvFetcher.Options.html#logPath"><span class="hs-identifier hs-var hs-var">logPath</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span class="hs-special">,</span><span>
-</span><span id="line-25"></span><span>    </span><span id="threads"><span class="annot"><span class="annottext">CLIOptions -&gt; Int
-</span><a href="NvFetcher.Options.html#threads"><span class="hs-identifier hs-var hs-var">threads</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">,</span><span>
-</span><span id="line-26"></span><span>    </span><span id="retries"><span class="annot"><span class="annottext">CLIOptions -&gt; Int
-</span><a href="NvFetcher.Options.html#retries"><span class="hs-identifier hs-var hs-var">retries</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">,</span><span>
-</span><span id="line-27"></span><span>    </span><span id="timing"><span class="annot"><span class="annottext">CLIOptions -&gt; Bool
-</span><a href="NvFetcher.Options.html#timing"><span class="hs-identifier hs-var hs-var">timing</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
-</span><span id="line-28"></span><span>    </span><span id="verbose"><span class="annot"><span class="annottext">CLIOptions -&gt; Bool
-</span><a href="NvFetcher.Options.html#verbose"><span class="hs-identifier hs-var hs-var">verbose</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
-</span><span id="line-29"></span><span>    </span><span id="pkgNameFilter"><span class="annot"><span class="annottext">CLIOptions -&gt; Maybe FilePath
-</span><a href="NvFetcher.Options.html#pkgNameFilter"><span class="hs-identifier hs-var hs-var">pkgNameFilter</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">,</span><span>
-</span><span id="line-30"></span><span>    </span><span id="target"><span class="annot"><span class="annottext">CLIOptions -&gt; FilePath
-</span><a href="NvFetcher.Options.html#target"><span class="hs-identifier hs-var hs-var">target</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-22"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="optBuildDir"><span class="annot"><span class="annottext">CLIOptions -&gt; FilePath
+</span><a href="NvFetcher.Options.html#optBuildDir"><span class="hs-identifier hs-var hs-var">optBuildDir</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span class="hs-special">,</span><span>
+</span><span id="line-23"></span><span>    </span><span id="optCommit"><span class="annot"><span class="annottext">CLIOptions -&gt; Bool
+</span><a href="NvFetcher.Options.html#optCommit"><span class="hs-identifier hs-var hs-var">optCommit</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
+</span><span id="line-24"></span><span>    </span><span id="optLogPath"><span class="annot"><span class="annottext">CLIOptions -&gt; Maybe FilePath
+</span><a href="NvFetcher.Options.html#optLogPath"><span class="hs-identifier hs-var hs-var">optLogPath</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span class="hs-special">,</span><span>
+</span><span id="line-25"></span><span>    </span><span id="optThreads"><span class="annot"><span class="annottext">CLIOptions -&gt; Int
+</span><a href="NvFetcher.Options.html#optThreads"><span class="hs-identifier hs-var hs-var">optThreads</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">,</span><span>
+</span><span id="line-26"></span><span>    </span><span id="optRetry"><span class="annot"><span class="annottext">CLIOptions -&gt; Int
+</span><a href="NvFetcher.Options.html#optRetry"><span class="hs-identifier hs-var hs-var">optRetry</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">,</span><span>
+</span><span id="line-27"></span><span>    </span><span id="optTiming"><span class="annot"><span class="annottext">CLIOptions -&gt; Bool
+</span><a href="NvFetcher.Options.html#optTiming"><span class="hs-identifier hs-var hs-var">optTiming</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
+</span><span id="line-28"></span><span>    </span><span id="optVerbose"><span class="annot"><span class="annottext">CLIOptions -&gt; Bool
+</span><a href="NvFetcher.Options.html#optVerbose"><span class="hs-identifier hs-var hs-var">optVerbose</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
+</span><span id="line-29"></span><span>    </span><span id="optPkgNameFilter"><span class="annot"><span class="annottext">CLIOptions -&gt; Maybe FilePath
+</span><a href="NvFetcher.Options.html#optPkgNameFilter"><span class="hs-identifier hs-var hs-var">optPkgNameFilter</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">,</span><span>
+</span><span id="line-30"></span><span>    </span><span id="optTarget"><span class="annot"><span class="annottext">CLIOptions -&gt; FilePath
+</span><a href="NvFetcher.Options.html#optTarget"><span class="hs-identifier hs-var hs-var">optTarget</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
 </span><span id="line-31"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-32"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679298386"><span id="local-6989586621679298388"><span id="local-6989586621679298390"><span class="annot"><span class="annottext">Int -&gt; CLIOptions -&gt; ShowS
+</span><span id="line-32"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679298875"><span id="local-6989586621679298877"><span id="local-6989586621679298879"><span class="annot"><span class="annottext">Int -&gt; CLIOptions -&gt; ShowS
 [CLIOptions] -&gt; ShowS
 CLIOptions -&gt; FilePath
 (Int -&gt; CLIOptions -&gt; ShowS)
@@ -445,12 +445,12 @@ forall a (f :: * -&gt; *). Show a =&gt; Mod f a
 </span><a href="NvFetcher.Options.html#version"><span class="hs-identifier hs-var hs-var">version</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">$(</span><span class="hs-identifier">simpleVersion</span><span> </span><span class="hs-identifier">Paths.version</span><span class="hs-special">)</span><span>
 </span><span id="line-96"></span><span>
 </span><span id="line-97"></span><span class="hs-comment">-- | Parse nvfetcher CLI options</span><span>
-</span><span id="line-98"></span><span id="local-6989586621679298366"><span class="annot"><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-type">getCLIOptions</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Parser</span></span><span> </span><span class="annot"><a href="#local-6989586621679298366"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679298366"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-98"></span><span id="local-6989586621679298855"><span class="annot"><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-type">getCLIOptions</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Parser</span></span><span> </span><span class="annot"><a href="#local-6989586621679298855"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679298855"><span class="hs-identifier hs-type">a</span></a></span></span><span>
 </span><span id="line-99"></span><span id="getCLIOptions"><span class="annot"><span class="annottext">getCLIOptions :: Parser a -&gt; IO a
-</span><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-var hs-var">getCLIOptions</span></a></span></span><span> </span><span id="local-6989586621679298365"><span class="annot"><span class="annottext">Parser a
-</span><a href="#local-6989586621679298365"><span class="hs-identifier hs-var">parser</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-100"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679298364"><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679298364"><span class="hs-identifier hs-var">opts</span></a></span></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
+</span><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-var hs-var">getCLIOptions</span></a></span></span><span> </span><span id="local-6989586621679298854"><span class="annot"><span class="annottext">Parser a
+</span><a href="#local-6989586621679298854"><span class="hs-identifier hs-var">parser</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-100"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679298853"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679298853"><span class="hs-identifier hs-var">opts</span></a></span></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
 </span><span id="line-101"></span><span>    </span><span class="annot"><span class="annottext">FilePath
 -&gt; FilePath
 -&gt; FilePath
@@ -472,12 +472,12 @@ FilePath
 </span><span id="line-104"></span><span>      </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;generate nix sources expr for the latest version of packages&quot;</span></span><span>
 </span><span id="line-105"></span><span>      </span><span class="annot"><span class="annottext">Parser a
-</span><a href="#local-6989586621679298365"><span class="hs-identifier hs-var">parser</span></a></span><span>
+</span><a href="#local-6989586621679298854"><span class="hs-identifier hs-var">parser</span></a></span><span>
 </span><span id="line-106"></span><span>      </span><span class="annot"><span class="annottext">ExceptT () (Writer (Mod CommandFields ())) ()
 forall (f :: * -&gt; *) a. Alternative f =&gt; f a
 </span><span class="hs-identifier hs-var">empty</span></span><span>
 </span><span id="line-107"></span><span>  </span><span class="annot"><span class="annottext">a -&gt; IO a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679298364"><span class="hs-identifier hs-var">opts</span></a></span><span>
+</span><a href="#local-6989586621679298853"><span class="hs-identifier hs-var">opts</span></a></span><span>
 </span><span id="line-108"></span></pre></body></html>

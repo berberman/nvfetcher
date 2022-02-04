@@ -8,6 +8,20 @@
 @package nvfetcher
 @version 0.4.0.0
 
+module NvFetcher.Config
+
+-- | Nvfetcher configuration
+data Config
+Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Config
+[shakeConfig] :: Config -> ShakeOptions
+[buildDir] :: Config -> FilePath
+[customRules] :: Config -> Rules ()
+[actionAfterBuild] :: Config -> Action ()
+[actionAfterClean] :: Config -> Action ()
+[retry] :: Config -> Int
+[filterRegex] :: Config -> Maybe String
+instance Data.Default.Class.Default NvFetcher.Config.Config
+
 
 -- | Types used in this program.
 module NvFetcher.Types
@@ -411,15 +425,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_abJh k_aG6Q. Lens (NixFetcher k_abJh) (NixFetcher k_aG6Q) (FetchResult k_abJh) (FetchResult k_aG6Q)
-rev :: forall k_abJh. Traversal' (NixFetcher k_abJh) Version
-name :: forall k_abJh. Traversal' (NixFetcher k_abJh) (Maybe Text)
-leaveDotGit :: forall k_abJh. Traversal' (NixFetcher k_abJh) Bool
-furl :: forall k_abJh. Traversal' (NixFetcher k_abJh) Text
-frepo :: forall k_abJh. Traversal' (NixFetcher k_abJh) Text
-fowner :: forall k_abJh. Traversal' (NixFetcher k_abJh) Text
-fetchSubmodules :: forall k_abJh. Traversal' (NixFetcher k_abJh) Bool
-deepClone :: forall k_abJh. Traversal' (NixFetcher k_abJh) Bool
+sha256 :: forall k_aegM k_aGXo. Lens (NixFetcher k_aegM) (NixFetcher k_aGXo) (FetchResult k_aegM) (FetchResult k_aGXo)
+rev :: forall k_aegM. Traversal' (NixFetcher k_aegM) Version
+name :: forall k_aegM. Traversal' (NixFetcher k_aegM) (Maybe Text)
+leaveDotGit :: forall k_aegM. Traversal' (NixFetcher k_aegM) Bool
+furl :: forall k_aegM. Traversal' (NixFetcher k_aegM) Text
+frepo :: forall k_aegM. Traversal' (NixFetcher k_aegM) Text
+fowner :: forall k_aegM. Traversal' (NixFetcher k_aegM) Text
+fetchSubmodules :: forall k_aegM. Traversal' (NixFetcher k_aegM) Bool
+deepClone :: forall k_aegM. Traversal' (NixFetcher k_aegM) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -434,16 +448,15 @@ module NvFetcher.Types.ShakeExtras
 
 -- | Values we use during the build. It's stored in <a>shakeExtra</a>
 data ShakeExtras
-ShakeExtras :: Var [VersionChange] -> Map PackageKey Package -> Int -> FilePath -> Var (Map PackageKey LastVersion) -> ShakeExtras
+ShakeExtras :: Config -> Var [VersionChange] -> Map PackageKey Package -> Var (Map PackageKey LastVersion) -> ShakeExtras
+[config] :: ShakeExtras -> Config
 [versionChanges] :: ShakeExtras -> Var [VersionChange]
 [targetPackages] :: ShakeExtras -> Map PackageKey Package
-[retries] :: ShakeExtras -> Int
-[buildDir] :: ShakeExtras -> FilePath
 [lastVersions] :: ShakeExtras -> Var (Map PackageKey LastVersion)
 
 -- | Create an empty <a>ShakeExtras</a> from packages to build, times to
 --   retry for each rule, build dir, and on disk versions
-initShakeExtras :: Map PackageKey Package -> Int -> FilePath -> Map PackageKey Version -> IO ShakeExtras
+initShakeExtras :: Config -> Map PackageKey Package -> Map PackageKey Version -> IO ShakeExtras
 
 -- | Get our values from shake
 getShakeExtras :: Action ShakeExtras
@@ -463,9 +476,9 @@ recordVersionChange :: PackageName -> Maybe Version -> Version -> Action ()
 -- | Get version changes since the last run
 getVersionChanges :: Action [VersionChange]
 
--- | Run an action, retry at most <a>retries</a> times if it throws an
---   exception
-withRetries :: Action a -> Action a
+-- | Run an action, retry at most <a>retry</a> times (defined in config) if
+--   it throws an exception
+withRetry :: Action a -> Action a
 
 -- | Get build dir
 getBuildDir :: Action FilePath
@@ -1140,15 +1153,15 @@ module NvFetcher.Options
 -- | Options for nvfetcher CLI
 data CLIOptions
 CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> String -> CLIOptions
-[buildDir] :: CLIOptions -> FilePath
-[commit] :: CLIOptions -> Bool
-[logPath] :: CLIOptions -> Maybe FilePath
-[threads] :: CLIOptions -> Int
-[retries] :: CLIOptions -> Int
-[timing] :: CLIOptions -> Bool
-[verbose] :: CLIOptions -> Bool
-[pkgNameFilter] :: CLIOptions -> Maybe String
-[target] :: CLIOptions -> String
+[optBuildDir] :: CLIOptions -> FilePath
+[optCommit] :: CLIOptions -> Bool
+[optLogPath] :: CLIOptions -> Maybe FilePath
+[optThreads] :: CLIOptions -> Int
+[optRetry] :: CLIOptions -> Int
+[optTiming] :: CLIOptions -> Bool
+[optVerbose] :: CLIOptions -> Bool
+[optPkgNameFilter] :: CLIOptions -> Maybe String
+[optTarget] :: CLIOptions -> String
 cliOptionsParser :: Parser CLIOptions
 
 -- | Parse nvfetcher CLI options
@@ -1192,34 +1205,9 @@ module NvFetcher
 
 -- | Arguments for running nvfetcher
 data Args
-Args :: ShakeOptions -> String -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Args
-
--- | Shake options
-[argShakeOptions] :: Args -> ShakeOptions
-
--- | Build target
+Args :: Config -> String -> Args
+[argConfig] :: Args -> Config
 [argTarget] :: Args -> String
-
--- | Build dir
-[argBuildDir] :: Args -> FilePath
-
--- | Custom rules
-[argRules] :: Args -> Rules ()
-
--- | Action run after build rule
-[argActionAfterBuild] :: Args -> Action ()
-
--- | Action run after clean rule
-[argActionAfterClean] :: Args -> Action ()
-
--- | Retry times
-[argRetries] :: Args -> Int
-
--- | Package whose name matches might be updated
-[argFilterRegex] :: Args -> Maybe String
-
--- | Default <a>Args</a>
-defaultArgs :: Args
 
 -- | Run nvfetcher with CLI options
 --   
@@ -1229,7 +1217,7 @@ defaultArgs :: Args
 runNvFetcher :: PackageSet () -> IO ()
 
 -- | Similar to <a>runNvFetcher</a>, but uses custom <tt>args</tt> instead
---   of <a>defaultArgs</a>
+--   of <a>def</a> arg
 runNvFetcher' :: Args -> PackageSet () -> IO ()
 
 -- | Entry point of nvfetcher
@@ -1242,3 +1230,4 @@ applyCliOptions :: Args -> CLIOptions -> Args
 --   Parse generated.nix
 --   </pre>
 parseLastVersions :: FilePath -> IO (Maybe (Map PackageKey Version))
+instance Data.Default.Class.Default NvFetcher.Args
