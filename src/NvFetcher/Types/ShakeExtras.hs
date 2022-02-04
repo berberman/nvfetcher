@@ -24,8 +24,8 @@ module NvFetcher.Types.ShakeExtras
     recordVersionChange,
     getVersionChanges,
 
-    -- * Retries
-    withRetries,
+    -- * Retry
+    withRetry,
 
     -- * Build dir
     getBuildDir,
@@ -42,6 +42,7 @@ import Control.Concurrent.Extra
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 import Development.Shake
+import NvFetcher.Config
 import NvFetcher.Types
 
 data LastVersion
@@ -53,10 +54,9 @@ data LastVersion
 
 -- | Values we use during the build. It's stored in 'shakeExtra'
 data ShakeExtras = ShakeExtras
-  { versionChanges :: Var [VersionChange],
+  { config :: Config,
+    versionChanges :: Var [VersionChange],
     targetPackages :: Map PackageKey Package,
-    retries :: Int,
-    buildDir :: FilePath,
     lastVersions :: Var (Map PackageKey LastVersion)
   }
 
@@ -69,8 +69,8 @@ getShakeExtras =
 
 -- | Create an empty 'ShakeExtras' from packages to build, times to retry for each rule,
 -- build dir, and on disk versions
-initShakeExtras :: Map PackageKey Package -> Int -> FilePath -> Map PackageKey Version -> IO ShakeExtras
-initShakeExtras targetPackages retries buildDir lv = do
+initShakeExtras :: Config -> Map PackageKey Package -> Map PackageKey Version -> IO ShakeExtras
+initShakeExtras config targetPackages lv = do
   versionChanges <- newVar mempty
   lastVersions <- newVar $ Map.map OnDisk lv
   pure ShakeExtras {..}
@@ -103,13 +103,13 @@ getVersionChanges = do
   ShakeExtras {..} <- getShakeExtras
   liftIO $ readVar versionChanges
 
--- | Run an action, retry at most 'retries' times if it throws an exception
-withRetries :: Action a -> Action a
-withRetries a = getShakeExtras >>= \ShakeExtras {..} -> actionRetry retries a
+-- | Run an action, retry at most 'retry' times (defined in config) if it throws an exception
+withRetry :: Action a -> Action a
+withRetry a = getShakeExtras >>= \ShakeExtras {..} -> actionRetry (retry config) a
 
 -- | Get build dir
 getBuildDir :: Action FilePath
-getBuildDir = buildDir <$> getShakeExtras
+getBuildDir = buildDir . config <$> getShakeExtras
 
 -- | Get initial version of a package
 getLastVersionOnDisk :: PackageKey -> Action (Maybe Version)

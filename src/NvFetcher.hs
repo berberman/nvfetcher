@@ -41,7 +41,6 @@
 -- All shake options are inherited.
 module NvFetcher
   ( Args (..),
-    defaultArgs,
     runNvFetcher,
     runNvFetcher',
     runNvFetcherNoCLI,
@@ -58,6 +57,7 @@ import qualified Data.Aeson as A
 import qualified Data.Aeson.Encode.Pretty as A
 import qualified Data.Aeson.Types as A
 import qualified Data.ByteString.Lazy.Char8 as LBS
+import Data.Default
 import Data.List ((\\))
 import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes, fromMaybe)
@@ -66,6 +66,7 @@ import qualified Data.Text as T
 import Development.Shake
 import Development.Shake.FilePath
 import NeatInterpolation (trimming)
+import NvFetcher.Config
 import NvFetcher.Core
 import NvFetcher.NixExpr (ToNixExpr (toNixExpr))
 import NvFetcher.NixFetcher
@@ -80,49 +81,21 @@ import Text.Regex.TDFA ((=~))
 
 -- | Arguments for running nvfetcher
 data Args = Args
-  { -- | Shake options
-    argShakeOptions :: ShakeOptions,
-    -- | Build target
-    argTarget :: String,
-    -- | Build dir
-    argBuildDir :: FilePath,
-    -- | Custom rules
-    argRules :: Rules (),
-    -- | Action run after build rule
-    argActionAfterBuild :: Action (),
-    -- | Action run after clean rule
-    argActionAfterClean :: Action (),
-    -- | Retry times
-    argRetries :: Int,
-    -- | Package whose name matches might be updated
-    argFilterRegex :: Maybe String
+  { argConfig :: Config,
+    argTarget :: String
   }
 
--- | Default 'Args'
-defaultArgs :: Args
-defaultArgs =
-  Args
-    ( shakeOptions
-        { shakeProgress = progressSimple,
-          shakeThreads = 0
-        }
-    )
-    "build"
-    "_sources"
-    (pure ())
-    (pure ())
-    (pure ())
-    3
-    Nothing
+instance Default Args where
+  def = Args def "build"
 
 -- | Run nvfetcher with CLI options
 --
 -- This function calls 'runNvFetcherNoCLI', using 'Args' from 'CLIOptions'.
 -- Use this function to create your own Haskell executable program.
 runNvFetcher :: PackageSet () -> IO ()
-runNvFetcher = runNvFetcher' defaultArgs
+runNvFetcher = runNvFetcher' def
 
--- | Similar to 'runNvFetcher', but uses custom @args@ instead of 'defaultArgs'
+-- | Similar to 'runNvFetcher', but uses custom @args@ instead of 'def' arg
 runNvFetcher' :: Args -> PackageSet () -> IO ()
 runNvFetcher' args packageSet =
   getCLIOptions cliOptionsParser >>= flip runNvFetcherNoCLI packageSet . applyCliOptions args
@@ -131,18 +104,23 @@ runNvFetcher' args packageSet =
 applyCliOptions :: Args -> CLIOptions -> Args
 applyCliOptions args CLIOptions {..} =
   args
-    { argActionAfterBuild = do
-        whenJust logPath logChangesToFile
-        when commit commitChanges
-        argActionAfterBuild args,
-      argTarget = target,
-      argShakeOptions =
-        (argShakeOptions defaultArgs)
-          { shakeTimings = timing,
-            shakeVerbosity = if verbose then Verbose else Info,
-            shakeThreads = threads
+    { argConfig =
+        (argConfig args)
+          { buildDir = optBuildDir,
+            actionAfterBuild = do
+              whenJust optLogPath logChangesToFile
+              when optCommit commitChanges
+              actionAfterBuild (argConfig args),
+            shakeConfig =
+              (shakeConfig $ argConfig args)
+                { shakeTimings = optTiming,
+                  shakeVerbosity = if optVerbose then Verbose else Info,
+                  shakeThreads = optThreads
+                },
+            filterRegex = optPkgNameFilter,
+            retry = optRetry
           },
-      argFilterRegex = pkgNameFilter
+      argTarget = optTarget
     }
 
 logChangesToFile :: FilePath -> Action ()
@@ -180,22 +158,22 @@ parseLastVersions jsonFile =
 
 -- | Entry point of nvfetcher
 runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
-runNvFetcherNoCLI args@Args {..} packageSet = do
+runNvFetcherNoCLI args@Args {argConfig = config@Config {..}, ..} packageSet = do
   pkgs <- Map.map pinIfUnmatch <$> runPackageSet packageSet
-  lastVersions <- parseLastVersions $ argBuildDir </> "generated.json"
-  shakeExtras <- initShakeExtras pkgs argRetries argBuildDir $ fromMaybe mempty lastVersions
+  lastVersions <- parseLastVersions $ buildDir </> generatedJsonFileName
   shakeDir <- getDataDir
-  let opts =
-        argShakeOptions
-          { shakeFiles = shakeDir,
-            shakeExtra = addShakeExtra shakeExtras (shakeExtra argShakeOptions)
-          }
+  -- Set shakeFiles
+  let shakeOptions1 = shakeConfig {shakeFiles = shakeDir}
+  -- shakeConfig in Config will be shakeOptions1 (not including shake extra)
+  shakeExtras <- initShakeExtras (config {shakeConfig = shakeOptions1}) pkgs $ fromMaybe mempty lastVersions
+  -- Set shakeExtra
+  let shakeOptions2 = shakeOptions1 {shakeExtra = addShakeExtra shakeExtras (shakeExtra shakeConfig)}
       rules = mainRules args
-  shake opts $ want [argTarget] >> rules
+  shake shakeOptions2 $ want [argTarget] >> rules
   where
     -- Don't touch already pinned packages
     pinIfUnmatch x@Package {..}
-      | Just regex <- argFilterRegex =
+      | Just regex <- filterRegex =
         x
           { _ppinned =
               if coerce _ppinned || not (_pname =~ regex)
@@ -207,10 +185,10 @@ runNvFetcherNoCLI args@Args {..} packageSet = do
 --------------------------------------------------------------------------------
 
 mainRules :: Args -> Rules ()
-mainRules Args {..} = do
+mainRules Args {argConfig = Config {..}} = do
   "clean" ~> do
     getBuildDir >>= flip removeFilesAfter ["//*"]
-    argActionAfterClean
+    actionAfterClean
 
   "build" ~> do
     allKeys <- getAllPackageKeys
@@ -226,15 +204,15 @@ mainRules Args {..} = do
           putInfo "Changes:"
           putInfo $ unlines $ show <$> changes
     buildDir <- getBuildDir
-    let generatedNixPath = buildDir </> "generated.nix"
-        generatedJSONPath = buildDir </> "generated.json"
+    let generatedNixPath = buildDir </> generatedNixFileName
+        generatedJSONPath = buildDir </> generatedJsonFileName
     putVerbose $ "Generating " <> generatedNixPath
     writeFileChanged generatedNixPath $ T.unpack $ srouces (T.unlines $ toNixExpr <$> results) <> "\n"
     putVerbose $ "Generating " <> generatedJSONPath
     writeFileChanged generatedJSONPath $ LBS.unpack $ A.encodePretty $ A.object [_prname r A..= r | r <- results]
-    argActionAfterBuild
+    actionAfterBuild
 
-  argRules
+  customRules
   coreRules
 
 srouces :: Text -> Text
@@ -246,3 +224,9 @@ srouces body =
       $body
     }
   |]
+
+generatedNixFileName :: String
+generatedNixFileName = "generated.nix"
+
+generatedJsonFileName :: String
+generatedJsonFileName = "generated.nix"

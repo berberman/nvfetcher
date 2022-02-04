@@ -88,7 +88,7 @@ oneShotRule = void $
     pure $ NvcheckerResult now Nothing False
 
 runNvchecker :: PackageKey -> NvcheckerOptions -> VersionSource -> Action NvcheckerRaw
-runNvchecker pkg options versionSource = withTempFile $ \config -> withRetries $ do
+runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ do
   writeFile' config $ T.unpack $ pretty $ mkToml $ genNvConfig pkg options versionSource
   (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
   putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"

@@ -3,6 +3,7 @@
 module Main where
 
 import Config
+import Data.Default (def)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import NvFetcher
@@ -32,4 +33,4 @@ main = do
     Left e -> error $ T.unpack $ Toml.prettyTomlDecodeError $ Toml.ParseError e
     Right x -> case parseConfig x of
       Left e -> error $ T.unpack $ prettyPackageConfigParseError e
-      Right pkgs -> runNvFetcherNoCLI (applyCliOptions defaultArgs opt) $ purePackageSet pkgs
+      Right pkgs -> runNvFetcherNoCLI (applyCliOptions def opt) $ purePackageSet pkgs
