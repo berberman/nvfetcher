@@ -229,4 +229,4 @@ generatedNixFileName :: String
 generatedNixFileName = "generated.nix"
 
 generatedJsonFileName :: String
-generatedJsonFileName = "generated.nix"
+generatedJsonFileName = "generated.json"
