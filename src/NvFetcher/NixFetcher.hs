@@ -113,7 +113,7 @@ pypiUrl pypi (coerce -> ver) =
 prefetchRule :: Rules ()
 prefetchRule = void $
   addOracleCache $ \(f :: NixFetcher Fresh) -> do
-    sha256 <- withRetries $ runFetcher f
+    sha256 <- withRetry $ runFetcher f
     pure $ f {_sha256 = sha256}
 
 -- | Run nix fetcher

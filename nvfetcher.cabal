@@ -62,6 +62,7 @@ library
   other-modules:   NvFetcher.Utils
   exposed-modules:
     NvFetcher
+    NvFetcher.Config
     NvFetcher.Core
     NvFetcher.ExtractSrc
     NvFetcher.FetchRustGitDeps

@@ -19,15 +19,15 @@ import qualified Paths_nvfetcher as Paths
 
 -- | Options for nvfetcher CLI
 data CLIOptions = CLIOptions
-  { buildDir :: FilePath,
-    commit :: Bool,
-    logPath :: Maybe FilePath,
-    threads :: Int,
-    retries :: Int,
-    timing :: Bool,
-    verbose :: Bool,
-    pkgNameFilter :: Maybe String,
-    target :: String
+  { optBuildDir :: FilePath,
+    optCommit :: Bool,
+    optLogPath :: Maybe FilePath,
+    optThreads :: Int,
+    optRetry :: Int,
+    optTiming :: Bool,
+    optVerbose :: Bool,
+    optPkgNameFilter :: Maybe String,
+    optTarget :: String
   }
   deriving (Show)
 

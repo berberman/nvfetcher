@@ -12,10 +12,12 @@ import Control.Exception (Handler (..), SomeException, bracket, catches, throwIO
 import Control.Monad (void)
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Reader
+import Data.Default (def)
 import Data.Map (Map)
 import Data.Maybe (isJust)
 import Development.Shake
 import Development.Shake.Database
+import NvFetcher.Config
 import NvFetcher.Core (coreRules)
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
@@ -37,7 +39,7 @@ type ActionQueue = TQueue (Action ())
 
 newAsyncActionQueue :: Map PackageKey Package -> IO (ActionQueue, Async ())
 newAsyncActionQueue pkgs = Extra.withTempDir $ \dir -> do
-  shakeExtras <- liftIO $ initShakeExtras pkgs 3 dir mempty
+  shakeExtras <- liftIO $ initShakeExtras def {buildDir = dir} pkgs mempty
   chan <- atomically newTQueue
   (getShakeDb, _) <-
     shakeOpenDatabase
