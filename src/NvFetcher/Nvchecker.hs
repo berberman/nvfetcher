@@ -66,7 +66,7 @@ persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (CheckVersio
       | Just oldVer' <- oldVer -> do
         -- use the stale version if we have
         putInfo $ T.unpack $ "Skip running nvchecker, use stale version " <> coerce oldVer' <> " for " <> coerce pkg
-        let result = NvcheckerResult {nvNow = oldVer', nvOld = Nothing, nvStale = True}
+        let result = NvcheckerResult {nvNow = oldVer', nvOld = oldVer, nvStale = True}
         pure $ RunResult ChangedRecomputeSame (encode' result) result
 
     -- run nvchecker

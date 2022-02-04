@@ -91,7 +91,7 @@ useStaleSpec = aroundShake' (Map.singleton fakePackageKey fakePinnedPackage) def
 
     specifyChan "stale" $ do
       liftIO $ writeFile temp "Bark"
-      runNvcheckerRuleOnFakePackage versionSource `shouldReturnJust` NvcheckerResult {nvNow = "Meow", nvOld = Nothing, nvStale = True}
+      runNvcheckerRuleOnFakePackage versionSource `shouldReturnJust` NvcheckerResult {nvNow = "Meow", nvOld = Just "Meow", nvStale = True}
 
     runIO cleanup
 

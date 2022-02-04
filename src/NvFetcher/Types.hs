@@ -174,9 +174,9 @@ data CheckVersion = CheckVersion VersionSource NvcheckerOptions
 -- | The result of nvchecker rule
 data NvcheckerResult = NvcheckerResult
   { nvNow :: Version,
-    -- | shake restores it from last run
+    -- | last result of this nvchecker rule
     nvOld :: Maybe Version,
-    -- | stale means even 'nvNow' comes from json file or last run
+    -- | stale means even 'nvNow' comes from json file (last run)
     -- and we actually didn't run nvchecker this time. 'nvOld' will be 'Nothing' in this case.
     nvStale :: Bool
   }
