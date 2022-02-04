@@ -175,6 +175,7 @@ data CheckVersion = CheckVersion VersionSource NvcheckerOptions
 data NvcheckerResult = NvcheckerResult
   { nvNow :: Version,
     -- | last result of this nvchecker rule
+    -- TODO: consider removing this field
     nvOld :: Maybe Version,
     -- | stale means even 'nvNow' comes from json file (last run)
     -- and we actually didn't run nvchecker this time. 'nvOld' will be 'Nothing' in this case.

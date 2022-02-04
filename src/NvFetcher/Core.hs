@@ -49,7 +49,7 @@ coreRules = do
             _ppinned = (UseStaleVersion pinned),
             ..
           } -> do
-          _prversion@(NvcheckerResult version mOldV _isStale) <- checkVersion versionSource options pkg
+          _prversion@(NvcheckerResult version _mOldV _isStale) <- checkVersion versionSource options pkg
           _prfetched <- prefetch $ _pfetcher version
           buildDir <- getBuildDir
           -- extract src
@@ -91,6 +91,8 @@ coreRules = do
               _ -> pure (Nothing, Nothing)
 
           -- update changelog
+          -- always use on disk verion
+          mOldV <- getLastVersionOnDisk pkg
           case mOldV of
             Nothing ->
               recordVersionChange _pname Nothing version
