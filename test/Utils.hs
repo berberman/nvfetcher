@@ -37,9 +37,9 @@ runAction chan x = do
 
 type ActionQueue = TQueue (Action ())
 
-newAsyncActionQueue :: Map PackageKey Package -> IO (ActionQueue, Async ())
-newAsyncActionQueue pkgs = Extra.withTempDir $ \dir -> do
-  shakeExtras <- liftIO $ initShakeExtras def {buildDir = dir} pkgs mempty
+newAsyncActionQueue :: Map PackageKey Package -> Config -> IO (ActionQueue, Async ())
+newAsyncActionQueue pkgs config = Extra.withTempDir $ \dir -> do
+  shakeExtras <- liftIO $ initShakeExtras config {buildDir = dir} pkgs mempty
   chan <- atomically newTQueue
   (getShakeDb, _) <-
     shakeOpenDatabase
@@ -67,12 +67,12 @@ newAsyncActionQueue pkgs = Extra.withTempDir $ \dir -> do
 --------------------------------------------------------------------------------
 
 aroundShake :: SpecWith ActionQueue -> Spec
-aroundShake = aroundShake' mempty
+aroundShake = aroundShake' mempty def
 
-aroundShake' :: Map PackageKey Package -> SpecWith ActionQueue -> Spec
-aroundShake' pkgs = aroundAll $ \f ->
+aroundShake' :: Map PackageKey Package -> Config -> SpecWith ActionQueue -> Spec
+aroundShake' pkgs config = aroundAll $ \f ->
   bracket
-    (newAsyncActionQueue pkgs)
+    (newAsyncActionQueue pkgs config)
     (\(_, runnerTask) -> cancel runnerTask)
     (\(chan, _) -> f chan)
 

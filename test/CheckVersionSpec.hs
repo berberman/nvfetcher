@@ -9,6 +9,7 @@ import Data.Default (def)
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import Lens.Micro
+import NvFetcher.Config (Config (cacheNvchecker))
 import NvFetcher.Nvchecker
 import NvFetcher.Types
 import NvFetcher.Types.Lens
@@ -20,6 +21,7 @@ spec :: Spec
 spec = do
   versionSourcesSpec
   useStaleSpec
+  cacheSpec
 
 versionSourcesSpec :: Spec
 versionSourcesSpec = aroundShake $
@@ -75,9 +77,9 @@ versionSourcesSpec = aroundShake $
 
 --------------------------------------------------------------------------------
 
--- | We need a new shake session for checking useStale working
+-- | We need disable nvchecker cache to see if use stale works
 useStaleSpec :: Spec
-useStaleSpec = aroundShake' (Map.singleton fakePackageKey pinnedPackage) $
+useStaleSpec = aroundShake' (Map.singleton fakePackageKey fakePinnedPackage) def {cacheNvchecker = False} $
   describe "useStale" $ do
     (temp, cleanup) <- runIO newTempFile
 
@@ -89,7 +91,24 @@ useStaleSpec = aroundShake' (Map.singleton fakePackageKey pinnedPackage) $
 
     specifyChan "stale" $ do
       liftIO $ writeFile temp "Bark"
-      runNvcheckerRuleOnFakePackage versionSource `shouldReturnJust` NvcheckerResult {nvNow = "Meow", nvOld = Nothing, nvStale = True}
+      runNvcheckerRuleOnFakePackage versionSource `shouldReturnJust` NvcheckerResult {nvNow = "Meow", nvOld = Just "Meow", nvStale = True}
+
+    runIO cleanup
+
+cacheSpec :: Spec
+cacheSpec = aroundShake' (Map.singleton fakePackageKey fakePackage) def {cacheNvchecker = True} $
+  describe "cache" $ do
+    (temp, cleanup) <- runIO newTempFile
+
+    let versionSource = Cmd $ "cat " <> T.pack temp
+
+    specifyChan "needs run" $ do
+      liftIO $ writeFile temp "Meow"
+      runNvcheckerRuleOnFakePackage versionSource `shouldReturnJust` NvcheckerResult {nvNow = "Meow", nvOld = Nothing, nvStale = False}
+
+    specifyChan "cache" $ do
+      liftIO $ writeFile temp "Bark"
+      runNvcheckerRuleOnFakePackage versionSource `shouldReturnJust` NvcheckerResult {nvNow = "Meow", nvOld = Just "Meow", nvStale = False}
 
     runIO cleanup
 
@@ -104,8 +123,8 @@ runNvcheckerRuleOnFakePackage v = runActionChan $ checkVersion v def fakePackage
 fakePackageKey :: PackageKey
 fakePackageKey = PackageKey "a-fake-package"
 
-pinnedPackage :: Package
-pinnedPackage =
+fakePackage :: Package
+fakePackage =
   Package
     { _pname = coerce fakePackageKey,
       _pversion = undefined,
@@ -113,5 +132,8 @@ pinnedPackage =
       _pcargo = undefined,
       _pextract = undefined,
       _ppassthru = undefined,
-      _ppinned = UseStaleVersion True
+      _ppinned = UseStaleVersion False
     }
+
+fakePinnedPackage :: Package
+fakePinnedPackage = fakePackage {_ppinned = UseStaleVersion True}

@@ -35,6 +35,10 @@ module NvFetcher.Types.ShakeExtras
     getRecentLastVersion,
     updateLastVersion,
     getAllOnDiskVersions,
+    getLastVersionUpdated,
+
+    -- * Cache nvchecker
+    nvcheckerCacheEnabled,
   )
 where
 
@@ -131,6 +135,15 @@ getRecentLastVersion k = do
     Just (OnDisk v) -> Just v
     _ -> Nothing
 
+-- | Get updated version of a package
+getLastVersionUpdated :: PackageKey -> Action (Maybe Version)
+getLastVersionUpdated k = do
+  ShakeExtras {..} <- getShakeExtras
+  versions <- liftIO $ readVar lastVersions
+  pure $ case versions Map.!? k of
+    Just (Updated _ v) -> Just v
+    _ -> Nothing
+
 -- | Add nvchecker result of a package
 updateLastVersion :: PackageKey -> Version -> Action ()
 updateLastVersion k v = do
@@ -151,3 +164,7 @@ getAllOnDiskVersions = do
           OnDisk v -> Just v
           Updated v _ -> v
   pure $ Map.fromList [(k, v) | (k, Just v) <- xs]
+
+-- | Get if 'cacheNvchecker' is enabled
+nvcheckerCacheEnabled :: Action Bool
+nvcheckerCacheEnabled = cacheNvchecker . config <$> getShakeExtras
