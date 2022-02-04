@@ -61,7 +61,7 @@
 </span><span id="line-61"></span><span class="annot"><a href="NvFetcher.NixFetcher.html#runFetcher"><span class="hs-identifier hs-type">runFetcher</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fresh"><span class="hs-identifier hs-type">Fresh</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-type">Checksum</span></a></span><span>
 </span><span id="line-62"></span><span id="runFetcher"><span class="annot"><span class="annottext">runFetcher :: NixFetcher 'Fresh -&gt; Action Checksum
 </span><a href="NvFetcher.NixFetcher.html#runFetcher"><span class="hs-identifier hs-var hs-var">runFetcher</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
-</span><span id="line-63"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#FetchGit"><span class="hs-identifier hs-type">FetchGit</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297260"><span id="local-6989586621679297261"><span id="local-6989586621679297262"><span id="local-6989586621679297263"><span id="local-6989586621679297264"><span id="local-6989586621679297265"><span id="local-6989586621679297266"><span class="annot"><span class="annottext">Bool
+</span><span id="line-63"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#FetchGit"><span class="hs-identifier hs-type">FetchGit</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679298130"><span id="local-6989586621679298131"><span id="local-6989586621679298132"><span id="local-6989586621679298133"><span id="local-6989586621679298134"><span id="local-6989586621679298135"><span id="local-6989586621679298136"><span class="annot"><span class="annottext">Bool
 Maybe Text
 Text
 FetchResult 'Fresh
@@ -81,11 +81,11 @@ _deepClone :: Bool
 _rev :: Version
 _furl :: Text
 </span><a href="NvFetcher.Types.html#_sha256"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-64"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679297251"><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679297251"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Stdout</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; Text
-</span><span class="hs-identifier hs-var">T.decodeUtf8</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679297248"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297248"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679297246"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679297246"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
+</span><span id="line-64"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679298121"><span class="annot"><span class="annottext">Double
+</span><a href="#local-6989586621679298121"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Stdout</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; Text
+</span><span class="hs-identifier hs-var">T.decodeUtf8</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679298118"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298118"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679298116"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679298116"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
 </span><span id="line-65"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption]
 -&gt; String
 -&gt; [String]
@@ -107,7 +107,7 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--url&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297266"><span class="hs-identifier hs-var">_furl</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298136"><span class="hs-identifier hs-var">_furl</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-68"></span><span>          </span><span class="annot"><span class="annottext">[String] -&gt; [String] -&gt; [String]
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
@@ -116,22 +116,22 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Text
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679297265"><span class="hs-identifier hs-var">_rev</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298135"><span class="hs-identifier hs-var">_rev</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-69"></span><span>          </span><span class="annot"><span class="annottext">[String] -&gt; [String] -&gt; [String]
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--fetchSubmodules&quot;</span></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679297263"><span class="hs-identifier hs-var">_fetchSubmodules</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298133"><span class="hs-identifier hs-var">_fetchSubmodules</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-70"></span><span>          </span><span class="annot"><span class="annottext">[String] -&gt; [String] -&gt; [String]
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--deepClone&quot;</span></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679297264"><span class="hs-identifier hs-var">_deepClone</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298134"><span class="hs-identifier hs-var">_deepClone</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-71"></span><span>          </span><span class="annot"><span class="annottext">[String] -&gt; [String] -&gt; [String]
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--leaveDotGit&quot;</span></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679297262"><span class="hs-identifier hs-var">_leaveDotGit</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298132"><span class="hs-identifier hs-var">_leaveDotGit</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-72"></span><span>    </span><span class="annot"><span class="annottext">String -&gt; Action ()
 </span><span class="hs-identifier hs-var">putVerbose</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ()) -&gt; String -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
@@ -139,7 +139,7 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-string">&quot;Finishing running &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679297246"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679298116"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;, took &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
@@ -147,7 +147,7 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Double -&gt; String
 forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679297251"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679298121"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;s&quot;</span></span><span>
@@ -165,15 +165,15 @@ forall a. [a] -&gt; [a]
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; [Text]
 </span><span class="hs-identifier hs-var">T.lines</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297248"><span class="hs-identifier hs-var">out</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-74"></span><span>      </span><span class="hs-special">[</span><span id="local-6989586621679297234"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297234"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Checksum -&gt; Action Checksum
+</span><a href="#local-6989586621679298118"><span class="hs-identifier hs-var">out</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-74"></span><span>      </span><span class="hs-special">[</span><span id="local-6989586621679298104"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298104"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Checksum -&gt; Action Checksum
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Checksum -&gt; Action Checksum) -&gt; Checksum -&gt; Action Checksum
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Checksum
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297234"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><a href="#local-6989586621679298104"><span class="hs-identifier hs-var">x</span></a></span><span>
 </span><span id="line-75"></span><span>      </span><span class="annot"><span class="annottext">[Text]
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Action Checksum
 forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; m a
@@ -184,8 +184,8 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297248"><span class="hs-identifier hs-var">out</span></a></span><span>
-</span><span id="line-76"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#FetchGitHub"><span class="hs-identifier hs-type">FetchGitHub</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297225"><span id="local-6989586621679297226"><span id="local-6989586621679297227"><span id="local-6989586621679297228"><span id="local-6989586621679297229"><span id="local-6989586621679297230"><span id="local-6989586621679297231"><span id="local-6989586621679297232"><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679298118"><span class="hs-identifier hs-var">out</span></a></span><span>
+</span><span id="line-76"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#FetchGitHub"><span class="hs-identifier hs-type">FetchGitHub</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679298095"><span id="local-6989586621679298096"><span id="local-6989586621679298097"><span id="local-6989586621679298098"><span id="local-6989586621679298099"><span id="local-6989586621679298100"><span id="local-6989586621679298101"><span id="local-6989586621679298102"><span class="annot"><span class="annottext">Bool
 Maybe Text
 Text
 FetchResult 'Fresh
@@ -207,11 +207,11 @@ _fetchSubmodules :: forall (k :: FetchStatus). NixFetcher k -&gt; Bool
 _deepClone :: forall (k :: FetchStatus). NixFetcher k -&gt; Bool
 _rev :: forall (k :: FetchStatus). NixFetcher k -&gt; Version
 </span><a href="NvFetcher.Types.html#_frepo"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-77"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679297222"><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679297222"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Stdout</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; Text
-</span><span class="hs-identifier hs-var">T.decodeUtf8</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679297221"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297221"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679297220"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679297220"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
+</span><span id="line-77"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679298092"><span class="annot"><span class="annottext">Double
+</span><a href="#local-6989586621679298092"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Stdout</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; Text
+</span><span class="hs-identifier hs-var">T.decodeUtf8</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679298091"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298091"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679298090"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679298090"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
 </span><span id="line-78"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption]
 -&gt; String
 -&gt; [String]
@@ -233,13 +233,13 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--owner&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297232"><span class="hs-identifier hs-var">_fowner</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298102"><span class="hs-identifier hs-var">_fowner</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-81"></span><span>          </span><span class="annot"><span class="annottext">[String] -&gt; [String] -&gt; [String]
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--repo&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297231"><span class="hs-identifier hs-var">_frepo</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298101"><span class="hs-identifier hs-var">_frepo</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-82"></span><span>          </span><span class="annot"><span class="annottext">[String] -&gt; [String] -&gt; [String]
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
@@ -248,22 +248,22 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Text
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679297230"><span class="hs-identifier hs-var">_rev</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298100"><span class="hs-identifier hs-var">_rev</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-83"></span><span>          </span><span class="annot"><span class="annottext">[String] -&gt; [String] -&gt; [String]
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--fetchSubmodules&quot;</span></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679297228"><span class="hs-identifier hs-var">_fetchSubmodules</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298098"><span class="hs-identifier hs-var">_fetchSubmodules</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-84"></span><span>          </span><span class="annot"><span class="annottext">[String] -&gt; [String] -&gt; [String]
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--deepClone&quot;</span></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679297229"><span class="hs-identifier hs-var">_deepClone</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298099"><span class="hs-identifier hs-var">_deepClone</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-85"></span><span>          </span><span class="annot"><span class="annottext">[String] -&gt; [String] -&gt; [String]
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--leaveDotGit&quot;</span></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
-</span><a href="#local-6989586621679297227"><span class="hs-identifier hs-var">_leaveDotGit</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298097"><span class="hs-identifier hs-var">_leaveDotGit</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-86"></span><span>    </span><span class="annot"><span class="annottext">String -&gt; Action ()
 </span><span class="hs-identifier hs-var">putVerbose</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ()) -&gt; String -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
@@ -271,7 +271,7 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-string">&quot;Finishing running &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679297220"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679298090"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;, took &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
@@ -279,7 +279,7 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Double -&gt; String
 forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679297222"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679298092"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;s&quot;</span></span><span>
@@ -297,15 +297,15 @@ forall a. [a] -&gt; [a]
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; [Text]
 </span><span class="hs-identifier hs-var">T.lines</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297221"><span class="hs-identifier hs-var">out</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-88"></span><span>      </span><span class="hs-special">[</span><span id="local-6989586621679297219"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297219"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Checksum -&gt; Action Checksum
+</span><a href="#local-6989586621679298091"><span class="hs-identifier hs-var">out</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-88"></span><span>      </span><span class="hs-special">[</span><span id="local-6989586621679298089"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298089"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Checksum -&gt; Action Checksum
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Checksum -&gt; Action Checksum) -&gt; Checksum -&gt; Action Checksum
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Checksum
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297219"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><a href="#local-6989586621679298089"><span class="hs-identifier hs-var">x</span></a></span><span>
 </span><span id="line-89"></span><span>      </span><span class="annot"><span class="annottext">[Text]
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Action Checksum
 forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; m a
@@ -316,8 +316,8 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297221"><span class="hs-identifier hs-var">out</span></a></span><span>
-</span><span id="line-90"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#FetchUrl"><span class="hs-identifier hs-type">FetchUrl</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297215"><span id="local-6989586621679297216"><span id="local-6989586621679297217"><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679298091"><span class="hs-identifier hs-var">out</span></a></span><span>
+</span><span id="line-90"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#FetchUrl"><span class="hs-identifier hs-type">FetchUrl</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679298085"><span id="local-6989586621679298086"><span id="local-6989586621679298087"><span class="annot"><span class="annottext">Maybe Text
 Text
 FetchResult 'Fresh
 _sha256 :: FetchResult 'Fresh
@@ -326,12 +326,12 @@ _furl :: Text
 _sha256 :: forall (k :: FetchStatus). NixFetcher k -&gt; FetchResult k
 _name :: forall (k :: FetchStatus). NixFetcher k -&gt; Maybe Text
 _furl :: forall (k :: FetchStatus). NixFetcher k -&gt; Text
-</span><a href="#local-6989586621679297215"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-91"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679297214"><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679297214"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Stdout</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; Text
-</span><span class="hs-identifier hs-var">T.decodeUtf8</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679297213"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297213"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679297212"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679297212"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
+</span><a href="#local-6989586621679298085"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-91"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679298084"><span class="annot"><span class="annottext">Double
+</span><a href="#local-6989586621679298084"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Stdout</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; Text
+</span><span class="hs-identifier hs-var">T.decodeUtf8</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679298083"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298083"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679298082"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679298082"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
 </span><span id="line-92"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption]
 -&gt; String
 -&gt; [String]
@@ -346,7 +346,7 @@ forall r.
 </span><span class="hs-string">&quot;fetchurl&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--url&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297217"><span class="hs-identifier hs-var">_furl</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298087"><span class="hs-identifier hs-var">_furl</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-93"></span><span>    </span><span class="annot"><span class="annottext">String -&gt; Action ()
 </span><span class="hs-identifier hs-var">putVerbose</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ()) -&gt; String -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
@@ -354,7 +354,7 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-string">&quot;Finishing running &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679297212"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679298082"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;, took &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
@@ -362,7 +362,7 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Double -&gt; String
 forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679297214"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679298084"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;s&quot;</span></span><span>
@@ -380,15 +380,15 @@ forall a. [a] -&gt; [a]
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; [Text]
 </span><span class="hs-identifier hs-var">T.lines</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297213"><span class="hs-identifier hs-var">out</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-95"></span><span>      </span><span class="hs-special">[</span><span id="local-6989586621679297211"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297211"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Checksum -&gt; Action Checksum
+</span><a href="#local-6989586621679298083"><span class="hs-identifier hs-var">out</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-95"></span><span>      </span><span class="hs-special">[</span><span id="local-6989586621679298081"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298081"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Checksum -&gt; Action Checksum
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Checksum -&gt; Action Checksum) -&gt; Checksum -&gt; Action Checksum
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Checksum
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297211"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><a href="#local-6989586621679298081"><span class="hs-identifier hs-var">x</span></a></span><span>
 </span><span id="line-96"></span><span>      </span><span class="annot"><span class="annottext">[Text]
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Action Checksum
 forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; m a
@@ -399,19 +399,19 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297213"><span class="hs-identifier hs-var">out</span></a></span><span>
-</span><span id="line-97"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#FetchTarball"><span class="hs-identifier hs-type">FetchTarball</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679297208"><span id="local-6989586621679297209"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298083"><span class="hs-identifier hs-var">out</span></a></span><span>
+</span><span id="line-97"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#FetchTarball"><span class="hs-identifier hs-type">FetchTarball</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679298078"><span id="local-6989586621679298079"><span class="annot"><span class="annottext">Text
 FetchResult 'Fresh
 _sha256 :: FetchResult 'Fresh
 _furl :: Text
 _sha256 :: forall (k :: FetchStatus). NixFetcher k -&gt; FetchResult k
 _furl :: forall (k :: FetchStatus). NixFetcher k -&gt; Text
-</span><a href="#local-6989586621679297208"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-98"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679297207"><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679297207"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Stdout</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; Text
-</span><span class="hs-identifier hs-var">T.decodeUtf8</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679297206"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297206"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679297205"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679297205"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
+</span><a href="#local-6989586621679298078"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-98"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CmdTime</span></span><span> </span><span id="local-6989586621679298077"><span class="annot"><span class="annottext">Double
+</span><a href="#local-6989586621679298077"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Stdout</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; Text
+</span><span class="hs-identifier hs-var">T.decodeUtf8</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679298076"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298076"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">CmdLine</span></span><span> </span><span id="local-6989586621679298075"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679298075"><span class="hs-identifier hs-var">c</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
 </span><span id="line-99"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption]
 -&gt; String
 -&gt; [String]
@@ -426,7 +426,7 @@ forall r.
 </span><span class="hs-string">&quot;fetchTarball&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;--url&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297209"><span class="hs-identifier hs-var">_furl</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679298079"><span class="hs-identifier hs-var">_furl</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-100"></span><span>    </span><span class="annot"><span class="annottext">String -&gt; Action ()
 </span><span class="hs-identifier hs-var">putVerbose</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ()) -&gt; String -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
@@ -434,7 +434,7 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-string">&quot;Finishing running &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679297205"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679298075"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;, took &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
@@ -442,7 +442,7 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Double -&gt; String
 forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Double
-</span><a href="#local-6989586621679297207"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679298077"><span class="hs-identifier hs-var">t</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;s&quot;</span></span><span>
@@ -460,15 +460,15 @@ forall a. [a] -&gt; [a]
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; [Text]
 </span><span class="hs-identifier hs-var">T.lines</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297206"><span class="hs-identifier hs-var">out</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-102"></span><span>      </span><span class="hs-special">[</span><span id="local-6989586621679297204"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297204"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Checksum -&gt; Action Checksum
+</span><a href="#local-6989586621679298076"><span class="hs-identifier hs-var">out</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-102"></span><span>      </span><span class="hs-special">[</span><span id="local-6989586621679298074"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298074"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Checksum -&gt; Action Checksum
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Checksum -&gt; Action Checksum) -&gt; Checksum -&gt; Action Checksum
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Checksum
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297204"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><a href="#local-6989586621679298074"><span class="hs-identifier hs-var">x</span></a></span><span>
 </span><span id="line-103"></span><span>      </span><span class="annot"><span class="annottext">[Text]
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Action Checksum
 forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; m a
@@ -479,19 +479,19 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297206"><span class="hs-identifier hs-var">out</span></a></span><span>
+</span><a href="#local-6989586621679298076"><span class="hs-identifier hs-var">out</span></a></span><span>
 </span><span id="line-104"></span><span>
 </span><span id="line-105"></span><span class="annot"><a href="NvFetcher.NixFetcher.html#pypiUrl"><span class="hs-identifier hs-type">pypiUrl</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
 </span><span id="line-106"></span><span id="pypiUrl"><span class="annot"><span class="annottext">pypiUrl :: Text -&gt; Version -&gt; Text
-</span><a href="NvFetcher.NixFetcher.html#pypiUrl"><span class="hs-identifier hs-var hs-var">pypiUrl</span></a></span></span><span> </span><span id="local-6989586621679297202"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297202"><span class="hs-identifier hs-var">pypi</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Text
-</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679297201"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297201"><span class="hs-identifier hs-var">ver</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-107"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679297200"><span class="annot"><span class="annottext">h :: Text
-</span><a href="#local-6989586621679297200"><span class="hs-identifier hs-var hs-var">h</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Text -&gt; Text
+</span><a href="NvFetcher.NixFetcher.html#pypiUrl"><span class="hs-identifier hs-var hs-var">pypiUrl</span></a></span></span><span> </span><span id="local-6989586621679298072"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298072"><span class="hs-identifier hs-var">pypi</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Text
+</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679298071"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298071"><span class="hs-identifier hs-var">ver</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-107"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679298070"><span class="annot"><span class="annottext">h :: Text
+</span><a href="#local-6989586621679298070"><span class="hs-identifier hs-var hs-var">h</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Text -&gt; Text
 </span><span class="hs-identifier hs-var">T.cons</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Char
 </span><span class="hs-identifier hs-var">T.head</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297202"><span class="hs-identifier hs-var">pypi</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298072"><span class="hs-identifier hs-var">pypi</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;&quot;</span></span><span>
 </span><span id="line-108"></span><span>   </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="">[trimming|https://pypi.io/packages/source/$h/$pypi/$pypi-$ver.tar.gz|]</span></span><span>
 </span><span id="line-109"></span><span>
@@ -519,27 +519,27 @@ forall q a.
 -&gt; (NixFetcher 'Fresh -&gt; Action (NixFetcher 'Fetched))
 -&gt; Rules (NixFetcher 'Fresh -&gt; Action (NixFetcher 'Fetched))
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span id="local-6989586621679297191"><span class="annot"><span class="annottext">NixFetcher 'Fresh
-</span><a href="#local-6989586621679297191"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fresh"><span class="hs-identifier hs-type">Fresh</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-116"></span><span>    </span><span id="local-6989586621679297190"><span class="annot"><span class="annottext">Checksum
-</span><a href="#local-6989586621679297190"><span class="hs-identifier hs-var">sha256</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Action Checksum -&gt; Action Checksum
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span id="local-6989586621679298061"><span class="annot"><span class="annottext">NixFetcher 'Fresh
+</span><a href="#local-6989586621679298061"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fresh"><span class="hs-identifier hs-type">Fresh</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-116"></span><span>    </span><span id="local-6989586621679298060"><span class="annot"><span class="annottext">Checksum
+</span><a href="#local-6989586621679298060"><span class="hs-identifier hs-var">sha256</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Action Checksum -&gt; Action Checksum
 forall a. Action a -&gt; Action a
 </span><a href="NvFetcher.Types.ShakeExtras.html#withRetry"><span class="hs-identifier hs-var">withRetry</span></a></span><span> </span><span class="annot"><span class="annottext">(Action Checksum -&gt; Action Checksum)
 -&gt; Action Checksum -&gt; Action Checksum
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fresh -&gt; Action Checksum
 </span><a href="NvFetcher.NixFetcher.html#runFetcher"><span class="hs-identifier hs-var">runFetcher</span></a></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fresh
-</span><a href="#local-6989586621679297191"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><a href="#local-6989586621679298061"><span class="hs-identifier hs-var">f</span></a></span><span>
 </span><span id="line-117"></span><span>    </span><span class="annot"><span class="annottext">NixFetcher 'Fetched -&gt; Action (NixFetcher 'Fetched)
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(NixFetcher 'Fetched -&gt; Action (NixFetcher 'Fetched))
 -&gt; NixFetcher 'Fetched -&gt; Action (NixFetcher 'Fetched)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fresh
-</span><a href="#local-6989586621679297191"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><span class="annottext">_sha256 :: FetchResult 'Fetched
+</span><a href="#local-6989586621679298061"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><span class="annottext">_sha256 :: FetchResult 'Fetched
 </span><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var">_sha256</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FetchResult 'Fetched
 Checksum
-</span><a href="#local-6989586621679297190"><span class="hs-identifier hs-var">sha256</span></a></span><span class="hs-special">}</span><span>
+</span><a href="#local-6989586621679298060"><span class="hs-identifier hs-var">sha256</span></a></span><span class="hs-special">}</span><span>
 </span><span id="line-118"></span><span>
 </span><span id="line-119"></span><span class="hs-comment">-- | Run nix fetcher</span><span>
 </span><span id="line-120"></span><span class="annot"><a href="NvFetcher.NixFetcher.html#prefetch"><span class="hs-identifier hs-type">prefetch</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fresh"><span class="hs-identifier hs-type">Fresh</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fetched"><span class="hs-identifier hs-type">Fetched</span></a></span><span class="hs-special">)</span><span>
@@ -555,9 +555,9 @@ q -&gt; Action a
 </span><span id="line-125"></span><span class="hs-comment">-- | Create a fetcher from git url</span><span>
 </span><span id="line-126"></span><span class="annot"><a href="NvFetcher.NixFetcher.html#gitFetcher"><span class="hs-identifier hs-type">gitFetcher</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageFetcher"><span class="hs-identifier hs-type">PackageFetcher</span></a></span><span>
 </span><span id="line-127"></span><span id="gitFetcher"><span class="annot"><span class="annottext">gitFetcher :: Text -&gt; PackageFetcher
-</span><a href="NvFetcher.NixFetcher.html#gitFetcher"><span class="hs-identifier hs-var hs-var">gitFetcher</span></a></span></span><span> </span><span id="local-6989586621679297187"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297187"><span class="hs-identifier hs-var">furl</span></a></span></span><span> </span><span id="local-6989586621679297186"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679297186"><span class="hs-identifier hs-var">rev</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="NvFetcher.NixFetcher.html#gitFetcher"><span class="hs-identifier hs-var hs-var">gitFetcher</span></a></span></span><span> </span><span id="local-6989586621679298057"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298057"><span class="hs-identifier hs-var">furl</span></a></span></span><span> </span><span id="local-6989586621679298056"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679298056"><span class="hs-identifier hs-var">rev</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
 -&gt; Version
 -&gt; Bool
 -&gt; Bool
@@ -575,8 +575,8 @@ Text
 -&gt; FetchResult k
 -&gt; NixFetcher k
 </span><a href="NvFetcher.Types.html#FetchGit"><span class="hs-identifier hs-var">FetchGit</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297187"><span class="hs-identifier hs-var">furl</span></a></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679297186"><span class="hs-identifier hs-var">rev</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679298057"><span class="hs-identifier hs-var">furl</span></a></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679298056"><span class="hs-identifier hs-var">rev</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span> </span><span class="annot"><span class="annottext">Maybe Text
@@ -589,10 +589,10 @@ forall a. Maybe a
 </span><span id="line-132"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-133"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#PackageFetcher"><span class="hs-identifier hs-type">PackageFetcher</span></a></span><span>
 </span><span id="line-134"></span><span id="gitHubFetcher"><span class="annot"><span class="annottext">gitHubFetcher :: (Text, Text) -&gt; PackageFetcher
-</span><a href="NvFetcher.NixFetcher.html#gitHubFetcher"><span class="hs-identifier hs-var hs-var">gitHubFetcher</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679297185"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297185"><span class="hs-identifier hs-var">owner</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679297184"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297184"><span class="hs-identifier hs-var">repo</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679297183"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679297183"><span class="hs-identifier hs-var">rev</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="NvFetcher.NixFetcher.html#gitHubFetcher"><span class="hs-identifier hs-var hs-var">gitHubFetcher</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679298055"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298055"><span class="hs-identifier hs-var">owner</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679298054"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298054"><span class="hs-identifier hs-var">repo</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679298053"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679298053"><span class="hs-identifier hs-var">rev</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
 -&gt; Text
 -&gt; Version
 -&gt; Bool
@@ -612,9 +612,9 @@ Text
 -&gt; FetchResult k
 -&gt; NixFetcher k
 </span><a href="NvFetcher.Types.html#FetchGitHub"><span class="hs-identifier hs-var">FetchGitHub</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297185"><span class="hs-identifier hs-var">owner</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297184"><span class="hs-identifier hs-var">repo</span></a></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679297183"><span class="hs-identifier hs-var">rev</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679298055"><span class="hs-identifier hs-var">owner</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298054"><span class="hs-identifier hs-var">repo</span></a></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679298053"><span class="hs-identifier hs-var">rev</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span> </span><span class="annot"><span class="annottext">Maybe Text
@@ -624,15 +624,15 @@ forall a. Maybe a
 </span><span id="line-136"></span><span class="hs-comment">-- | Create a fetcher from pypi</span><span>
 </span><span id="line-137"></span><span class="annot"><a href="NvFetcher.NixFetcher.html#pypiFetcher"><span class="hs-identifier hs-type">pypiFetcher</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageFetcher"><span class="hs-identifier hs-type">PackageFetcher</span></a></span><span>
 </span><span id="line-138"></span><span id="pypiFetcher"><span class="annot"><span class="annottext">pypiFetcher :: Text -&gt; PackageFetcher
-</span><a href="NvFetcher.NixFetcher.html#pypiFetcher"><span class="hs-identifier hs-var hs-var">pypiFetcher</span></a></span></span><span> </span><span id="local-6989586621679297182"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297182"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span id="local-6989586621679297181"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679297181"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; NixFetcher 'Fresh
+</span><a href="NvFetcher.NixFetcher.html#pypiFetcher"><span class="hs-identifier hs-var hs-var">pypiFetcher</span></a></span></span><span> </span><span id="local-6989586621679298052"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298052"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span id="local-6989586621679298051"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679298051"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; NixFetcher 'Fresh
 </span><a href="NvFetcher.NixFetcher.html#urlFetcher"><span class="hs-identifier hs-var">urlFetcher</span></a></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; NixFetcher 'Fresh) -&gt; Text -&gt; NixFetcher 'Fresh
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Version -&gt; Text
 </span><a href="NvFetcher.NixFetcher.html#pypiUrl"><span class="hs-identifier hs-var">pypiUrl</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297182"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679297181"><span class="hs-identifier hs-var">v</span></a></span><span>
+</span><a href="#local-6989586621679298052"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679298051"><span class="hs-identifier hs-var">v</span></a></span><span>
 </span><span id="line-139"></span><span>
 </span><span id="line-140"></span><span class="hs-comment">-- | Create a fetcher from github release</span><span>
 </span><span id="line-141"></span><span class="annot"><a href="NvFetcher.NixFetcher.html#gitHubReleaseFetcher"><span class="hs-identifier hs-type">gitHubReleaseFetcher</span></a></span><span> </span><span class="hs-glyph">::</span><span>
@@ -642,12 +642,12 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span id="line-145"></span><span>  </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-146"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#PackageFetcher"><span class="hs-identifier hs-type">PackageFetcher</span></a></span><span>
 </span><span id="line-147"></span><span id="gitHubReleaseFetcher"><span class="annot"><span class="annottext">gitHubReleaseFetcher :: (Text, Text) -&gt; Text -&gt; PackageFetcher
-</span><a href="NvFetcher.NixFetcher.html#gitHubReleaseFetcher"><span class="hs-identifier hs-var hs-var">gitHubReleaseFetcher</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679297180"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297180"><span class="hs-identifier hs-var">owner</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679297179"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297179"><span class="hs-identifier hs-var">repo</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679297178"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297178"><span class="hs-identifier hs-var">fp</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Text
-</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679297177"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297177"><span class="hs-identifier hs-var">ver</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><a href="NvFetcher.NixFetcher.html#gitHubReleaseFetcher"><span class="hs-identifier hs-var hs-var">gitHubReleaseFetcher</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679298050"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298050"><span class="hs-identifier hs-var">owner</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679298049"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298049"><span class="hs-identifier hs-var">repo</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679298048"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298048"><span class="hs-identifier hs-var">fp</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Text
+</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679298047"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298047"><span class="hs-identifier hs-var">ver</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-148"></span><span>  </span><span class="annot"><span class="annottext">Text -&gt; NixFetcher 'Fresh
 </span><a href="NvFetcher.NixFetcher.html#urlFetcher"><span class="hs-identifier hs-var">urlFetcher</span></a></span><span>
 </span><span id="line-149"></span><span>    </span><span class="annot"><span class="">[trimming|https://github.com/$owner/$repo/releases/download/$ver/$fp|]</span></span><span>
@@ -655,12 +655,12 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span id="line-151"></span><span class="hs-comment">-- | Create a fetcher from url</span><span>
 </span><span id="line-152"></span><span class="annot"><a href="NvFetcher.NixFetcher.html#urlFetcher"><span class="hs-identifier hs-type">urlFetcher</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fresh"><span class="hs-identifier hs-type">Fresh</span></a></span><span>
 </span><span id="line-153"></span><span id="urlFetcher"><span class="annot"><span class="annottext">urlFetcher :: Text -&gt; NixFetcher 'Fresh
-</span><a href="NvFetcher.NixFetcher.html#urlFetcher"><span class="hs-identifier hs-var hs-var">urlFetcher</span></a></span></span><span> </span><span id="local-6989586621679297176"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297176"><span class="hs-identifier hs-var">url</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; FetchResult 'Fresh -&gt; NixFetcher 'Fresh
+</span><a href="NvFetcher.NixFetcher.html#urlFetcher"><span class="hs-identifier hs-var hs-var">urlFetcher</span></a></span></span><span> </span><span id="local-6989586621679298046"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298046"><span class="hs-identifier hs-var">url</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; FetchResult 'Fresh -&gt; NixFetcher 'Fresh
 forall (k :: FetchStatus).
 Text -&gt; Maybe Text -&gt; FetchResult k -&gt; NixFetcher k
 </span><a href="NvFetcher.Types.html#FetchUrl"><span class="hs-identifier hs-var">FetchUrl</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297176"><span class="hs-identifier hs-var">url</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679298046"><span class="hs-identifier hs-var">url</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Text
 forall a. Maybe a
 </span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
 </span><span id="line-154"></span><span>
@@ -670,11 +670,11 @@ forall a. Maybe a
 </span><span id="line-158"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-159"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#PackageFetcher"><span class="hs-identifier hs-type">PackageFetcher</span></a></span><span>
 </span><span id="line-160"></span><span id="openVsxFetcher"><span class="annot"><span class="annottext">openVsxFetcher :: (Text, Text) -&gt; PackageFetcher
-</span><a href="NvFetcher.NixFetcher.html#openVsxFetcher"><span class="hs-identifier hs-var hs-var">openVsxFetcher</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679297175"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297175"><span class="hs-identifier hs-var">publisher</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679297174"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297174"><span class="hs-identifier hs-var">extName</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Text
-</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679297173"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297173"><span class="hs-identifier hs-var">ver</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><a href="NvFetcher.NixFetcher.html#openVsxFetcher"><span class="hs-identifier hs-var hs-var">openVsxFetcher</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679298045"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298045"><span class="hs-identifier hs-var">publisher</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679298044"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298044"><span class="hs-identifier hs-var">extName</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Text
+</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679298043"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298043"><span class="hs-identifier hs-var">ver</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-161"></span><span>  </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; FetchResult 'Fresh -&gt; NixFetcher 'Fresh
 forall (k :: FetchStatus).
 Text -&gt; Maybe Text -&gt; FetchResult k -&gt; NixFetcher k
@@ -691,11 +691,11 @@ forall a. a -&gt; Maybe a
 </span><span id="line-169"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-170"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.html#PackageFetcher"><span class="hs-identifier hs-type">PackageFetcher</span></a></span><span>
 </span><span id="line-171"></span><span id="vscodeMarketplaceFetcher"><span class="annot"><span class="annottext">vscodeMarketplaceFetcher :: (Text, Text) -&gt; PackageFetcher
-</span><a href="NvFetcher.NixFetcher.html#vscodeMarketplaceFetcher"><span class="hs-identifier hs-var hs-var">vscodeMarketplaceFetcher</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679297172"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297172"><span class="hs-identifier hs-var">publisher</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679297171"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297171"><span class="hs-identifier hs-var">extName</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Text
-</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679297170"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297170"><span class="hs-identifier hs-var">ver</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><a href="NvFetcher.NixFetcher.html#vscodeMarketplaceFetcher"><span class="hs-identifier hs-var hs-var">vscodeMarketplaceFetcher</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679298042"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298042"><span class="hs-identifier hs-var">publisher</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679298041"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298041"><span class="hs-identifier hs-var">extName</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Text
+</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679298040"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298040"><span class="hs-identifier hs-var">ver</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-172"></span><span>  </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; FetchResult 'Fresh -&gt; NixFetcher 'Fresh
 forall (k :: FetchStatus).
 Text -&gt; Maybe Text -&gt; FetchResult k -&gt; NixFetcher k
@@ -709,9 +709,9 @@ forall a. a -&gt; Maybe a
 </span><span id="line-177"></span><span class="hs-comment">-- | Create a fetcher from url, using fetchTarball</span><span>
 </span><span id="line-178"></span><span class="annot"><a href="NvFetcher.NixFetcher.html#tarballFetcher"><span class="hs-identifier hs-type">tarballFetcher</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fresh"><span class="hs-identifier hs-type">Fresh</span></a></span><span>
 </span><span id="line-179"></span><span id="tarballFetcher"><span class="annot"><span class="annottext">tarballFetcher :: Text -&gt; NixFetcher 'Fresh
-</span><a href="NvFetcher.NixFetcher.html#tarballFetcher"><span class="hs-identifier hs-var hs-var">tarballFetcher</span></a></span></span><span> </span><span id="local-6989586621679297169"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297169"><span class="hs-identifier hs-var">url</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; FetchResult 'Fresh -&gt; NixFetcher 'Fresh
+</span><a href="NvFetcher.NixFetcher.html#tarballFetcher"><span class="hs-identifier hs-var hs-var">tarballFetcher</span></a></span></span><span> </span><span id="local-6989586621679298039"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679298039"><span class="hs-identifier hs-var">url</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; FetchResult 'Fresh -&gt; NixFetcher 'Fresh
 forall (k :: FetchStatus). Text -&gt; FetchResult k -&gt; NixFetcher k
 </span><a href="NvFetcher.Types.html#FetchTarball"><span class="hs-identifier hs-var">FetchTarball</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679297169"><span class="hs-identifier hs-var">url</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679298039"><span class="hs-identifier hs-var">url</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
 </span><span id="line-180"></span></pre></body></html>

@@ -12,7 +12,7 @@ module NvFetcher.Config
 
 -- | Nvfetcher configuration
 data Config
-Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Config
+Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Bool -> Config
 [shakeConfig] :: Config -> ShakeOptions
 [buildDir] :: Config -> FilePath
 [customRules] :: Config -> Rules ()
@@ -20,6 +20,7 @@ Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int 
 [actionAfterClean] :: Config -> Action ()
 [retry] :: Config -> Int
 [filterRegex] :: Config -> Maybe String
+[cacheNvchecker] :: Config -> Bool
 instance Data.Default.Class.Default NvFetcher.Config.Config
 
 
@@ -120,10 +121,10 @@ data NvcheckerResult
 NvcheckerResult :: Version -> Maybe Version -> Bool -> NvcheckerResult
 [nvNow] :: NvcheckerResult -> Version
 
--- | shake restores it from last run
+-- | last result of this nvchecker rule TODO: consider removing this field
 [nvOld] :: NvcheckerResult -> Maybe Version
 
--- | stale means even <a>nvNow</a> comes from json file or last run and we
+-- | stale means even <a>nvNow</a> comes from json file (last run) and we
 --   actually didn't run nvchecker this time. <a>nvOld</a> will be
 --   <a>Nothing</a> in this case.
 [nvStale] :: NvcheckerResult -> Bool
@@ -425,15 +426,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_aegM k_aGXo. Lens (NixFetcher k_aegM) (NixFetcher k_aGXo) (FetchResult k_aegM) (FetchResult k_aGXo)
-rev :: forall k_aegM. Traversal' (NixFetcher k_aegM) Version
-name :: forall k_aegM. Traversal' (NixFetcher k_aegM) (Maybe Text)
-leaveDotGit :: forall k_aegM. Traversal' (NixFetcher k_aegM) Bool
-furl :: forall k_aegM. Traversal' (NixFetcher k_aegM) Text
-frepo :: forall k_aegM. Traversal' (NixFetcher k_aegM) Text
-fowner :: forall k_aegM. Traversal' (NixFetcher k_aegM) Text
-fetchSubmodules :: forall k_aegM. Traversal' (NixFetcher k_aegM) Bool
-deepClone :: forall k_aegM. Traversal' (NixFetcher k_aegM) Bool
+sha256 :: forall k_aeip k_aGZ1. Lens (NixFetcher k_aeip) (NixFetcher k_aGZ1) (FetchResult k_aeip) (FetchResult k_aGZ1)
+rev :: forall k_aeip. Traversal' (NixFetcher k_aeip) Version
+name :: forall k_aeip. Traversal' (NixFetcher k_aeip) (Maybe Text)
+leaveDotGit :: forall k_aeip. Traversal' (NixFetcher k_aeip) Bool
+furl :: forall k_aeip. Traversal' (NixFetcher k_aeip) Text
+frepo :: forall k_aeip. Traversal' (NixFetcher k_aeip) Text
+fowner :: forall k_aeip. Traversal' (NixFetcher k_aeip) Text
+fetchSubmodules :: forall k_aeip. Traversal' (NixFetcher k_aeip) Bool
+deepClone :: forall k_aeip. Traversal' (NixFetcher k_aeip) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -494,6 +495,12 @@ updateLastVersion :: PackageKey -> Version -> Action ()
 
 -- | Get all initial versions
 getAllOnDiskVersions :: Action (Map PackageKey Version)
+
+-- | Get updated version of a package
+getLastVersionUpdated :: PackageKey -> Action (Maybe Version)
+
+-- | Get if <a>cacheNvchecker</a> is enabled
+nvcheckerCacheEnabled :: Action Bool
 
 
 -- | <a>NixFetcher</a> is used to describe how to fetch package sources.
@@ -971,7 +978,7 @@ instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
 --   Meanwhile, we lose the capabilities of tracking version updates, i.e.
 --   normally nvchecker will help us maintain a list of old versions, so
 --   that we are able to know which package's version is updated in this
---   run. Fortunately, we can reimplement this using shake database, see
+--   run. Fortunately, we can reimplement this in shake, see
 --   <a>nvcheckerRule</a> for details.
 module NvFetcher.Nvchecker
 data VersionSortMethod
@@ -1046,10 +1053,10 @@ data NvcheckerResult
 NvcheckerResult :: Version -> Maybe Version -> Bool -> NvcheckerResult
 [nvNow] :: NvcheckerResult -> Version
 
--- | shake restores it from last run
+-- | last result of this nvchecker rule TODO: consider removing this field
 [nvOld] :: NvcheckerResult -> Maybe Version
 
--- | stale means even <a>nvNow</a> comes from json file or last run and we
+-- | stale means even <a>nvNow</a> comes from json file (last run) and we
 --   actually didn't run nvchecker this time. <a>nvOld</a> will be
 --   <a>Nothing</a> in this case.
 [nvStale] :: NvcheckerResult -> Bool
