@@ -40,8 +40,7 @@
 --
 -- All shake options are inherited.
 module NvFetcher
-  ( Args (..),
-    runNvFetcher,
+  ( runNvFetcher,
     runNvFetcher',
     runNvFetcherNoCLI,
     applyCliOptions,
@@ -79,48 +78,35 @@ import NvFetcher.Utils (getDataDir)
 import qualified System.Directory.Extra as D
 import Text.Regex.TDFA ((=~))
 
--- | Arguments for running nvfetcher
-data Args = Args
-  { argConfig :: Config,
-    argTarget :: String
-  }
-
-instance Default Args where
-  def = Args def "build"
-
 -- | Run nvfetcher with CLI options
 --
--- This function calls 'runNvFetcherNoCLI', using 'Args' from 'CLIOptions'.
+-- This function calls 'runNvFetcherNoCLI', using 'def' 'Config' overridden by 'CLIOptions'.
 -- Use this function to create your own Haskell executable program.
 runNvFetcher :: PackageSet () -> IO ()
 runNvFetcher = runNvFetcher' def
 
--- | Similar to 'runNvFetcher', but uses custom @args@ instead of 'def' arg
-runNvFetcher' :: Args -> PackageSet () -> IO ()
-runNvFetcher' args packageSet =
-  getCLIOptions cliOptionsParser >>= flip runNvFetcherNoCLI packageSet . applyCliOptions args
+-- | Similar to 'runNvFetcher', but uses custom @config@ instead of 'def' overridden by 'CLIOptions'
+runNvFetcher' :: Config -> PackageSet () -> IO ()
+runNvFetcher' config packageSet =
+  getCLIOptions cliOptionsParser >>= \cli -> runNvFetcherNoCLI (applyCliOptions config cli) (optTarget cli) packageSet
 
--- | Apply 'CLIOptions' to 'Args'
-applyCliOptions :: Args -> CLIOptions -> Args
-applyCliOptions args CLIOptions {..} =
-  args
-    { argConfig =
-        (argConfig args)
-          { buildDir = optBuildDir,
-            actionAfterBuild = do
-              whenJust optLogPath logChangesToFile
-              when optCommit commitChanges
-              actionAfterBuild (argConfig args),
-            shakeConfig =
-              (shakeConfig $ argConfig args)
-                { shakeTimings = optTiming,
-                  shakeVerbosity = if optVerbose then Verbose else Info,
-                  shakeThreads = optThreads
-                },
-            filterRegex = optPkgNameFilter,
-            retry = optRetry
+-- | Apply 'CLIOptions' to 'Config'
+applyCliOptions :: Config -> CLIOptions -> Config
+applyCliOptions config CLIOptions {..} =
+  config
+    { buildDir = optBuildDir,
+      actionAfterBuild = do
+        whenJust optLogPath logChangesToFile
+        when optCommit commitChanges
+        actionAfterBuild config,
+      shakeConfig =
+        (shakeConfig config)
+          { shakeTimings = optTiming,
+            shakeVerbosity = if optVerbose then Verbose else Info,
+            shakeThreads = optThreads
           },
-      argTarget = optTarget
+      filterRegex = optPkgNameFilter,
+      retry = optRetry
     }
 
 logChangesToFile :: FilePath -> Action ()
@@ -157,8 +143,8 @@ parseLastVersions jsonFile =
     _ -> pure mempty
 
 -- | Entry point of nvfetcher
-runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
-runNvFetcherNoCLI args@Args {argConfig = config@Config {..}, ..} packageSet = do
+runNvFetcherNoCLI :: Config -> Target -> PackageSet () -> IO ()
+runNvFetcherNoCLI config@Config {..} target packageSet = do
   pkgs <- Map.map pinIfUnmatch <$> runPackageSet packageSet
   lastVersions <- parseLastVersions $ buildDir </> generatedJsonFileName
   shakeDir <- getDataDir
@@ -168,8 +154,8 @@ runNvFetcherNoCLI args@Args {argConfig = config@Config {..}, ..} packageSet = do
   shakeExtras <- initShakeExtras (config {shakeConfig = shakeOptions1}) pkgs $ fromMaybe mempty lastVersions
   -- Set shakeExtra
   let shakeOptions2 = shakeOptions1 {shakeExtra = addShakeExtra shakeExtras (shakeExtra shakeConfig)}
-      rules = mainRules args
-  shake shakeOptions2 $ want [argTarget] >> rules
+      rules = mainRules config
+  shake shakeOptions2 $ want [show target] >> rules
   where
     -- Don't touch already pinned packages
     pinIfUnmatch x@Package {..}
@@ -184,8 +170,8 @@ runNvFetcherNoCLI args@Args {argConfig = config@Config {..}, ..} packageSet = do
 
 --------------------------------------------------------------------------------
 
-mainRules :: Args -> Rules ()
-mainRules Args {argConfig = Config {..}} = do
+mainRules :: Config -> Rules ()
+mainRules Config {..} = do
   "clean" ~> do
     getBuildDir >>= flip removeFilesAfter ["//*"]
     actionAfterClean
