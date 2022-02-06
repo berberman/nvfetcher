@@ -1159,7 +1159,7 @@ module NvFetcher.Options
 
 -- | Options for nvfetcher CLI
 data CLIOptions
-CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> String -> CLIOptions
+CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> Target -> CLIOptions
 [optBuildDir] :: CLIOptions -> FilePath
 [optCommit] :: CLIOptions -> Bool
 [optLogPath] :: CLIOptions -> Maybe FilePath
@@ -1168,12 +1168,17 @@ CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -
 [optTiming] :: CLIOptions -> Bool
 [optVerbose] :: CLIOptions -> Bool
 [optPkgNameFilter] :: CLIOptions -> Maybe String
-[optTarget] :: CLIOptions -> String
+[optTarget] :: CLIOptions -> Target
+data Target
+Build :: Target
+Clean :: Target
 cliOptionsParser :: Parser CLIOptions
 
 -- | Parse nvfetcher CLI options
 getCLIOptions :: Parser a -> IO a
+instance GHC.Classes.Eq NvFetcher.Options.Target
 instance GHC.Show.Show NvFetcher.Options.CLIOptions
+instance GHC.Show.Show NvFetcher.Options.Target
 
 
 -- | The main module of nvfetcher. If you want to create CLI program with
@@ -1210,31 +1215,24 @@ instance GHC.Show.Show NvFetcher.Options.CLIOptions
 --   All shake options are inherited.
 module NvFetcher
 
--- | Arguments for running nvfetcher
-data Args
-Args :: Config -> String -> Args
-[argConfig] :: Args -> Config
-[argTarget] :: Args -> String
-
 -- | Run nvfetcher with CLI options
 --   
---   This function calls <a>runNvFetcherNoCLI</a>, using <a>Args</a> from
---   <a>CLIOptions</a>. Use this function to create your own Haskell
---   executable program.
+--   This function calls <a>runNvFetcherNoCLI</a>, using <a>def</a>
+--   <a>Config</a> overridden by <a>CLIOptions</a>. Use this function to
+--   create your own Haskell executable program.
 runNvFetcher :: PackageSet () -> IO ()
 
--- | Similar to <a>runNvFetcher</a>, but uses custom <tt>args</tt> instead
---   of <a>def</a> arg
-runNvFetcher' :: Args -> PackageSet () -> IO ()
+-- | Similar to <a>runNvFetcher</a>, but uses custom <tt>config</tt>
+--   instead of <a>def</a> overridden by <a>CLIOptions</a>
+runNvFetcher' :: Config -> PackageSet () -> IO ()
 
 -- | Entry point of nvfetcher
-runNvFetcherNoCLI :: Args -> PackageSet () -> IO ()
+runNvFetcherNoCLI :: Config -> Target -> PackageSet () -> IO ()
 
--- | Apply <a>CLIOptions</a> to <a>Args</a>
-applyCliOptions :: Args -> CLIOptions -> Args
+-- | Apply <a>CLIOptions</a> to <a>Config</a>
+applyCliOptions :: Config -> CLIOptions -> Config
 
 -- | <pre>
 --   Parse generated.nix
 --   </pre>
 parseLastVersions :: FilePath -> IO (Maybe (Map PackageKey Version))
-instance Data.Default.Class.Default NvFetcher.Args
