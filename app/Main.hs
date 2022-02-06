@@ -33,4 +33,4 @@ main = do
     Left e -> error $ T.unpack $ Toml.prettyTomlDecodeError $ Toml.ParseError e
     Right x -> case parseConfig x of
       Left e -> error $ T.unpack $ prettyPackageConfigParseError e
-      Right pkgs -> runNvFetcherNoCLI (applyCliOptions def opt) $ purePackageSet pkgs
+      Right pkgs -> runNvFetcherNoCLI (applyCliOptions def opt) (optTarget opt) $ purePackageSet pkgs

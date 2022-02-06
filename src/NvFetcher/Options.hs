@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 -- | Copyright: (c) 2021 berberman
@@ -9,6 +10,7 @@
 -- CLI interface of nvfetcher
 module NvFetcher.Options
   ( CLIOptions (..),
+    Target (..),
     cliOptionsParser,
     getCLIOptions,
   )
@@ -16,6 +18,19 @@ where
 
 import Options.Applicative.Simple
 import qualified Paths_nvfetcher as Paths
+
+data Target = Build | Clean
+  deriving (Eq)
+
+instance Show Target where
+  show Build = "build"
+  show Clean = "clean"
+
+targetParser :: ReadM Target
+targetParser = maybeReader $ \case
+  "build" -> Just Build
+  "clean" -> Just Clean
+  _ -> Nothing
 
 -- | Options for nvfetcher CLI
 data CLIOptions = CLIOptions
@@ -27,7 +42,7 @@ data CLIOptions = CLIOptions
     optTiming :: Bool,
     optVerbose :: Bool,
     optPkgNameFilter :: Maybe String,
-    optTarget :: String
+    optTarget :: Target
   }
   deriving (Show)
 
@@ -83,11 +98,12 @@ cliOptionsParser =
               <> help "Regex to filter packages to be updated"
           )
       )
-    <*> strArgument
+    <*> argument
+      targetParser
       ( metavar "TARGET"
           <> help "Two targets are available: 1.build  2.clean"
-          <> value "build"
-          <> completer (listCompleter ["build", "clean"])
+          <> value Build
+          <> completer (listCompleter [show Build, show Clean])
           <> showDefault
       )
 
