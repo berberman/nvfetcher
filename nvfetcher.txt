@@ -426,15 +426,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_aeip k_aGZ1. Lens (NixFetcher k_aeip) (NixFetcher k_aGZ1) (FetchResult k_aeip) (FetchResult k_aGZ1)
-rev :: forall k_aeip. Traversal' (NixFetcher k_aeip) Version
-name :: forall k_aeip. Traversal' (NixFetcher k_aeip) (Maybe Text)
-leaveDotGit :: forall k_aeip. Traversal' (NixFetcher k_aeip) Bool
-furl :: forall k_aeip. Traversal' (NixFetcher k_aeip) Text
-frepo :: forall k_aeip. Traversal' (NixFetcher k_aeip) Text
-fowner :: forall k_aeip. Traversal' (NixFetcher k_aeip) Text
-fetchSubmodules :: forall k_aeip. Traversal' (NixFetcher k_aeip) Bool
-deepClone :: forall k_aeip. Traversal' (NixFetcher k_aeip) Bool
+sha256 :: forall k_iIEc k_aIEi. Lens (NixFetcher k_iIEc) (NixFetcher k_aIEi) (FetchResult k_iIEc) (FetchResult k_aIEi)
+rev :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Version
+name :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) (Maybe Text)
+leaveDotGit :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Bool
+furl :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Text
+frepo :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Text
+fowner :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Text
+fetchSubmodules :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Bool
+deepClone :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -852,9 +852,46 @@ type AttachMany xs arg = forall r. PackageSet (Prod r) -> arg -> PackageSet (Pro
 --   <tt>RuntimeRep</tt> type argument is marked as <tt>Inferred</tt>,
 --   meaning that it is not available for visible type application. This
 --   means the typechecker will accept <tt>coerce @Int @Age 42</tt>.
-coerce :: forall (k :: RuntimeRep) (a :: TYPE k) (b :: TYPE k). Coercible a b => a -> b
+coerce :: forall {k :: RuntimeRep} (a :: TYPE k) (b :: TYPE k). Coercible a b => a -> b
 
--- | Lift a computation from the <a>IO</a> monad.
+-- | Lift a computation from the <a>IO</a> monad. This allows us to run IO
+--   computations in any monadic stack, so long as it supports these kinds
+--   of operations (i.e. <a>IO</a> is the base monad for the stack).
+--   
+--   <h3><b>Example</b></h3>
+--   
+--   <pre>
+--   import Control.Monad.Trans.State -- from the "transformers" library
+--   
+--   printState :: Show s =&gt; StateT s IO ()
+--   printState = do
+--     state &lt;- get
+--     liftIO $ print state
+--   </pre>
+--   
+--   Had we omitted <tt><a>liftIO</a></tt>, we would have ended up with
+--   this error:
+--   
+--   <pre>
+--   • Couldn't match type ‘IO’ with ‘StateT s IO’
+--    Expected type: StateT s IO ()
+--      Actual type: IO ()
+--   </pre>
+--   
+--   The important part here is the mismatch between <tt>StateT s IO
+--   ()</tt> and <tt><a>IO</a> ()</tt>.
+--   
+--   Luckily, we know of a function that takes an <tt><a>IO</a> a</tt> and
+--   returns an <tt>(m a)</tt>: <tt><a>liftIO</a></tt>, enabling us to run
+--   the program and see the expected results:
+--   
+--   <pre>
+--   &gt; evalStateT printState "hello"
+--   "hello"
+--   
+--   &gt; evalStateT printState 3
+--   3
+--   </pre>
 liftIO :: MonadIO m => IO a -> m a
 
 -- | <a>&amp;</a> is a reverse application operator. This provides

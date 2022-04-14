@@ -41,178 +41,166 @@
 </span><span id="line-41"></span><span class="hs-comment">-- | Rules of fetch rust git dependencies</span><span>
 </span><span id="line-42"></span><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#fetchRustGitDepsRule"><span class="hs-identifier hs-type">fetchRustGitDepsRule</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Rules</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
 </span><span id="line-43"></span><span id="fetchRustGitDepsRule"><span class="annot"><span class="annottext">fetchRustGitDepsRule :: Rules ()
-</span><a href="NvFetcher.FetchRustGitDeps.html#fetchRustGitDepsRule"><span class="hs-identifier hs-var hs-var">fetchRustGitDepsRule</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Rules (FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum))
+</span><a href="NvFetcher.FetchRustGitDeps.html#fetchRustGitDepsRule"><span class="hs-identifier hs-var hs-var">fetchRustGitDepsRule</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Rules (FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum))
 -&gt; Rules ()
 forall (f :: * -&gt; *) a. Functor f =&gt; f a -&gt; f ()
-</span><span class="hs-identifier hs-var">void</span></span><span> </span><span class="annot"><span class="annottext">(Rules (FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum))
+</span><span class="hs-identifier hs-var">void</span></span><span> </span><span class="annot"><span class="annottext">(Rules (FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum))
  -&gt; Rules ())
--&gt; Rules
-     (FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum))
+-&gt; Rules (FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum))
 -&gt; Rules ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span>
-</span><span id="line-44"></span><span>  </span><span class="annot"><span class="annottext">(FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum))
--&gt; Rules
-     (FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum))
+</span><span id="line-44"></span><span>  </span><span class="annot"><span class="annottext">(FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum))
+-&gt; Rules (FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum))
 forall q a.
 (RuleResult q ~ a, ShakeValue q, ShakeValue a, Partial) =&gt;
 (q -&gt; Action a) -&gt; Rules (q -&gt; Action a)
-</span><span class="hs-identifier hs-var">addOracleCache</span></span><span> </span><span class="annot"><span class="annottext">((FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum))
- -&gt; Rules
-      (FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum)))
--&gt; (FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum))
--&gt; Rules
-     (FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum))
+</span><span class="hs-identifier hs-var">addOracleCache</span></span><span> </span><span class="annot"><span class="annottext">((FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum))
+ -&gt; Rules (FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum)))
+-&gt; (FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum))
+-&gt; Rules (FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum))
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchRustGitDepsQ"><span class="hs-identifier hs-type">FetchRustGitDepsQ</span></a></span><span> </span><span id="local-6989586621679299630"><span class="annot"><span class="annottext">NixFetcher 'Fetched
-</span><a href="#local-6989586621679299630"><span class="hs-identifier hs-var">fetcher</span></a></span></span><span> </span><span id="local-6989586621679299629"><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679299629"><span class="hs-identifier hs-var">lockPath</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-45"></span><span>    </span><span id="local-6989586621679299628"><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679299628"><span class="hs-identifier hs-var">cargoLock</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[PackageName] -&gt; PackageName
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchRustGitDepsQ"><span class="hs-identifier hs-type">FetchRustGitDepsQ</span></a></span><span> </span><span id="local-6989586621679314019"><span class="annot"><span class="annottext">NixFetcher 'Fetched
+</span><a href="#local-6989586621679314019"><span class="hs-identifier hs-var">fetcher</span></a></span></span><span> </span><span id="local-6989586621679314018"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679314018"><span class="hs-identifier hs-var">lockPath</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-45"></span><span>    </span><span id="local-6989586621679314017"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679314017"><span class="hs-identifier hs-var">cargoLock</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[Text] -&gt; Text
 forall a. [a] -&gt; a
-</span><span class="hs-identifier hs-var">head</span></span><span> </span><span class="annot"><span class="annottext">([PackageName] -&gt; PackageName)
--&gt; (HashMap FilePath PackageName -&gt; [PackageName])
--&gt; HashMap FilePath PackageName
--&gt; PackageName
+</span><span class="hs-identifier hs-var">head</span></span><span> </span><span class="annot"><span class="annottext">([Text] -&gt; Text)
+-&gt; (HashMap String Text -&gt; [Text]) -&gt; HashMap String Text -&gt; Text
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
-</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">HashMap FilePath PackageName -&gt; [PackageName]
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">HashMap String Text -&gt; [Text]
 forall k v. HashMap k v -&gt; [v]
-</span><span class="hs-identifier hs-var">HMap.elems</span></span><span> </span><span class="annot"><span class="annottext">(HashMap FilePath PackageName -&gt; PackageName)
--&gt; Action (HashMap FilePath PackageName) -&gt; Action PackageName
+</span><span class="hs-identifier hs-var">HMap.elems</span></span><span> </span><span class="annot"><span class="annottext">(HashMap String Text -&gt; Text)
+-&gt; Action (HashMap String Text) -&gt; Action Text
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
-</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fetched
--&gt; FilePath -&gt; Action (HashMap FilePath PackageName)
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fetched -&gt; String -&gt; Action (HashMap String Text)
 </span><a href="NvFetcher.ExtractSrc.html#extractSrc"><span class="hs-identifier hs-var">extractSrc</span></a></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fetched
-</span><a href="#local-6989586621679299630"><span class="hs-identifier hs-var">fetcher</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679299629"><span class="hs-identifier hs-var">lockPath</span></a></span><span>
-</span><span id="line-46"></span><span>    </span><span id="local-6989586621679299622"><span class="annot"><span class="annottext">[RustDep]
-</span><a href="#local-6989586621679299622"><span class="hs-identifier hs-var">deps</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">TomlCodec [RustDep]
--&gt; PackageName -&gt; Either [TomlDecodeError] [RustDep]
-forall a. TomlCodec a -&gt; PackageName -&gt; Either [TomlDecodeError] a
+</span><a href="#local-6989586621679314019"><span class="hs-identifier hs-var">fetcher</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679314018"><span class="hs-identifier hs-var">lockPath</span></a></span><span>
+</span><span id="line-46"></span><span>    </span><span id="local-6989586621679314011"><span class="annot"><span class="annottext">[RustDep]
+</span><a href="#local-6989586621679314011"><span class="hs-identifier hs-var">deps</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">TomlCodec [RustDep] -&gt; Text -&gt; Either [TomlDecodeError] [RustDep]
+forall a. TomlCodec a -&gt; Text -&gt; Either [TomlDecodeError] a
 </span><span class="hs-identifier hs-var">Toml.decode</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">TomlCodec RustDep -&gt; Key -&gt; TomlCodec [RustDep]
 forall a. TomlCodec a -&gt; Key -&gt; TomlCodec [a]
 </span><span class="hs-identifier hs-var">Toml.list</span></span><span> </span><span class="annot"><span class="annottext">TomlCodec RustDep
 </span><a href="NvFetcher.FetchRustGitDeps.html#rustDepCodec"><span class="hs-identifier hs-var">rustDepCodec</span></a></span><span> </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;package&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679299628"><span class="hs-identifier hs-var">cargoLock</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-47"></span><span>      </span><span class="annot"><span class="hs-identifier hs-type">Right</span></span><span> </span><span id="local-6989586621679299618"><span class="annot"><span class="annottext">[RustDep]
-</span><a href="#local-6989586621679299618"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">[RustDep] -&gt; Action [RustDep]
+</span><span class="hs-string">&quot;package&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679314017"><span class="hs-identifier hs-var">cargoLock</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-47"></span><span>      </span><span class="annot"><span class="hs-identifier hs-type">Right</span></span><span> </span><span id="local-6989586621679314007"><span class="annot"><span class="annottext">[RustDep]
+</span><a href="#local-6989586621679314007"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">[RustDep] -&gt; Action [RustDep]
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">([RustDep] -&gt; Action [RustDep]) -&gt; [RustDep] -&gt; Action [RustDep]
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(RustDep -&gt; Maybe PackageName) -&gt; [RustDep] -&gt; [RustDep]
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(RustDep -&gt; Maybe Text) -&gt; [RustDep] -&gt; [RustDep]
 forall b a. Ord b =&gt; (a -&gt; b) -&gt; [a] -&gt; [a]
-</span><span class="hs-identifier hs-var">nubOrdOn</span></span><span> </span><span class="annot"><span class="annottext">RustDep -&gt; Maybe PackageName
+</span><span class="hs-identifier hs-var">nubOrdOn</span></span><span> </span><span class="annot"><span class="annottext">RustDep -&gt; Maybe Text
 </span><a href="NvFetcher.FetchRustGitDeps.html#rrawSrc"><span class="hs-identifier hs-var hs-var">rrawSrc</span></a></span><span> </span><span class="annot"><span class="annottext">[RustDep]
-</span><a href="#local-6989586621679299618"><span class="hs-identifier hs-var">r</span></a></span><span>
-</span><span id="line-48"></span><span>      </span><span class="annot"><span class="hs-identifier hs-type">Left</span></span><span> </span><span id="local-6989586621679299616"><span class="annot"><span class="annottext">[TomlDecodeError]
-</span><a href="#local-6989586621679299616"><span class="hs-identifier hs-var">err</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Action [RustDep]
-forall (m :: * -&gt; *) a. MonadFail m =&gt; FilePath -&gt; m a
-</span><span class="hs-identifier hs-var">fail</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action [RustDep]) -&gt; FilePath -&gt; Action [RustDep]
+</span><a href="#local-6989586621679314007"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-48"></span><span>      </span><span class="annot"><span class="hs-identifier hs-type">Left</span></span><span> </span><span id="local-6989586621679314005"><span class="annot"><span class="annottext">[TomlDecodeError]
+</span><a href="#local-6989586621679314005"><span class="hs-identifier hs-var">err</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Action [RustDep]
+forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; m a
+</span><span class="hs-identifier hs-var">fail</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action [RustDep]) -&gt; String -&gt; Action [RustDep]
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;Failed to parse Cargo.lock: &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;Failed to parse Cargo.lock: &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; FilePath
-</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[TomlDecodeError] -&gt; PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[TomlDecodeError] -&gt; Text
 </span><span class="hs-identifier hs-var">Toml.prettyTomlDecodeErrors</span></span><span> </span><span class="annot"><span class="annottext">[TomlDecodeError]
-</span><a href="#local-6989586621679299616"><span class="hs-identifier hs-var">err</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-49"></span><span>    </span><span id="local-6989586621679299613"><span class="annot"><span class="annottext">[(PackageName, Checksum)]
-</span><a href="#local-6989586621679299613"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span>
-</span><span id="line-50"></span><span>      </span><span class="annot"><span class="annottext">[Action (PackageName, Checksum)]
--&gt; Action [(PackageName, Checksum)]
+</span><a href="#local-6989586621679314005"><span class="hs-identifier hs-var">err</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-49"></span><span>    </span><span id="local-6989586621679314002"><span class="annot"><span class="annottext">[(Text, Checksum)]
+</span><a href="#local-6989586621679314002"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span>
+</span><span id="line-50"></span><span>      </span><span class="annot"><span class="annottext">[Action (Text, Checksum)] -&gt; Action [(Text, Checksum)]
 forall a. [Action a] -&gt; Action [a]
 </span><span class="hs-identifier hs-var">parallel</span></span><span>
-</span><span id="line-51"></span><span>        </span><span class="hs-special">[</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Parsec PackageName () ParsedGitSrc
--&gt; FilePath -&gt; PackageName -&gt; Either ParseError ParsedGitSrc
+</span><span id="line-51"></span><span>        </span><span class="hs-special">[</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Parsec Text () ParsedGitSrc
+-&gt; String -&gt; Text -&gt; Either ParseError ParsedGitSrc
 forall s t a.
 Stream s Identity t =&gt;
-Parsec s () a -&gt; FilePath -&gt; s -&gt; Either ParseError a
-</span><span class="hs-identifier hs-var">parse</span></span><span> </span><span class="annot"><span class="annottext">Parsec PackageName () ParsedGitSrc
-</span><a href="NvFetcher.FetchRustGitDeps.html#gitSrcParser"><span class="hs-identifier hs-var">gitSrcParser</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageName -&gt; FilePath
-</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679299609"><span class="hs-identifier hs-var">rname</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679299608"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-52"></span><span>            </span><span class="annot"><span class="hs-identifier hs-type">Right</span></span><span> </span><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#ParsedGitSrc"><span class="hs-identifier hs-type">ParsedGitSrc</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679299605"><span id="local-6989586621679299606"><span class="annot"><span class="annottext">PackageName
+Parsec s () a -&gt; String -&gt; s -&gt; Either ParseError a
+</span><span class="hs-identifier hs-var">parse</span></span><span> </span><span class="annot"><span class="annottext">Parsec Text () ParsedGitSrc
+</span><a href="NvFetcher.FetchRustGitDeps.html#gitSrcParser"><span class="hs-identifier hs-var">gitSrcParser</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; String
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679313998"><span class="hs-identifier hs-var">rname</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679313997"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-52"></span><span>            </span><span class="annot"><span class="hs-identifier hs-type">Right</span></span><span> </span><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#ParsedGitSrc"><span class="hs-identifier hs-type">ParsedGitSrc</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679313994"><span id="local-6989586621679313995"><span class="annot"><span class="annottext">Text
 Version
 pgsha :: ParsedGitSrc -&gt; Version
-pgurl :: ParsedGitSrc -&gt; PackageName
+pgurl :: ParsedGitSrc -&gt; Text
 pgsha :: Version
-pgurl :: PackageName
+pgurl :: Text
 </span><a href="NvFetcher.FetchRustGitDeps.html#pgsha"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
 </span><span id="line-53"></span><span>              </span><span class="hs-special">(</span><span class="annot"><span class="annottext">NixFetcher 'Fetched -&gt; FetchResult 'Fetched
 forall (k :: FetchStatus). NixFetcher k -&gt; FetchResult k
-</span><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var hs-var">_sha256</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679299601"><span class="annot"><span class="annottext">FetchResult 'Fetched
-</span><a href="#local-6989586621679299601"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fresh -&gt; Action (NixFetcher 'Fetched)
+</span><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var hs-var">_sha256</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679313990"><span class="annot"><span class="annottext">FetchResult 'Fetched
+</span><a href="#local-6989586621679313990"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fresh -&gt; Action (NixFetcher 'Fetched)
 </span><a href="NvFetcher.NixFetcher.html#prefetch"><span class="hs-identifier hs-var">prefetch</span></a></span><span> </span><span class="annot"><span class="annottext">(NixFetcher 'Fresh -&gt; Action (NixFetcher 'Fetched))
 -&gt; NixFetcher 'Fresh -&gt; Action (NixFetcher 'Fetched)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageFetcher
-</span><a href="NvFetcher.NixFetcher.html#gitFetcher"><span class="hs-identifier hs-var">gitFetcher</span></a></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679299606"><span class="hs-identifier hs-var">pgurl</span></a></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679299605"><span class="hs-identifier hs-var">pgsha</span></a></span><span>
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; PackageFetcher
+</span><a href="NvFetcher.NixFetcher.html#gitFetcher"><span class="hs-identifier hs-var">gitFetcher</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679313995"><span class="hs-identifier hs-var">pgurl</span></a></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679313994"><span class="hs-identifier hs-var">pgsha</span></a></span><span>
 </span><span id="line-54"></span><span>              </span><span class="hs-comment">-- @${name}-${version}@ -&gt; sha256</span><span>
-</span><span id="line-55"></span><span>              </span><span class="annot"><span class="annottext">(PackageName, Checksum) -&gt; Action (PackageName, Checksum)
+</span><span id="line-55"></span><span>              </span><span class="annot"><span class="annottext">(Text, Checksum) -&gt; Action (Text, Checksum)
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
-</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679299609"><span class="hs-identifier hs-var">rname</span></a></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679313998"><span class="hs-identifier hs-var">rname</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><span class="hs-string">&quot;-&quot;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;-&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; PackageName
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Text
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679299598"><span class="hs-identifier hs-var">rversion</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FetchResult 'Fetched
+</span><a href="#local-6989586621679313987"><span class="hs-identifier hs-var">rversion</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FetchResult 'Fetched
 Checksum
-</span><a href="#local-6989586621679299601"><span class="hs-identifier hs-var">sha256</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-56"></span><span>            </span><span class="annot"><span class="hs-identifier hs-type">Left</span></span><span> </span><span id="local-6989586621679299597"><span class="annot"><span class="annottext">ParseError
-</span><a href="#local-6989586621679299597"><span class="hs-identifier hs-var">err</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Action (PackageName, Checksum)
-forall (m :: * -&gt; *) a. MonadFail m =&gt; FilePath -&gt; m a
-</span><span class="hs-identifier hs-var">fail</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Action (PackageName, Checksum))
--&gt; FilePath -&gt; Action (PackageName, Checksum)
+</span><a href="#local-6989586621679313990"><span class="hs-identifier hs-var">sha256</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-56"></span><span>            </span><span class="annot"><span class="hs-identifier hs-type">Left</span></span><span> </span><span id="local-6989586621679313986"><span class="annot"><span class="annottext">ParseError
+</span><a href="#local-6989586621679313986"><span class="hs-identifier hs-var">err</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Action (Text, Checksum)
+forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; m a
+</span><span class="hs-identifier hs-var">fail</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action (Text, Checksum))
+-&gt; String -&gt; Action (Text, Checksum)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;Failed to parse git source in Cargo.lock: &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;Failed to parse git source in Cargo.lock: &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">ParseError -&gt; FilePath
-forall a. Show a =&gt; a -&gt; FilePath
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">ParseError -&gt; String
+forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">ParseError
-</span><a href="#local-6989586621679299597"><span class="hs-identifier hs-var">err</span></a></span><span>
-</span><span id="line-57"></span><span>          </span><span class="hs-glyph">|</span><span> </span><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#RustDep"><span class="hs-identifier hs-type">RustDep</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679299594"><span id="local-6989586621679299598"><span id="local-6989586621679299609"><span class="annot"><span class="annottext">Maybe PackageName
-PackageName
+</span><a href="#local-6989586621679313986"><span class="hs-identifier hs-var">err</span></a></span><span>
+</span><span id="line-57"></span><span>          </span><span class="hs-glyph">|</span><span> </span><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#RustDep"><span class="hs-identifier hs-type">RustDep</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679313983"><span id="local-6989586621679313987"><span id="local-6989586621679313998"><span class="annot"><span class="annottext">Maybe Text
+Text
 Version
 rversion :: RustDep -&gt; Version
-rname :: RustDep -&gt; PackageName
-rrawSrc :: Maybe PackageName
+rname :: RustDep -&gt; Text
+rrawSrc :: Maybe Text
 rversion :: Version
-rname :: PackageName
-rrawSrc :: RustDep -&gt; Maybe PackageName
+rname :: Text
+rrawSrc :: RustDep -&gt; Maybe Text
 </span><a href="NvFetcher.FetchRustGitDeps.html#rversion"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[RustDep]
-</span><a href="#local-6989586621679299622"><span class="hs-identifier hs-var">deps</span></a></span><span class="hs-special">,</span><span>
+</span><a href="#local-6989586621679314011"><span class="hs-identifier hs-var">deps</span></a></span><span class="hs-special">,</span><span>
 </span><span id="line-58"></span><span>            </span><span class="hs-comment">-- it's a dependency</span><span>
-</span><span id="line-59"></span><span>            </span><span id="local-6989586621679299608"><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679299608"><span class="hs-identifier hs-var">src</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Maybe PackageName -&gt; [PackageName]
+</span><span id="line-59"></span><span>            </span><span id="local-6989586621679313997"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679313997"><span class="hs-identifier hs-var">src</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Maybe Text -&gt; [Text]
 forall a. Maybe a -&gt; [a]
-</span><span class="hs-identifier hs-var">maybeToList</span></span><span> </span><span class="annot"><span class="annottext">Maybe PackageName
-</span><a href="#local-6989586621679299594"><span class="hs-identifier hs-var">rrawSrc</span></a></span><span class="hs-special">,</span><span>
+</span><span class="hs-identifier hs-var">maybeToList</span></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679313983"><span class="hs-identifier hs-var">rrawSrc</span></a></span><span class="hs-special">,</span><span>
 </span><span id="line-60"></span><span>            </span><span class="hs-comment">-- it's a git dependency</span><span>
-</span><span id="line-61"></span><span>            </span><span class="annot"><span class="annottext">PackageName
-</span><span class="hs-string">&quot;git+&quot;</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; PackageName -&gt; Bool
-</span><span class="hs-operator hs-var">`T.isPrefixOf`</span></span><span> </span><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679299608"><span class="hs-identifier hs-var">src</span></a></span><span>
+</span><span id="line-61"></span><span>            </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;git+&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Bool
+</span><span class="hs-operator hs-var">`T.isPrefixOf`</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679313997"><span class="hs-identifier hs-var">src</span></a></span><span>
 </span><span id="line-62"></span><span>        </span><span class="hs-special">]</span><span>
-</span><span id="line-63"></span><span>    </span><span class="annot"><span class="annottext">HashMap PackageName Checksum
--&gt; Action (HashMap PackageName Checksum)
+</span><span id="line-63"></span><span>    </span><span class="annot"><span class="annottext">HashMap Text Checksum -&gt; Action (HashMap Text Checksum)
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
-</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(HashMap PackageName Checksum
- -&gt; Action (HashMap PackageName Checksum))
--&gt; HashMap PackageName Checksum
--&gt; Action (HashMap PackageName Checksum)
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(HashMap Text Checksum -&gt; Action (HashMap Text Checksum))
+-&gt; HashMap Text Checksum -&gt; Action (HashMap Text Checksum)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[(PackageName, Checksum)] -&gt; HashMap PackageName Checksum
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[(Text, Checksum)] -&gt; HashMap Text Checksum
 forall k v. (Eq k, Hashable k) =&gt; [(k, v)] -&gt; HashMap k v
-</span><span class="hs-identifier hs-var">HMap.fromList</span></span><span> </span><span class="annot"><span class="annottext">[(PackageName, Checksum)]
-</span><a href="#local-6989586621679299613"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span class="hs-identifier hs-var">HMap.fromList</span></span><span> </span><span class="annot"><span class="annottext">[(Text, Checksum)]
+</span><a href="#local-6989586621679314002"><span class="hs-identifier hs-var">r</span></a></span><span>
 </span><span id="line-64"></span><span>
 </span><span id="line-65"></span><span class="hs-comment">-- | Run fetch rust git dependencies</span><span>
 </span><span id="line-66"></span><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#fetchRustGitDeps"><span class="hs-identifier hs-type">fetchRustGitDeps</span></a></span><span> </span><span class="hs-glyph">::</span><span>
@@ -221,46 +209,45 @@ forall k v. (Eq k, Hashable k) =&gt; [(k, v)] -&gt; HashMap k v
 </span><span id="line-69"></span><span>  </span><span class="hs-comment">-- | relative file path of @Cargo.lock@</span><span>
 </span><span id="line-70"></span><span>  </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-71"></span><span>  </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">HashMap</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-type">Checksum</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-72"></span><span id="fetchRustGitDeps"><span class="annot"><span class="annottext">fetchRustGitDeps :: NixFetcher 'Fetched
--&gt; FilePath -&gt; Action (HashMap PackageName Checksum)
-</span><a href="NvFetcher.FetchRustGitDeps.html#fetchRustGitDeps"><span class="hs-identifier hs-var hs-var">fetchRustGitDeps</span></a></span></span><span> </span><span id="local-6989586621679299589"><span class="annot"><span class="annottext">NixFetcher 'Fetched
-</span><a href="#local-6989586621679299589"><span class="hs-identifier hs-var">fetcher</span></a></span></span><span> </span><span id="local-6989586621679299588"><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679299588"><span class="hs-identifier hs-var">lockPath</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum)
+</span><span id="line-72"></span><span id="fetchRustGitDeps"><span class="annot"><span class="annottext">fetchRustGitDeps :: NixFetcher 'Fetched -&gt; String -&gt; Action (HashMap Text Checksum)
+</span><a href="NvFetcher.FetchRustGitDeps.html#fetchRustGitDeps"><span class="hs-identifier hs-var hs-var">fetchRustGitDeps</span></a></span></span><span> </span><span id="local-6989586621679313977"><span class="annot"><span class="annottext">NixFetcher 'Fetched
+</span><a href="#local-6989586621679313977"><span class="hs-identifier hs-var">fetcher</span></a></span></span><span> </span><span id="local-6989586621679313976"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679313976"><span class="hs-identifier hs-var">lockPath</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum)
 forall q a.
 (RuleResult q ~ a, ShakeValue q, ShakeValue a) =&gt;
 q -&gt; Action a
-</span><span class="hs-identifier hs-var">askOracle</span></span><span> </span><span class="annot"><span class="annottext">(FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum))
--&gt; FetchRustGitDepsQ -&gt; Action (HashMap PackageName Checksum)
+</span><span class="hs-identifier hs-var">askOracle</span></span><span> </span><span class="annot"><span class="annottext">(FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum))
+-&gt; FetchRustGitDepsQ -&gt; Action (HashMap Text Checksum)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fetched -&gt; FilePath -&gt; FetchRustGitDepsQ
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fetched -&gt; String -&gt; FetchRustGitDepsQ
 </span><a href="NvFetcher.Types.html#FetchRustGitDepsQ"><span class="hs-identifier hs-var">FetchRustGitDepsQ</span></a></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fetched
-</span><a href="#local-6989586621679299589"><span class="hs-identifier hs-var">fetcher</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679299588"><span class="hs-identifier hs-var">lockPath</span></a></span><span>
+</span><a href="#local-6989586621679313977"><span class="hs-identifier hs-var">fetcher</span></a></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679313976"><span class="hs-identifier hs-var">lockPath</span></a></span><span>
 </span><span id="line-73"></span><span>
 </span><span id="line-74"></span><span class="hs-keyword">data</span><span> </span><span id="ParsedGitSrc"><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#ParsedGitSrc"><span class="hs-identifier hs-var">ParsedGitSrc</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ParsedGitSrc"><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#ParsedGitSrc"><span class="hs-identifier hs-var">ParsedGitSrc</span></a></span></span><span>
 </span><span id="line-75"></span><span>  </span><span class="hs-special">{</span><span> </span><span class="hs-comment">-- | git url</span><span>
-</span><span id="line-76"></span><span>    </span><span id="pgurl"><span class="annot"><span class="annottext">ParsedGitSrc -&gt; PackageName
+</span><span id="line-76"></span><span>    </span><span id="pgurl"><span class="annot"><span class="annottext">ParsedGitSrc -&gt; Text
 </span><a href="NvFetcher.FetchRustGitDeps.html#pgurl"><span class="hs-identifier hs-var hs-var">pgurl</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
 </span><span id="line-77"></span><span>    </span><span id="pgsha"><span class="annot"><span class="annottext">ParsedGitSrc -&gt; Version
 </span><a href="NvFetcher.FetchRustGitDeps.html#pgsha"><span class="hs-identifier hs-var hs-var">pgsha</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span>
 </span><span id="line-78"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-79"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679299581"><span id="local-6989586621679299583"><span id="local-6989586621679299585"><span class="annot"><span class="annottext">Int -&gt; ParsedGitSrc -&gt; FilePath -&gt; FilePath
-[ParsedGitSrc] -&gt; FilePath -&gt; FilePath
-ParsedGitSrc -&gt; FilePath
-(Int -&gt; ParsedGitSrc -&gt; FilePath -&gt; FilePath)
--&gt; (ParsedGitSrc -&gt; FilePath)
--&gt; ([ParsedGitSrc] -&gt; FilePath -&gt; FilePath)
+</span><span id="line-79"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679313964"><span id="local-6989586621679313966"><span id="local-6989586621679313973"><span class="annot"><span class="annottext">Int -&gt; ParsedGitSrc -&gt; String -&gt; String
+[ParsedGitSrc] -&gt; String -&gt; String
+ParsedGitSrc -&gt; String
+(Int -&gt; ParsedGitSrc -&gt; String -&gt; String)
+-&gt; (ParsedGitSrc -&gt; String)
+-&gt; ([ParsedGitSrc] -&gt; String -&gt; String)
 -&gt; Show ParsedGitSrc
 forall a.
-(Int -&gt; a -&gt; FilePath -&gt; FilePath)
--&gt; (a -&gt; FilePath) -&gt; ([a] -&gt; FilePath -&gt; FilePath) -&gt; Show a
-showList :: [ParsedGitSrc] -&gt; FilePath -&gt; FilePath
-$cshowList :: [ParsedGitSrc] -&gt; FilePath -&gt; FilePath
-show :: ParsedGitSrc -&gt; FilePath
-$cshow :: ParsedGitSrc -&gt; FilePath
-showsPrec :: Int -&gt; ParsedGitSrc -&gt; FilePath -&gt; FilePath
-$cshowsPrec :: Int -&gt; ParsedGitSrc -&gt; FilePath -&gt; FilePath
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679299576"><span id="local-6989586621679299578"><span class="annot"><span class="annottext">ParsedGitSrc -&gt; ParsedGitSrc -&gt; Bool
+(Int -&gt; a -&gt; String -&gt; String)
+-&gt; (a -&gt; String) -&gt; ([a] -&gt; String -&gt; String) -&gt; Show a
+showList :: [ParsedGitSrc] -&gt; String -&gt; String
+$cshowList :: [ParsedGitSrc] -&gt; String -&gt; String
+show :: ParsedGitSrc -&gt; String
+$cshow :: ParsedGitSrc -&gt; String
+showsPrec :: Int -&gt; ParsedGitSrc -&gt; String -&gt; String
+$cshowsPrec :: Int -&gt; ParsedGitSrc -&gt; String -&gt; String
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679313956"><span id="local-6989586621679313961"><span class="annot"><span class="annottext">ParsedGitSrc -&gt; ParsedGitSrc -&gt; Bool
 (ParsedGitSrc -&gt; ParsedGitSrc -&gt; Bool)
 -&gt; (ParsedGitSrc -&gt; ParsedGitSrc -&gt; Bool) -&gt; Eq ParsedGitSrc
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -268,7 +255,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: ParsedGitSrc -&gt; ParsedGitSrc -&gt; Bool
 == :: ParsedGitSrc -&gt; ParsedGitSrc -&gt; Bool
 $c== :: ParsedGitSrc -&gt; ParsedGitSrc -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679299560"><span id="local-6989586621679299562"><span id="local-6989586621679299564"><span id="local-6989586621679299566"><span id="local-6989586621679299568"><span id="local-6989586621679299570"><span id="local-6989586621679299572"><span class="annot"><span class="annottext">Eq ParsedGitSrc
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679313931"><span id="local-6989586621679313933"><span id="local-6989586621679313936"><span id="local-6989586621679313939"><span id="local-6989586621679313942"><span id="local-6989586621679313946"><span id="local-6989586621679313951"><span class="annot"><span class="annottext">Eq ParsedGitSrc
 Eq ParsedGitSrc
 -&gt; (ParsedGitSrc -&gt; ParsedGitSrc -&gt; Ordering)
 -&gt; (ParsedGitSrc -&gt; ParsedGitSrc -&gt; Bool)
@@ -305,7 +292,6 @@ $c&lt;= :: ParsedGitSrc -&gt; ParsedGitSrc -&gt; Bool
 $c&lt; :: ParsedGitSrc -&gt; ParsedGitSrc -&gt; Bool
 compare :: ParsedGitSrc -&gt; ParsedGitSrc -&gt; Ordering
 $ccompare :: ParsedGitSrc -&gt; ParsedGitSrc -&gt; Ordering
-$cp1Ord :: Eq ParsedGitSrc
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
 </span><span id="line-80"></span><span>
 </span><span id="line-81"></span><span class="hs-comment">-- | Parse git src in cargo lock file</span><span>
@@ -318,104 +304,99 @@ $cp1Ord :: Eq ParsedGitSrc
 </span><span id="line-88"></span><span class="hs-comment">-- &gt;&gt;&gt; parse gitSrcParser &quot;test&quot; &quot;git+https://github.com/rust-lang/cargo?branch=rust-1.53.0#4369396ce7d270972955d876eaa4954bea56bcd9&quot;</span><span>
 </span><span id="line-89"></span><span class="hs-comment">-- Right (ParsedGitSrc {pgurl = &quot;https://github.com/rust-lang/cargo&quot;, pgsha = &quot;4369396ce7d270972955d876eaa4954bea56bcd9&quot;})</span><span>
 </span><span id="line-90"></span><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#gitSrcParser"><span class="hs-identifier hs-type">gitSrcParser</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Parser</span></span><span> </span><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#ParsedGitSrc"><span class="hs-identifier hs-type">ParsedGitSrc</span></a></span><span>
-</span><span id="line-91"></span><span id="gitSrcParser"><span class="annot"><span class="annottext">gitSrcParser :: Parsec PackageName () ParsedGitSrc
+</span><span id="line-91"></span><span id="gitSrcParser"><span class="annot"><span class="annottext">gitSrcParser :: Parsec Text () ParsedGitSrc
 </span><a href="NvFetcher.FetchRustGitDeps.html#gitSrcParser"><span class="hs-identifier hs-var hs-var">gitSrcParser</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-92"></span><span>  </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; ParsecT PackageName () Identity FilePath
+</span><span id="line-92"></span><span>  </span><span class="annot"><span class="annottext">String
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">String -&gt; ParsecT Text () Identity String
 forall s (m :: * -&gt; *) u.
 Stream s m Char =&gt;
-FilePath -&gt; ParsecT s u m FilePath
-</span><span class="hs-identifier hs-var">string</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+String -&gt; ParsecT s u m String
+</span><span class="hs-identifier hs-var">string</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;git+&quot;</span></span><span>
-</span><span id="line-93"></span><span>  </span><span id="local-6989586621679299556"><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679299556"><span class="hs-identifier hs-var">pgurl</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">ParsecT PackageName () Identity Char
--&gt; ParsecT PackageName () Identity FilePath
+</span><span id="line-93"></span><span>  </span><span id="local-6989586621679313927"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679313927"><span class="hs-identifier hs-var">pgurl</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">ParsecT Text () Identity Char -&gt; ParsecT Text () Identity String
 forall s (m :: * -&gt; *) t u a.
 Stream s m t =&gt;
 ParsecT s u m a -&gt; ParsecT s u m [a]
-</span><span class="hs-identifier hs-var">many1</span></span><span> </span><span class="annot"><span class="annottext">(ParsecT PackageName () Identity Char
- -&gt; ParsecT PackageName () Identity FilePath)
--&gt; ParsecT PackageName () Identity Char
--&gt; ParsecT PackageName () Identity FilePath
+</span><span class="hs-identifier hs-var">many1</span></span><span> </span><span class="annot"><span class="annottext">(ParsecT Text () Identity Char -&gt; ParsecT Text () Identity String)
+-&gt; ParsecT Text () Identity Char -&gt; ParsecT Text () Identity String
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; ParsecT PackageName () Identity Char
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; ParsecT Text () Identity Char
 forall s (m :: * -&gt; *) u.
 Stream s m Char =&gt;
-FilePath -&gt; ParsecT s u m Char
+String -&gt; ParsecT s u m Char
 </span><span class="hs-identifier hs-var">noneOf</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'?'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'#'</span></span><span class="hs-special">]</span><span>
 </span><span id="line-94"></span><span>  </span><span class="hs-comment">-- skip things like ?rev and ?branch</span><span>
-</span><span id="line-95"></span><span>  </span><span class="annot"><span class="annottext">ParsecT PackageName () Identity Char
--&gt; ParsecT PackageName () Identity ()
+</span><span id="line-95"></span><span>  </span><span class="annot"><span class="annottext">ParsecT Text () Identity Char -&gt; ParsecT Text () Identity ()
 forall s u (m :: * -&gt; *) a. ParsecT s u m a -&gt; ParsecT s u m ()
-</span><span class="hs-identifier hs-var">skipMany</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; ParsecT PackageName () Identity Char
+</span><span class="hs-identifier hs-var">skipMany</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; ParsecT Text () Identity Char
 forall s (m :: * -&gt; *) u.
 Stream s m Char =&gt;
-FilePath -&gt; ParsecT s u m Char
+String -&gt; ParsecT s u m Char
 </span><span class="hs-identifier hs-var">noneOf</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'#'</span></span><span class="hs-special">]</span><span class="hs-special">)</span><span>
 </span><span id="line-96"></span><span>  </span><span class="annot"><span class="annottext">Char
-</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Char -&gt; ParsecT PackageName () Identity Char
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Char -&gt; ParsecT Text () Identity Char
 forall s (m :: * -&gt; *) u.
 Stream s m Char =&gt;
 Char -&gt; ParsecT s u m Char
 </span><span class="hs-identifier hs-var">char</span></span><span> </span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'#'</span></span><span>
-</span><span id="line-97"></span><span>  </span><span id="local-6989586621679299551"><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679299551"><span class="hs-identifier hs-var">pgsha</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">ParsecT PackageName () Identity Char
--&gt; ParsecT PackageName () Identity ()
--&gt; ParsecT PackageName () Identity FilePath
+</span><span id="line-97"></span><span>  </span><span id="local-6989586621679313922"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679313922"><span class="hs-identifier hs-var">pgsha</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">ParsecT Text () Identity Char
+-&gt; ParsecT Text () Identity () -&gt; ParsecT Text () Identity String
 forall s (m :: * -&gt; *) t u a end.
 Stream s m t =&gt;
 ParsecT s u m a -&gt; ParsecT s u m end -&gt; ParsecT s u m [a]
-</span><span class="hs-identifier hs-var">manyTill</span></span><span> </span><span class="annot"><span class="annottext">ParsecT PackageName () Identity Char
+</span><span class="hs-identifier hs-var">manyTill</span></span><span> </span><span class="annot"><span class="annottext">ParsecT Text () Identity Char
 forall s (m :: * -&gt; *) u. Stream s m Char =&gt; ParsecT s u m Char
-</span><span class="hs-identifier hs-var">anyChar</span></span><span> </span><span class="annot"><span class="annottext">ParsecT PackageName () Identity ()
+</span><span class="hs-identifier hs-var">anyChar</span></span><span> </span><span class="annot"><span class="annottext">ParsecT Text () Identity ()
 forall s (m :: * -&gt; *) t u.
 (Stream s m t, Show t) =&gt;
 ParsecT s u m ()
 </span><span class="hs-identifier hs-var">eof</span></span><span>
-</span><span id="line-98"></span><span>  </span><span class="annot"><span class="annottext">ParsedGitSrc -&gt; Parsec PackageName () ParsedGitSrc
+</span><span id="line-98"></span><span>  </span><span class="annot"><span class="annottext">ParsedGitSrc -&gt; Parsec Text () ParsedGitSrc
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
-</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(ParsedGitSrc -&gt; Parsec PackageName () ParsedGitSrc)
--&gt; ParsedGitSrc -&gt; Parsec PackageName () ParsedGitSrc
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(ParsedGitSrc -&gt; Parsec Text () ParsedGitSrc)
+-&gt; ParsedGitSrc -&gt; Parsec Text () ParsedGitSrc
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageName -&gt; Version -&gt; ParsedGitSrc
-</span><a href="NvFetcher.FetchRustGitDeps.html#ParsedGitSrc"><span class="hs-identifier hs-var">ParsedGitSrc</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; PackageName
-</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679299556"><span class="hs-identifier hs-var">pgurl</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageName -&gt; Version
-</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">(PackageName -&gt; Version) -&gt; PackageName -&gt; Version
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Version -&gt; ParsedGitSrc
+</span><a href="NvFetcher.FetchRustGitDeps.html#ParsedGitSrc"><span class="hs-identifier hs-var">ParsedGitSrc</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
+</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679313927"><span class="hs-identifier hs-var">pgurl</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Version
+</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Version) -&gt; Text -&gt; Version
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; PackageName
-</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679299551"><span class="hs-identifier hs-var">pgsha</span></a></span><span class="hs-special">)</span><span>
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; Text
+</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679313922"><span class="hs-identifier hs-var">pgsha</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-99"></span><span>
 </span><span id="line-100"></span><span class="hs-keyword">data</span><span> </span><span id="RustDep"><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#RustDep"><span class="hs-identifier hs-var">RustDep</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="RustDep"><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#RustDep"><span class="hs-identifier hs-var">RustDep</span></a></span></span><span>
-</span><span id="line-101"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="rname"><span class="annot"><span class="annottext">RustDep -&gt; PackageName
+</span><span id="line-101"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="rname"><span class="annot"><span class="annottext">RustDep -&gt; Text
 </span><a href="NvFetcher.FetchRustGitDeps.html#rname"><span class="hs-identifier hs-var hs-var">rname</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageName"><span class="hs-identifier hs-type">PackageName</span></a></span><span class="hs-special">,</span><span>
 </span><span id="line-102"></span><span>    </span><span id="rversion"><span class="annot"><span class="annottext">RustDep -&gt; Version
 </span><a href="NvFetcher.FetchRustGitDeps.html#rversion"><span class="hs-identifier hs-var hs-var">rversion</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-103"></span><span>    </span><span id="rrawSrc"><span class="annot"><span class="annottext">RustDep -&gt; Maybe PackageName
+</span><span id="line-103"></span><span>    </span><span id="rrawSrc"><span class="annot"><span class="annottext">RustDep -&gt; Maybe Text
 </span><a href="NvFetcher.FetchRustGitDeps.html#rrawSrc"><span class="hs-identifier hs-var hs-var">rrawSrc</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
 </span><span id="line-104"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-105"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679299541"><span id="local-6989586621679299543"><span id="local-6989586621679299545"><span class="annot"><span class="annottext">Int -&gt; RustDep -&gt; FilePath -&gt; FilePath
-[RustDep] -&gt; FilePath -&gt; FilePath
-RustDep -&gt; FilePath
-(Int -&gt; RustDep -&gt; FilePath -&gt; FilePath)
--&gt; (RustDep -&gt; FilePath)
--&gt; ([RustDep] -&gt; FilePath -&gt; FilePath)
+</span><span id="line-105"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679313906"><span id="local-6989586621679313908"><span id="local-6989586621679313915"><span class="annot"><span class="annottext">Int -&gt; RustDep -&gt; String -&gt; String
+[RustDep] -&gt; String -&gt; String
+RustDep -&gt; String
+(Int -&gt; RustDep -&gt; String -&gt; String)
+-&gt; (RustDep -&gt; String)
+-&gt; ([RustDep] -&gt; String -&gt; String)
 -&gt; Show RustDep
 forall a.
-(Int -&gt; a -&gt; FilePath -&gt; FilePath)
--&gt; (a -&gt; FilePath) -&gt; ([a] -&gt; FilePath -&gt; FilePath) -&gt; Show a
-showList :: [RustDep] -&gt; FilePath -&gt; FilePath
-$cshowList :: [RustDep] -&gt; FilePath -&gt; FilePath
-show :: RustDep -&gt; FilePath
-$cshow :: RustDep -&gt; FilePath
-showsPrec :: Int -&gt; RustDep -&gt; FilePath -&gt; FilePath
-$cshowsPrec :: Int -&gt; RustDep -&gt; FilePath -&gt; FilePath
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679299537"><span id="local-6989586621679299539"><span class="annot"><span class="annottext">RustDep -&gt; RustDep -&gt; Bool
+(Int -&gt; a -&gt; String -&gt; String)
+-&gt; (a -&gt; String) -&gt; ([a] -&gt; String -&gt; String) -&gt; Show a
+showList :: [RustDep] -&gt; String -&gt; String
+$cshowList :: [RustDep] -&gt; String -&gt; String
+show :: RustDep -&gt; String
+$cshow :: RustDep -&gt; String
+showsPrec :: Int -&gt; RustDep -&gt; String -&gt; String
+$cshowsPrec :: Int -&gt; RustDep -&gt; String -&gt; String
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679313898"><span id="local-6989586621679313904"><span class="annot"><span class="annottext">RustDep -&gt; RustDep -&gt; Bool
 (RustDep -&gt; RustDep -&gt; Bool)
 -&gt; (RustDep -&gt; RustDep -&gt; Bool) -&gt; Eq RustDep
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -423,7 +404,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: RustDep -&gt; RustDep -&gt; Bool
 == :: RustDep -&gt; RustDep -&gt; Bool
 $c== :: RustDep -&gt; RustDep -&gt; Bool
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679299522"><span id="local-6989586621679299524"><span id="local-6989586621679299526"><span id="local-6989586621679299528"><span id="local-6989586621679299530"><span id="local-6989586621679299532"><span id="local-6989586621679299534"><span class="annot"><span class="annottext">Eq RustDep
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679313873"><span id="local-6989586621679313875"><span id="local-6989586621679313878"><span id="local-6989586621679313881"><span id="local-6989586621679313884"><span id="local-6989586621679313889"><span id="local-6989586621679313894"><span class="annot"><span class="annottext">Eq RustDep
 Eq RustDep
 -&gt; (RustDep -&gt; RustDep -&gt; Ordering)
 -&gt; (RustDep -&gt; RustDep -&gt; Bool)
@@ -460,51 +441,47 @@ $c&lt;= :: RustDep -&gt; RustDep -&gt; Bool
 $c&lt; :: RustDep -&gt; RustDep -&gt; Bool
 compare :: RustDep -&gt; RustDep -&gt; Ordering
 $ccompare :: RustDep -&gt; RustDep -&gt; Ordering
-$cp1Ord :: Eq RustDep
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
 </span><span id="line-106"></span><span>
 </span><span id="line-107"></span><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#rustDepCodec"><span class="hs-identifier hs-type">rustDepCodec</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">TomlCodec</span></span><span> </span><span class="annot"><a href="NvFetcher.FetchRustGitDeps.html#RustDep"><span class="hs-identifier hs-type">RustDep</span></a></span><span>
 </span><span id="line-108"></span><span id="rustDepCodec"><span class="annot"><span class="annottext">rustDepCodec :: TomlCodec RustDep
 </span><a href="NvFetcher.FetchRustGitDeps.html#rustDepCodec"><span class="hs-identifier hs-var hs-var">rustDepCodec</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-109"></span><span>  </span><span class="annot"><span class="annottext">PackageName -&gt; Version -&gt; Maybe PackageName -&gt; RustDep
+</span><span id="line-109"></span><span>  </span><span class="annot"><span class="annottext">Text -&gt; Version -&gt; Maybe Text -&gt; RustDep
 </span><a href="NvFetcher.FetchRustGitDeps.html#RustDep"><span class="hs-identifier hs-var">RustDep</span></a></span><span>
-</span><span id="line-110"></span><span>    </span><span class="annot"><span class="annottext">(PackageName -&gt; Version -&gt; Maybe PackageName -&gt; RustDep)
--&gt; Codec RustDep PackageName
--&gt; Codec RustDep (Version -&gt; Maybe PackageName -&gt; RustDep)
+</span><span id="line-110"></span><span>    </span><span class="annot"><span class="annottext">(Text -&gt; Version -&gt; Maybe Text -&gt; RustDep)
+-&gt; Codec RustDep Text
+-&gt; Codec RustDep (Version -&gt; Maybe Text -&gt; RustDep)
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
-</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; TomlCodec PackageName
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">Key -&gt; TomlCodec Text
 </span><span class="hs-identifier hs-var">Toml.text</span></span><span> </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;name&quot;</span></span><span> </span><span class="annot"><span class="annottext">TomlCodec PackageName
--&gt; (RustDep -&gt; PackageName) -&gt; Codec RustDep PackageName
+</span><span class="hs-string">&quot;name&quot;</span></span><span> </span><span class="annot"><span class="annottext">TomlCodec Text -&gt; (RustDep -&gt; Text) -&gt; Codec RustDep Text
 forall field a object.
 Codec field a -&gt; (object -&gt; field) -&gt; Codec object a
-</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">RustDep -&gt; PackageName
+</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">RustDep -&gt; Text
 </span><a href="NvFetcher.FetchRustGitDeps.html#rname"><span class="hs-identifier hs-var hs-var">rname</span></a></span><span>
-</span><span id="line-111"></span><span>    </span><span class="annot"><span class="annottext">Codec RustDep (Version -&gt; Maybe PackageName -&gt; RustDep)
--&gt; Codec RustDep Version
--&gt; Codec RustDep (Maybe PackageName -&gt; RustDep)
+</span><span id="line-111"></span><span>    </span><span class="annot"><span class="annottext">Codec RustDep (Version -&gt; Maybe Text -&gt; RustDep)
+-&gt; Codec RustDep Version -&gt; Codec RustDep (Maybe Text -&gt; RustDep)
 forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
-</span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">TomlCodec PackageName -&gt; TomlCodec Version
+</span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">TomlCodec Text -&gt; TomlCodec Version
 forall b a. Coercible a b =&gt; TomlCodec a -&gt; TomlCodec b
-</span><span class="hs-identifier hs-var">Toml.diwrap</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Key -&gt; TomlCodec PackageName
+</span><span class="hs-identifier hs-var">Toml.diwrap</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Key -&gt; TomlCodec Text
 </span><span class="hs-identifier hs-var">Toml.text</span></span><span> </span><span class="annot"><span class="annottext">Key
 </span><span class="hs-string">&quot;version&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">TomlCodec Version -&gt; (RustDep -&gt; Version) -&gt; Codec RustDep Version
 forall field a object.
 Codec field a -&gt; (object -&gt; field) -&gt; Codec object a
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">RustDep -&gt; Version
 </span><a href="NvFetcher.FetchRustGitDeps.html#rversion"><span class="hs-identifier hs-var hs-var">rversion</span></a></span><span>
-</span><span id="line-112"></span><span>    </span><span class="annot"><span class="annottext">Codec RustDep (Maybe PackageName -&gt; RustDep)
--&gt; Codec RustDep (Maybe PackageName) -&gt; TomlCodec RustDep
+</span><span id="line-112"></span><span>    </span><span class="annot"><span class="annottext">Codec RustDep (Maybe Text -&gt; RustDep)
+-&gt; Codec RustDep (Maybe Text) -&gt; TomlCodec RustDep
 forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
-</span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">TomlCodec PackageName -&gt; TomlCodec (Maybe PackageName)
+</span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">TomlCodec Text -&gt; TomlCodec (Maybe Text)
 forall a. TomlCodec a -&gt; TomlCodec (Maybe a)
-</span><span class="hs-identifier hs-var">Toml.dioptional</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Key -&gt; TomlCodec PackageName
+</span><span class="hs-identifier hs-var">Toml.dioptional</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Key -&gt; TomlCodec Text
 </span><span class="hs-identifier hs-var">Toml.text</span></span><span> </span><span class="annot"><span class="annottext">Key
-</span><span class="hs-string">&quot;source&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">TomlCodec (Maybe PackageName)
--&gt; (RustDep -&gt; Maybe PackageName)
--&gt; Codec RustDep (Maybe PackageName)
+</span><span class="hs-string">&quot;source&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">TomlCodec (Maybe Text)
+-&gt; (RustDep -&gt; Maybe Text) -&gt; Codec RustDep (Maybe Text)
 forall field a object.
 Codec field a -&gt; (object -&gt; field) -&gt; Codec object a
-</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">RustDep -&gt; Maybe PackageName
+</span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">RustDep -&gt; Maybe Text
 </span><a href="NvFetcher.FetchRustGitDeps.html#rrawSrc"><span class="hs-identifier hs-var hs-var">rrawSrc</span></a></span><span>
 </span><span id="line-113"></span></pre></body></html>
