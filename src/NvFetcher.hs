@@ -74,7 +74,7 @@ import NvFetcher.Options
 import NvFetcher.PackageSet
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
-import NvFetcher.Utils (getDataDir)
+import NvFetcher.Utils (getDataDir, aesonKey)
 import qualified System.Directory.Extra as D
 import Text.Regex.TDFA ((=~))
 
@@ -195,7 +195,7 @@ mainRules Config {..} = do
     putVerbose $ "Generating " <> generatedNixPath
     writeFileChanged generatedNixPath $ T.unpack $ srouces (T.unlines $ toNixExpr <$> results) <> "\n"
     putVerbose $ "Generating " <> generatedJSONPath
-    writeFileChanged generatedJSONPath $ LBS.unpack $ A.encodePretty $ A.object [_prname r A..= r | r <- results]
+    writeFileChanged generatedJSONPath $ LBS.unpack $ A.encodePretty $ A.object [aesonKey (_prname r) A..= r | r <- results]
     actionAfterBuild
 
   customRules
