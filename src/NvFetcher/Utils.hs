@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 module NvFetcher.Utils where
 
 import Data.Binary
@@ -7,6 +9,9 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import System.Directory.Extra (XdgDirectory (XdgData), getXdgDirectory)
 import Text.Regex.TDFA ((=~))
+#if MIN_VERSION_aeson(2,0,0)
+import qualified Data.Aeson.Key as A
+#endif
 
 encode' :: Binary a => a -> BS.ByteString
 encode' = BS.concat . LBS.toChunks . encode
@@ -27,3 +32,11 @@ quoteIfNeeds x
 
 getDataDir :: IO FilePath
 getDataDir = getXdgDirectory XdgData "nvfetcher"
+
+#if MIN_VERSION_aeson(2,0,0)
+aesonKey :: Text -> A.Key
+aesonKey = A.fromText
+#else
+aesonKey :: Text -> Text
+aesonKey = id
+#endif

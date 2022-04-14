@@ -2,12 +2,6 @@
 src.pypi = "feeluown"
 fetch.pypi = "feeluown"
 
-[qliveplayer]
-src.github = "THMonster/QLivePlayer"
-fetch.github = "THMonster/QLivePlayer"
-# fetchgit options
-git.fetchSubmodules = true
-
 [apple-emoji]
 # A fake version, which is unused in the fetcher
 src.manual = "0.0.0.20200413"
