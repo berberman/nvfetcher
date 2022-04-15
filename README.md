@@ -41,7 +41,7 @@ and `_sources/generated.json`:
 {
   "feeluown": {
     "pinned": false,
-    "cargoLock": null,
+    "cargoLocks": null,
     "name": "feeluown-core",
     "version": "3.8.2",
     "passthru": null,
