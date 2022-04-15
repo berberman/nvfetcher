@@ -56,7 +56,7 @@ module NvFetcher.Types
     PackageName,
     PackageFetcher,
     PackageExtractSrc (..),
-    PackageCargoFilePath (..),
+    PackageCargoLockFiles (..),
     PackagePassthru (..),
     Package (..),
     PackageKey (..),
@@ -317,7 +317,7 @@ type PackageFetcher = Version -> NixFetcher Fresh
 
 newtype PackageExtractSrc = PackageExtractSrc (NE.NonEmpty FilePath)
 
-newtype PackageCargoFilePath = PackageCargoFilePath FilePath
+newtype PackageCargoLockFiles = PackageCargoLockFiles (NE.NonEmpty FilePath)
 
 newtype PackagePassthru = PackagePassthru (HashMap Text Text)
   deriving newtype (Semigroup, Monoid)
@@ -350,7 +350,7 @@ data Package = Package
     _pversion :: CheckVersion,
     _pfetcher :: PackageFetcher,
     _pextract :: Maybe PackageExtractSrc,
-    _pcargo :: Maybe PackageCargoFilePath,
+    _pcargo :: Maybe PackageCargoLockFiles,
     _ppassthru :: PackagePassthru,
     _ppinned :: UseStaleVersion
   }
@@ -387,10 +387,8 @@ data PackageResult = PackageResult
     _prpassthru :: Maybe (HashMap Text Text),
     -- | extracted file name -> file path in build dir
     _prextract :: Maybe (HashMap FilePath NixExpr),
-    -- | cargo lock file path in build dir
-    _prcargolock :: Maybe NixExpr,
-    -- | rust git deps name -> checksum
-    _prrustgitdeps :: Maybe (HashMap Text Checksum),
+    -- | cargo lock file path in build dir -> (file path in nix, git dependencies)
+    _prcargolock :: Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum)),
     _prpinned :: Bool
   }
   deriving (Show, Typeable, Generic, NFData)
@@ -403,7 +401,6 @@ instance A.ToJSON PackageResult where
         "src" A..= _prfetched,
         "extract" A..= _prextract,
         "passthru" A..= _prpassthru,
-        "cargoLock" A..= _prcargolock,
-        "rustGitDeps" A..= _prrustgitdeps,
+        "cargoLocks" A..= _prcargolock,
         "pinned" A..= _prpinned
       ]

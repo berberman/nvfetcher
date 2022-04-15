@@ -56,7 +56,7 @@ data PackageConfig = PackageConfig
   { pcVersionSource :: VersionSource,
     pcFetcher :: PackageFetcher,
     pcExtractFiles :: Maybe PackageExtractSrc,
-    pcCargoLockPath :: Maybe PackageCargoFilePath,
+    pcCargoLockFiles :: Maybe PackageCargoLockFiles,
     pcNvcheckerOptions :: NvcheckerOptions,
     pcPassthru :: PackagePassthru,
     pcUseStale :: UseStaleVersion
@@ -69,7 +69,7 @@ toPackage k PackageConfig {..} =
     (CheckVersion pcVersionSource pcNvcheckerOptions)
     pcFetcher
     pcExtractFiles
-    pcCargoLockPath
+    pcCargoLockFiles
     pcPassthru
     pcUseStale
 
@@ -79,7 +79,7 @@ packageConfigCodec =
     <$> versionSourceCodec .= pcVersionSource
     <*> fetcherCodec .= pcFetcher
     <*> extractFilesCodec .= pcExtractFiles
-    <*> cargoLockPathCodec .= pcCargoLockPath
+    <*> cargoLockPathCodec .= pcCargoLockFiles
     <*> nvcheckerOptionsCodec .= pcNvcheckerOptions
     <*> passthruCodec .= pcPassthru
     <*> pinnedCodec .= pcUseStale
@@ -93,8 +93,12 @@ extractFilesCodec =
     (\mxs -> coerce <$> (mxs >>= NE.nonEmpty))
     $ dioptional $ arrayOf _String "extract"
 
-cargoLockPathCodec :: TomlCodec (Maybe PackageCargoFilePath)
-cargoLockPathCodec = dioptional $ diwrap (string "cargo_lock")
+cargoLockPathCodec :: TomlCodec (Maybe PackageCargoLockFiles)
+cargoLockPathCodec =
+  dimap
+    (fmap (NE.toList . coerce))
+    (\mxs -> coerce <$> (mxs >>= NE.nonEmpty))
+    $ dioptional $ arrayOf _String "cargo_locks"
 
 nvcheckerOptionsCodec :: TomlCodec NvcheckerOptions
 nvcheckerOptionsCodec =

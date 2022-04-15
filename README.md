@@ -39,21 +39,21 @@ and `_sources/generated.json`:
 
 ```json
 {
-    "feeluown": {
-        "pinned": false,
-        "cargoLock": null,
-        "name": "feeluown-core",
-        "version": "3.8.2",
-        "passthru": null,
-        "src": {
-            "url": "https://pypi.io/packages/source/f/feeluown/feeluown-3.8.2.tar.gz",
-            "name": null,
-            "type": "url",
-            "sha256": "sha256-V2yzpkmjRkipZOvQGB2mYRhiiEly6QPrTOMJ7BmyWBQ="
-        },
-        "extract": null,
-        "rustGitDeps": null
-    }
+  "feeluown": {
+    "pinned": false,
+    "cargoLock": null,
+    "name": "feeluown-core",
+    "version": "3.8.2",
+    "passthru": null,
+    "src": {
+      "url": "https://pypi.io/packages/source/f/feeluown/feeluown-3.8.2.tar.gz",
+      "name": null,
+      "type": "url",
+      "sha256": "sha256-V2yzpkmjRkipZOvQGB2mYRhiiEly6QPrTOMJ7BmyWBQ="
+    },
+    "extract": null,
+    "rustGitDeps": null
+  }
 }
 ```
 
@@ -66,11 +66,11 @@ We always check versions of packages during each run, but only do prefetch and f
 
 How to use the generated sources file? Here are several examples:
 
-* [DevOS](https://github.com/divnix/devos/tree/main/pkgs)
+- [DevOS](https://github.com/divnix/devos/tree/main/pkgs)
 
-* My [flakes repo](https://github.com/berberman/flakes)
+- My [flakes repo](https://github.com/berberman/flakes)
 
-* Nick Cao's [flakes repo](https://gitlab.com/NickCao/flakes/-/tree/master/pkgs)
+- Nick Cao's [flakes repo](https://gitlab.com/NickCao/flakes/-/tree/master/pkgs)
 
 ## Installation
 
@@ -126,90 +126,93 @@ Available options:
                            (default: "nvfetcher.toml")
 ```
 
-Each *package* corresponds to a TOML table, whose name is encoded as table key, with
+Each _package_ corresponds to a TOML table, whose name is encoded as table key, with
 two required fields and three optional fields in each table.
 You can find an example of the configuration file, see [`nvfetcher_example.toml`](nvfetcher_example.toml).
 
 #### Nvchecker
 
 Version source -- how do we track upstream version updates?
-* `src.github = owner/repo` - the latest github release
-* `src.github_tag = owner/repo` - the max github tag, usually used with list options (see below)
-* `src.pypi = pypi_name` - the latest pypi release
-* `src.git = git_url` (and an optional `src.branch = git_branch`) - **the latest commit** of a repo
-* `src.archpkg = archlinux_pkg_name` -- the latest version of an archlinux package
-* `src.aur = aur_pkg_name` -- the latest version of an aur package
-* `src.manual = v` -- a fixed version, which never updates
-* `src.repology = project:repo` -- the latest version from repology
-* `src.webpage = web_url` and `src.regex` -- a string in webpage that matches with regex
-* `src.httpheader = request_url` and `src.regex` -- a string in http header that matches with regex
-* `src.openvsx = publisher.ext_name` -- the latest version of a vscode extension from open vsx
-* `src.vsmarketplace = publisher.ext_name` -- the latest version of a vscode extension from vscode marketplace
-* `src.cmd = cmd` -- the version from a shell command (e.g. `echo Meow`)
 
+- `src.github = owner/repo` - the latest github release
+- `src.github_tag = owner/repo` - the max github tag, usually used with list options (see below)
+- `src.pypi = pypi_name` - the latest pypi release
+- `src.git = git_url` (and an optional `src.branch = git_branch`) - **the latest commit** of a repo
+- `src.archpkg = archlinux_pkg_name` -- the latest version of an archlinux package
+- `src.aur = aur_pkg_name` -- the latest version of an aur package
+- `src.manual = v` -- a fixed version, which never updates
+- `src.repology = project:repo` -- the latest version from repology
+- `src.webpage = web_url` and `src.regex` -- a string in webpage that matches with regex
+- `src.httpheader = request_url` and `src.regex` -- a string in http header that matches with regex
+- `src.openvsx = publisher.ext_name` -- the latest version of a vscode extension from open vsx
+- `src.vsmarketplace = publisher.ext_name` -- the latest version of a vscode extension from vscode marketplace
+- `src.cmd = cmd` -- the version from a shell command (e.g. `echo Meow`)
 
 Optional list options for some version sources (`src.github_tag`, `src.webpage`, and `src.httpheader`),
 see the corresponding [nvchecker documentation](https://nvchecker.readthedocs.io/en/latest/usage.html#list-options) for details.
-* `src.include_regex`
-* `src.exclude_regex`
-* `src.sort_version_key`
-* `src.ignored`
 
+- `src.include_regex`
+- `src.exclude_regex`
+- `src.sort_version_key`
+- `src.ignored`
 
 Optional global options for all kinds of version sources,
 see the corresponding [nvchecker documentation](https://nvchecker.readthedocs.io/en/latest/usage.html#global-options) for details. You can tweak obtained version number using this option, e.g. stripping the prefix `v` or transforming the result by regex.
-* `src.prefix`
-* `src.from_pattern`
-* `src.to_pattern`
+
+- `src.prefix`
+- `src.from_pattern`
+- `src.to_pattern`
 
 #### Nix fetcher
 
 How do we fetch the package source if we have the target version number?
 `$ver` is available in string, which will be set to the result of nvchecker.
 
-* `fetch.github = owner/repo`
-* `fetch.pypi = pypi_name`
-* `fetch.git = git_url`
-* `fetch.url = url`
-* `fetch.openvsx = publisher.ext_name`
-* `fetch.vsmarketplace = publisher.ext_name`
-* `fetch.tarball = tarball_url`
-
+- `fetch.github = owner/repo`
+- `fetch.pypi = pypi_name`
+- `fetch.git = git_url`
+- `fetch.url = url`
+- `fetch.openvsx = publisher.ext_name`
+- `fetch.vsmarketplace = publisher.ext_name`
+- `fetch.tarball = tarball_url`
 
 Optional `nix-prefetch fetchgit` config, which make sense only when the fetcher equals to `fetch.github` or `fetch.git`.
-They can exist simultanesouly.
-  * `git.deepClone`
-  * `git.fetchSubmodules`
-  * `git.leaveDotGit`
+They can exist simultaneously.
 
+- `git.deepClone`
+- `git.fetchSubmodules`
+- `git.leaveDotGit`
 
 #### Extract src
 
-Optional *extract src* config, files are extracted into build directory, and then read by `readFile` in generated nix expr.
-  * `extract = [ "file_1", "file_2", ...]` - file paths are relative to the source root
+Optional _extract src_ config, files are extracted into build directory, and then read by `readFile` in generated nix expr.
+
+- `extract = [ "file_1", "file_2", ...]` - file paths are relative to the source root
 
 #### Rust support
 
 `rustPlatform.buildRustPackage` now accepts an attribute [`cargoLock`](https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file) to vendor dependencies from `Cargo.lock`,
-so we can use this instead TOFU `cargoSha256` for Rust packageing. `nvfetcher` supports automating this process,
-extracting the lock file to build and calculating `cargoLock.outputHashes`, as long as you set the config
-* `cargo_lock = cargo_lock_path` - relative to the source root
+so we can use this instead TOFU `cargoSha256` for Rust packaging. `nvfetcher` supports automating this process,
+extracting the lock file to build and calculating `cargoLock.outputHashes`, as long as you set the config.
+There can be many lock files in one source.
+
+- `cargo_locks = [ "cargo_lock_path_1", "cargo_lock_path_2", ...]` - relative to the source root
 
 #### Passthru
 
-*passthru* config, an additional set of attrs to be generated.
+_passthru_ config, an additional set of attrs to be generated.
 
-  * `passthru = { k1 = "v1", k2 = "v2", ... }`
+- `passthru = { k1 = "v1", k2 = "v2", ... }`
 
 #### Pinned
 
 If a package is pinned, we call nvchecker to check the new version iff there's no existing version.
 
-* `pinned = true`
+- `pinned = true`
 
 ### Haskell library
 
-nvfetcher itsetlf is a Haskell library as well, whereas the CLI program is just a trivial wrapper of the library.
+nvfetcher itself is a Haskell library as well, whereas the CLI program is just a trivial wrapper of the library.
 You can create a Haskell program depending on it directly, by using the `runNvFetcher` entry point.
 In this case, we can define packages in Haskell language, getting rid of TOML constraints.
 
