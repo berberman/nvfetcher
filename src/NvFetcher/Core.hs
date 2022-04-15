@@ -73,22 +73,25 @@ coreRules = do
                                 </> k
                     ]
               _ -> pure Nothing
-          -- cargo lock
-          (_prcargolock, _prrustgitdeps) <-
+          -- cargo locks
+          _prcargolock <-
             case _pcargo of
-              Just (PackageCargoFilePath lockPath) -> do
-                (_, lockData) <- head . HMap.toList <$> extractSrc _prfetched lockPath
-                result <- fetchRustGitDeps _prfetched lockPath
-                let lockPath' =
-                      T.unpack _pname
-                        <> "-"
-                        <> T.unpack (coerce version)
-                        </> lockPath
-                    lockPathNix = "./" <> T.pack lockPath'
-                -- similar to extract src, write lock file to build dir
-                writeFile' (buildDir </> lockPath') $ T.unpack lockData
-                pure (Just lockPathNix, Just result)
-              _ -> pure (Nothing, Nothing)
+              Just (PackageCargoLockFiles lockPath) -> do
+                lockFiles <- HMap.toList <$> extractSrcs _prfetched lockPath
+                result <- parallel $
+                  flip fmap lockFiles $ \(lockPath, lockData) -> do
+                    result <- fetchRustGitDeps _prfetched lockPath
+                    let lockPath' =
+                          T.unpack _pname
+                            <> "-"
+                            <> T.unpack (coerce version)
+                            </> lockPath
+                        lockPathNix = "./" <> T.pack lockPath'
+                    -- similar to extract src, write lock file to build dir
+                    writeFile' (buildDir </> lockPath') $ T.unpack lockData
+                    pure (lockPath, (lockPathNix, result))
+                pure . Just $ HMap.fromList result
+              _ -> pure Nothing
 
           -- update changelog
           -- always use on disk verion

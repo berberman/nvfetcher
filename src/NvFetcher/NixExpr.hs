@@ -4,6 +4,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE ViewPatterns #-}
 
 -- | Copyright: (c) 2021 berberman
@@ -21,6 +22,7 @@ module NvFetcher.NixExpr
 where
 
 import Data.Coerce (coerce)
+import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HMap
 import qualified Data.List.NonEmpty as NE
 import Data.Maybe (fromMaybe)
@@ -193,9 +195,8 @@ instance ToNixExpr PackageResult where
           )
           _prextract
       cargo = fromMaybe "" $ do
-        fp <- _prcargolock
-        deps <-
-          ( \deps ->
+        cargoLocks <- _prcargolock
+        let depsSnippet (deps :: HashMap Text Checksum) =
               T.unlines
                 [ quoteIfNeeds name
                     <> " = "
@@ -203,17 +204,17 @@ instance ToNixExpr PackageResult where
                     <> ";"
                   | (name, sum) <- HMap.toList deps
                 ]
-            )
-            <$> _prrustgitdeps
-        pure
-          [trimming|
-            cargoLock = {
-              lockFile = $fp;
-              outputHashes = {
-                $deps
-              };
-            };
-          |]
+            lockSnippet ((T.pack -> fp) :: FilePath, (nixFP :: NixExpr, deps :: HashMap Text Checksum)) =
+              let hashes = depsSnippet deps
+               in [trimming|
+                    cargoLock."$fp" = {
+                      lockFile = $nixFP;
+                      outputHashes = {
+                        $hashes
+                      };
+                    };
+                |]
+        pure . T.unlines $ lockSnippet <$> HMap.toList cargoLocks
       passthru =
         maybe
           ""

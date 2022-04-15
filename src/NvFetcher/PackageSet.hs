@@ -80,7 +80,7 @@ module NvFetcher.PackageSet
 
     -- * Addons
     extractSource,
-    hasCargoLock,
+    hasCargoLocks,
     tweakVersion,
     passthru,
     pinned,
@@ -153,7 +153,7 @@ newPackage ::
   CheckVersion ->
   PackageFetcher ->
   Maybe PackageExtractSrc ->
-  Maybe PackageCargoFilePath ->
+  Maybe PackageCargoLockFiles ->
   PackagePassthru ->
   UseStaleVersion ->
   PackageSet ()
@@ -253,7 +253,7 @@ class PkgDSL f where
         r,
       OptionalMembers
         '[ PackageExtractSrc,
-           PackageCargoFilePath,
+           PackageCargoLockFiles,
            NvcheckerOptions,
            PackagePassthru,
            UseStaleVersion
@@ -298,7 +298,7 @@ define ::
       r,
     OptionalMembers
       '[ PackageExtractSrc,
-         PackageCargoFilePath,
+         PackageCargoLockFiles,
          PackagePassthru,
          NvcheckerOptions,
          UseStaleVersion
@@ -522,11 +522,11 @@ fetchTarball e f = fetch e (tarballFetcher . f)
 extractSource :: Attach PackageExtractSrc [FilePath]
 extractSource = (. pure . PackageExtractSrc . NE.fromList) . andThen
 
--- | Run 'FetchRustGitDependencies' given the path to @Cargo.lock@
+-- | Run 'FetchRustGitDependencies' given the path to @Cargo.lock@ files
 --
--- The lock file will be extracted as well.
-hasCargoLock :: Attach PackageCargoFilePath FilePath
-hasCargoLock = (. pure . PackageCargoFilePath) . andThen
+-- The lock files will be extracted as well.
+hasCargoLocks :: Attach PackageCargoLockFiles [FilePath]
+hasCargoLocks = (. pure . PackageCargoLockFiles . NE.fromList) . andThen
 
 -- | Set 'NvcheckerOptions' for a package, which can tweak the version number we obtain
 tweakVersion :: Attach NvcheckerOptions (NvcheckerOptions -> NvcheckerOptions)
