@@ -212,8 +212,8 @@ type PackageName = Text
 type PackageFetcher = Version -> NixFetcher Fresh
 newtype PackageExtractSrc
 PackageExtractSrc :: NonEmpty FilePath -> PackageExtractSrc
-newtype PackageCargoFilePath
-PackageCargoFilePath :: FilePath -> PackageCargoFilePath
+newtype PackageCargoLockFiles
+PackageCargoLockFiles :: NonEmpty FilePath -> PackageCargoLockFiles
 newtype PackagePassthru
 PackagePassthru :: HashMap Text Text -> PackagePassthru
 
@@ -234,12 +234,12 @@ PackagePassthru :: HashMap Text Text -> PackagePassthru
 --   strings,</i> <i>in case we can't check the equality between fetcher
 --   functions.</i>
 data Package
-Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoFilePath -> PackagePassthru -> UseStaleVersion -> Package
+Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> Package
 [_pname] :: Package -> PackageName
 [_pversion] :: Package -> CheckVersion
 [_pfetcher] :: Package -> PackageFetcher
 [_pextract] :: Package -> Maybe PackageExtractSrc
-[_pcargo] :: Package -> Maybe PackageCargoFilePath
+[_pcargo] :: Package -> Maybe PackageCargoLockFiles
 [_ppassthru] :: Package -> PackagePassthru
 [_ppinned] :: Package -> UseStaleVersion
 
@@ -250,7 +250,7 @@ PackageKey :: PackageName -> PackageKey
 
 -- | Result type of <a>Core</a>
 data PackageResult
-PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe (HashMap Text Text) -> Maybe (HashMap FilePath NixExpr) -> Maybe NixExpr -> Maybe (HashMap Text Checksum) -> Bool -> PackageResult
+PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe (HashMap Text Text) -> Maybe (HashMap FilePath NixExpr) -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum)) -> Bool -> PackageResult
 [_prname] :: PackageResult -> PackageName
 [_prversion] :: PackageResult -> NvcheckerResult
 [_prfetched] :: PackageResult -> NixFetcher 'Fetched
@@ -259,11 +259,9 @@ PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe 
 -- | extracted file name -&gt; file path in build dir
 [_prextract] :: PackageResult -> Maybe (HashMap FilePath NixExpr)
 
--- | cargo lock file path in build dir
-[_prcargolock] :: PackageResult -> Maybe NixExpr
-
--- | rust git deps name -&gt; checksum
-[_prrustgitdeps] :: PackageResult -> Maybe (HashMap Text Checksum)
+-- | cargo lock file path in build dir -&gt; (file path in nix, git
+--   dependencies)
+[_prcargolock] :: PackageResult -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum))
 [_prpinned] :: PackageResult -> Bool
 instance Control.DeepSeq.NFData NvFetcher.Types.Version
 instance Data.Binary.Class.Binary NvFetcher.Types.Version
@@ -426,22 +424,22 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_iIEc k_aIEi. Lens (NixFetcher k_iIEc) (NixFetcher k_aIEi) (FetchResult k_iIEc) (FetchResult k_aIEi)
-rev :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Version
-name :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) (Maybe Text)
-leaveDotGit :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Bool
-furl :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Text
-frepo :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Text
-fowner :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Text
-fetchSubmodules :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Bool
-deepClone :: forall k_iIEc. Traversal' (NixFetcher k_iIEc) Bool
+sha256 :: forall k_iIx6 k_aIxc. Lens (NixFetcher k_iIx6) (NixFetcher k_aIxc) (FetchResult k_iIx6) (FetchResult k_aIxc)
+rev :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Version
+name :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) (Maybe Text)
+leaveDotGit :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Bool
+furl :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Text
+frepo :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Text
+fowner :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Text
+fetchSubmodules :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Bool
+deepClone :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
 pname :: Lens' Package PackageName
 pfetcher :: Lens' Package PackageFetcher
 pextract :: Lens' Package (Maybe PackageExtractSrc)
-pcargo :: Lens' Package (Maybe PackageCargoFilePath)
+pcargo :: Lens' Package (Maybe PackageCargoLockFiles)
 
 
 -- | This module is about global information we use in rules.
@@ -607,7 +605,7 @@ data PackageSetF f
 type PackageSet = Free PackageSetF
 
 -- | Add a package to package set
-newPackage :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoFilePath -> PackagePassthru -> UseStaleVersion -> PackageSet ()
+newPackage :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> PackageSet ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -622,7 +620,7 @@ runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 class PkgDSL f
 new :: PkgDSL f => f PackageName -> f (Prod '[PackageName])
 andThen :: PkgDSL f => f (Prod r) -> f a -> f (Prod (a : r))
-end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoFilePath, NvcheckerOptions, PackagePassthru, UseStaleVersion] r) => f (Prod r) -> f ()
+end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, NvcheckerOptions, PackagePassthru, UseStaleVersion] r) => f (Prod r) -> f ()
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
@@ -631,7 +629,7 @@ end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, Optio
 --   <pre>
 --   define $ package "nvfetcher-git" <a>sourceGit</a> "<a>https://github.com/berberman/nvfetcher"</a> <a>fetchGitHub</a> ("berberman", "nvfetcher")
 --   </pre>
-define :: (Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoFilePath, PackagePassthru, NvcheckerOptions, UseStaleVersion] r) => PackageSet (Prod r) -> PackageSet ()
+define :: (Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, PackagePassthru, NvcheckerOptions, UseStaleVersion] r) => PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])
@@ -795,10 +793,10 @@ fetchTarball :: Attach PackageFetcher (Version -> Text)
 extractSource :: Attach PackageExtractSrc [FilePath]
 
 -- | Run <tt>FetchRustGitDependencies</tt> given the path to
---   <tt>Cargo.lock</tt>
+--   <tt>Cargo.lock</tt> files
 --   
---   The lock file will be extracted as well.
-hasCargoLock :: Attach PackageCargoFilePath FilePath
+--   The lock files will be extracted as well.
+hasCargoLocks :: Attach PackageCargoLockFiles [FilePath]
 
 -- | Set <a>NvcheckerOptions</a> for a package, which can tweak the version
 --   number we obtain
