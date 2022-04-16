@@ -60,9 +60,13 @@ nvcheckerRule = do
 persistedRule :: Rules ()
 persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (CheckVersion versionSource options, pkg)) _old _mode -> do
   oldVer <- getRecentLastVersion pkg
-  useStale <- _ppinned . fromJust <$> lookupPackage pkg
+  useStaleVersion <- _ppinned . fromJust <$> lookupPackage pkg
+  let useStale = case useStaleVersion of
+        PermanentStale -> True
+        TemporaryStale -> True
+        _ -> False
   case useStale of
-    (UseStaleVersion True)
+    True
       | Just oldVer' <- oldVer -> do
         -- use the stale version if we have
         putInfo $ T.unpack $ "Skip running nvchecker, use stale version " <> coerce oldVer' <> " for " <> coerce pkg

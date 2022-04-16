@@ -280,7 +280,7 @@ instance PkgDSL PackageSet where
       (projMaybe p)
       (projMaybe p)
       (fromMaybe mempty (projMaybe p))
-      (fromMaybe (UseStaleVersion False) (projMaybe p))
+      (fromMaybe NoStale (projMaybe p))
 
 -- | 'PkgDSL' version of 'newPackage'
 --
@@ -542,4 +542,4 @@ passthru = (. pure . PackagePassthru . HMap.fromList) . andThen
 --
 -- new version won't be checked if we have a stale version
 pinned :: PackageSet (Prod r) -> PackageSet (Prod (UseStaleVersion : r))
-pinned = flip andThen . pure $ UseStaleVersion True
+pinned = flip andThen . pure $ PermanentStale

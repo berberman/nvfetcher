@@ -322,14 +322,17 @@ newtype PackageCargoLockFiles = PackageCargoLockFiles (NE.NonEmpty FilePath)
 newtype PackagePassthru = PackagePassthru (HashMap Text Text)
   deriving newtype (Semigroup, Monoid)
 
--- | This bool value means whether or not to use stale value.
--- Using stale value indicates that we will /NOT/ check for new versions if
+-- | Using stale value indicates that we will /NOT/ check for new versions if
 -- there is a known version recoverd from json file or last use of the rule.
 -- Normally you don't want a stale version
 -- unless you need pin a package.
-newtype UseStaleVersion = UseStaleVersion Bool
-  deriving newtype (Eq, Show, Ord)
-  deriving stock (Typeable, Generic)
+data UseStaleVersion
+  = -- | Specified in configuration file
+    PermanentStale
+  | -- | Specified by @--filter@ command
+    TemporaryStale
+  | NoStale
+  deriving stock (Eq, Show, Ord, Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
 -- | A package is defined with:
@@ -389,7 +392,7 @@ data PackageResult = PackageResult
     _prextract :: Maybe (HashMap FilePath NixExpr),
     -- | cargo lock file path in build dir -> (file path in nix, git dependencies)
     _prcargolock :: Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum)),
-    _prpinned :: Bool
+    _prpinned :: UseStaleVersion
   }
   deriving (Show, Typeable, Generic, NFData)
 
@@ -402,5 +405,7 @@ instance A.ToJSON PackageResult where
         "extract" A..= _prextract,
         "passthru" A..= _prpassthru,
         "cargoLocks" A..= _prcargolock,
-        "pinned" A..= _prpinned
+        "pinned" A..= case _prpinned of
+          PermanentStale -> True
+          _ -> False
       ]
