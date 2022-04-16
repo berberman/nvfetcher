@@ -146,13 +146,18 @@ NvcheckerOptions :: Maybe Text -> Maybe Text -> Maybe Text -> NvcheckerOptions
 [_fromPattern] :: NvcheckerOptions -> Maybe Text
 [_toPattern] :: NvcheckerOptions -> Maybe Text
 
--- | This bool value means whether or not to use stale value. Using stale
---   value indicates that we will <i>NOT</i> check for new versions if
---   there is a known version recoverd from json file or last use of the
---   rule. Normally you don't want a stale version unless you need pin a
---   package.
-newtype UseStaleVersion
-UseStaleVersion :: Bool -> UseStaleVersion
+-- | Using stale value indicates that we will <i>NOT</i> check for new
+--   versions if there is a known version recoverd from json file or last
+--   use of the rule. Normally you don't want a stale version unless you
+--   need pin a package.
+data UseStaleVersion
+
+-- | Specified in configuration file
+PermanentStale :: UseStaleVersion
+
+-- | Specified by <tt>--filter</tt> command
+TemporaryStale :: UseStaleVersion
+NoStale :: UseStaleVersion
 
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
@@ -250,7 +255,7 @@ PackageKey :: PackageName -> PackageKey
 
 -- | Result type of <a>Core</a>
 data PackageResult
-PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe (HashMap Text Text) -> Maybe (HashMap FilePath NixExpr) -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum)) -> Bool -> PackageResult
+PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe (HashMap Text Text) -> Maybe (HashMap FilePath NixExpr) -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum)) -> UseStaleVersion -> PackageResult
 [_prname] :: PackageResult -> PackageName
 [_prversion] :: PackageResult -> NvcheckerResult
 [_prfetched] :: PackageResult -> NixFetcher 'Fetched
@@ -262,7 +267,7 @@ PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe 
 -- | cargo lock file path in build dir -&gt; (file path in nix, git
 --   dependencies)
 [_prcargolock] :: PackageResult -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum))
-[_prpinned] :: PackageResult -> Bool
+[_prpinned] :: PackageResult -> UseStaleVersion
 instance Control.DeepSeq.NFData NvFetcher.Types.Version
 instance Data.Binary.Class.Binary NvFetcher.Types.Version
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Version
@@ -424,15 +429,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_iIx6 k_aIxc. Lens (NixFetcher k_iIx6) (NixFetcher k_aIxc) (FetchResult k_iIx6) (FetchResult k_aIxc)
-rev :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Version
-name :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) (Maybe Text)
-leaveDotGit :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Bool
-furl :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Text
-frepo :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Text
-fowner :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Text
-fetchSubmodules :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Bool
-deepClone :: forall k_iIx6. Traversal' (NixFetcher k_iIx6) Bool
+sha256 :: forall k_iIVC k_aIVI. Lens (NixFetcher k_iIVC) (NixFetcher k_aIVI) (FetchResult k_iIVC) (FetchResult k_aIVI)
+rev :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Version
+name :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) (Maybe Text)
+leaveDotGit :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Bool
+furl :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Text
+frepo :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Text
+fowner :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Text
+fetchSubmodules :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Bool
+deepClone :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
