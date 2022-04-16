@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
@@ -111,4 +112,12 @@ passthruCodec :: TomlCodec PackagePassthru
 passthruCodec = diwrap $ tableHashMap _KeyText text "passthru"
 
 pinnedCodec :: TomlCodec UseStaleVersion
-pinnedCodec = dimap (Just . coerce) (maybe (UseStaleVersion False) coerce) $ dioptional $ bool "pinned"
+pinnedCodec =
+  dimap
+    ( \case
+        PermanentStale -> Just True
+        TemporaryStale -> error "Impossible!"
+        NoStale -> Just False
+    )
+    (maybe NoStale (\x -> if x then PermanentStale else NoStale))
+    $ dioptional $ bool "pinned"

@@ -74,7 +74,7 @@ import NvFetcher.Options
 import NvFetcher.PackageSet
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
-import NvFetcher.Utils (getDataDir, aesonKey)
+import NvFetcher.Utils (aesonKey, getDataDir)
 import qualified System.Directory.Extra as D
 import Text.Regex.TDFA ((=~))
 
@@ -161,10 +161,12 @@ runNvFetcherNoCLI config@Config {..} target packageSet = do
     pinIfUnmatch x@Package {..}
       | Just regex <- filterRegex =
         x
-          { _ppinned =
-              if coerce _ppinned || not (_pname =~ regex)
-                then UseStaleVersion True
-                else UseStaleVersion False
+          { _ppinned = case _ppinned of
+              PermanentStale -> PermanentStale
+              _ ->
+                if _pname =~ regex
+                  then NoStale
+                  else TemporaryStale
           }
       | otherwise = x
 

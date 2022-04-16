@@ -132,8 +132,8 @@ fakePackage =
       _pcargo = undefined,
       _pextract = undefined,
       _ppassthru = undefined,
-      _ppinned = UseStaleVersion False
+      _ppinned = NoStale
     }
 
 fakePinnedPackage :: Package
-fakePinnedPackage = fakePackage {_ppinned = UseStaleVersion True}
+fakePinnedPackage = fakePackage {_ppinned = PermanentStale}

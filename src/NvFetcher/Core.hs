@@ -46,7 +46,6 @@ coreRules = do
         Package
           { _pversion = CheckVersion versionSource options,
             _ppassthru = (PackagePassthru passthru),
-            _ppinned = (UseStaleVersion pinned),
             ..
           } -> do
           _prversion@(NvcheckerResult version _mOldV _isStale) <- checkVersion versionSource options pkg
@@ -106,7 +105,7 @@ coreRules = do
 
           let _prpassthru = if HMap.null passthru then Nothing else Just passthru
               _prname = _pname
-              _prpinned = pinned
+              _prpinned = _ppinned
           -- Since we don't save the previous result, we are not able to know if the result changes
           -- Depending on this rule leads to RunDependenciesChanged
           pure $ RunResult ChangedRecomputeDiff mempty PackageResult {..}
