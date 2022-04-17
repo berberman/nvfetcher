@@ -272,6 +272,7 @@ instance Control.DeepSeq.NFData NvFetcher.Types.Version
 instance Data.Binary.Class.Binary NvFetcher.Types.Version
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Version
 instance GHC.Generics.Generic NvFetcher.Types.Version
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.Version
 instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.Version
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.Version
 instance GHC.Base.Monoid NvFetcher.Types.Version
@@ -284,6 +285,7 @@ instance Control.DeepSeq.NFData NvFetcher.Types.Checksum
 instance Data.Binary.Class.Binary NvFetcher.Types.Checksum
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Checksum
 instance GHC.Generics.Generic NvFetcher.Types.Checksum
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.Checksum
 instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.Checksum
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.Checksum
 instance GHC.Classes.Ord NvFetcher.Types.Checksum
@@ -293,6 +295,7 @@ instance Control.DeepSeq.NFData NvFetcher.Types.Branch
 instance Data.Binary.Class.Binary NvFetcher.Types.Branch
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Branch
 instance GHC.Generics.Generic NvFetcher.Types.Branch
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.Branch
 instance Data.Default.Class.Default NvFetcher.Types.Branch
 instance GHC.Classes.Ord NvFetcher.Types.Branch
 instance GHC.Classes.Eq NvFetcher.Types.Branch
@@ -372,6 +375,7 @@ instance Control.DeepSeq.NFData NvFetcher.Types.PackageKey
 instance Data.Binary.Class.Binary NvFetcher.Types.PackageKey
 instance Data.Hashable.Class.Hashable NvFetcher.Types.PackageKey
 instance GHC.Generics.Generic NvFetcher.Types.PackageKey
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.PackageKey
 instance GHC.Classes.Ord NvFetcher.Types.PackageKey
 instance GHC.Show.Show NvFetcher.Types.PackageKey
 instance GHC.Classes.Eq NvFetcher.Types.PackageKey
@@ -398,9 +402,17 @@ instance Control.DeepSeq.NFData (NvFetcher.Types.FetchResult k) => Control.DeepS
 instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.PackageResult
 instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
 instance GHC.Show.Show NvFetcher.Types.VersionChange
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.FetchRustGitDepsQ
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.ExtractSrcQ
 instance Data.Aeson.Types.ToJSON.ToJSON (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
+instance Prettyprinter.Internal.Pretty (NvFetcher.Types.NixFetcher k)
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerRaw
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.CheckVersion
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.VersionSource
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.NvcheckerOptions
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.ListOptions
 instance GHC.Show.Show NvFetcher.Types.VersionSortMethod
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.VersionSortMethod
 instance Data.Default.Class.Default NvFetcher.Types.VersionSortMethod
 
 
@@ -429,15 +441,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_iIVC k_aIVI. Lens (NixFetcher k_iIVC) (NixFetcher k_aIVI) (FetchResult k_iIVC) (FetchResult k_aIVI)
-rev :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Version
-name :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) (Maybe Text)
-leaveDotGit :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Bool
-furl :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Text
-frepo :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Text
-fowner :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Text
-fetchSubmodules :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Bool
-deepClone :: forall k_iIVC. Traversal' (NixFetcher k_iIVC) Bool
+sha256 :: forall k_iN0I k_aN0O. Lens (NixFetcher k_iN0I) (NixFetcher k_aN0O) (FetchResult k_iN0I) (FetchResult k_aN0O)
+rev :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Version
+name :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) (Maybe Text)
+leaveDotGit :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Bool
+furl :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Text
+frepo :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Text
+fowner :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Text
+fetchSubmodules :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Bool
+deepClone :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
