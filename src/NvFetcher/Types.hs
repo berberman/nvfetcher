@@ -69,31 +69,32 @@ import Data.Coerce (coerce)
 import Data.Default
 import Data.HashMap.Strict (HashMap)
 import qualified Data.List.NonEmpty as NE
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromMaybe, isNothing)
 import Data.String (IsString)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
 import Development.Shake.Classes
 import GHC.Generics (Generic)
+import Prettyprinter
 
 --------------------------------------------------------------------------------
 
 -- | Package version
 newtype Version = Version Text
-  deriving newtype (Eq, Show, Ord, IsString, Semigroup, Monoid, A.FromJSON, A.ToJSON)
+  deriving newtype (Eq, Show, Ord, IsString, Semigroup, Monoid, A.FromJSON, A.ToJSON, Pretty)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
 -- | Check sum, sha256, sri or base32, etc.
 newtype Checksum = Checksum Text
-  deriving newtype (Show, Eq, Ord, A.FromJSON, A.ToJSON)
+  deriving newtype (Show, Eq, Ord, A.FromJSON, A.ToJSON, Pretty)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
 -- | Git branch ('Nothing': master)
 newtype Branch = Branch (Maybe Text)
-  deriving newtype (Show, Eq, Ord, Default)
+  deriving newtype (Show, Eq, Ord, Default, Pretty)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
@@ -128,6 +129,10 @@ instance Show VersionSortMethod where
     ParseVersion -> "parse_version"
     Vercmp -> "vercmp"
 
+instance Pretty VersionSortMethod where
+  pretty ParseVersion = "ParseVersion"
+  pretty Vercmp = "Vercmp"
+
 instance Default VersionSortMethod where
   def = ParseVersion
 
@@ -141,6 +146,18 @@ data ListOptions = ListOptions
   }
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData, Default)
 
+instance Pretty ListOptions where
+  pretty ListOptions {..} =
+    "ListOptions"
+      <+> align
+        ( vsep
+            [ "includeRegex" <> colon <+> pretty _includeRegex,
+              "excludeRegex" <> colon <+> pretty _excludeRegex,
+              "sortVersionKey" <> colon <+> pretty _sortVersionKey,
+              "ignored" <> colon <+> pretty _includeRegex
+            ]
+        )
+
 -- | Configuration available for evey version sourece.
 -- See <https://nvchecker.readthedocs.io/en/latest/usage.html#global-options> for details.
 data NvcheckerOptions = NvcheckerOptions
@@ -149,6 +166,28 @@ data NvcheckerOptions = NvcheckerOptions
     _toPattern :: Maybe Text
   }
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData, Default)
+
+instance Pretty NvcheckerOptions where
+  pretty NvcheckerOptions {..} =
+    if isNothing _stripPrefix
+      && isNothing _fromPattern
+      && isNothing _toPattern
+      then mempty
+      else
+        "NvcheckerOptions"
+          <> line
+          <> indent
+            2
+            ( vsep
+                [ ppField "stripPrefix" _stripPrefix,
+                  ppField "fromPattern" _fromPattern,
+                  ppField "toPattern" _toPattern
+                ]
+            )
+
+ppField :: Pretty a => Doc ann -> Maybe a -> Doc ann
+ppField _ Nothing = mempty
+ppField s (Just x) = s <> colon <+> pretty x
 
 -- | Upstream version source for nvchecker to check
 data VersionSource
@@ -167,9 +206,107 @@ data VersionSource
   | Cmd {_vcmd :: Text}
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
+instance Pretty VersionSource where
+  pretty GitHubRelease {..} =
+    "CheckGitHubRelease"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "owner" <> colon <+> pretty _owner,
+              "repo" <> colon <+> pretty _repo
+            ]
+        )
+  pretty GitHubTag {..} =
+    "CheckGitHubTag"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "owner" <> colon <+> pretty _owner,
+              "repo" <> colon <+> pretty _repo,
+              "listOptions" <> colon <+> pretty _listOptions
+            ]
+        )
+  pretty Git {..} =
+    "CheckGit"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "url" <> colon <+> pretty _vurl,
+              "branch" <> colon <+> pretty _vbranch
+            ]
+        )
+  pretty Pypi {..} =
+    "CheckPypi" <> colon <+> pretty _pypi
+  pretty ArchLinux {..} =
+    "CheckArchLinux" <> colon <+> pretty _archpkg
+  pretty Aur {..} =
+    "CheckAur" <> colon <+> pretty _aur
+  pretty Manual {..} =
+    "CheckManual" <> colon <+> pretty _manual
+  pretty Repology {..} =
+    "CheckRepology"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "repology" <> colon <+> pretty _repology,
+              "repo" <> colon <+> pretty _repo
+            ]
+        )
+  pretty Webpage {..} =
+    "CheckWebpage"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "url" <> colon <+> pretty _vurl,
+              "regex" <> colon <+> pretty _regex,
+              "listOptions" <> colon <+> pretty _listOptions
+            ]
+        )
+  pretty HttpHeader {..} =
+    "CheckHttpHeader"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "url" <> colon <+> pretty _vurl,
+              "regex" <> colon <+> pretty _regex,
+              "listOptions" <> colon <+> pretty _listOptions
+            ]
+        )
+  pretty OpenVsx {..} =
+    "CheckOpenVsx"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "publisher" <> colon <+> pretty _ovPublisher,
+              "extName" <> colon <+> pretty _ovExtName
+            ]
+        )
+  pretty VscodeMarketplace {..} =
+    "CheckVscodeMarketplace"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "publisher" <> colon <+> pretty _vsmPublisher,
+              "extName" <> colon <+> pretty _vsmExtName
+            ]
+        )
+  pretty Cmd {..} =
+    "CheckCmd" <> colon <+> pretty _vcmd
+
 -- | The input of nvchecker
 data CheckVersion = CheckVersion VersionSource NvcheckerOptions
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
+
+instance Pretty CheckVersion where
+  pretty (CheckVersion v n) = "#" <+> align (vsep [pretty v, pretty n])
 
 -- | The result of nvchecker rule
 data NvcheckerResult = NvcheckerResult
@@ -287,6 +424,49 @@ instance A.ToJSON (NixFetcher Fetched) where
         "type" A..= A.String "tarball"
       ]
 
+instance Pretty (NixFetcher k) where
+  pretty FetchGit {..} =
+    "#" <+> "FetchGit"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "url" <> colon <+> pretty _furl,
+              "rev" <> colon <+> pretty _rev,
+              "deepClone" <> colon <+> pretty _deepClone,
+              "fetchSubmodules" <> colon <+> pretty _fetchSubmodules,
+              "leaveDotGit" <> colon <+> pretty _leaveDotGit,
+              ppField "name" _name
+            ]
+        )
+  pretty FetchGitHub {..} =
+    "#" <+> "FetchGitHub"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "owner" <> colon <+> pretty _fowner,
+              "repo" <> colon <+> pretty _frepo,
+              "rev" <> colon <+> pretty _rev,
+              "deepClone" <> colon <+> pretty _deepClone,
+              "fetchSubmodules" <> colon <+> pretty _fetchSubmodules,
+              "leaveDotGit" <> colon <+> pretty _leaveDotGit,
+              ppField "name" _name
+            ]
+        )
+  pretty FetchUrl {..} =
+    "#" <+> "FetchUrl"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "url" <> colon <+> pretty _furl,
+              ppField "name" _name
+            ]
+        )
+  pretty FetchTarball {..} =
+    "#" <+> "FetchTarball" <> colon <+> pretty _furl
+
 --------------------------------------------------------------------------------
 
 -- | Extract file contents from package source
@@ -295,6 +475,17 @@ data ExtractSrcQ = ExtractSrcQ (NixFetcher Fetched) (NE.NonEmpty FilePath)
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
 type instance RuleResult ExtractSrcQ = HashMap FilePath Text
+
+instance Pretty ExtractSrcQ where
+  pretty (ExtractSrcQ f n) =
+    "ExtractSrc" <> line
+      <> indent
+        2
+        ( vsep
+            [ "fetcher" <> colon <+> pretty f,
+              "files" <> colon <+> pretty n
+            ]
+        )
 
 --------------------------------------------------------------------------------
 
@@ -306,6 +497,17 @@ data FetchRustGitDepsQ = FetchRustGitDepsQ (NixFetcher Fetched) FilePath
 
 -- | @outputHashes@, a mapping from nameVer -> output hash
 type instance RuleResult FetchRustGitDepsQ = HashMap Text Checksum
+
+instance Pretty FetchRustGitDepsQ where
+  pretty (FetchRustGitDepsQ f n) =
+    "FetchRustGitDeps" <> line
+      <> indent
+        2
+        ( vsep
+            [ "fetcher" <> colon <+> pretty f,
+              "cargoLock" <> colon <+> pretty n
+            ]
+        )
 
 --------------------------------------------------------------------------------
 
@@ -361,7 +563,7 @@ data Package = Package
 -- | Package key is the name of a package.
 -- We use this type to index packages.
 newtype PackageKey = PackageKey PackageName
-  deriving newtype (Eq, Show, Ord)
+  deriving newtype (Eq, Show, Ord, Pretty)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 

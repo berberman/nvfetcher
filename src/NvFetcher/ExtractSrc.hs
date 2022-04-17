@@ -38,14 +38,18 @@ import NeatInterpolation (trimming)
 import NvFetcher.NixExpr
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
+import Prettyprinter (pretty)
 
 -- | Rules of extract source
 extractSrcRule :: Rules ()
 extractSrcRule = void $
   addOracleCache $ \(q :: ExtractSrcQ) -> withTempFile $ \fp -> withRetry $ do
-    writeFile' fp $ T.unpack $ wrap $ toNixExpr q
+    putInfo . show $ pretty q
+    let nixExpr = T.unpack $ wrap $ toNixExpr q
+    putVerbose $ "Generated nix expr:\n" <> nixExpr
+    writeFile' fp nixExpr
     -- TODO: Avoid using NIX_PATH
-    (CmdTime t, StdoutTrim out, CmdLine c) <- cmd Shell $ "nix-instantiate --eval --strict --json --read-write-mode -E 'let pkgs = import <nixpkgs> { }; in ((import " <> fp <> ") pkgs)'"
+    (CmdTime t, StdoutTrim out, CmdLine c) <- quietly $ cmd Shell $ "nix-instantiate --eval --strict --json --read-write-mode -E 'let pkgs = import <nixpkgs> { }; in ((import " <> fp <> ") pkgs)'"
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case A.decodeStrict out of
       Just x -> pure x

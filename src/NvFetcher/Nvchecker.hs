@@ -44,7 +44,9 @@ import Development.Shake.Rule
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
 import NvFetcher.Utils
-import Toml (Value (Bool, Text), pretty)
+import Prettyprinter
+import Toml (Value (Bool, Text))
+import qualified Toml
 import Toml.Type.Edsl
 
 -- | Rules of nvchecker
@@ -58,7 +60,8 @@ nvcheckerRule = do
 -- 'PackageKey' is required for caching.
 -- Run this rule by calling 'checkVersion'
 persistedRule :: Rules ()
-persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (CheckVersion versionSource options, pkg)) _old _mode -> do
+persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (key@(CheckVersion versionSource options), pkg)) _old _mode -> do
+  putInfo . show $ pretty key
   oldVer <- getRecentLastVersion pkg
   useStaleVersion <- _ppinned . fromJust <$> lookupPackage pkg
   let useStale = case useStaleVersion of
@@ -92,14 +95,17 @@ persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (CheckVersio
 -- Rule this rule by calling 'checkVersion''
 oneShotRule :: Rules ()
 oneShotRule = void $
-  addOracle $ \(CheckVersion versionSource options) -> do
+  addOracle $ \key@(CheckVersion versionSource options) -> do
+    putInfo . show $ pretty key
     NvcheckerRaw now <- runNvchecker (PackageKey "pkg") options versionSource
     pure $ NvcheckerResult now Nothing False
 
 runNvchecker :: PackageKey -> NvcheckerOptions -> VersionSource -> Action NvcheckerRaw
 runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ do
-  writeFile' config $ T.unpack $ pretty $ mkToml $ genNvConfig pkg options versionSource
-  (CmdTime t, Stdout out, CmdLine c) <- cmd $ "nvchecker --logger json -c " <> config
+  let nvcheckerConfig = T.unpack $ Toml.pretty $ mkToml $ genNvConfig pkg options versionSource
+  putVerbose $ "Generated nvchecker config for " <> show pkg <> ":" <> nvcheckerConfig
+  writeFile' config nvcheckerConfig
+  (CmdTime t, Stdout out, CmdLine c) <- quietly . cmd $ "nvchecker --logger json -c " <> config
   putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
   let out' = T.decodeUtf8 out
       result = mapMaybe (A.decodeStrict . T.encodeUtf8) (T.lines out')
