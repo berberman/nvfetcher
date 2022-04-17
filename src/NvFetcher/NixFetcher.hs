@@ -55,7 +55,7 @@ import Development.Shake
 import NeatInterpolation (trimming)
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
-import Prettyprinter
+import Prettyprinter (pretty, (<+>))
 
 --------------------------------------------------------------------------------
 
@@ -118,7 +118,7 @@ pypiUrl pypi (coerce -> ver) =
 prefetchRule :: Rules ()
 prefetchRule = void $
   addOracleCache $ \(f :: NixFetcher Fresh) -> do
-    putInfo . show $ pretty f
+    putInfo . show $ "#" <+> pretty f
     sha256 <- withRetry $ runFetcher f
     pure $ f {_sha256 = sha256}
 

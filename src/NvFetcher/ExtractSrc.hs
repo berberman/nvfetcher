@@ -38,13 +38,13 @@ import NeatInterpolation (trimming)
 import NvFetcher.NixExpr
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
-import Prettyprinter (pretty)
+import Prettyprinter (pretty, (<+>))
 
 -- | Rules of extract source
 extractSrcRule :: Rules ()
 extractSrcRule = void $
   addOracleCache $ \(q :: ExtractSrcQ) -> withTempFile $ \fp -> withRetry $ do
-    putInfo . show $ pretty q
+    putInfo . show $ "#" <+> pretty q
     let nixExpr = T.unpack $ wrap $ toNixExpr q
     putVerbose $ "Generated nix expr:\n" <> nixExpr
     writeFile' fp nixExpr

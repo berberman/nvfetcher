@@ -33,7 +33,7 @@ import Development.Shake
 import NvFetcher.ExtractSrc
 import NvFetcher.NixFetcher
 import NvFetcher.Types
-import Prettyprinter (pretty)
+import Prettyprinter (pretty, (<+>))
 import Text.Parsec
 import Text.Parsec.Text
 import Toml (TomlCodec, (.=))
@@ -43,7 +43,7 @@ import qualified Toml
 fetchRustGitDepsRule :: Rules ()
 fetchRustGitDepsRule = void $
   addOracleCache $ \key@(FetchRustGitDepsQ fetcher lockPath) -> do
-    putInfo . show $ pretty key
+    putInfo . show $ "#" <+> pretty key
     cargoLock <- head . HMap.elems <$> extractSrc fetcher lockPath
     deps <- case Toml.decode (Toml.list rustDepCodec "package") cargoLock of
       Right r -> pure $ nubOrdOn rrawSrc r

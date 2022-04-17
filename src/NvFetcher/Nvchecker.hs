@@ -44,7 +44,7 @@ import Development.Shake.Rule
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
 import NvFetcher.Utils
-import Prettyprinter
+import Prettyprinter (pretty, (<+>))
 import Toml (Value (Bool, Text))
 import qualified Toml
 import Toml.Type.Edsl
@@ -61,7 +61,7 @@ nvcheckerRule = do
 -- Run this rule by calling 'checkVersion'
 persistedRule :: Rules ()
 persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (key@(CheckVersion versionSource options), pkg)) _old _mode -> do
-  putInfo . show $ pretty key
+  putInfo . show $ "#" <+> pretty key
   oldVer <- getRecentLastVersion pkg
   useStaleVersion <- _ppinned . fromJust <$> lookupPackage pkg
   let useStale = case useStaleVersion of

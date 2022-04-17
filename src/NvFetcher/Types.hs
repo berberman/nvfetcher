@@ -148,15 +148,23 @@ data ListOptions = ListOptions
 
 instance Pretty ListOptions where
   pretty ListOptions {..} =
-    "ListOptions"
-      <+> align
-        ( vsep
-            [ "includeRegex" <> colon <+> pretty _includeRegex,
-              "excludeRegex" <> colon <+> pretty _excludeRegex,
-              "sortVersionKey" <> colon <+> pretty _sortVersionKey,
-              "ignored" <> colon <+> pretty _includeRegex
-            ]
-        )
+    if isNothing _includeRegex
+      && isNothing _excludeRegex
+      && isNothing _sortVersionKey
+      && isNothing _includeRegex
+      then mempty
+      else
+        "ListOptions"
+          <> indent
+            2
+            ( vsep $
+                concat
+                  [ ppField "includeRegex" _includeRegex,
+                    ppField "excludeRegex" _excludeRegex,
+                    ppField "sortVersionKey" _sortVersionKey,
+                    ppField "ignored" _includeRegex
+                  ]
+            )
 
 -- | Configuration available for evey version sourece.
 -- See <https://nvchecker.readthedocs.io/en/latest/usage.html#global-options> for details.
@@ -178,16 +186,17 @@ instance Pretty NvcheckerOptions where
           <> line
           <> indent
             2
-            ( vsep
-                [ ppField "stripPrefix" _stripPrefix,
-                  ppField "fromPattern" _fromPattern,
-                  ppField "toPattern" _toPattern
-                ]
+            ( vsep $
+                concat
+                  [ ppField "stripPrefix" _stripPrefix,
+                    ppField "fromPattern" _fromPattern,
+                    ppField "toPattern" _toPattern
+                  ]
             )
 
-ppField :: Pretty a => Doc ann -> Maybe a -> Doc ann
-ppField _ Nothing = mempty
-ppField s (Just x) = s <> colon <+> pretty x
+ppField :: Pretty a => Doc ann -> Maybe a -> [Doc ann]
+ppField _ Nothing = []
+ppField s (Just x) = [s <> colon <+> pretty x]
 
 -- | Upstream version source for nvchecker to check
 data VersionSource
@@ -306,7 +315,7 @@ data CheckVersion = CheckVersion VersionSource NvcheckerOptions
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 instance Pretty CheckVersion where
-  pretty (CheckVersion v n) = "#" <+> align (vsep [pretty v, pretty n])
+  pretty (CheckVersion v n) = align (vsep [pretty v, pretty n])
 
 -- | The result of nvchecker rule
 data NvcheckerResult = NvcheckerResult
@@ -426,46 +435,45 @@ instance A.ToJSON (NixFetcher Fetched) where
 
 instance Pretty (NixFetcher k) where
   pretty FetchGit {..} =
-    "#" <+> "FetchGit"
+    "FetchGit"
       <> line
       <> indent
         2
-        ( vsep
+        ( vsep $
             [ "url" <> colon <+> pretty _furl,
               "rev" <> colon <+> pretty _rev,
               "deepClone" <> colon <+> pretty _deepClone,
               "fetchSubmodules" <> colon <+> pretty _fetchSubmodules,
-              "leaveDotGit" <> colon <+> pretty _leaveDotGit,
-              ppField "name" _name
+              "leaveDotGit" <> colon <+> pretty _leaveDotGit
             ]
+              <> ppField "name" _name
         )
   pretty FetchGitHub {..} =
-    "#" <+> "FetchGitHub"
+    "FetchGitHub"
       <> line
       <> indent
         2
-        ( vsep
+        ( vsep $
             [ "owner" <> colon <+> pretty _fowner,
               "repo" <> colon <+> pretty _frepo,
               "rev" <> colon <+> pretty _rev,
               "deepClone" <> colon <+> pretty _deepClone,
               "fetchSubmodules" <> colon <+> pretty _fetchSubmodules,
-              "leaveDotGit" <> colon <+> pretty _leaveDotGit,
-              ppField "name" _name
+              "leaveDotGit" <> colon <+> pretty _leaveDotGit
             ]
+              <> ppField "name" _name
         )
   pretty FetchUrl {..} =
-    "#" <+> "FetchUrl"
+    "FetchUrl"
       <> line
       <> indent
         2
-        ( vsep
-            [ "url" <> colon <+> pretty _furl,
-              ppField "name" _name
-            ]
+        ( vsep $
+            ["url" <> colon <+> pretty _furl]
+              <> ppField "name" _name
         )
   pretty FetchTarball {..} =
-    "#" <+> "FetchTarball" <> colon <+> pretty _furl
+    "FetchTarball" <> colon <+> pretty _furl
 
 --------------------------------------------------------------------------------
 
