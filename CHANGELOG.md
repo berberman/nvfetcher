@@ -1,5 +1,33 @@
 # Revision history for nvfetcher
 
+## 0.5.0.0
+
+There have been many significant changes since the last release.
+**Starting from this version, nvfetcher no longer requires shake database for each project,
+in other words, there is no need to commit the database in git or share it between machines.**
+Also, a machine-readable `generated.json` will be generated for convenience.
+
+### Migration
+
+The option in TOML configuration `cargo_lock` (string) was changed to `cargo_locks` (list of strings), since now nvfetcher supports handling multi-cargo locks.
+
+* Use `fetchFromGitHub` as the GitHub fetcher (introduces [`nix-prefetch`](https://github.com/msteen/nix-prefetch))
+* Add [cmd](https://nvchecker.readthedocs.io/en/latest/usage.html#find-with-a-command) version source
+* Support pinning a package
+* Tweak src name to extract .vsx file properly
+* Add option --filter to specify packages to update
+* Fix missing `argActionAfterBuild`
+* Add one shot nvchecker rule independent of package definition
+* Don't cache generated nix exprs in shake database
+* Add `fetchTarball`
+* Produce parser readable `generated.json`
+* Internalize shake database
+* Validate config before decoding
+* Extract `Config` from `Arg` and save it to shake extra
+* Breakdown `Args` to provide a more concise API
+* Support multi-cargo lock files
+* Pretty print rules in command line
+
 ## 0.4.0.0
 
 * Rename `_build` to `_sources`

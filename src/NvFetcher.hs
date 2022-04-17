@@ -6,7 +6,7 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
--- | Copyright: (c) 2021 berberman
+-- | Copyright: (c) 2021-2022 berberman
 -- SPDX-License-Identifier: MIT
 -- Maintainer: berberman <berberman@yandex.com>
 -- Stability: experimental
