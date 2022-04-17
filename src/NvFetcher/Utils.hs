@@ -1,5 +1,10 @@
 {-# LANGUAGE CPP #-}
 
+-- | Copyright: (c) 2021-2022 berberman
+-- SPDX-License-Identifier: MIT
+-- Maintainer: berberman <berberman@yandex.com>
+-- Stability: experimental
+-- Portability: portable
 module NvFetcher.Utils where
 
 import Data.Binary
