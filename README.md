@@ -66,8 +66,6 @@ We always check versions of packages during each run, but only do prefetch and f
 
 How to use the generated sources file? Here are several examples:
 
-- [DevOS](https://github.com/divnix/devos/tree/main/pkgs)
-
 - My [flakes repo](https://github.com/berberman/flakes)
 
 - Nick Cao's [flakes repo](https://gitlab.com/NickCao/flakes/-/tree/master/pkgs)
