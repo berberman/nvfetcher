@@ -41,6 +41,7 @@ common common-options
     , neat-interpolation    ^>=0.5.1
     , optparse-simple       ^>=0.1.1
     , parsec
+    , prettyprinter
     , regex-tdfa            ^>=1.3.1.1
     , shake                 ^>=0.19.4
     , text

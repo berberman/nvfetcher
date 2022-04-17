@@ -55,6 +55,7 @@ import Development.Shake
 import NeatInterpolation (trimming)
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
+import Prettyprinter (pretty, (<+>))
 
 --------------------------------------------------------------------------------
 
@@ -62,41 +63,45 @@ runFetcher :: NixFetcher Fresh -> Action Checksum
 runFetcher = \case
   FetchGit {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
-      command [EchoStderr False] "nix-prefetch" $
-        ["fetchgit"]
-          <> ["--url", T.unpack _furl]
-          <> ["--rev", T.unpack $ coerce _rev]
-          <> ["--fetchSubmodules" | _fetchSubmodules]
-          <> ["--deepClone" | _deepClone]
-          <> ["--leaveDotGit" | _leaveDotGit]
+      quietly $
+        command [EchoStderr False] "nix-prefetch" $
+          ["fetchgit"]
+            <> ["--url", T.unpack _furl]
+            <> ["--rev", T.unpack $ coerce _rev]
+            <> ["--fetchSubmodules" | _fetchSubmodules]
+            <> ["--deepClone" | _deepClone]
+            <> ["--leaveDotGit" | _leaveDotGit]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
       [x] -> pure $ coerce x
       _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
   FetchGitHub {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
-      command [EchoStderr False] "nix-prefetch" $
-        ["fetchFromGitHub"]
-          <> ["--owner", T.unpack _fowner]
-          <> ["--repo", T.unpack _frepo]
-          <> ["--rev", T.unpack $ coerce _rev]
-          <> ["--fetchSubmodules" | _fetchSubmodules]
-          <> ["--deepClone" | _deepClone]
-          <> ["--leaveDotGit" | _leaveDotGit]
+      quietly $
+        command [EchoStderr False] "nix-prefetch" $
+          ["fetchFromGitHub"]
+            <> ["--owner", T.unpack _fowner]
+            <> ["--repo", T.unpack _frepo]
+            <> ["--rev", T.unpack $ coerce _rev]
+            <> ["--fetchSubmodules" | _fetchSubmodules]
+            <> ["--deepClone" | _deepClone]
+            <> ["--leaveDotGit" | _leaveDotGit]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
       [x] -> pure $ coerce x
       _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
   FetchUrl {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
-      command [EchoStderr False] "nix-prefetch" ["fetchurl", "--url", T.unpack _furl]
+      quietly $
+        command [EchoStderr False] "nix-prefetch" ["fetchurl", "--url", T.unpack _furl]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
       [x] -> pure $ coerce x
       _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
   FetchTarball {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
-      command [EchoStderr False] "nix-prefetch" ["fetchTarball", "--url", T.unpack _furl]
+      quietly $
+        command [EchoStderr False] "nix-prefetch" ["fetchTarball", "--url", T.unpack _furl]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
       [x] -> pure $ coerce x
@@ -113,6 +118,7 @@ pypiUrl pypi (coerce -> ver) =
 prefetchRule :: Rules ()
 prefetchRule = void $
   addOracleCache $ \(f :: NixFetcher Fresh) -> do
+    putInfo . show $ "#" <+> pretty f
     sha256 <- withRetry $ runFetcher f
     pure $ f {_sha256 = sha256}
 
