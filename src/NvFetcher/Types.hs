@@ -146,25 +146,26 @@ data ListOptions = ListOptions
   }
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData, Default)
 
+isEmptyListOptions :: ListOptions -> Bool
+isEmptyListOptions ListOptions {..} =
+  isNothing _includeRegex
+    && isNothing _excludeRegex
+    && isNothing _sortVersionKey
+    && isNothing _includeRegex
+
 instance Pretty ListOptions where
   pretty ListOptions {..} =
-    if isNothing _includeRegex
-      && isNothing _excludeRegex
-      && isNothing _sortVersionKey
-      && isNothing _includeRegex
-      then mempty
-      else
-        "ListOptions"
-          <> indent
-            2
-            ( vsep $
-                concat
-                  [ ppField "includeRegex" _includeRegex,
-                    ppField "excludeRegex" _excludeRegex,
-                    ppField "sortVersionKey" _sortVersionKey,
-                    ppField "ignored" _includeRegex
-                  ]
-            )
+    "ListOptions"
+      <> indent
+        2
+        ( vsep $
+            concat
+              [ ppField "includeRegex" _includeRegex,
+                ppField "excludeRegex" _excludeRegex,
+                ppField "sortVersionKey" _sortVersionKey,
+                ppField "ignored" _includeRegex
+              ]
+        )
 
 -- | Configuration available for evey version sourece.
 -- See <https://nvchecker.readthedocs.io/en/latest/usage.html#global-options> for details.
@@ -175,24 +176,25 @@ data NvcheckerOptions = NvcheckerOptions
   }
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData, Default)
 
+isEmptyNvcheckerOptions :: NvcheckerOptions -> Bool
+isEmptyNvcheckerOptions NvcheckerOptions {..} =
+  isNothing _stripPrefix
+    && isNothing _fromPattern
+    && isNothing _toPattern
+
 instance Pretty NvcheckerOptions where
   pretty NvcheckerOptions {..} =
-    if isNothing _stripPrefix
-      && isNothing _fromPattern
-      && isNothing _toPattern
-      then mempty
-      else
-        "NvcheckerOptions"
-          <> line
-          <> indent
-            2
-            ( vsep $
-                concat
-                  [ ppField "stripPrefix" _stripPrefix,
-                    ppField "fromPattern" _fromPattern,
-                    ppField "toPattern" _toPattern
-                  ]
-            )
+    "NvcheckerOptions"
+      <> line
+      <> indent
+        2
+        ( vsep $
+            concat
+              [ ppField "stripPrefix" _stripPrefix,
+                ppField "fromPattern" _fromPattern,
+                ppField "toPattern" _toPattern
+              ]
+        )
 
 ppField :: Pretty a => Doc ann -> Maybe a -> [Doc ann]
 ppField _ Nothing = []
@@ -231,11 +233,11 @@ instance Pretty VersionSource where
       <> line
       <> indent
         2
-        ( vsep
+        ( vsep $
             [ "owner" <> colon <+> pretty _owner,
-              "repo" <> colon <+> pretty _repo,
-              "listOptions" <> colon <+> pretty _listOptions
+              "repo" <> colon <+> pretty _repo
             ]
+              <> ["listOptions" <> colon <+> pretty _listOptions | not $ isEmptyListOptions _listOptions]
         )
   pretty Git {..} =
     "CheckGit"
@@ -270,22 +272,22 @@ instance Pretty VersionSource where
       <> line
       <> indent
         2
-        ( vsep
+        ( vsep $
             [ "url" <> colon <+> pretty _vurl,
-              "regex" <> colon <+> pretty _regex,
-              "listOptions" <> colon <+> pretty _listOptions
+              "regex" <> colon <+> pretty _regex
             ]
+              <> ["listOptions" <> colon <+> pretty _listOptions | not $ isEmptyListOptions _listOptions]
         )
   pretty HttpHeader {..} =
     "CheckHttpHeader"
       <> line
       <> indent
         2
-        ( vsep
+        ( vsep $
             [ "url" <> colon <+> pretty _vurl,
-              "regex" <> colon <+> pretty _regex,
-              "listOptions" <> colon <+> pretty _listOptions
+              "regex" <> colon <+> pretty _regex
             ]
+              <> ["listOptions" <> colon <+> pretty _listOptions | not $ isEmptyListOptions _listOptions]
         )
   pretty OpenVsx {..} =
     "CheckOpenVsx"
@@ -315,7 +317,7 @@ data CheckVersion = CheckVersion VersionSource NvcheckerOptions
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 instance Pretty CheckVersion where
-  pretty (CheckVersion v n) = align (vsep [pretty v, pretty n])
+  pretty (CheckVersion v n) = align (vsep $ [pretty v] <> [pretty n | not $ isEmptyNvcheckerOptions n])
 
 -- | The result of nvchecker rule
 data NvcheckerResult = NvcheckerResult
