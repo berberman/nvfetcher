@@ -230,5 +230,6 @@ Building from source:
 ```
 $ git clone https://github.com/berberman/nvfetcher
 $ nix develop
+$ cabal update
 $ cabal build
 ```
