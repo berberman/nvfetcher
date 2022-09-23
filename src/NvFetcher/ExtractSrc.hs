@@ -48,7 +48,7 @@ extractSrcRule = void $
     let nixExpr = T.unpack $ fetcherToDrv fetcher "nvfetcher-extract"
     putVerbose $ "Generated nix expr:\n" <> nixExpr
     writeFile' fp nixExpr
-    (CmdTime t, StdoutTrim out, CmdLine c) <- cmd $ "nix-build " <> fp
+    (CmdTime t, StdoutTrim out, CmdLine c) <- quietly $ cmd $ "nix-build " <> fp
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     unlessM (doesDirectoryExist out) $
       fail $ "nix-build output is not a directory: " <> out
