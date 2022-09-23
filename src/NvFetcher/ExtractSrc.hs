@@ -1,8 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE TupleSections #-}
 
 -- | Copyright: (c) 2021-2022 berberman
 -- SPDX-License-Identifier: MIT
@@ -26,15 +25,16 @@ module NvFetcher.ExtractSrc
 where
 
 import Control.Monad (void)
-import qualified Data.Aeson as A
+import Control.Monad.Extra (unlessM)
 import Data.Binary.Instances ()
 import Data.HashMap.Strict (HashMap)
+import qualified Data.HashMap.Strict as HM
 import qualified Data.List.NonEmpty as NE
 import Data.Text (Text)
 import qualified Data.Text as T
-import qualified Data.Text.Encoding as T
+import qualified Data.Text.IO as T
 import Development.Shake
-import NeatInterpolation (trimming)
+import Development.Shake.FilePath ((</>))
 import NvFetcher.NixExpr
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
@@ -43,17 +43,18 @@ import Prettyprinter (pretty, (<+>))
 -- | Rules of extract source
 extractSrcRule :: Rules ()
 extractSrcRule = void $
-  addOracleCache $ \(q :: ExtractSrcQ) -> withTempFile $ \fp -> withRetry $ do
+  addOracle $ \q@(ExtractSrcQ fetcher files) -> withTempFile $ \fp -> withRetry $ do
     putInfo . show $ "#" <+> pretty q
-    let nixExpr = T.unpack $ wrap $ toNixExpr q
+    let nixExpr = T.unpack $ fetcherToDrv fetcher "nvfetcher-extract"
     putVerbose $ "Generated nix expr:\n" <> nixExpr
     writeFile' fp nixExpr
-    -- TODO: Avoid using NIX_PATH
-    (CmdTime t, StdoutTrim out, CmdLine c) <- quietly $ cmd Shell $ "nix-instantiate --eval --strict --json --read-write-mode -E 'let pkgs = import <nixpkgs> { }; in ((import " <> fp <> ") pkgs)'"
+    (CmdTime t, StdoutTrim out, CmdLine c, Stdouterr err) <- quietly $ cmd $ "nix-build --no-out-link " <> fp
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
-    case A.decodeStrict out of
-      Just x -> pure x
-      _ -> fail $ "Failed to parse output of nix-instantiate: " <> T.unpack (T.decodeUtf8 out)
+    putVerbose $ "Output from stdout: " <> out
+    putVerbose $ "Output from stderr: " <> err
+    unlessM (doesDirectoryExist out) $
+      fail $ "nix-build output is not a directory: " <> out
+    HM.fromList <$> sequence [(f,) <$> liftIO (T.readFile $ out </> f) | f <- NE.toList files]
 
 -- | Run extract source with many sources
 extractSrcs ::
@@ -72,12 +73,3 @@ extractSrc ::
   FilePath ->
   Action (HashMap FilePath Text)
 extractSrc fetcher fp = extractSrcs fetcher $ NE.fromList [fp]
-
---------------------------------------------------------------------------------
-
-wrap :: NixExpr -> NixExpr
-wrap expr =
-  [trimming|
-    { pkgs, ... }:
-    $expr
-  |]

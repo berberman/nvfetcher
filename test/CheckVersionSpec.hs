@@ -29,8 +29,8 @@ versionSourcesSpec = aroundShake $
     specifyChan "pypi" $
       runNvcheckerRule (Pypi "example") `shouldReturnJust` Version "0.1.0"
 
-    specifyChan "archpkg" $
-      runNvcheckerRule (ArchLinux "ipw2100-fw") `shouldReturnJust` Version "1.3"
+    -- specifyChan "archpkg" $
+    --   runNvcheckerRule (ArchLinux "ipw2100-fw") `shouldReturnJust` Version "1.3"
 
     specifyChan "aur" $
       runNvcheckerRule (Aur "ssed") `shouldReturnJust` Version "3.62"

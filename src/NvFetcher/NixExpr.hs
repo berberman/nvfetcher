@@ -18,6 +18,7 @@
 module NvFetcher.NixExpr
   ( NixExpr,
     ToNixExpr (..),
+    fetcherToDrv,
   )
 where
 
@@ -134,24 +135,22 @@ nixFetcher sha256 = \case
   where
     nameField = maybe "" (\x -> "\nname = " <> quote x <> ";")
 
-instance ToNixExpr ExtractSrcQ where
-  toNixExpr (ExtractSrcQ fetcher files) = extractFiles fetcher files
-
-extractFiles :: NixFetcher Fetched -> NE.NonEmpty FilePath -> NixExpr
-extractFiles (toNixExpr -> fetcherExpr) (toNixExpr -> fileNames) =
+-- | Create a trivial drv that extracts the source from a fetcher
+-- TODO: Avoid using @NIX_PATH@
+fetcherToDrv :: NixFetcher Fetched -> Text -> NixExpr
+fetcherToDrv (toNixExpr -> fetcherExpr) (quote -> drvName) =
   [trimming|
-    let
-      drv = import (pkgs.writeText "src" ''
-        pkgs: {
-          src = pkgs.$fetcherExpr;
-        }
-      '');
-      fileNames = $fileNames;
-      toFile = f: builtins.readFile ((drv pkgs).src + "/" + f);
-    in builtins.listToAttrs (builtins.map (x: {
-      name = x;
-      value = toFile x;
-    }) fileNames)
+    with import <nixpkgs> { };
+    stdenv.mkDerivation {
+      name = $drvName;
+      src = $fetcherExpr;
+      nativeBuildInputs = [ unzip ];
+      doBuild = false;
+      installPhase = ''
+        mkdir $$out
+        cp -r * $$out
+      '';
+    }
   |]
 
 -- | nix expr snippet like:
