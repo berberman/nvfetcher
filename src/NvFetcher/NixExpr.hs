@@ -144,6 +144,7 @@ fetcherToDrv (toNixExpr -> fetcherExpr) (quote -> drvName) =
     stdenv.mkDerivation {
       name = $drvName;
       src = $fetcherExpr;
+      nativeBuildInputs = [ unzip ];
       doBuild = false;
       installPhase = ''
         mkdir $$out
