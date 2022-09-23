@@ -442,15 +442,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_iN0I k_aN0O. Lens (NixFetcher k_iN0I) (NixFetcher k_aN0O) (FetchResult k_iN0I) (FetchResult k_aN0O)
-rev :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Version
-name :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) (Maybe Text)
-leaveDotGit :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Bool
-furl :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Text
-frepo :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Text
-fowner :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Text
-fetchSubmodules :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Bool
-deepClone :: forall k_iN0I. Traversal' (NixFetcher k_iN0I) Bool
+sha256 :: forall k_iN1K k_aN1Q. Lens (NixFetcher k_iN1K) (NixFetcher k_aN1Q) (FetchResult k_iN1K) (FetchResult k_aN1Q)
+rev :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Version
+name :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) (Maybe Text)
+leaveDotGit :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Bool
+furl :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Text
+frepo :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Text
+fowner :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Text
+fetchSubmodules :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Bool
+deepClone :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -1136,6 +1136,10 @@ type NixExpr = Text
 -- | Types can be converted into nix expr
 class ToNixExpr a
 toNixExpr :: ToNixExpr a => a -> NixExpr
+
+-- | Create a trivial drv that extracts the source from a fetcher TODO:
+--   Avoid using <tt>NIX_PATH</tt>
+fetcherToDrv :: NixFetcher Fetched -> Text -> NixExpr
 instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fresh)
 instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
 instance NvFetcher.NixExpr.ToNixExpr GHC.Types.Bool
@@ -1144,7 +1148,6 @@ instance NvFetcher.NixExpr.ToNixExpr a => NvFetcher.NixExpr.ToNixExpr (GHC.Base.
 instance NvFetcher.NixExpr.ToNixExpr GHC.Base.String
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.NixExpr
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.Version
-instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.ExtractSrcQ
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.PackageResult
 
 
