@@ -13,7 +13,7 @@ module NvFetcher.Config
 
 -- | Nvfetcher configuration
 data Config
-Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Bool -> Config
+Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Bool -> Maybe FilePath -> Config
 [shakeConfig] :: Config -> ShakeOptions
 [buildDir] :: Config -> FilePath
 [customRules] :: Config -> Rules ()
@@ -22,6 +22,9 @@ Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int 
 [retry] :: Config -> Int
 [filterRegex] :: Config -> Maybe String
 [cacheNvchecker] :: Config -> Bool
+
+-- | Absolute path
+[keyfile] :: Config -> Maybe FilePath
 instance Data.Default.Class.Default NvFetcher.Config.Config
 
 
@@ -442,15 +445,15 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_iN1K k_aN1Q. Lens (NixFetcher k_iN1K) (NixFetcher k_aN1Q) (FetchResult k_iN1K) (FetchResult k_aN1Q)
-rev :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Version
-name :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) (Maybe Text)
-leaveDotGit :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Bool
-furl :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Text
-frepo :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Text
-fowner :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Text
-fetchSubmodules :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Bool
-deepClone :: forall k_iN1K. Traversal' (NixFetcher k_iN1K) Bool
+sha256 :: forall k_iN3s k_aN3y. Lens (NixFetcher k_iN3s) (NixFetcher k_aN3y) (FetchResult k_iN3s) (FetchResult k_aN3y)
+rev :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Version
+name :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) (Maybe Text)
+leaveDotGit :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Bool
+furl :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Text
+frepo :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Text
+fowner :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Text
+fetchSubmodules :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Bool
+deepClone :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -499,6 +502,9 @@ withRetry :: Action a -> Action a
 
 -- | Get build dir
 getBuildDir :: Action FilePath
+
+-- | Get keyfile path
+getKeyfilePath :: Action (Maybe FilePath)
 
 -- | Get initial version of a package
 getLastVersionOnDisk :: PackageKey -> Action (Maybe Version)
@@ -1215,7 +1221,7 @@ module NvFetcher.Options
 
 -- | Options for nvfetcher CLI
 data CLIOptions
-CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> Target -> CLIOptions
+CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> Maybe FilePath -> Target -> CLIOptions
 [optBuildDir] :: CLIOptions -> FilePath
 [optCommit] :: CLIOptions -> Bool
 [optLogPath] :: CLIOptions -> Maybe FilePath
@@ -1224,6 +1230,7 @@ CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -
 [optTiming] :: CLIOptions -> Bool
 [optVerbose] :: CLIOptions -> Bool
 [optPkgNameFilter] :: CLIOptions -> Maybe String
+[optKeyfile] :: CLIOptions -> Maybe FilePath
 [optTarget] :: CLIOptions -> Target
 data Target
 Build :: Target
@@ -1286,7 +1293,7 @@ runNvFetcher' :: Config -> PackageSet () -> IO ()
 runNvFetcherNoCLI :: Config -> Target -> PackageSet () -> IO ()
 
 -- | Apply <a>CLIOptions</a> to <a>Config</a>
-applyCliOptions :: Config -> CLIOptions -> Config
+applyCliOptions :: Config -> CLIOptions -> IO Config
 
 -- | <pre>
 --   Parse generated.nix
