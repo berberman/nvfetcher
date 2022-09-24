@@ -30,6 +30,9 @@ module NvFetcher.Types.ShakeExtras
     -- * Build dir
     getBuildDir,
 
+    -- * Keyfile
+    getKeyfilePath,
+
     -- * Last versions
     getLastVersionOnDisk,
     getRecentLastVersion,
@@ -114,6 +117,10 @@ withRetry a = getShakeExtras >>= \ShakeExtras {..} -> actionRetry (retry config)
 -- | Get build dir
 getBuildDir :: Action FilePath
 getBuildDir = buildDir . config <$> getShakeExtras
+
+-- | Get keyfile path
+getKeyfilePath :: Action (Maybe FilePath)
+getKeyfilePath = keyfile . config <$> getShakeExtras
 
 -- | Get initial version of a package
 getLastVersionOnDisk :: PackageKey -> Action (Maybe Version)

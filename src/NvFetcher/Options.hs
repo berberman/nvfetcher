@@ -42,6 +42,7 @@ data CLIOptions = CLIOptions
     optTiming :: Bool,
     optVerbose :: Bool,
     optPkgNameFilter :: Maybe String,
+    optKeyfile :: Maybe FilePath,
     optTarget :: Target
   }
   deriving (Show)
@@ -84,7 +85,7 @@ cliOptionsParser =
       ( short 'r'
           <> long "retry"
           <> metavar "NUM"
-          <> help "Times to retry of some rules (nvchecker, prefetch, nix-instantiate, etc.)"
+          <> help "Times to retry of some rules (nvchecker, prefetch, nix-build, etc.)"
           <> value 3
           <> showDefault
       )
@@ -96,6 +97,15 @@ cliOptionsParser =
               <> long "filter"
               <> metavar "REGEX"
               <> help "Regex to filter packages to be updated"
+          )
+      )
+    <*> optional
+      ( strOption
+          ( short 'k'
+              <> long "keyfile"
+              <> metavar "FILE"
+              <> help "Nvchecker keyfile"
+              <> completer (bashCompleter "file")
           )
       )
     <*> argument

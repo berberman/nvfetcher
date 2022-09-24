@@ -88,26 +88,33 @@ runNvFetcher = runNvFetcher' def
 -- | Similar to 'runNvFetcher', but uses custom @config@ instead of 'def' overridden by 'CLIOptions'
 runNvFetcher' :: Config -> PackageSet () -> IO ()
 runNvFetcher' config packageSet =
-  getCLIOptions cliOptionsParser >>= \cli -> runNvFetcherNoCLI (applyCliOptions config cli) (optTarget cli) packageSet
+  getCLIOptions cliOptionsParser >>= \cli ->
+    applyCliOptions config cli >>= \o ->
+      runNvFetcherNoCLI o (optTarget cli) packageSet
 
 -- | Apply 'CLIOptions' to 'Config'
-applyCliOptions :: Config -> CLIOptions -> Config
-applyCliOptions config CLIOptions {..} =
-  config
-    { buildDir = optBuildDir,
-      actionAfterBuild = do
-        whenJust optLogPath logChangesToFile
-        when optCommit commitChanges
-        actionAfterBuild config,
-      shakeConfig =
-        (shakeConfig config)
-          { shakeTimings = optTiming,
-            shakeVerbosity = if optVerbose then Verbose else Info,
-            shakeThreads = optThreads
-          },
-      filterRegex = optPkgNameFilter,
-      retry = optRetry
-    }
+applyCliOptions :: Config -> CLIOptions -> IO Config
+applyCliOptions config CLIOptions {..} = do
+  aKeyfile <- case optKeyfile of
+    Just k -> Just <$> D.makeAbsolute k
+    _ -> pure Nothing
+  pure $
+    config
+      { buildDir = optBuildDir,
+        actionAfterBuild = do
+          whenJust optLogPath logChangesToFile
+          when optCommit commitChanges
+          actionAfterBuild config,
+        shakeConfig =
+          (shakeConfig config)
+            { shakeTimings = optTiming,
+              shakeVerbosity = if optVerbose then Verbose else Info,
+              shakeThreads = optThreads
+            },
+        filterRegex = optPkgNameFilter,
+        retry = optRetry,
+        keyfile = aKeyfile
+      }
 
 logChangesToFile :: FilePath -> Action ()
 logChangesToFile fp = do

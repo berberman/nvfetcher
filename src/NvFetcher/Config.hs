@@ -17,7 +17,9 @@ data Config = Config
     actionAfterClean :: Action (),
     retry :: Int,
     filterRegex :: Maybe String,
-    cacheNvchecker :: Bool
+    cacheNvchecker :: Bool,
+    -- | Absolute path
+    keyfile :: Maybe FilePath
   }
 
 instance Default Config where
@@ -34,5 +36,6 @@ instance Default Config where
         actionAfterClean = pure (),
         retry = 3,
         filterRegex = Nothing,
-        cacheNvchecker = True
+        cacheNvchecker = True,
+        keyfile = Nothing
       }
