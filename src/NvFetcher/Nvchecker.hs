@@ -102,7 +102,8 @@ oneShotRule = void $
 
 runNvchecker :: PackageKey -> NvcheckerOptions -> VersionSource -> Action NvcheckerRaw
 runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ do
-  let nvcheckerConfig = T.unpack $ Toml.pretty $ mkToml $ genNvConfig pkg options versionSource
+  mKeyfile <- getKeyfilePath
+  let nvcheckerConfig = T.unpack $ Toml.pretty $ mkToml $ genNvConfig pkg options mKeyfile versionSource
   putVerbose $ "Generated nvchecker config for " <> show pkg <> ":" <> nvcheckerConfig
   writeFile' config nvcheckerConfig
   (CmdTime t, Stdout out, CmdLine c) <- quietly . cmd $ "nvchecker --logger json -c " <> config
@@ -113,10 +114,19 @@ runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ d
     [x] -> pure x
     _ -> fail $ "Failed to parse output from nvchecker: " <> T.unpack out'
 
-genNvConfig :: PackageKey -> NvcheckerOptions -> VersionSource -> TDSL
-genNvConfig pkg options versionSource = table (fromString $ T.unpack $ coerce pkg) $ do
-  genVersionSource versionSource
-  genOptions options
+genNvConfig :: PackageKey -> NvcheckerOptions -> Maybe FilePath -> VersionSource -> TDSL
+genNvConfig pkg options mKeyfile versionSource =
+  case mKeyfile of
+    Just keyfile -> do
+      table "__config__" $
+        "keyfile" =: Text (T.pack keyfile)
+    _ -> pure ()
+    >> table
+      (fromString $ T.unpack $ coerce pkg)
+      ( do
+          genVersionSource versionSource
+          genOptions options
+      )
   where
     key =:? (Just x) = key =: Text x
     _ =:? _ = pure ()

@@ -103,6 +103,12 @@ Basically, there are two ways to use nvfetcher, where the difference is how we p
 To run nvfetcher as a CLI program, you'll need to provide package sources defined in TOML.
 
 ```
+Usage: nvfetcher [--version] [--help] [-o|--build-dir DIR] [--commit-changes]
+                 [-l|--changelog FILE] [-j NUM] [-r|--retry NUM] [-t|--timing]
+                 [-v|--verbose] [-f|--filter REGEX] [-k|--keyfile FILE] [TARGET]
+                 [-c|--config FILE]
+  generate nix sources expr for the latest version of packages
+
 Available options:
   --version                Show version
   --help                   Show this help text
@@ -114,12 +120,13 @@ Available options:
   -j NUM                   Number of threads (0: detected number of processors)
                            (default: 0)
   -r,--retry NUM           Times to retry of some rules (nvchecker, prefetch,
-                           nix-instantiate, etc.) (default: 3)
+                           nix-build, etc.) (default: 3)
   -t,--timing              Show build time
   -v,--verbose             Verbose mode
   -f,--filter REGEX        Regex to filter packages to be updated
+  -k,--keyfile FILE        Nvchecker keyfile
   TARGET                   Two targets are available: 1.build 2.clean
-                           (default: "build")
+                           (default: build)
   -c,--config FILE         Path to nvfetcher TOML config
                            (default: "nvfetcher.toml")
 ```
@@ -127,6 +134,11 @@ Available options:
 Each _package_ corresponds to a TOML table, whose name is encoded as table key, with
 two required fields and three optional fields in each table.
 You can find an example of the configuration file, see [`nvfetcher_example.toml`](nvfetcher_example.toml).
+
+### Keyfile
+
+You can specify nvchecker keyfile via command line option.
+For the format of this file, please refer to [nvchecker documentation](https://nvchecker.readthedocs.io/en/latest/usage.html#configuration-table).
 
 #### Nvchecker
 
@@ -190,7 +202,7 @@ Optional _extract src_ config, files are extracted into build directory, and the
 #### Rust support
 
 `rustPlatform.buildRustPackage` now accepts an attribute [`cargoLock`](https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file) to vendor dependencies from `Cargo.lock`,
-so we can use this instead TOFU `cargoSha256` for Rust packaging. `nvfetcher` supports automating this process,
+so we can use this instead of TOFU `cargoSha256` for Rust packaging. `nvfetcher` supports automating this process,
 extracting the lock file to build and calculating `cargoLock.outputHashes`, as long as you set the config.
 There can be many lock files in one source.
 
