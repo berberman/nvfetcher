@@ -132,7 +132,8 @@ fakePackage =
       _pcargo = undefined,
       _pextract = undefined,
       _ppassthru = undefined,
-      _ppinned = NoStale
+      _ppinned = NoStale,
+      _pgitdateformat = undefined
     }
 
 fakePinnedPackage :: Package

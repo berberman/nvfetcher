@@ -60,7 +60,8 @@ data PackageConfig = PackageConfig
     pcCargoLockFiles :: Maybe PackageCargoLockFiles,
     pcNvcheckerOptions :: NvcheckerOptions,
     pcPassthru :: PackagePassthru,
-    pcUseStale :: UseStaleVersion
+    pcUseStale :: UseStaleVersion,
+    pcGitDateFormat :: DateFormat
   }
 
 toPackage :: PackageKey -> PackageConfig -> Package
@@ -73,6 +74,7 @@ toPackage k PackageConfig {..} =
     pcCargoLockFiles
     pcPassthru
     pcUseStale
+    pcGitDateFormat
 
 packageConfigCodec :: TomlCodec PackageConfig
 packageConfigCodec =
@@ -84,6 +86,7 @@ packageConfigCodec =
     <*> nvcheckerOptionsCodec .= pcNvcheckerOptions
     <*> passthruCodec .= pcPassthru
     <*> pinnedCodec .= pcUseStale
+    <*> gitDateFormatCodec .= pcGitDateFormat
 
 --------------------------------------------------------------------------------
 
@@ -121,3 +124,6 @@ pinnedCodec =
     )
     (maybe NoStale (\x -> if x then PermanentStale else NoStale))
     $ dioptional $ bool "pinned"
+
+gitDateFormatCodec :: TomlCodec DateFormat
+gitDateFormatCodec = diwrap $ dioptional $ text "git.date_format"

@@ -23,6 +23,7 @@ import Development.Shake.FilePath
 import Development.Shake.Rule
 import NvFetcher.ExtractSrc
 import NvFetcher.FetchRustGitDeps
+import NvFetcher.GetGitCommitDate
 import NvFetcher.NixFetcher
 import NvFetcher.Nvchecker
 import NvFetcher.Types
@@ -36,6 +37,7 @@ coreRules = do
   prefetchRule
   extractSrcRule
   fetchRustGitDepsRule
+  getGitCommitDateRule
   addBuiltinRule noLint noIdentity $ \(WithPackageKey (Core, pkg)) _ _ -> do
     -- it's important to always rerun
     -- since the package definition is not tracked at all
@@ -91,6 +93,11 @@ coreRules = do
                     pure (lockPath, (lockPathNix, result))
                 pure . Just $ HMap.fromList result
               _ -> pure Nothing
+
+          -- Only git version source supports git commit date
+          _prgitdate <- case versionSource of
+            Git {..} -> Just <$> getGitCommitDate _vurl (coerce version) _pgitdateformat
+            _ -> pure Nothing
 
           -- update changelog
           -- always use on disk verion

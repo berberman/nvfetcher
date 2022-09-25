@@ -220,6 +220,13 @@ If a package is pinned, we call nvchecker to check the new version iff there's n
 
 - `pinned = true`
 
+#### Git commit date
+
+If the version source of a package is `git`, nvfetcher can finds out the commit date of this revision,
+in the format of `%Y-%m-%d` by default. You can provide your own [`strftime`](https://strftime.org/) format:
+
+- `git.date_format = "strftime_format"`
+
 ### Haskell library
 
 nvfetcher itself is a Haskell library as well, whereas the CLI program is just a trivial wrapper of the library.
