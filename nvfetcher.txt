@@ -151,7 +151,7 @@ NvcheckerOptions :: Maybe Text -> Maybe Text -> Maybe Text -> NvcheckerOptions
 [_toPattern] :: NvcheckerOptions -> Maybe Text
 
 -- | Using stale value indicates that we will <i>NOT</i> check for new
---   versions if there is a known version recoverd from json file or last
+--   versions if there is a known version recovered from json file or last
 --   use of the rule. Normally you don't want a stale version unless you
 --   need pin a package.
 data UseStaleVersion
@@ -210,6 +210,21 @@ ExtractSrcQ :: NixFetcher Fetched -> NonEmpty FilePath -> ExtractSrcQ
 data FetchRustGitDepsQ
 FetchRustGitDepsQ :: NixFetcher Fetched -> FilePath -> FetchRustGitDepsQ
 
+-- | <tt>strftime</tt> format
+--   
+--   Nothing defaults to <tt>%Y-%m-%d</tt>
+newtype DateFormat
+DateFormat :: Maybe Text -> DateFormat
+
+-- | Get the commit date by using shallow clone
+--   
+--   <tt>_gformat</tt> is in. Note: Requires git &gt;= 2.5
+data GetGitCommitDate
+GetGitCommitDate :: Text -> Text -> DateFormat -> GetGitCommitDate
+[_gurl] :: GetGitCommitDate -> Text
+[_grev] :: GetGitCommitDate -> Text
+[_gformat] :: GetGitCommitDate -> DateFormat
+
 -- | The key type of nvfetcher rule. See <a>NvFetcher.Core</a>
 data Core
 Core :: Core
@@ -236,14 +251,14 @@ PackagePassthru :: HashMap Text Text -> PackagePassthru
 --   <li>optional <tt>Cargo.lock</tt> path (if it's a rust package)</li>
 --   <li>an optional pass through map</li>
 --   <li>if the package version was pinned</li>
---   </ol>
---   
+--   <li>optional git date format (if the version source is git)
 --   <i>INVARIANT: <a>Version</a> passed to <a>PackageFetcher</a> MUST be
 --   used textually,</i> <i>i.e. can only be concatenated with other
 --   strings,</i> <i>in case we can't check the equality between fetcher
---   functions.</i>
+--   functions.</i></li>
+--   </ol>
 data Package
-Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> Package
+Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> DateFormat -> Package
 [_pname] :: Package -> PackageName
 [_pversion] :: Package -> CheckVersion
 [_pfetcher] :: Package -> PackageFetcher
@@ -251,6 +266,7 @@ Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtract
 [_pcargo] :: Package -> Maybe PackageCargoLockFiles
 [_ppassthru] :: Package -> PackagePassthru
 [_ppinned] :: Package -> UseStaleVersion
+[_pgitdateformat] :: Package -> DateFormat
 
 -- | Package key is the name of a package. We use this type to index
 --   packages.
@@ -259,7 +275,7 @@ PackageKey :: PackageName -> PackageKey
 
 -- | Result type of <a>Core</a>
 data PackageResult
-PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe (HashMap Text Text) -> Maybe (HashMap FilePath NixExpr) -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum)) -> UseStaleVersion -> PackageResult
+PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe (HashMap Text Text) -> Maybe (HashMap FilePath NixExpr) -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum)) -> UseStaleVersion -> Maybe Text -> PackageResult
 [_prname] :: PackageResult -> PackageName
 [_prversion] :: PackageResult -> NvcheckerResult
 [_prfetched] :: PackageResult -> NixFetcher 'Fetched
@@ -272,6 +288,7 @@ PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe 
 --   dependencies)
 [_prcargolock] :: PackageResult -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum))
 [_prpinned] :: PackageResult -> UseStaleVersion
+[_prgitdate] :: PackageResult -> Maybe Text
 instance Control.DeepSeq.NFData NvFetcher.Types.Version
 instance Data.Binary.Class.Binary NvFetcher.Types.Version
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Version
@@ -365,6 +382,22 @@ instance Data.Hashable.Class.Hashable NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Classes.Ord NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Classes.Eq NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Show.Show NvFetcher.Types.FetchRustGitDepsQ
+instance Control.DeepSeq.NFData NvFetcher.Types.DateFormat
+instance Data.Binary.Class.Binary NvFetcher.Types.DateFormat
+instance Data.Hashable.Class.Hashable NvFetcher.Types.DateFormat
+instance GHC.Generics.Generic NvFetcher.Types.DateFormat
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.DateFormat
+instance Data.Default.Class.Default NvFetcher.Types.DateFormat
+instance GHC.Classes.Ord NvFetcher.Types.DateFormat
+instance GHC.Classes.Eq NvFetcher.Types.DateFormat
+instance GHC.Show.Show NvFetcher.Types.DateFormat
+instance GHC.Generics.Generic NvFetcher.Types.GetGitCommitDate
+instance Data.Binary.Class.Binary NvFetcher.Types.GetGitCommitDate
+instance Control.DeepSeq.NFData NvFetcher.Types.GetGitCommitDate
+instance Data.Hashable.Class.Hashable NvFetcher.Types.GetGitCommitDate
+instance GHC.Classes.Ord NvFetcher.Types.GetGitCommitDate
+instance GHC.Classes.Eq NvFetcher.Types.GetGitCommitDate
+instance GHC.Show.Show NvFetcher.Types.GetGitCommitDate
 instance GHC.Classes.Eq NvFetcher.Types.VersionChange
 instance GHC.Base.Monoid NvFetcher.Types.PackagePassthru
 instance GHC.Base.Semigroup NvFetcher.Types.PackagePassthru
@@ -406,6 +439,7 @@ instance Control.DeepSeq.NFData (NvFetcher.Types.FetchResult k) => Control.DeepS
 instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.PackageResult
 instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
 instance GHC.Show.Show NvFetcher.Types.VersionChange
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.GetGitCommitDate
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.FetchRustGitDepsQ
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ExtractSrcQ
 instance Data.Aeson.Types.ToJSON.ToJSON (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
@@ -418,6 +452,28 @@ instance Prettyprinter.Internal.Pretty NvFetcher.Types.ListOptions
 instance GHC.Show.Show NvFetcher.Types.VersionSortMethod
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.VersionSortMethod
 instance Data.Default.Class.Default NvFetcher.Types.VersionSortMethod
+
+
+-- | This module provides mechanisms for obtaining the git commit date. The
+--   cloned repo will not be preserved.
+module NvFetcher.GetGitCommitDate
+
+-- | <tt>strftime</tt> format
+--   
+--   Nothing defaults to <tt>%Y-%m-%d</tt>
+newtype DateFormat
+DateFormat :: Maybe Text -> DateFormat
+
+-- | Get the commit date by using shallow clone
+--   
+--   <tt>_gformat</tt> is in. Note: Requires git &gt;= 2.5
+data GetGitCommitDate
+GetGitCommitDate :: Text -> Text -> DateFormat -> GetGitCommitDate
+[_gurl] :: GetGitCommitDate -> Text
+[_grev] :: GetGitCommitDate -> Text
+[_gformat] :: GetGitCommitDate -> DateFormat
+getGitCommitDateRule :: Rules ()
+getGitCommitDate :: Text -> Text -> DateFormat -> Action Text
 
 
 -- | Lenses for <a>NvFetcher.Types</a>
@@ -445,19 +501,20 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_iN3s k_aN3y. Lens (NixFetcher k_iN3s) (NixFetcher k_aN3y) (FetchResult k_iN3s) (FetchResult k_aN3y)
-rev :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Version
-name :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) (Maybe Text)
-leaveDotGit :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Bool
-furl :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Text
-frepo :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Text
-fowner :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Text
-fetchSubmodules :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Bool
-deepClone :: forall k_iN3s. Traversal' (NixFetcher k_iN3s) Bool
+sha256 :: forall k_iOF4 k_aQsw. Lens (NixFetcher k_iOF4) (NixFetcher k_aQsw) (FetchResult k_iOF4) (FetchResult k_aQsw)
+rev :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Version
+name :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) (Maybe Text)
+leaveDotGit :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Bool
+furl :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Text
+frepo :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Text
+fowner :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Text
+fetchSubmodules :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Bool
+deepClone :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
 pname :: Lens' Package PackageName
+pgitdateformat :: Lens' Package DateFormat
 pfetcher :: Lens' Package PackageFetcher
 pextract :: Lens' Package (Maybe PackageExtractSrc)
 pcargo :: Lens' Package (Maybe PackageCargoLockFiles)
@@ -629,7 +686,7 @@ data PackageSetF f
 type PackageSet = Free PackageSetF
 
 -- | Add a package to package set
-newPackage :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> PackageSet ()
+newPackage :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> DateFormat -> PackageSet ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -644,7 +701,7 @@ runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 class PkgDSL f
 new :: PkgDSL f => f PackageName -> f (Prod '[PackageName])
 andThen :: PkgDSL f => f (Prod r) -> f a -> f (Prod (a : r))
-end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, NvcheckerOptions, PackagePassthru, UseStaleVersion] r) => f (Prod r) -> f ()
+end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, NvcheckerOptions, PackagePassthru, UseStaleVersion, DateFormat] r) => f (Prod r) -> f ()
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
@@ -653,7 +710,7 @@ end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, Optio
 --   <pre>
 --   define $ package "nvfetcher-git" <a>sourceGit</a> "<a>https://github.com/berberman/nvfetcher"</a> <a>fetchGitHub</a> ("berberman", "nvfetcher")
 --   </pre>
-define :: (Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, PackagePassthru, NvcheckerOptions, UseStaleVersion] r) => PackageSet (Prod r) -> PackageSet ()
+define :: (Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, PackagePassthru, NvcheckerOptions, UseStaleVersion, DateFormat] r) => PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])
@@ -835,6 +892,11 @@ passthru :: Attach PackagePassthru [(Text, Text)]
 --   
 --   new version won't be checked if we have a stale version
 pinned :: PackageSet (Prod r) -> PackageSet (Prod (UseStaleVersion : r))
+
+-- | Specify the date format for getting git commit date
+--   
+--   Available only for git version source
+gitDateFormat :: Attach DateFormat (Maybe Text)
 
 -- | Simple HList
 data Prod (r :: [Type])
