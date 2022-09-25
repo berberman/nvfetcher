@@ -49,6 +49,10 @@ module NvFetcher.Types
     -- * FetchRustGitDeps types
     FetchRustGitDepsQ (..),
 
+    -- * GetGitCommitDate types
+    DateFormat (..),
+    GetGitCommitDate (..),
+
     -- * Core types
     Core (..),
 
@@ -521,6 +525,37 @@ instance Pretty FetchRustGitDepsQ where
 
 --------------------------------------------------------------------------------
 
+-- | @strftime@ format
+--
+-- Nothing defaults to @%Y-%m-%d@
+newtype DateFormat = DateFormat (Maybe Text)
+  deriving newtype (Show, Eq, Ord, Default, Pretty)
+  deriving stock (Typeable, Generic)
+  deriving anyclass (Hashable, Binary, NFData)
+
+-- | Get the commit date by using shallow clone
+--
+-- @_gformat@ is in.
+-- Note: Requires git >= 2.5
+data GetGitCommitDate = GetGitCommitDate {_gurl :: Text, _grev :: Text, _gformat :: DateFormat}
+  deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
+
+type instance RuleResult GetGitCommitDate = Text
+
+instance Pretty GetGitCommitDate where
+  pretty GetGitCommitDate {..} =
+    "GetGitCommitDate" <> line
+      <> indent
+        2
+        ( vsep
+            [ "url" <> colon <+> pretty _gurl,
+              "rev" <> colon <+> pretty _grev,
+              "format" <> colon <+> pretty _gformat
+            ]
+        )
+
+--------------------------------------------------------------------------------
+
 -- | Package name, used in generating nix expr
 type PackageName = Text
 
@@ -535,7 +570,7 @@ newtype PackagePassthru = PackagePassthru (HashMap Text Text)
   deriving newtype (Semigroup, Monoid)
 
 -- | Using stale value indicates that we will /NOT/ check for new versions if
--- there is a known version recoverd from json file or last use of the rule.
+-- there is a known version recovered from json file or last use of the rule.
 -- Normally you don't want a stale version
 -- unless you need pin a package.
 data UseStaleVersion
@@ -556,7 +591,7 @@ data UseStaleVersion
 -- 5. optional @Cargo.lock@ path (if it's a rust package)
 -- 6. an optional pass through map
 -- 7. if the package version was pinned
---
+-- 8. optional git date format (if the version source is git)
 -- /INVARIANT: 'Version' passed to 'PackageFetcher' MUST be used textually,/
 -- /i.e. can only be concatenated with other strings,/
 -- /in case we can't check the equality between fetcher functions./
@@ -567,7 +602,8 @@ data Package = Package
     _pextract :: Maybe PackageExtractSrc,
     _pcargo :: Maybe PackageCargoLockFiles,
     _ppassthru :: PackagePassthru,
-    _ppinned :: UseStaleVersion
+    _ppinned :: UseStaleVersion,
+    _pgitdateformat :: DateFormat
   }
 
 -- | Package key is the name of a package.
@@ -604,7 +640,8 @@ data PackageResult = PackageResult
     _prextract :: Maybe (HashMap FilePath NixExpr),
     -- | cargo lock file path in build dir -> (file path in nix, git dependencies)
     _prcargolock :: Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum)),
-    _prpinned :: UseStaleVersion
+    _prpinned :: UseStaleVersion,
+    _prgitdate :: Maybe Text
   }
   deriving (Show, Typeable, Generic, NFData)
 
@@ -619,5 +656,6 @@ instance A.ToJSON PackageResult where
         "cargoLocks" A..= _prcargolock,
         "pinned" A..= case _prpinned of
           PermanentStale -> True
-          _ -> False
+          _ -> False,
+        "date" A..= _prgitdate
       ]

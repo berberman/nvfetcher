@@ -19,6 +19,8 @@ module NvFetcher.ExtractSrc
 
     -- * Rules
     extractSrcRule,
+
+    -- * Functions
     extractSrc,
     extractSrcs,
   )

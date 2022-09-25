@@ -16,6 +16,8 @@ module NvFetcher.FetchRustGitDeps
 
     -- * Rules
     fetchRustGitDepsRule,
+
+    -- * Functions
     fetchRustGitDeps,
   )
 where

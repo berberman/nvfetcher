@@ -227,5 +227,6 @@ instance ToNixExpr PackageResult where
                 ]
           )
           _prpassthru
-      joined = extract <> cargo <> passthru
+      date = maybe "" (\d -> "date = " <> quote d <> ";") _prgitdate
+      joined = extract <> cargo <> passthru <> date
       appending = if T.null joined then "" else "\n" <> joined

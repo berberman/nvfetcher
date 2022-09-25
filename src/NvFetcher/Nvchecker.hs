@@ -26,6 +26,8 @@ module NvFetcher.Nvchecker
 
     -- * Rules
     nvcheckerRule,
+
+    -- * Functions
     checkVersion,
     checkVersion',
   )

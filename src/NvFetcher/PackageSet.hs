@@ -84,6 +84,7 @@ module NvFetcher.PackageSet
     tweakVersion,
     passthru,
     pinned,
+    gitDateFormat,
 
     -- ** Miscellaneous
     Prod,
@@ -156,9 +157,10 @@ newPackage ::
   Maybe PackageCargoLockFiles ->
   PackagePassthru ->
   UseStaleVersion ->
+  DateFormat ->
   PackageSet ()
-newPackage name source fetcher extract cargo pasthru useStale =
-  liftF $ NewPackage (Package name source fetcher extract cargo pasthru useStale) ()
+newPackage name source fetcher extract cargo pasthru useStale format =
+  liftF $ NewPackage (Package name source fetcher extract cargo pasthru useStale format) ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -256,7 +258,8 @@ class PkgDSL f where
            PackageCargoLockFiles,
            NvcheckerOptions,
            PackagePassthru,
-           UseStaleVersion
+           UseStaleVersion,
+           DateFormat
          ]
         r
     ) =>
@@ -281,6 +284,7 @@ instance PkgDSL PackageSet where
       (projMaybe p)
       (fromMaybe mempty (projMaybe p))
       (fromMaybe NoStale (projMaybe p))
+      (fromMaybe (DateFormat Nothing) (projMaybe p))
 
 -- | 'PkgDSL' version of 'newPackage'
 --
@@ -301,7 +305,8 @@ define ::
          PackageCargoLockFiles,
          PackagePassthru,
          NvcheckerOptions,
-         UseStaleVersion
+         UseStaleVersion,
+         DateFormat
        ]
       r
   ) =>
@@ -543,3 +548,9 @@ passthru = (. pure . PackagePassthru . HMap.fromList) . andThen
 -- new version won't be checked if we have a stale version
 pinned :: PackageSet (Prod r) -> PackageSet (Prod (UseStaleVersion : r))
 pinned = flip andThen . pure $ PermanentStale
+
+-- | Specify the date format for getting git commit date
+--
+-- Available only for git version source
+gitDateFormat :: Attach DateFormat (Maybe Text)
+gitDateFormat = (. pure . DateFormat) . andThen
