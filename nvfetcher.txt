@@ -646,6 +646,9 @@ pypiFetcher :: Text -> PackageFetcher
 -- | Create a fetcher from github release
 gitHubReleaseFetcher :: (Text, Text) -> Text -> PackageFetcher
 
+-- | Create a fetcher from github release
+gitHubReleaseFetcher' :: (Text, Text) -> (Version -> Text) -> PackageFetcher
+
 -- | Create a fetcher from git url
 gitFetcher :: Text -> PackageFetcher
 
@@ -833,6 +836,11 @@ fetchGitHub' :: Attach PackageFetcher (Text, Text, NixFetcher Fresh -> NixFetche
 --   
 --   Args are owner, repo, and file name
 fetchGitHubRelease :: Attach PackageFetcher (Text, Text, Text)
+
+-- | This package is fetched from a file in github release
+--   
+--   Args are owner, repo, and file name computed from version
+fetchGitHubRelease' :: Attach PackageFetcher (Text, Text, Version -> Text)
 
 -- | This package is fetched from pypi
 --   
