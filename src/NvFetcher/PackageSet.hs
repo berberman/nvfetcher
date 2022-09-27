@@ -70,6 +70,7 @@ module NvFetcher.PackageSet
     fetchGitHub,
     fetchGitHub',
     fetchGitHubRelease,
+    fetchGitHubRelease',
     fetchPypi,
     fetchGit,
     fetchGit',
@@ -477,6 +478,12 @@ fetchGitHub' e (owner, repo, f) = fetch e $ f . gitHubFetcher (owner, repo)
 -- Args are owner, repo, and file name
 fetchGitHubRelease :: Attach PackageFetcher (Text, Text, Text)
 fetchGitHubRelease e (owner, repo, fp) = fetch e $ gitHubReleaseFetcher (owner, repo) fp
+
+-- | This package is fetched from a file in github release
+--
+-- Args are owner, repo, and file name computed from version
+fetchGitHubRelease' :: Attach PackageFetcher (Text, Text, Version -> Text)
+fetchGitHubRelease' e (owner, repo, f) = fetch e $ gitHubReleaseFetcher' (owner, repo) f
 
 -- | This package is fetched from pypi
 --
