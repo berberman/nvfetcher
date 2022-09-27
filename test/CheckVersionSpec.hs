@@ -29,8 +29,8 @@ versionSourcesSpec = aroundShake $
     specifyChan "pypi" $
       runNvcheckerRule (Pypi "example") `shouldReturnJust` Version "0.1.0"
 
-    -- specifyChan "archpkg" $
-    --   runNvcheckerRule (ArchLinux "ipw2100-fw") `shouldReturnJust` Version "1.3"
+    specifyChan "archpkg" $
+      runNvcheckerRule (ArchLinux "lib32-libva-vdpau-driver") `shouldReturnJust` Version "0.7.4"
 
     specifyChan "aur" $
       runNvcheckerRule (Aur "ssed") `shouldReturnJust` Version "3.62"
@@ -64,13 +64,13 @@ versionSourcesSpec = aroundShake $
       runNvcheckerRule (Manual "Meow") `shouldReturnJust` Version "Meow"
 
     specifyChan "openvsx" $
-      runNvcheckerRule (OpenVsx "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.2.7"
+      runNvcheckerRule (OpenVsx "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.3.0"
 
     specifyChan "repology" $
       runNvcheckerRule (Repology "ssed" "aur") `shouldReturnJust` Version "3.62"
 
     specifyChan "vsmarketplace" $
-      runNvcheckerRule (VscodeMarketplace "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.2.8"
+      runNvcheckerRule (VscodeMarketplace "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.3.0"
 
     specifyChan "cmd" $
       runNvcheckerRule (Cmd "echo Meow") `shouldReturnJust` Version "Meow"

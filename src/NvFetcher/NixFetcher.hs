@@ -38,6 +38,7 @@ module NvFetcher.NixFetcher
     gitHubFetcher,
     pypiFetcher,
     gitHubReleaseFetcher,
+    gitHubReleaseFetcher',
     gitFetcher,
     urlFetcher,
     openVsxFetcher,
@@ -150,9 +151,19 @@ gitHubReleaseFetcher ::
   -- | file name
   Text ->
   PackageFetcher
-gitHubReleaseFetcher (owner, repo) fp (coerce -> ver) =
-  urlFetcher
-    [trimming|https://github.com/$owner/$repo/releases/download/$ver/$fp|]
+gitHubReleaseFetcher (owner, repo) fp = gitHubReleaseFetcher' (owner, repo) $ const fp
+
+-- | Create a fetcher from github release
+gitHubReleaseFetcher' ::
+  -- | owner and repo
+  (Text, Text) ->
+  -- | file name computed from version
+  (Version -> Text) ->
+  PackageFetcher
+gitHubReleaseFetcher' (owner, repo) f (coerce -> ver) =
+  let fp = f $ coerce ver
+   in urlFetcher
+        [trimming|https://github.com/$owner/$repo/releases/download/$ver/$fp|]
 
 -- | Create a fetcher from url
 urlFetcher :: Text -> NixFetcher Fresh
