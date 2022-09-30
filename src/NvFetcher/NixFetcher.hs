@@ -26,6 +26,8 @@
 -- a fetcher will be filled with the fetch result (hash) after the prefetch.
 module NvFetcher.NixFetcher
   ( -- * Types
+    RunFetch (..),
+    ForceFetch (..),
     NixFetcher (..),
     FetchStatus (..),
     FetchResult,
@@ -47,7 +49,7 @@ module NvFetcher.NixFetcher
   )
 where
 
-import Control.Monad (void)
+import Control.Monad (void, when)
 import Data.Coerce (coerce)
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -118,14 +120,15 @@ pypiUrl pypi (coerce -> ver) =
 -- | Rules of nix fetcher
 prefetchRule :: Rules ()
 prefetchRule = void $
-  addOracleCache $ \(f :: NixFetcher Fresh) -> do
+  addOracleCache $ \(RunFetch force f) -> do
+    when (force == ForceFetch) alwaysRerun
     putInfo . show $ "#" <+> pretty f
     sha256 <- withRetry $ runFetcher f
     pure $ f {_sha256 = sha256}
 
 -- | Run nix fetcher
-prefetch :: NixFetcher Fresh -> Action (NixFetcher Fetched)
-prefetch = askOracle
+prefetch :: NixFetcher Fresh -> ForceFetch -> Action (NixFetcher Fetched)
+prefetch f force = askOracle $ RunFetch force f
 
 --------------------------------------------------------------------------------
 

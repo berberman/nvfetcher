@@ -38,5 +38,6 @@ spec = aroundShake $
 
 --------------------------------------------------------------------------------
 
+-- TODO test force fetch
 runPrefetchRule :: NixFetcher Fresh -> ReaderT ActionQueue IO (Maybe Checksum)
-runPrefetchRule f = runActionChan $ _sha256 <$> prefetch f
+runPrefetchRule f = runActionChan $ _sha256 <$> prefetch f NoForceFetch

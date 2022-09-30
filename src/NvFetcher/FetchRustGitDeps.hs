@@ -54,7 +54,7 @@ fetchRustGitDepsRule = void $
       parallel
         [ case parse gitSrcParser (T.unpack rname) src of
             Right ParsedGitSrc {..} -> do
-              (_sha256 -> sha256) <- prefetch $ gitFetcher pgurl pgsha
+              (_sha256 -> sha256) <- prefetch (gitFetcher pgurl pgsha) NoForceFetch
               -- @${name}-${version}@ -> sha256
               pure (rname <> "-" <> coerce rversion, sha256)
             Left err -> fail $ "Failed to parse git source in Cargo.lock: " <> show err
