@@ -39,6 +39,8 @@ module NvFetcher.Types
     UseStaleVersion (..),
 
     -- * Nix fetcher types
+    RunFetch (..),
+    ForceFetch (..),
     NixFetcher (..),
     FetchResult,
     FetchStatus (..),
@@ -347,6 +349,25 @@ type instance RuleResult CheckVersion = NvcheckerResult
 
 --------------------------------------------------------------------------------
 
+-- | Whether to cache the fetched sha256
+--
+-- @ForceFetch@ indicates @alwaysRerun@ the fetcher rule
+data ForceFetch = ForceFetch | NoForceFetch
+  deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
+
+instance Pretty ForceFetch where
+  pretty ForceFetch = "ForceFetch"
+  pretty NoForceFetch = "NoForceFetch"
+
+instance Default ForceFetch where
+  def = NoForceFetch
+
+-- | The input of prefetch rule
+data RunFetch = RunFetch ForceFetch (NixFetcher Fresh)
+  deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
+
+type instance RuleResult RunFetch = NixFetcher Fetched
+
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
   = FetchGit
@@ -379,16 +400,6 @@ data NixFetcher (k :: FetchStatus)
       }
   deriving (Typeable, Generic)
 
--- | Fetch status
-data FetchStatus = Fresh | Fetched
-
--- | Prefetched fetchers hold hashes
-type family FetchResult (k :: FetchStatus) where
-  FetchResult Fresh = ()
-  FetchResult Fetched = Checksum
-
-type instance RuleResult (NixFetcher Fresh) = NixFetcher Fetched
-
 deriving instance Show (FetchResult k) => Show (NixFetcher k)
 
 deriving instance Eq (FetchResult k) => Eq (NixFetcher k)
@@ -400,6 +411,14 @@ deriving instance Hashable (FetchResult k) => Hashable (NixFetcher k)
 deriving instance Binary (FetchResult k) => Binary (NixFetcher k)
 
 deriving instance NFData (FetchResult k) => NFData (NixFetcher k)
+
+-- | Fetch status
+data FetchStatus = Fresh | Fetched
+
+-- | Prefetched fetchers hold hashes
+type family FetchResult (k :: FetchStatus) where
+  FetchResult Fresh = ()
+  FetchResult Fetched = Checksum
 
 instance A.ToJSON (NixFetcher Fetched) where
   toJSON FetchGit {..} =
@@ -592,6 +611,7 @@ data UseStaleVersion
 -- 6. an optional pass through map
 -- 7. if the package version was pinned
 -- 8. optional git date format (if the version source is git)
+-- 9. whether to always fetch a package regardless of the version changing
 -- /INVARIANT: 'Version' passed to 'PackageFetcher' MUST be used textually,/
 -- /i.e. can only be concatenated with other strings,/
 -- /in case we can't check the equality between fetcher functions./
@@ -603,7 +623,8 @@ data Package = Package
     _pcargo :: Maybe PackageCargoLockFiles,
     _ppassthru :: PackagePassthru,
     _ppinned :: UseStaleVersion,
-    _pgitdateformat :: DateFormat
+    _pgitdateformat :: DateFormat,
+    _pforcefetch :: ForceFetch
   }
 
 -- | Package key is the name of a package.

@@ -30,7 +30,7 @@ spec = aroundShake $
           ]
 
 runPrefetchRule :: NixFetcher Fresh -> ReaderT ActionQueue IO (Maybe (NixFetcher Fetched))
-runPrefetchRule fetcher = runActionChan $ prefetch fetcher
+runPrefetchRule fetcher = runActionChan $ prefetch fetcher NoForceFetch
 
 runFetchRustGitDepsRule :: NixFetcher Fetched -> FilePath -> ReaderT ActionQueue IO (Maybe (HashMap Text Checksum))
 runFetchRustGitDepsRule fetcher lockPath = runActionChan $ fetchRustGitDeps fetcher lockPath

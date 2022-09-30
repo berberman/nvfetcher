@@ -227,6 +227,16 @@ in the format of `%Y-%m-%d` by default. You can provide your own [`strftime`](ht
 
 - `git.date_format = "strftime_format"`
 
+#### Force fetching
+
+Always fetch the package, even if its version (nvchecker output) doesn't change.
+This is useful when the file to be downloaded cannot not be determined by the url.
+
+- `fetch.force = true`
+
+> Note: In such case, nvfetcher will not produce a version change log, since the version doesn't change at all.
+> Only sha256 in generated files will be updated.
+
 ### Haskell library
 
 nvfetcher itself is a Haskell library as well, whereas the CLI program is just a trivial wrapper of the library.

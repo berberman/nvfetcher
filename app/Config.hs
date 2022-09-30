@@ -61,7 +61,8 @@ data PackageConfig = PackageConfig
     pcNvcheckerOptions :: NvcheckerOptions,
     pcPassthru :: PackagePassthru,
     pcUseStale :: UseStaleVersion,
-    pcGitDateFormat :: DateFormat
+    pcGitDateFormat :: DateFormat,
+    pcForceFetch :: ForceFetch
   }
 
 toPackage :: PackageKey -> PackageConfig -> Package
@@ -75,6 +76,7 @@ toPackage k PackageConfig {..} =
     pcPassthru
     pcUseStale
     pcGitDateFormat
+    pcForceFetch
 
 packageConfigCodec :: TomlCodec PackageConfig
 packageConfigCodec =
@@ -87,6 +89,7 @@ packageConfigCodec =
     <*> passthruCodec .= pcPassthru
     <*> pinnedCodec .= pcUseStale
     <*> gitDateFormatCodec .= pcGitDateFormat
+    <*> forceFetchCodec .= pcForceFetch
 
 --------------------------------------------------------------------------------
 
@@ -127,3 +130,13 @@ pinnedCodec =
 
 gitDateFormatCodec :: TomlCodec DateFormat
 gitDateFormatCodec = diwrap $ dioptional $ text "git.date_format"
+
+forceFetchCodec :: TomlCodec ForceFetch
+forceFetchCodec =
+  dimap
+    ( \case
+        ForceFetch -> Just True
+        NoForceFetch -> Just False
+    )
+    (maybe NoForceFetch (\x -> if x then ForceFetch else NoForceFetch))
+    $ dioptional $ bool "fetch.force"

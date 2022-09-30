@@ -86,6 +86,7 @@ module NvFetcher.PackageSet
     passthru,
     pinned,
     gitDateFormat,
+    forceFetch,
 
     -- ** Miscellaneous
     Prod,
@@ -159,9 +160,10 @@ newPackage ::
   PackagePassthru ->
   UseStaleVersion ->
   DateFormat ->
+  ForceFetch ->
   PackageSet ()
-newPackage name source fetcher extract cargo pasthru useStale format =
-  liftF $ NewPackage (Package name source fetcher extract cargo pasthru useStale format) ()
+newPackage name source fetcher extract cargo pasthru useStale format force =
+  liftF $ NewPackage (Package name source fetcher extract cargo pasthru useStale format force) ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -260,7 +262,8 @@ class PkgDSL f where
            NvcheckerOptions,
            PackagePassthru,
            UseStaleVersion,
-           DateFormat
+           DateFormat,
+           ForceFetch
          ]
         r
     ) =>
@@ -286,6 +289,7 @@ instance PkgDSL PackageSet where
       (fromMaybe mempty (projMaybe p))
       (fromMaybe NoStale (projMaybe p))
       (fromMaybe (DateFormat Nothing) (projMaybe p))
+      (fromMaybe NoForceFetch (projMaybe p))
 
 -- | 'PkgDSL' version of 'newPackage'
 --
@@ -307,7 +311,8 @@ define ::
          PackagePassthru,
          NvcheckerOptions,
          UseStaleVersion,
-         DateFormat
+         DateFormat,
+         ForceFetch
        ]
       r
   ) =>
@@ -561,3 +566,7 @@ pinned = flip andThen . pure $ PermanentStale
 -- Available only for git version source
 gitDateFormat :: Attach DateFormat (Maybe Text)
 gitDateFormat = (. pure . DateFormat) . andThen
+
+-- | Set always fetching regardless of the version changing
+forceFetch :: PackageSet (Prod r) -> PackageSet (Prod (ForceFetch : r))
+forceFetch = flip andThen . pure $ ForceFetch

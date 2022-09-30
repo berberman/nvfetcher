@@ -51,7 +51,7 @@ coreRules = do
             ..
           } -> do
           _prversion@(NvcheckerResult version _mOldV _isStale) <- checkVersion versionSource options pkg
-          _prfetched <- prefetch $ _pfetcher version
+          _prfetched <- prefetch (_pfetcher version) _pforcefetch
           buildDir <- getBuildDir
           -- extract src
           _prextract <-
@@ -100,7 +100,7 @@ coreRules = do
             _ -> pure Nothing
 
           -- update changelog
-          -- always use on disk verion
+          -- always use on disk version
           mOldV <- getLastVersionOnDisk pkg
           case mOldV of
             Nothing ->
