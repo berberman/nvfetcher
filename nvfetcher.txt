@@ -163,6 +163,17 @@ PermanentStale :: UseStaleVersion
 TemporaryStale :: UseStaleVersion
 NoStale :: UseStaleVersion
 
+-- | The input of prefetch rule
+data RunFetch
+RunFetch :: ForceFetch -> NixFetcher Fresh -> RunFetch
+
+-- | Whether to cache the fetched sha256
+--   
+--   <tt>ForceFetch</tt> indicates <tt>alwaysRerun</tt> the fetcher rule
+data ForceFetch
+ForceFetch :: ForceFetch
+NoForceFetch :: ForceFetch
+
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
 FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
@@ -251,14 +262,15 @@ PackagePassthru :: HashMap Text Text -> PackagePassthru
 --   <li>optional <tt>Cargo.lock</tt> path (if it's a rust package)</li>
 --   <li>an optional pass through map</li>
 --   <li>if the package version was pinned</li>
---   <li>optional git date format (if the version source is git)
---   <i>INVARIANT: <a>Version</a> passed to <a>PackageFetcher</a> MUST be
---   used textually,</i> <i>i.e. can only be concatenated with other
---   strings,</i> <i>in case we can't check the equality between fetcher
---   functions.</i></li>
+--   <li>optional git date format (if the version source is git)</li>
+--   <li>whether to always fetch a package regardless of the version
+--   changing <i>INVARIANT: <a>Version</a> passed to <a>PackageFetcher</a>
+--   MUST be used textually,</i> <i>i.e. can only be concatenated with
+--   other strings,</i> <i>in case we can't check the equality between
+--   fetcher functions.</i></li>
 --   </ol>
 data Package
-Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> DateFormat -> Package
+Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> DateFormat -> ForceFetch -> Package
 [_pname] :: Package -> PackageName
 [_pversion] :: Package -> CheckVersion
 [_pfetcher] :: Package -> PackageFetcher
@@ -267,6 +279,7 @@ Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtract
 [_ppassthru] :: Package -> PackagePassthru
 [_ppinned] :: Package -> UseStaleVersion
 [_pgitdateformat] :: Package -> DateFormat
+[_pforcefetch] :: Package -> ForceFetch
 
 -- | Package key is the name of a package. We use this type to index
 --   packages.
@@ -367,7 +380,21 @@ instance GHC.Show.Show NvFetcher.Types.NvcheckerResult
 instance GHC.Generics.Generic NvFetcher.Types.NvcheckerRaw
 instance GHC.Classes.Eq NvFetcher.Types.NvcheckerRaw
 instance GHC.Show.Show NvFetcher.Types.NvcheckerRaw
+instance GHC.Generics.Generic NvFetcher.Types.ForceFetch
+instance Data.Binary.Class.Binary NvFetcher.Types.ForceFetch
+instance Control.DeepSeq.NFData NvFetcher.Types.ForceFetch
+instance Data.Hashable.Class.Hashable NvFetcher.Types.ForceFetch
+instance GHC.Classes.Ord NvFetcher.Types.ForceFetch
+instance GHC.Classes.Eq NvFetcher.Types.ForceFetch
+instance GHC.Show.Show NvFetcher.Types.ForceFetch
 instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
+instance GHC.Generics.Generic NvFetcher.Types.RunFetch
+instance Data.Binary.Class.Binary NvFetcher.Types.RunFetch
+instance Control.DeepSeq.NFData NvFetcher.Types.RunFetch
+instance Data.Hashable.Class.Hashable NvFetcher.Types.RunFetch
+instance GHC.Classes.Ord NvFetcher.Types.RunFetch
+instance GHC.Classes.Eq NvFetcher.Types.RunFetch
+instance GHC.Show.Show NvFetcher.Types.RunFetch
 instance GHC.Generics.Generic NvFetcher.Types.ExtractSrcQ
 instance Data.Binary.Class.Binary NvFetcher.Types.ExtractSrcQ
 instance Control.DeepSeq.NFData NvFetcher.Types.ExtractSrcQ
@@ -444,6 +471,8 @@ instance Prettyprinter.Internal.Pretty NvFetcher.Types.FetchRustGitDepsQ
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ExtractSrcQ
 instance Data.Aeson.Types.ToJSON.ToJSON (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
 instance Prettyprinter.Internal.Pretty (NvFetcher.Types.NixFetcher k)
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.ForceFetch
+instance Data.Default.Class.Default NvFetcher.Types.ForceFetch
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerRaw
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.CheckVersion
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.VersionSource
@@ -501,20 +530,21 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_iOF4 k_aQsw. Lens (NixFetcher k_iOF4) (NixFetcher k_aQsw) (FetchResult k_iOF4) (FetchResult k_aQsw)
-rev :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Version
-name :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) (Maybe Text)
-leaveDotGit :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Bool
-furl :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Text
-frepo :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Text
-fowner :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Text
-fetchSubmodules :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Bool
-deepClone :: forall k_iOF4. Traversal' (NixFetcher k_iOF4) Bool
+sha256 :: forall k_iS0A k_aS0G. Lens (NixFetcher k_iS0A) (NixFetcher k_aS0G) (FetchResult k_iS0A) (FetchResult k_aS0G)
+rev :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Version
+name :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) (Maybe Text)
+leaveDotGit :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Bool
+furl :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Text
+frepo :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Text
+fowner :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Text
+fetchSubmodules :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Bool
+deepClone :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
 pname :: Lens' Package PackageName
 pgitdateformat :: Lens' Package DateFormat
+pforcefetch :: Lens' Package ForceFetch
 pfetcher :: Lens' Package PackageFetcher
 pextract :: Lens' Package (Maybe PackageExtractSrc)
 pcargo :: Lens' Package (Maybe PackageCargoLockFiles)
@@ -596,6 +626,17 @@ nvcheckerCacheEnabled :: Action Bool
 --   be filled with the fetch result (hash) after the prefetch.
 module NvFetcher.NixFetcher
 
+-- | The input of prefetch rule
+data RunFetch
+RunFetch :: ForceFetch -> NixFetcher Fresh -> RunFetch
+
+-- | Whether to cache the fetched sha256
+--   
+--   <tt>ForceFetch</tt> indicates <tt>alwaysRerun</tt> the fetcher rule
+data ForceFetch
+ForceFetch :: ForceFetch
+NoForceFetch :: ForceFetch
+
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
 FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
@@ -635,7 +676,7 @@ type family FetchResult (k :: FetchStatus)
 prefetchRule :: Rules ()
 
 -- | Run nix fetcher
-prefetch :: NixFetcher Fresh -> Action (NixFetcher Fetched)
+prefetch :: NixFetcher Fresh -> ForceFetch -> Action (NixFetcher Fetched)
 
 -- | Create a fetcher from github repo
 gitHubFetcher :: (Text, Text) -> PackageFetcher
@@ -689,7 +730,7 @@ data PackageSetF f
 type PackageSet = Free PackageSetF
 
 -- | Add a package to package set
-newPackage :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> DateFormat -> PackageSet ()
+newPackage :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> DateFormat -> ForceFetch -> PackageSet ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -704,7 +745,7 @@ runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 class PkgDSL f
 new :: PkgDSL f => f PackageName -> f (Prod '[PackageName])
 andThen :: PkgDSL f => f (Prod r) -> f a -> f (Prod (a : r))
-end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, NvcheckerOptions, PackagePassthru, UseStaleVersion, DateFormat] r) => f (Prod r) -> f ()
+end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, NvcheckerOptions, PackagePassthru, UseStaleVersion, DateFormat, ForceFetch] r) => f (Prod r) -> f ()
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
@@ -713,7 +754,7 @@ end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, Optio
 --   <pre>
 --   define $ package "nvfetcher-git" <a>sourceGit</a> "<a>https://github.com/berberman/nvfetcher"</a> <a>fetchGitHub</a> ("berberman", "nvfetcher")
 --   </pre>
-define :: (Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, PackagePassthru, NvcheckerOptions, UseStaleVersion, DateFormat] r) => PackageSet (Prod r) -> PackageSet ()
+define :: (Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, PackagePassthru, NvcheckerOptions, UseStaleVersion, DateFormat, ForceFetch] r) => PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])
@@ -905,6 +946,9 @@ pinned :: PackageSet (Prod r) -> PackageSet (Prod (UseStaleVersion : r))
 --   
 --   Available only for git version source
 gitDateFormat :: Attach DateFormat (Maybe Text)
+
+-- | Set always fetching regardless of the version changing
+forceFetch :: PackageSet (Prod r) -> PackageSet (Prod (ForceFetch : r))
 
 -- | Simple HList
 data Prod (r :: [Type])
