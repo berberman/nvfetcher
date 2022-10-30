@@ -75,6 +75,9 @@ versionSourcesSpec = aroundShake $
     specifyChan "cmd" $
       runNvcheckerRule (Cmd "echo Meow") `shouldReturnJust` Version "Meow"
 
+    specifyChan "container" $
+      runNvcheckerRule (Container "testcontainers/helloworld" def) `shouldReturnJust` Version "1.1.0"
+
 --------------------------------------------------------------------------------
 
 -- | We need disable nvchecker cache to see if use stale works

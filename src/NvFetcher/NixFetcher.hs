@@ -1,4 +1,6 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -45,16 +47,18 @@ module NvFetcher.NixFetcher
     urlFetcher,
     openVsxFetcher,
     vscodeMarketplaceFetcher,
-    tarballFetcher,
+    tarballFetcher
   )
 where
 
 import Control.Monad (void, when)
+import qualified Data.Aeson as A
 import Data.Coerce (coerce)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import Development.Shake
+import GHC.Generics (Generic)
 import NeatInterpolation (trimming)
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
@@ -62,7 +66,7 @@ import Prettyprinter (pretty, (<+>))
 
 --------------------------------------------------------------------------------
 
-runFetcher :: NixFetcher Fresh -> Action Checksum
+runFetcher :: NixFetcher Fresh -> Action (NixFetcher Fetched)
 runFetcher = \case
   FetchGit {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
@@ -76,7 +80,7 @@ runFetcher = \case
             <> ["--leaveDotGit" | _leaveDotGit]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
-      [x] -> pure $ coerce x
+      [x] -> pure FetchGit {_sha256 = coerce x, ..}
       _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
   FetchGitHub {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
@@ -91,7 +95,7 @@ runFetcher = \case
             <> ["--leaveDotGit" | _leaveDotGit]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
-      [x] -> pure $ coerce x
+      [x] -> pure FetchGitHub {_sha256 = coerce x, ..}
       _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
   FetchUrl {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
@@ -99,7 +103,7 @@ runFetcher = \case
         command [EchoStderr False] "nix-prefetch" ["fetchurl", "--url", T.unpack _furl]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
-      [x] -> pure $ coerce x
+      [x] -> pure FetchUrl {_sha256 = coerce x, ..}
       _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
   FetchTarball {..} -> do
     (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
@@ -107,8 +111,29 @@ runFetcher = \case
         command [EchoStderr False] "nix-prefetch" ["fetchTarball", "--url", T.unpack _furl]
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case takeWhile (not . T.null) $ reverse $ T.lines out of
-      [x] -> pure $ coerce x
+      [x] -> pure FetchTarball {_sha256 = coerce x, ..}
       _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
+  FetchDocker {..} -> do
+    (CmdTime t, Stdout out, CmdLine c) <-
+      quietly $
+        command [EchoStderr False] "nix-prefetch-docker" $
+          [ "--json",
+            T.unpack _imageName,
+            T.unpack _imageTag
+          ]
+            <> concat [["--os", T.unpack os] | Just os <- [_fos]]
+            <> concat [["--arch", T.unpack arch] | Just arch <- [_farch]]
+    putVerbose $ "Finishing running " <> c <> ",, took " <> show t <> "s"
+    case A.eitherDecode out of
+      Right FetchedContainer {..} ->
+        pure FetchDocker {_sha256 = sha256, _imageDigest = imageDigest, ..}
+      Left e -> fail $ "Failed to parse output from nix-prefetch-docker as JSON: " <> e
+
+data FetchedContainer = FetchedContainer
+  { imageDigest :: ContainerDigest,
+    sha256 :: Checksum
+  }
+  deriving (Show, Generic, A.FromJSON)
 
 pypiUrl :: Text -> Version -> Text
 pypiUrl pypi (coerce -> ver) =
@@ -123,8 +148,7 @@ prefetchRule = void $
   addOracleCache $ \(RunFetch force f) -> do
     when (force == ForceFetch) alwaysRerun
     putInfo . show $ "#" <+> pretty f
-    sha256 <- withRetry $ runFetcher f
-    pure $ f {_sha256 = sha256}
+    withRetry $ runFetcher f
 
 -- | Run nix fetcher
 prefetch :: NixFetcher Fresh -> ForceFetch -> Action (NixFetcher Fetched)

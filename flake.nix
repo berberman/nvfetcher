@@ -23,6 +23,7 @@
             cabal-install
             nvchecker
             nix-prefetch
+            nix-prefetch-docker
             cabal2nix # cd nix && cabal2nix ../. > default.nix && ..
           ]).envFunc { };
         packages.nvfetcher-lib = with haskell.lib;
@@ -55,7 +56,7 @@
                       drv.postInstall or "" + ''
                         wrapProgram $out/bin/nvfetcher \
                           --prefix PATH ":" "${
-                            lib.makeBinPath [ nvchecker nix-prefetch ]
+                            lib.makeBinPath [ nvchecker nix-prefetch nix-prefetch-docker ]
                           }"
                       '';
                   }));

@@ -87,3 +87,19 @@ specifyChan s m = specify s $ \r -> runReaderT m r
 
 runActionChan :: Action a -> ReaderT ActionQueue IO (Maybe a)
 runActionChan m = ask >>= \chan -> liftIO $ runAction chan m
+
+--------------------------------------------------------------------------------
+
+testDockerFetcher :: NixFetcher Fresh
+testDockerFetcher =
+  FetchDocker
+    { _imageName = "library/alpine",
+      _imageTag = "3.16.2",
+      _imageDigest = (),
+      _sha256 = (),
+      _fos = Nothing,
+      _farch = Nothing,
+      _finalImageName = Nothing,
+      _finalImageTag = Nothing,
+      _tlsVerify = Nothing
+    }

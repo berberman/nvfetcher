@@ -184,6 +184,10 @@ genNvConfig pkg options mKeyfile versionSource =
       Cmd {..} -> do
         "source" =: "cmd"
         "cmd" =: Text _vcmd
+      Container {..} -> do
+        "source" =: "container"
+        "container" =: Text _vcontainer
+        genListOptions _listOptions
     genListOptions ListOptions {..} = do
       "include_regex" =:? _includeRegex
       "exclude_regex" =:? _excludeRegex
