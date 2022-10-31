@@ -10,8 +10,8 @@ import NeatInterpolation (trimming)
 import NvFetcher.NixExpr
 import NvFetcher.NixFetcher
 import NvFetcher.Types
+import PrefetchSpec
 import Test.Hspec
-import Utils
 
 spec :: Spec
 spec = describe "toNixExpr" $ do

@@ -44,6 +44,20 @@ spec = aroundShake $
             ContainerDigest "sha256:bc41182d7ef5ffc53a40b044e725193bc10142a1243f395ee852a8d9730fc2ad"
           )
 
+testDockerFetcher :: NixFetcher Fresh
+testDockerFetcher =
+  FetchDocker
+    { _imageName = "library/alpine",
+      _imageTag = "3.16.2",
+      _imageDigest = (),
+      _sha256 = (),
+      _fos = Nothing,
+      _farch = Nothing,
+      _finalImageName = Nothing,
+      _finalImageTag = Nothing,
+      _tlsVerify = Nothing
+    }
+
 --------------------------------------------------------------------------------
 
 -- TODO test force fetch
