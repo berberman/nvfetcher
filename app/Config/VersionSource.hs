@@ -33,7 +33,8 @@ versionSourceCodec =
       httpHeaderCodec,
       openVsxCodec,
       vscodeMarketplaceCodec,
-      cmdCodec
+      cmdCodec,
+      containerCodec
     ]
 
 versionSourceKeys :: [Key]
@@ -49,7 +50,8 @@ versionSourceKeys =
     "src.httpheader",
     "src.openvsx",
     "src.vsmarketplace",
-    "src.cmd"
+    "src.cmd",
+    "src.container"
   ]
 
 --------------------------------------------------------------------------------
@@ -244,3 +246,13 @@ matchCmd x = x ^? vcmd
 
 cmdCodec :: TomlCodec VersionSource
 cmdCodec = dimatch matchCmd Cmd (text "src.cmd")
+
+--------------------------------------------------------------------------------
+
+matchContainer :: VersionSource -> Maybe (Text, ListOptions)
+matchContainer x = (,) <$> x ^? vcontainer <*> x ^? listOptions
+
+containerCodec :: TomlCodec VersionSource
+containerCodec =
+  dimatch matchContainer (uncurry Container) $
+    Toml.pair (text "src.container") listOptionsCodec

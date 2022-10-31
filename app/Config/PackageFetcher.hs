@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
@@ -36,7 +37,8 @@ fetcherCodec =
       vscodeMarketplaceCodec,
       gitCodec,
       urlCodec,
-      tarballCodec
+      tarballCodec,
+      dockerCodec
     ]
 
 fetcherKeys :: [Key]
@@ -47,7 +49,8 @@ fetcherKeys =
     "fetch.vsmarketplace",
     "fetch.git",
     "fetch.url",
-    "fetch.tarball"
+    "fetch.tarball",
+    "fetch.docker"
   ]
 
 --------------------------------------------------------------------------------
@@ -171,3 +174,24 @@ tarballCodec =
     unsupportError
     (\t -> Right $ \(coerce -> v) -> tarballFetcher $ T.replace "$ver" v t)
     "fetch.tarball"
+
+--------------------------------------------------------------------------------
+
+dockerCodec :: TomlCodec PackageFetcher
+dockerCodec =
+  dimap unsupportError setImageTag codec
+  where
+    setImageTag t (Version v) = t & imageTag .~ v
+
+    codec :: TomlCodec (NixFetcher Fresh)
+    codec =
+      FetchDocker
+        <$> Toml.text "fetch.docker" .= _imageName
+        <*> pure "" -- will be set in setImageTag
+        <*> pure () .= _imageDigest
+        <*> pure () .= _sha256
+        <*> dioptional (text "docker.os") .= _fos
+        <*> dioptional (text "docker.arch") .= _farch
+        <*> dioptional (text "docker.finalImageName") .= _finalImageName
+        <*> dioptional (text "docker.finalImageTag") .= _finalImageTag
+        <*> dioptional (bool "docker.tlsVerify") .= _tlsVerify

@@ -3,6 +3,7 @@
 
 module PrefetchSpec where
 
+import Control.Arrow ((&&&))
 import Control.Monad.Trans.Reader
 import NvFetcher.NixFetcher
 import NvFetcher.Types
@@ -36,8 +37,32 @@ spec = aroundShake $
       runPrefetchRule (tarballFetcher "https://github.com/nixos/nixpkgs/archive/3d35529a48d3ad50ad959463755b0b7fe392cfa7.tar.gz")
         `shouldReturnJust` Checksum "0la68sv52zz1kjw5s5sn6qslzz9mi9sakhzwi873gp4dhc8df1sg"
 
+    specifyChan "docker" $
+      runPrefetchRule' (_sha256 &&& _imageDigest) testDockerFetcher
+        `shouldReturnJust`
+          ( Checksum "1ly61z3bcs5qvqi2xxp3dd3llh61r9gygphl1ib8pxv64ix738mr",
+            ContainerDigest "sha256:bc41182d7ef5ffc53a40b044e725193bc10142a1243f395ee852a8d9730fc2ad"
+          )
+
+testDockerFetcher :: NixFetcher Fresh
+testDockerFetcher =
+  FetchDocker
+    { _imageName = "library/alpine",
+      _imageTag = "3.16.2",
+      _imageDigest = (),
+      _sha256 = (),
+      _fos = Nothing,
+      _farch = Nothing,
+      _finalImageName = Nothing,
+      _finalImageTag = Nothing,
+      _tlsVerify = Nothing
+    }
+
 --------------------------------------------------------------------------------
 
 -- TODO test force fetch
 runPrefetchRule :: NixFetcher Fresh -> ReaderT ActionQueue IO (Maybe Checksum)
-runPrefetchRule f = runActionChan $ _sha256 <$> prefetch f NoForceFetch
+runPrefetchRule = runPrefetchRule' _sha256
+
+runPrefetchRule' :: (NixFetcher Fetched -> a) -> NixFetcher Fresh -> ReaderT ActionQueue IO (Maybe a)
+runPrefetchRule' g f = runActionChan $ g <$> prefetch f NoForceFetch

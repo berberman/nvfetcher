@@ -37,11 +37,8 @@ import NvFetcher.Utils (quote, quoteIfNeeds)
 class ToNixExpr a where
   toNixExpr :: a -> NixExpr
 
-instance ToNixExpr (NixFetcher Fresh) where
-  toNixExpr = nixFetcher "lib.fakeSha256"
-
 instance ToNixExpr (NixFetcher Fetched) where
-  toNixExpr f = nixFetcher (quote $ coerce $ _sha256 f) f
+  toNixExpr = nixFetcher
 
 instance ToNixExpr Bool where
   toNixExpr True = "true"
@@ -62,10 +59,10 @@ instance ToNixExpr NixExpr where
 instance ToNixExpr Version where
   toNixExpr = coerce
 
-nixFetcher :: Text -> NixFetcher k -> NixExpr
-nixFetcher sha256 = \case
+nixFetcher :: NixFetcher Fetched -> NixExpr
+nixFetcher = \case
   FetchGit
-    { _sha256 = _,
+    { _sha256 = coerce quote -> sha256,
       _rev = quote . toNixExpr -> rev,
       _fetchSubmodules = toNixExpr -> fetchSubmodules,
       _deepClone = toNixExpr -> deepClone,
@@ -84,7 +81,7 @@ nixFetcher sha256 = \case
           }
     |]
   FetchGitHub
-    { _sha256 = _,
+    { _sha256 = coerce quote -> sha256,
       _rev = quote . toNixExpr -> rev,
       _fetchSubmodules = toNixExpr -> fetchSubmodules,
       _deepClone = toNixExpr -> deepClone,
@@ -118,22 +115,43 @@ nixFetcher sha256 = \case
                  sha256 = $sha256;
                })
          |]
-  (FetchUrl (quote -> url) (nameField -> n) _) ->
+  (FetchUrl (quote -> url) (nameField -> n) (coerce quote -> sha256)) ->
     [trimming|
           fetchurl {
             url = $url;$n
             sha256 = $sha256;
           }
     |]
-  (FetchTarball (quote -> url) _) ->
+  (FetchTarball (quote -> url) (coerce quote -> sha256)) ->
     [trimming|
           fetchTarball {
             url = $url;
             sha256 = $sha256;
           }
     |]
+  FetchDocker
+    { _imageName = quote . toNixExpr -> imageName,
+      _imageTag = quote . toNixExpr -> imageTag,
+      _imageDigest = ContainerDigest (quote . toNixExpr -> imageDigest),
+      _sha256 = coerce quote -> sha256,
+      _fos = optionalStr "os" -> os,
+      _farch = optionalStr "arch" -> arch,
+      _finalImageName = optionalStr "finalImageName" -> finalImageName,
+      _finalImageTag = maybe imageTag (quote . toNixExpr) -> finalImageTag,
+      _tlsVerify = optionalField "tlsVerify" -> tlsVerify
+    } ->
+      [trimming|
+            dockerTools.pullImage {
+              imageName = $imageName;
+              imageDigest = $imageDigest;
+              sha256 = $sha256;
+              finalImageTag = $finalImageTag;$os$arch$finalImageName$tlsVerify
+            }
+      |]
   where
-    nameField = maybe "" (\x -> "\nname = " <> quote x <> ";")
+    optionalField n = maybe "" (\x -> "\n" <> n <> " = " <> toNixExpr x <> ";")
+    optionalStr n = optionalField n . fmap quote
+    nameField = optionalStr "name"
 
 -- | Create a trivial drv that extracts the source from a fetcher
 -- TODO: Avoid using @NIX_PATH@

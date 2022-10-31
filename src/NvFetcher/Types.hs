@@ -1,3 +1,7 @@
+{-# LANGUAGE UndecidableSuperClasses #-}
+{-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
@@ -23,6 +27,7 @@ module NvFetcher.Types
   ( -- * Common types
     Version (..),
     Checksum (..),
+    ContainerDigest (..),
     Branch (..),
     NixExpr,
     VersionChange (..),
@@ -94,6 +99,12 @@ newtype Version = Version Text
 
 -- | Check sum, sha256, sri or base32, etc.
 newtype Checksum = Checksum Text
+  deriving newtype (Show, Eq, Ord, A.FromJSON, A.ToJSON, Pretty)
+  deriving stock (Typeable, Generic)
+  deriving anyclass (Hashable, Binary, NFData)
+
+-- | Digest of a (Docker) container
+newtype ContainerDigest = ContainerDigest Text
   deriving newtype (Show, Eq, Ord, A.FromJSON, A.ToJSON, Pretty)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
@@ -221,6 +232,7 @@ data VersionSource
   | OpenVsx {_ovPublisher :: Text, _ovExtName :: Text}
   | VscodeMarketplace {_vsmPublisher :: Text, _vsmExtName :: Text}
   | Cmd {_vcmd :: Text}
+  | Container {_vcontainer :: Text, _listOptions :: ListOptions}
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 instance Pretty VersionSource where
@@ -317,6 +329,8 @@ instance Pretty VersionSource where
         )
   pretty Cmd {..} =
     "CheckCmd" <> colon <+> pretty _vcmd
+  pretty Container {..} =
+    "CheckContainer" <> colon <+> pretty _vcontainer
 
 -- | The input of nvchecker
 data CheckVersion = CheckVersion VersionSource NvcheckerOptions
@@ -377,7 +391,7 @@ data NixFetcher (k :: FetchStatus)
         _fetchSubmodules :: Bool,
         _leaveDotGit :: Bool,
         _name :: Maybe Text,
-        _sha256 :: FetchResult k
+        _sha256 :: FetchResult Checksum k
       }
   | FetchGitHub
       { _fowner :: Text,
@@ -387,38 +401,53 @@ data NixFetcher (k :: FetchStatus)
         _fetchSubmodules :: Bool,
         _leaveDotGit :: Bool,
         _name :: Maybe Text,
-        _sha256 :: FetchResult k
+        _sha256 :: FetchResult Checksum k
       }
   | FetchUrl
       { _furl :: Text,
         _name :: Maybe Text,
-        _sha256 :: FetchResult k
+        _sha256 :: FetchResult Checksum k
       }
   | FetchTarball
       { _furl :: Text,
-        _sha256 :: FetchResult k
+        _sha256 :: FetchResult Checksum k
+      }
+  | FetchDocker
+      { _imageName :: Text,
+        _imageTag :: Text,
+        _imageDigest :: FetchResult ContainerDigest k,
+        _sha256 :: FetchResult Checksum k,
+        _fos :: Maybe Text,
+        _farch :: Maybe Text,
+        _finalImageName :: Maybe Text,
+        _finalImageTag :: Maybe Text,
+        _tlsVerify :: Maybe Bool
       }
   deriving (Typeable, Generic)
 
-deriving instance Show (FetchResult k) => Show (NixFetcher k)
+class (c (FetchResult Checksum k), c (FetchResult ContainerDigest k)) => ForFetchResult c k
 
-deriving instance Eq (FetchResult k) => Eq (NixFetcher k)
+instance (c (FetchResult Checksum k), c (FetchResult ContainerDigest k)) => ForFetchResult c k
 
-deriving instance Ord (FetchResult k) => Ord (NixFetcher k)
+deriving instance Show `ForFetchResult` k => Show (NixFetcher k)
 
-deriving instance Hashable (FetchResult k) => Hashable (NixFetcher k)
+deriving instance Eq `ForFetchResult` k => Eq (NixFetcher k)
 
-deriving instance Binary (FetchResult k) => Binary (NixFetcher k)
+deriving instance Ord `ForFetchResult` k => Ord (NixFetcher k)
 
-deriving instance NFData (FetchResult k) => NFData (NixFetcher k)
+deriving instance Hashable `ForFetchResult` k => Hashable (NixFetcher k)
+
+deriving instance Binary `ForFetchResult` k => Binary (NixFetcher k)
+
+deriving instance NFData `ForFetchResult` k => NFData (NixFetcher k)
 
 -- | Fetch status
 data FetchStatus = Fresh | Fetched
 
 -- | Prefetched fetchers hold hashes
-type family FetchResult (k :: FetchStatus) where
-  FetchResult Fresh = ()
-  FetchResult Fetched = Checksum
+type family FetchResult a (k :: FetchStatus) where
+  FetchResult _ Fresh = ()
+  FetchResult a Fetched = a
 
 instance A.ToJSON (NixFetcher Fetched) where
   toJSON FetchGit {..} =
@@ -457,6 +486,19 @@ instance A.ToJSON (NixFetcher Fetched) where
         "sha256" A..= _sha256,
         "type" A..= A.String "tarball"
       ]
+  toJSON FetchDocker {..} =
+    A.object
+      [ "imageName" A..= _imageName,
+        "imageTag" A..= _imageTag,
+        "imageDigest" A..= _imageDigest,
+        "sha256" A..= _sha256,
+        "os" A..= _fos,
+        "arch" A..= _farch,
+        "finalImageName" A..= _finalImageName,
+        "finalImageTag" A..= _finalImageTag,
+        "tlsVerify" A..= _tlsVerify
+      ]
+
 
 instance Pretty (NixFetcher k) where
   pretty FetchGit {..} =
@@ -499,6 +541,22 @@ instance Pretty (NixFetcher k) where
         )
   pretty FetchTarball {..} =
     "FetchTarball" <> colon <+> pretty _furl
+
+  pretty FetchDocker {..} =
+    "FetchDocker"
+      <> line
+      <> indent
+        2
+        ( vsep $
+            [ "imageName" <> colon <+> pretty _imageName,
+              "imageTag" <> colon <+> pretty _finalImageTag
+            ]
+              <> ppField "os" _fos
+              <> ppField "arch" _farch
+              <> ppField "finalImageName" _finalImageName
+              <> ppField "finalImageTag" _finalImageTag
+              <> ppField "tlsVerify" _tlsVerify
+        )
 
 --------------------------------------------------------------------------------
 
