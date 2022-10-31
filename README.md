@@ -157,8 +157,9 @@ Version source -- how do we track upstream version updates?
 - `src.openvsx = publisher.ext_name` -- the latest version of a vscode extension from open vsx
 - `src.vsmarketplace = publisher.ext_name` -- the latest version of a vscode extension from vscode marketplace
 - `src.cmd = cmd` -- the version from a shell command (e.g. `echo Meow`)
+= `src.container = owner/name` - the latest tag of a container from the Docker registry
 
-Optional list options for some version sources (`src.github_tag`, `src.webpage`, and `src.httpheader`),
+Optional list options for some version sources (`src.github_tag`, `src.webpage`, and `src.httpheader` and `src.container`),
 see the corresponding [nvchecker documentation](https://nvchecker.readthedocs.io/en/latest/usage.html#list-options) for details.
 
 - `src.include_regex`
@@ -185,6 +186,7 @@ How do we fetch the package source if we have the target version number?
 - `fetch.openvsx = publisher.ext_name`
 - `fetch.vsmarketplace = publisher.ext_name`
 - `fetch.tarball = tarball_url`
+- `fetch.docker = owner/name`
 
 Optional `nix-prefetch fetchgit` config, which make sense only when the fetcher equals to `fetch.github` or `fetch.git`.
 They can exist simultaneously.
@@ -192,6 +194,14 @@ They can exist simultaneously.
 - `git.deepClone`
 - `git.fetchSubmodules`
 - `git.leaveDotGit`
+
+Optional config for `fetch.docker`/`dockerTools.pullImage`:
+
+- `docker.os`
+- `docker.arch`
+- `docker.finalImageName`
+- `docker.finalImageTag`
+- `docker.tlsVerify`
 
 #### Extract src
 
