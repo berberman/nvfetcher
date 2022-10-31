@@ -39,6 +39,10 @@ Version :: Text -> Version
 newtype Checksum
 Checksum :: Text -> Checksum
 
+-- | Digest of a (Docker) container
+newtype ContainerDigest
+ContainerDigest :: Text -> ContainerDigest
+
 -- | Git branch (<a>Nothing</a>: master)
 newtype Branch
 Branch :: Maybe Text -> Branch
@@ -119,6 +123,9 @@ VscodeMarketplace :: Text -> Text -> VersionSource
 [_vsmExtName] :: VersionSource -> Text
 Cmd :: Text -> VersionSource
 [_vcmd] :: VersionSource -> Text
+Container :: Text -> ListOptions -> VersionSource
+[_vcontainer] :: VersionSource -> Text
+[_listOptions] :: VersionSource -> ListOptions
 
 -- | The result of nvchecker rule
 data NvcheckerResult
@@ -176,15 +183,15 @@ NoForceFetch :: ForceFetch
 
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
-FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult Checksum k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
 [_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
 [_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
-[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
-FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult Checksum k
+FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult Checksum k -> NixFetcher (k :: FetchStatus)
 [_fowner] :: NixFetcher (k :: FetchStatus) -> Text
 [_frepo] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
@@ -192,17 +199,27 @@ FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> 
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
 [_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
-[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
-FetchUrl :: Text -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult Checksum k
+FetchUrl :: Text -> Maybe Text -> FetchResult Checksum k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
-[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
-FetchTarball :: Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult Checksum k
+FetchTarball :: Text -> FetchResult Checksum k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
-[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult Checksum k
+FetchDocker :: Text -> Text -> FetchResult ContainerDigest k -> FetchResult Checksum k -> Maybe Text -> Maybe Text -> Maybe Text -> Maybe Text -> Maybe Bool -> NixFetcher (k :: FetchStatus)
+[_imageName] :: NixFetcher (k :: FetchStatus) -> Text
+[_imageTag] :: NixFetcher (k :: FetchStatus) -> Text
+[_imageDigest] :: NixFetcher (k :: FetchStatus) -> FetchResult ContainerDigest k
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult Checksum k
+[_fos] :: NixFetcher (k :: FetchStatus) -> Maybe Text
+[_farch] :: NixFetcher (k :: FetchStatus) -> Maybe Text
+[_finalImageName] :: NixFetcher (k :: FetchStatus) -> Maybe Text
+[_finalImageTag] :: NixFetcher (k :: FetchStatus) -> Maybe Text
+[_tlsVerify] :: NixFetcher (k :: FetchStatus) -> Maybe Bool
 
 -- | Prefetched fetchers hold hashes
-type family FetchResult (k :: FetchStatus)
+type family FetchResult a (k :: FetchStatus)
 
 -- | Fetch status
 data FetchStatus
@@ -325,6 +342,16 @@ instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.Checksum
 instance GHC.Classes.Ord NvFetcher.Types.Checksum
 instance GHC.Classes.Eq NvFetcher.Types.Checksum
 instance GHC.Show.Show NvFetcher.Types.Checksum
+instance Control.DeepSeq.NFData NvFetcher.Types.ContainerDigest
+instance Data.Binary.Class.Binary NvFetcher.Types.ContainerDigest
+instance Data.Hashable.Class.Hashable NvFetcher.Types.ContainerDigest
+instance GHC.Generics.Generic NvFetcher.Types.ContainerDigest
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.ContainerDigest
+instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.ContainerDigest
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.ContainerDigest
+instance GHC.Classes.Ord NvFetcher.Types.ContainerDigest
+instance GHC.Classes.Eq NvFetcher.Types.ContainerDigest
+instance GHC.Show.Show NvFetcher.Types.ContainerDigest
 instance Control.DeepSeq.NFData NvFetcher.Types.Branch
 instance Data.Binary.Class.Binary NvFetcher.Types.Branch
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Branch
@@ -457,12 +484,12 @@ instance GHC.Classes.Eq k => GHC.Classes.Eq (NvFetcher.Types.WithPackageKey k)
 instance Control.DeepSeq.NFData NvFetcher.Types.PackageResult
 instance GHC.Generics.Generic NvFetcher.Types.PackageResult
 instance GHC.Show.Show NvFetcher.Types.PackageResult
-instance GHC.Show.Show (NvFetcher.Types.FetchResult k) => GHC.Show.Show (NvFetcher.Types.NixFetcher k)
-instance GHC.Classes.Eq (NvFetcher.Types.FetchResult k) => GHC.Classes.Eq (NvFetcher.Types.NixFetcher k)
-instance GHC.Classes.Ord (NvFetcher.Types.FetchResult k) => GHC.Classes.Ord (NvFetcher.Types.NixFetcher k)
-instance Data.Hashable.Class.Hashable (NvFetcher.Types.FetchResult k) => Data.Hashable.Class.Hashable (NvFetcher.Types.NixFetcher k)
-instance Data.Binary.Class.Binary (NvFetcher.Types.FetchResult k) => Data.Binary.Class.Binary (NvFetcher.Types.NixFetcher k)
-instance Control.DeepSeq.NFData (NvFetcher.Types.FetchResult k) => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
+instance NvFetcher.Types.ForFetchResult GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.NixFetcher k)
+instance NvFetcher.Types.ForFetchResult GHC.Classes.Eq k => GHC.Classes.Eq (NvFetcher.Types.NixFetcher k)
+instance NvFetcher.Types.ForFetchResult GHC.Classes.Ord k => GHC.Classes.Ord (NvFetcher.Types.NixFetcher k)
+instance NvFetcher.Types.ForFetchResult Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.NixFetcher k)
+instance NvFetcher.Types.ForFetchResult Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.NixFetcher k)
+instance NvFetcher.Types.ForFetchResult Control.DeepSeq.NFData k => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
 instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.PackageResult
 instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
 instance GHC.Show.Show NvFetcher.Types.VersionChange
@@ -471,6 +498,7 @@ instance Prettyprinter.Internal.Pretty NvFetcher.Types.FetchRustGitDepsQ
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ExtractSrcQ
 instance Data.Aeson.Types.ToJSON.ToJSON (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
 instance Prettyprinter.Internal.Pretty (NvFetcher.Types.NixFetcher k)
+instance (c (NvFetcher.Types.FetchResult NvFetcher.Types.Checksum k), c (NvFetcher.Types.FetchResult NvFetcher.Types.ContainerDigest k)) => NvFetcher.Types.ForFetchResult c k
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ForceFetch
 instance Data.Default.Class.Default NvFetcher.Types.ForceFetch
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerRaw
@@ -517,6 +545,7 @@ fromPattern :: Lens' NvcheckerOptions (Maybe Text)
 vurl :: Traversal' VersionSource Text
 vsmPublisher :: Traversal' VersionSource Text
 vsmExtName :: Traversal' VersionSource Text
+vcontainer :: Traversal' VersionSource Text
 vcmd :: Traversal' VersionSource Text
 vbranch :: Traversal' VersionSource Branch
 repology :: Traversal' VersionSource Text
@@ -530,15 +559,23 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-sha256 :: forall k_iS0A k_aS0G. Lens (NixFetcher k_iS0A) (NixFetcher k_aS0G) (FetchResult k_iS0A) (FetchResult k_aS0G)
-rev :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Version
-name :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) (Maybe Text)
-leaveDotGit :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Bool
-furl :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Text
-frepo :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Text
-fowner :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Text
-fetchSubmodules :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Bool
-deepClone :: forall k_iS0A. Traversal' (NixFetcher k_iS0A) Bool
+tlsVerify :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) (Maybe Bool)
+sha256 :: forall k_iWpv. Lens' (NixFetcher k_iWpv) (FetchResult Checksum k_iWpv)
+rev :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) Version
+name :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) (Maybe Text)
+leaveDotGit :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) Bool
+imageTag :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) Text
+imageName :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) Text
+imageDigest :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) (FetchResult ContainerDigest k_iWpv)
+furl :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) Text
+frepo :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) Text
+fowner :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) Text
+fos :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) (Maybe Text)
+finalImageTag :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) (Maybe Text)
+finalImageName :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) (Maybe Text)
+fetchSubmodules :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) Bool
+farch :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) (Maybe Text)
+deepClone :: forall k_iWpv. Traversal' (NixFetcher k_iWpv) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -639,15 +676,15 @@ NoForceFetch :: ForceFetch
 
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
-FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+FetchGit :: Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult Checksum k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
 [_deepClone] :: NixFetcher (k :: FetchStatus) -> Bool
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
 [_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
-[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
-FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult Checksum k
+FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> FetchResult Checksum k -> NixFetcher (k :: FetchStatus)
 [_fowner] :: NixFetcher (k :: FetchStatus) -> Text
 [_frepo] :: NixFetcher (k :: FetchStatus) -> Text
 [_rev] :: NixFetcher (k :: FetchStatus) -> Version
@@ -655,14 +692,24 @@ FetchGitHub :: Text -> Text -> Version -> Bool -> Bool -> Bool -> Maybe Text -> 
 [_fetchSubmodules] :: NixFetcher (k :: FetchStatus) -> Bool
 [_leaveDotGit] :: NixFetcher (k :: FetchStatus) -> Bool
 [_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
-[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
-FetchUrl :: Text -> Maybe Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult Checksum k
+FetchUrl :: Text -> Maybe Text -> FetchResult Checksum k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
 [_name] :: NixFetcher (k :: FetchStatus) -> Maybe Text
-[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
-FetchTarball :: Text -> FetchResult k -> NixFetcher (k :: FetchStatus)
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult Checksum k
+FetchTarball :: Text -> FetchResult Checksum k -> NixFetcher (k :: FetchStatus)
 [_furl] :: NixFetcher (k :: FetchStatus) -> Text
-[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult k
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult Checksum k
+FetchDocker :: Text -> Text -> FetchResult ContainerDigest k -> FetchResult Checksum k -> Maybe Text -> Maybe Text -> Maybe Text -> Maybe Text -> Maybe Bool -> NixFetcher (k :: FetchStatus)
+[_imageName] :: NixFetcher (k :: FetchStatus) -> Text
+[_imageTag] :: NixFetcher (k :: FetchStatus) -> Text
+[_imageDigest] :: NixFetcher (k :: FetchStatus) -> FetchResult ContainerDigest k
+[_sha256] :: NixFetcher (k :: FetchStatus) -> FetchResult Checksum k
+[_fos] :: NixFetcher (k :: FetchStatus) -> Maybe Text
+[_farch] :: NixFetcher (k :: FetchStatus) -> Maybe Text
+[_finalImageName] :: NixFetcher (k :: FetchStatus) -> Maybe Text
+[_finalImageTag] :: NixFetcher (k :: FetchStatus) -> Maybe Text
+[_tlsVerify] :: NixFetcher (k :: FetchStatus) -> Maybe Bool
 
 -- | Fetch status
 data FetchStatus
@@ -670,7 +717,7 @@ Fresh :: FetchStatus
 Fetched :: FetchStatus
 
 -- | Prefetched fetchers hold hashes
-type family FetchResult (k :: FetchStatus)
+type family FetchResult a (k :: FetchStatus)
 
 -- | Rules of nix fetcher
 prefetchRule :: Rules ()
@@ -704,6 +751,9 @@ vscodeMarketplaceFetcher :: (Text, Text) -> PackageFetcher
 
 -- | Create a fetcher from url, using fetchTarball
 tarballFetcher :: Text -> NixFetcher Fresh
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.NixFetcher.FetchedContainer
+instance GHC.Generics.Generic NvFetcher.NixFetcher.FetchedContainer
+instance GHC.Show.Show NvFetcher.NixFetcher.FetchedContainer
 
 
 -- | This module mainly contains two things: <a>PackageSet</a> and
@@ -1220,6 +1270,9 @@ VscodeMarketplace :: Text -> Text -> VersionSource
 [_vsmExtName] :: VersionSource -> Text
 Cmd :: Text -> VersionSource
 [_vcmd] :: VersionSource -> Text
+Container :: Text -> ListOptions -> VersionSource
+[_vcontainer] :: VersionSource -> Text
+[_listOptions] :: VersionSource -> ListOptions
 
 -- | The result of nvchecker rule
 data NvcheckerResult
@@ -1260,7 +1313,6 @@ toNixExpr :: ToNixExpr a => a -> NixExpr
 -- | Create a trivial drv that extracts the source from a fetcher TODO:
 --   Avoid using <tt>NIX_PATH</tt>
 fetcherToDrv :: NixFetcher Fetched -> Text -> NixExpr
-instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fresh)
 instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
 instance NvFetcher.NixExpr.ToNixExpr GHC.Types.Bool
 instance NvFetcher.NixExpr.ToNixExpr a => NvFetcher.NixExpr.ToNixExpr [a]
