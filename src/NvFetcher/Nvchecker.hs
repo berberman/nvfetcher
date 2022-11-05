@@ -110,10 +110,11 @@ runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ d
   writeFile' config nvcheckerConfig
   (CmdTime t, Stdout out, CmdLine c) <- quietly . cmd $ "nvchecker --logger json -c " <> config
   putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
-  case A.decodeStrict' out of
-    (Just (NvcheckerSuccess x)) -> pure x
-    (Just (NvcheckerError err)) -> fail $ "Failed to run nvchecker: " <> T.unpack err
-    _ -> fail $ "Failed to parse output from nvchecker: " <> BS.unpack out
+  case reverse . lines $ out of
+    [o] | Just raw <- A.decodeStrict' $ BS.pack o -> case raw of
+      NvcheckerSuccess x -> pure x
+      NvcheckerError err -> fail $ "Failed to run nvchecker: " <> T.unpack err
+    _ -> fail $ "Failed to parse output from nvchecker: " <> out
 
 genNvConfig :: PackageKey -> NvcheckerOptions -> Maybe FilePath -> VersionSource -> TDSL
 genNvConfig pkg options mKeyfile versionSource =
