@@ -111,7 +111,7 @@ runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ d
   (CmdTime t, Stdout out, CmdLine c) <- quietly . cmd $ "nvchecker --logger json -c " <> config
   putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
   case reverse . lines $ out of
-    [o] | Just raw <- A.decodeStrict' $ BS.pack o -> case raw of
+    (o : _) | Just raw <- A.decodeStrict' $ BS.pack o -> case raw of
       NvcheckerSuccess x -> pure x
       NvcheckerError err -> fail $ "Failed to run nvchecker: " <> T.unpack err
     _ -> fail $ "Failed to parse output from nvchecker: " <> out
