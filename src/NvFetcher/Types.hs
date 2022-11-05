@@ -1,7 +1,4 @@
-{-# LANGUAGE UndecidableSuperClasses #-}
 {-# LANGUAGE ConstraintKinds #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
@@ -10,11 +7,14 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE UndecidableSuperClasses #-}
 
 -- | Copyright: (c) 2021-2022 berberman
 -- SPDX-License-Identifier: MIT
@@ -352,12 +352,15 @@ data NvcheckerResult = NvcheckerResult
   deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
 
 -- | Parsed JSON output from nvchecker
-newtype NvcheckerRaw = NvcheckerRaw Version
+data NvcheckerRaw = NvcheckerSuccess Version | NvcheckerError Text
   deriving (Show, Typeable, Eq, Generic)
 
 instance A.FromJSON NvcheckerRaw where
-  parseJSON = A.withObject "NvcheckerRaw" $ \o ->
-    NvcheckerRaw <$> o A..: "version"
+  parseJSON = A.withObject "NvcheckerRaw" $ \o -> do
+    mVersion <- o A..:? "version"
+    case mVersion of
+      Just version -> pure $ NvcheckerSuccess version
+      _ -> NvcheckerError <$> o A..: "error"
 
 type instance RuleResult CheckVersion = NvcheckerResult
 
@@ -499,7 +502,6 @@ instance A.ToJSON (NixFetcher Fetched) where
         "tlsVerify" A..= _tlsVerify
       ]
 
-
 instance Pretty (NixFetcher k) where
   pretty FetchGit {..} =
     "FetchGit"
@@ -541,7 +543,6 @@ instance Pretty (NixFetcher k) where
         )
   pretty FetchTarball {..} =
     "FetchTarball" <> colon <+> pretty _furl
-
   pretty FetchDocker {..} =
     "FetchDocker"
       <> line
@@ -569,7 +570,8 @@ type instance RuleResult ExtractSrcQ = HashMap FilePath Text
 
 instance Pretty ExtractSrcQ where
   pretty (ExtractSrcQ f n) =
-    "ExtractSrc" <> line
+    "ExtractSrc"
+      <> line
       <> indent
         2
         ( vsep
@@ -591,7 +593,8 @@ type instance RuleResult FetchRustGitDepsQ = HashMap Text Checksum
 
 instance Pretty FetchRustGitDepsQ where
   pretty (FetchRustGitDepsQ f n) =
-    "FetchRustGitDeps" <> line
+    "FetchRustGitDeps"
+      <> line
       <> indent
         2
         ( vsep
@@ -621,7 +624,8 @@ type instance RuleResult GetGitCommitDate = Text
 
 instance Pretty GetGitCommitDate where
   pretty GetGitCommitDate {..} =
-    "GetGitCommitDate" <> line
+    "GetGitCommitDate"
+      <> line
       <> indent
         2
         ( vsep
