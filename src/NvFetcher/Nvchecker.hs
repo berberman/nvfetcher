@@ -36,11 +36,11 @@ where
 import Control.Monad (void)
 import Control.Monad.Extra (fromMaybeM)
 import qualified Data.Aeson as A
+import qualified Data.ByteString.Char8 as BS
 import Data.Coerce (coerce)
-import Data.Maybe (fromJust, mapMaybe)
+import Data.Maybe (fromJust)
 import Data.String (fromString)
 import qualified Data.Text as T
-import qualified Data.Text.Encoding as T
 import Development.Shake
 import Development.Shake.Rule
 import NvFetcher.Types
@@ -73,10 +73,10 @@ persistedRule = addBuiltinRule noLint noIdentity $ \(WithPackageKey (key@(CheckV
   case useStale of
     True
       | Just oldVer' <- oldVer -> do
-        -- use the stale version if we have
-        putInfo $ T.unpack $ "Skip running nvchecker, use stale version " <> coerce oldVer' <> " for " <> coerce pkg
-        let result = NvcheckerResult {nvNow = oldVer', nvOld = oldVer, nvStale = True}
-        pure $ RunResult ChangedRecomputeSame (encode' result) result
+          -- use the stale version if we have
+          putInfo $ T.unpack $ "Skip running nvchecker, use stale version " <> coerce oldVer' <> " for " <> coerce pkg
+          let result = NvcheckerResult {nvNow = oldVer', nvOld = oldVer, nvStale = True}
+          pure $ RunResult ChangedRecomputeSame (encode' result) result
 
     -- run nvchecker
     _ -> do
@@ -99,10 +99,10 @@ oneShotRule :: Rules ()
 oneShotRule = void $
   addOracle $ \key@(CheckVersion versionSource options) -> do
     putInfo . show $ pretty key
-    NvcheckerRaw now <- runNvchecker (PackageKey "pkg") options versionSource
+    now <- runNvchecker (PackageKey "pkg") options versionSource
     pure $ NvcheckerResult now Nothing False
 
-runNvchecker :: PackageKey -> NvcheckerOptions -> VersionSource -> Action NvcheckerRaw
+runNvchecker :: PackageKey -> NvcheckerOptions -> VersionSource -> Action Version
 runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ do
   mKeyfile <- getKeyfilePath
   let nvcheckerConfig = T.unpack $ Toml.pretty $ mkToml $ genNvConfig pkg options mKeyfile versionSource
@@ -110,11 +110,11 @@ runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ d
   writeFile' config nvcheckerConfig
   (CmdTime t, Stdout out, CmdLine c) <- quietly . cmd $ "nvchecker --logger json -c " <> config
   putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
-  let out' = T.decodeUtf8 out
-      result = mapMaybe (A.decodeStrict . T.encodeUtf8) (T.lines out')
-  case result of
-    [x] -> pure x
-    _ -> fail $ "Failed to parse output from nvchecker: " <> T.unpack out'
+  case reverse . lines $ out of
+    (o : _) | Just raw <- A.decodeStrict' $ BS.pack o -> case raw of
+      NvcheckerSuccess x -> pure x
+      NvcheckerError err -> fail $ "Failed to run nvchecker: " <> T.unpack err
+    _ -> fail $ "Failed to parse output from nvchecker: " <> out
 
 genNvConfig :: PackageKey -> NvcheckerOptions -> Maybe FilePath -> VersionSource -> TDSL
 genNvConfig pkg options mKeyfile versionSource =

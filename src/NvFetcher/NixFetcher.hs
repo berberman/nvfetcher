@@ -47,7 +47,7 @@ module NvFetcher.NixFetcher
     urlFetcher,
     openVsxFetcher,
     vscodeMarketplaceFetcher,
-    tarballFetcher
+    tarballFetcher,
   )
 where
 
