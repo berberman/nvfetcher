@@ -7,7 +7,7 @@
 }:
 mkDerivation {
   pname = "nvfetcher";
-  version = "0.5.0.0";
+  version = "0.6.0.0";
   src = ../.;
   isLibrary = true;
   isExecutable = true;
@@ -34,4 +34,5 @@ mkDerivation {
   homepage = "https://github.com/berberman/nvfetcher";
   description = "Generate nix sources expr for the latest version of packages";
   license = lib.licenses.mit;
+  mainProgram = "nvfetcher";
 }
