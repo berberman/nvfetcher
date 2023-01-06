@@ -41,7 +41,7 @@ spec = aroundShake $
       runPrefetchRule' (_sha256 &&& _imageDigest) testDockerFetcher
         `shouldReturnJust`
           ( Checksum "1ly61z3bcs5qvqi2xxp3dd3llh61r9gygphl1ib8pxv64ix738mr",
-            ContainerDigest "sha256:bc41182d7ef5ffc53a40b044e725193bc10142a1243f395ee852a8d9730fc2ad"
+            ContainerDigest "sha256:65a2763f593ae85fab3b5406dc9e80f744ec5b449f269b699b5efd37a07ad32e"
           )
 
 testDockerFetcher :: NixFetcher Fresh
