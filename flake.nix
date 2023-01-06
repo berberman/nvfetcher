@@ -7,17 +7,16 @@
   };
   outputs = { self, nixpkgs, flake-utils, flake-compat, ... }:
     with flake-utils.lib;
-    # FIXME: ghc currently doesn't build on aarch64-darwin
-    eachSystem (nixpkgs.lib.remove "aarch64-darwin" defaultSystems) (system:
+    eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [ self.overlay ];
+          overlays = [ self.overlays.default ];
           config = { allowBroken = true; };
         };
       in with pkgs; rec {
-        defaultPackage = nvfetcher-bin;
-        devShell = with haskell.lib;
+        packages.default = nvfetcher-bin;
+        devShells.default = with haskell.lib;
           (addBuildTools (haskellPackages.nvfetcher) [
             haskell-language-server
             cabal-install
@@ -41,26 +40,32 @@
         };
         hydraJobs = { inherit packages; };
       }) // {
-        overlay = final: prev: {
-
+        overlays.default = final: prev: {
           haskellPackages = prev.haskellPackages.override (old: {
-            overrides = final.lib.composeExtensions (old.overrides or (_: _: {})) (hself: hsuper: {
-              nvfetcher = with final.haskell.lib;
-                generateOptparseApplicativeCompletion "nvfetcher"
-                (overrideCabal (prev.haskellPackages.callPackage ./nix { })
-                  (drv: {
-                    # test needs network
-                    doCheck = false;
-                    buildTools = drv.buildTools or [ ] ++ [ final.makeWrapper ];
-                    postInstall = with final;
-                      drv.postInstall or "" + ''
-                        wrapProgram $out/bin/nvfetcher \
-                          --prefix PATH ":" "${
-                            lib.makeBinPath [ nvchecker nix-prefetch nix-prefetch-docker ]
-                          }"
-                      '';
-                  }));
-            });
+            overrides =
+              final.lib.composeExtensions (old.overrides or (_: _: { }))
+              (hself: hsuper: {
+                nvfetcher = with final.haskell.lib;
+                  hself.generateOptparseApplicativeCompletions [ "nvfetcher" ]
+                  (overrideCabal (prev.haskellPackages.callPackage ./nix { })
+                    (drv: {
+                      # test needs network
+                      doCheck = false;
+                      buildTools = drv.buildTools or [ ]
+                        ++ [ final.makeWrapper ];
+                      postInstall = with final;
+                        drv.postInstall or "" + ''
+                          wrapProgram $out/bin/nvfetcher \
+                            --prefix PATH ":" "${
+                              lib.makeBinPath [
+                                nvchecker
+                                nix-prefetch
+                                nix-prefetch-docker
+                              ]
+                            }"
+                        '';
+                    }));
+              });
           });
           nvfetcher-bin = with final;
             haskell.lib.justStaticExecutables haskellPackages.nvfetcher;
