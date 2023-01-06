@@ -6,7 +6,7 @@
 --   
 --   Please see <a>README</a>
 @package nvfetcher
-@version 0.5.0.0
+@version 0.6.0.0
 
 
 module NvFetcher.Config
@@ -560,23 +560,23 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-tlsVerify :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) (Maybe Bool)
-sha256 :: forall k_iWDD. Lens' (NixFetcher k_iWDD) (FetchResult Checksum k_iWDD)
-rev :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) Version
-name :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) (Maybe Text)
-leaveDotGit :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) Bool
-imageTag :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) Text
-imageName :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) Text
-imageDigest :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) (FetchResult ContainerDigest k_iWDD)
-furl :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) Text
-frepo :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) Text
-fowner :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) Text
-fos :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) (Maybe Text)
-finalImageTag :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) (Maybe Text)
-finalImageName :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) (Maybe Text)
-fetchSubmodules :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) Bool
-farch :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) (Maybe Text)
-deepClone :: forall k_iWDD. Traversal' (NixFetcher k_iWDD) Bool
+tlsVerify :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Bool)
+sha256 :: forall k_iZN9. Lens' (NixFetcher k_iZN9) (FetchResult Checksum k_iZN9)
+rev :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Version
+name :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Text)
+leaveDotGit :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Bool
+imageTag :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Text
+imageName :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Text
+imageDigest :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (FetchResult ContainerDigest k_iZN9)
+furl :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Text
+frepo :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Text
+fowner :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Text
+fos :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Text)
+finalImageTag :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Text)
+finalImageName :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Text)
+fetchSubmodules :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Bool
+farch :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Text)
+deepClone :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru

@@ -32,58 +32,43 @@
 </span><span id="line-23"></span><span>  </span><span class="hs-special">}</span><span>
 </span><span id="line-24"></span><span>
 </span><span id="line-25"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Default</span></span><span> </span><span class="annot"><a href="NvFetcher.Config.html#Config"><span class="hs-identifier hs-type">Config</span></a></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-26"></span><span>  </span><span id="local-6989586621679377854"><span class="annot"><span class="annottext">def :: Config
+</span><span id="line-26"></span><span>  </span><span id="local-6989586621679391587"><span class="annot"><span class="annottext">def :: Config
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">def</span></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-27"></span><span>    </span><span class="annot"><span class="annottext">Config :: ShakeOptions
--&gt; FilePath
--&gt; Rules ()
--&gt; Action ()
--&gt; Action ()
--&gt; Int
--&gt; Maybe FilePath
--&gt; Bool
--&gt; Maybe FilePath
--&gt; Config
-</span><a href="NvFetcher.Config.html#Config"><span class="hs-identifier hs-type">Config</span></a></span><span>
+</span><span id="line-27"></span><span>    </span><span class="annot"><a href="NvFetcher.Config.html#Config"><span class="hs-identifier hs-type">Config</span></a></span><span>
 </span><span id="line-28"></span><span>      </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">shakeConfig :: ShakeOptions
 </span><a href="NvFetcher.Config.html#shakeConfig"><span class="hs-identifier hs-var">shakeConfig</span></a></span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-29"></span><span>          </span><span class="annot"><span class="annottext">ShakeOptions
 </span><span class="hs-identifier hs-var">shakeOptions</span></span><span>
 </span><span id="line-30"></span><span>            </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">shakeProgress :: IO Progress -&gt; IO ()
-</span><a href="#local-6989586621679377851"><span class="hs-identifier hs-var">shakeProgress</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">IO Progress -&gt; IO ()
+</span><a href="#local-6989586621679391584"><span class="hs-identifier hs-var">shakeProgress</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">IO Progress -&gt; IO ()
 </span><span class="hs-identifier hs-var">progressSimple</span></span><span class="hs-special">,</span><span>
 </span><span id="line-31"></span><span>              </span><span class="annot"><span class="annottext">shakeThreads :: Int
-</span><a href="#local-6989586621679377849"><span class="hs-identifier hs-var">shakeThreads</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679391582"><span class="hs-identifier hs-var">shakeThreads</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">0</span></span><span>
 </span><span id="line-32"></span><span>            </span><span class="hs-special">}</span><span class="hs-special">,</span><span>
 </span><span id="line-33"></span><span>        </span><span class="annot"><span class="annottext">buildDir :: FilePath
 </span><a href="NvFetcher.Config.html#buildDir"><span class="hs-identifier hs-var">buildDir</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;_sources&quot;</span></span><span class="hs-special">,</span><span>
 </span><span id="line-34"></span><span>        </span><span class="annot"><span class="annottext">customRules :: Rules ()
-</span><a href="NvFetcher.Config.html#customRules"><span class="hs-identifier hs-var">customRules</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">() -&gt; Rules ()
-forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><a href="NvFetcher.Config.html#customRules"><span class="hs-identifier hs-var">customRules</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
 </span><span id="line-35"></span><span>        </span><span class="annot"><span class="annottext">actionAfterBuild :: Action ()
-</span><a href="NvFetcher.Config.html#actionAfterBuild"><span class="hs-identifier hs-var">actionAfterBuild</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">() -&gt; Action ()
-forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><a href="NvFetcher.Config.html#actionAfterBuild"><span class="hs-identifier hs-var">actionAfterBuild</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
 </span><span id="line-36"></span><span>        </span><span class="annot"><span class="annottext">actionAfterClean :: Action ()
-</span><a href="NvFetcher.Config.html#actionAfterClean"><span class="hs-identifier hs-var">actionAfterClean</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">() -&gt; Action ()
-forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><a href="NvFetcher.Config.html#actionAfterClean"><span class="hs-identifier hs-var">actionAfterClean</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
 </span><span id="line-37"></span><span>        </span><span class="annot"><span class="annottext">retry :: Int
 </span><a href="NvFetcher.Config.html#retry"><span class="hs-identifier hs-var">retry</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">3</span></span><span class="hs-special">,</span><span>
 </span><span id="line-38"></span><span>        </span><span class="annot"><span class="annottext">filterRegex :: Maybe FilePath
-</span><a href="NvFetcher.Config.html#filterRegex"><span class="hs-identifier hs-var">filterRegex</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe FilePath
-forall a. Maybe a
+</span><a href="NvFetcher.Config.html#filterRegex"><span class="hs-identifier hs-var">filterRegex</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Maybe a
 </span><span class="hs-identifier hs-var">Nothing</span></span><span class="hs-special">,</span><span>
 </span><span id="line-39"></span><span>        </span><span class="annot"><span class="annottext">cacheNvchecker :: Bool
 </span><a href="NvFetcher.Config.html#cacheNvchecker"><span class="hs-identifier hs-var">cacheNvchecker</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span class="hs-special">,</span><span>
 </span><span id="line-40"></span><span>        </span><span class="annot"><span class="annottext">keyfile :: Maybe FilePath
-</span><a href="NvFetcher.Config.html#keyfile"><span class="hs-identifier hs-var">keyfile</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe FilePath
-forall a. Maybe a
+</span><a href="NvFetcher.Config.html#keyfile"><span class="hs-identifier hs-var">keyfile</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Maybe a
 </span><span class="hs-identifier hs-var">Nothing</span></span><span>
 </span><span id="line-41"></span><span>      </span><span class="hs-special">}</span><span>
 </span><span id="line-42"></span></pre></body></html>

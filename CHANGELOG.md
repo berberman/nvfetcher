@@ -1,5 +1,15 @@
 # Revision history for nvfetcher
 
+## 0.6.0.0
+
+* Parse error output from nvchecker
+* Add source and fetcher for Docker containers (Thanks to @amesgen)
+* Add option fetch.force to always rerun the prefetch rule
+* Add `fetchGitHubRelease'` to `PackageSet` 
+* Add `GetGitCommitDate` rule
+* Add `--keyfile` to pass [nvchecker keyfile](https://nvchecker.readthedocs.io/en/latest/usage.html#configuration-table)
+* Remove IFD from extracing sources
+
 ## 0.5.0.0
 
 There have been many significant changes since the last release.
