@@ -95,7 +95,7 @@ nixFetcher = \case
       if (deepClone == "true") || (leaveDotGit == "true")
         then
           [trimming|
-               fetchFromGitHub ({
+               fetchFromGitHub {
                  owner = $owner;
                  repo = $repo;
                  rev = $rev;
@@ -103,17 +103,17 @@ nixFetcher = \case
                  deepClone = $deepClone;
                  leaveDotGit = $leaveDotGit;$n
                  sha256 = $sha256;
-               })
+               }
          |]
         else
           [trimming|
-               fetchFromGitHub ({
+               fetchFromGitHub {
                  owner = $owner;
                  repo = $repo;
                  rev = $rev;
                  fetchSubmodules = $fetchSubmodules;$n
                  sha256 = $sha256;
-               })
+               }
          |]
   (FetchUrl (quote -> url) (nameField -> n) (coerce quote -> sha256)) ->
     [trimming|

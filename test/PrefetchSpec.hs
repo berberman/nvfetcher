@@ -35,12 +35,12 @@ spec = aroundShake $
 
     specifyChan "tarball" $
       runPrefetchRule (tarballFetcher "https://github.com/nixos/nixpkgs/archive/3d35529a48d3ad50ad959463755b0b7fe392cfa7.tar.gz")
-        `shouldReturnJust` Checksum "0la68sv52zz1kjw5s5sn6qslzz9mi9sakhzwi873gp4dhc8df1sg"
+        `shouldReturnJust` Checksum "sha256-TwfXEION3DcOivzDqXSKNf1PNTZWF124nOF/UbZGRlE="
 
     specifyChan "docker" $
       runPrefetchRule' (_sha256 &&& _imageDigest) testDockerFetcher
         `shouldReturnJust`
-          ( Checksum "1ly61z3bcs5qvqi2xxp3dd3llh61r9gygphl1ib8pxv64ix738mr",
+          ( Checksum "sha256-uaJxeiRm94tWDBTe51/KwUBKR2vj9i4i3rhotsYPxtM=",
             ContainerDigest "sha256:65a2763f593ae85fab3b5406dc9e80f744ec5b449f269b699b5efd37a07ad32e"
           )
 

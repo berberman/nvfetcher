@@ -70,7 +70,7 @@ versionSourcesSpec = aroundShake $
       runNvcheckerRule (Repology "ssed" "aur") `shouldReturnJust` Version "3.62"
 
     specifyChan "vsmarketplace" $
-      runNvcheckerRule (VscodeMarketplace "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.3.0"
+      runNvcheckerRule (VscodeMarketplace "usernamehw" "indent-one-space") `shouldReturnJust` Version "1.0.0"
 
     specifyChan "cmd" $
       runNvcheckerRule (Cmd "echo Meow") `shouldReturnJust` Version "Meow"

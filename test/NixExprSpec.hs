@@ -31,7 +31,7 @@ spec = describe "toNixExpr" $ do
       fetchgit {
         url = "https://example.com";
         rev = "fake_rev";
-        fetchSubmodules = false;
+        fetchSubmodules = true;
         deepClone = false;
         leaveDotGit = false;
         sha256 = "0000000000000000000000000000000000000000000000000000000000000000";
@@ -41,13 +41,13 @@ spec = describe "toNixExpr" $ do
   it "renders fresh gitHubFetcher" $
     toNixExpr (fakeFetch (gitHubFetcher ("owner", "repo") "fake_rev"))
       `shouldBe` [trimming|
-      fetchFromGitHub ({
+      fetchFromGitHub {
         owner = "owner";
         repo = "repo";
         rev = "fake_rev";
         fetchSubmodules = false;
         sha256 = "0000000000000000000000000000000000000000000000000000000000000000";
-      })
+      }
     |]
 
   it "renders fresh urlFetcher" $

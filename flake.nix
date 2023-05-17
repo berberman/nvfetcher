@@ -21,7 +21,7 @@
             haskell-language-server
             cabal-install
             nvchecker
-            nix-prefetch
+            nix-prefetch-git
             nix-prefetch-docker
             cabal2nix # cd nix && cabal2nix ../. > default.nix && ..
           ]).envFunc { };
@@ -33,7 +33,8 @@
           });
         packages.ghcWithNvfetcher = mkShell {
           buildInputs = [
-            nix-prefetch
+            nix-prefetch-git
+            nix-prefetch-docker
             nvchecker
             (haskellPackages.ghcWithPackages (p: [ p.nvfetcher ]))
           ];
@@ -59,7 +60,7 @@
                             --prefix PATH ":" "${
                               lib.makeBinPath [
                                 nvchecker
-                                nix-prefetch
+                                nix-prefetch-git
                                 nix-prefetch-docker
                               ]
                             }"

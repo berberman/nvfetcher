@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -18,11 +19,13 @@
 --
 -- 'NixFetcher' is used to describe how to fetch package sources.
 --
--- There are three types of fetchers overall:
+-- There are five types of fetchers overall:
 --
--- 1. 'FetchGit' -- nix-prefetch fetchgit
--- 2. 'FetchGitHub' -- nix-prefetch fetchFromGitHub
--- 3. 'FetchUrl' -- nix-prefetch fetchurl
+-- 1. 'FetchGit' -- nix-prefetch-git
+-- 2. 'FetchGitHub' -- nix-prefetch-git/nix-prefetch-url
+-- 3. 'FetchUrl' -- nix-prefetch-url
+-- 4. 'FetchTarball' -- nix-prefetch-url
+-- 5. 'FetchDocker' -- nix-prefetch-docker
 --
 -- As you can see the type signature of 'prefetch':
 -- a fetcher will be filled with the fetch result (hash) after the prefetch.
@@ -66,53 +69,66 @@ import Prettyprinter (pretty, (<+>))
 
 --------------------------------------------------------------------------------
 
+sha256ToSri :: Text -> Action Checksum
+sha256ToSri sha256 = do
+  (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
+    quietly $
+      command [EchoStderr False] "nix" ["hash", "to-sri", "--type", "sha256", T.unpack sha256]
+  putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
+  case takeWhile (not . T.null) $ reverse $ T.lines out of
+    [x] -> pure $ coerce x
+    _ -> fail $ "Failed to parse output from nix hash to-sri: " <> T.unpack out
+
+runNixPrefetchUrl :: Text -> Bool -> Action Checksum
+runNixPrefetchUrl url unpack = do
+  (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
+    quietly $
+      command [EchoStderr False] "nix-prefetch-url" $
+        [T.unpack url] <> ["--unpack" | unpack]
+  putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
+  case takeWhile (not . T.null) $ reverse $ T.lines out of
+    [x] -> sha256ToSri x
+    _ -> fail $ "Failed to parse output from nix-prefetch-url: " <> T.unpack out
+
+newtype FetchedGit = FetchedGit {sha256 :: Text}
+  deriving (Show, Generic, A.FromJSON)
+
+runNixPrefetchGit :: Text -> Text -> Bool -> Bool -> Bool -> Action Checksum
+runNixPrefetchGit url rev fetchSubmodules deepClone leaveDotGit = do
+  (CmdTime t, Stdout out, CmdLine c) <-
+    quietly $
+      command [EchoStderr False] "nix-prefetch-git" $
+        ["--url", T.unpack url]
+          <> ["--rev", T.unpack rev]
+          <> ["--fetch-submodules" | fetchSubmodules]
+          <> ["--deepClone" | deepClone]
+          <> ["--leave-dotGit" | leaveDotGit]
+  putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
+  case A.eitherDecode out of
+    Right (FetchedGit x) -> sha256ToSri x
+    Left e -> fail $ "Failed to parse output from nix-prefetch-git as JSON: " <> e
+
+--------------------------------------------------------------------------------
+
 runFetcher :: NixFetcher Fresh -> Action (NixFetcher Fetched)
 runFetcher = \case
   FetchGit {..} -> do
-    (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
-      quietly $
-        command [EchoStderr False] "nix-prefetch" $
-          ["fetchgit"]
-            <> ["--url", T.unpack _furl]
-            <> ["--rev", T.unpack $ coerce _rev]
-            <> ["--fetchSubmodules" | _fetchSubmodules]
-            <> ["--deepClone" | _deepClone]
-            <> ["--leaveDotGit" | _leaveDotGit]
-    putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
-    case takeWhile (not . T.null) $ reverse $ T.lines out of
-      [x] -> pure FetchGit {_sha256 = coerce x, ..}
-      _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
+    result <- runNixPrefetchGit _furl (coerce _rev) _fetchSubmodules _deepClone _leaveDotGit
+    pure FetchGit {_sha256 = coerce result, ..}
   FetchGitHub {..} -> do
-    (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
-      quietly $
-        command [EchoStderr False] "nix-prefetch" $
-          ["fetchFromGitHub"]
-            <> ["--owner", T.unpack _fowner]
-            <> ["--repo", T.unpack _frepo]
-            <> ["--rev", T.unpack $ coerce _rev]
-            <> ["--fetchSubmodules" | _fetchSubmodules]
-            <> ["--deepClone" | _deepClone]
-            <> ["--leaveDotGit" | _leaveDotGit]
-    putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
-    case takeWhile (not . T.null) $ reverse $ T.lines out of
-      [x] -> pure FetchGitHub {_sha256 = coerce x, ..}
-      _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
+    let useFetchGit = _fetchSubmodules || _leaveDotGit || _deepClone
+        ver = coerce _rev
+    result <-
+      if useFetchGit
+        then runNixPrefetchGit [trimming|https://github.com/$_fowner/$_frepo|] (coerce _rev) _fetchSubmodules _deepClone _leaveDotGit
+        else runNixPrefetchUrl [trimming|https://github.com/$_fowner/$_frepo/archive/$ver.tar.gz|] True
+    pure FetchGitHub {_sha256 = result, ..}
   FetchUrl {..} -> do
-    (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
-      quietly $
-        command [EchoStderr False] "nix-prefetch" ["fetchurl", "--url", T.unpack _furl]
-    putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
-    case takeWhile (not . T.null) $ reverse $ T.lines out of
-      [x] -> pure FetchUrl {_sha256 = coerce x, ..}
-      _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
+    result <- runNixPrefetchUrl _furl False
+    pure FetchUrl {_sha256 = result, ..}
   FetchTarball {..} -> do
-    (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
-      quietly $
-        command [EchoStderr False] "nix-prefetch" ["fetchTarball", "--url", T.unpack _furl]
-    putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
-    case takeWhile (not . T.null) $ reverse $ T.lines out of
-      [x] -> pure FetchTarball {_sha256 = coerce x, ..}
-      _ -> fail $ "Failed to parse output from nix-prefetch: " <> T.unpack out
+    result <- runNixPrefetchUrl _furl True
+    pure FetchTarball {_sha256 = result, ..}
   FetchDocker {..} -> do
     (CmdTime t, Stdout out, CmdLine c) <-
       quietly $
@@ -123,22 +139,23 @@ runFetcher = \case
           ]
             <> concat [["--os", T.unpack os] | Just os <- [_fos]]
             <> concat [["--arch", T.unpack arch] | Just arch <- [_farch]]
-    putVerbose $ "Finishing running " <> c <> ",, took " <> show t <> "s"
+    putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case A.eitherDecode out of
-      Right FetchedContainer {..} ->
-        pure FetchDocker {_sha256 = sha256, _imageDigest = imageDigest, ..}
+      Right FetchedContainer {..} -> do
+        sri <- sha256ToSri sha256
+        pure FetchDocker {_sha256 = sri, _imageDigest = imageDigest, ..}
       Left e -> fail $ "Failed to parse output from nix-prefetch-docker as JSON: " <> e
 
 data FetchedContainer = FetchedContainer
   { imageDigest :: ContainerDigest,
-    sha256 :: Checksum
+    sha256 :: Text
   }
   deriving (Show, Generic, A.FromJSON)
 
 pypiUrl :: Text -> Version -> Text
 pypiUrl pypi (coerce -> ver) =
   let h = T.cons (T.head pypi) ""
-   in [trimming|https://pypi.io/packages/source/$h/$pypi/$pypi-$ver.tar.gz|]
+   in [trimming|https://pypi.org/packages/source/$h/$pypi/$pypi-$ver.tar.gz|]
 
 --------------------------------------------------------------------------------
 
@@ -158,7 +175,7 @@ prefetch f force = askOracle $ RunFetch force f
 
 -- | Create a fetcher from git url
 gitFetcher :: Text -> PackageFetcher
-gitFetcher furl rev = FetchGit furl rev False False False Nothing ()
+gitFetcher furl rev = FetchGit furl rev False True False Nothing ()
 
 -- | Create a fetcher from github repo
 gitHubFetcher ::
