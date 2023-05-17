@@ -31,7 +31,7 @@ spec = describe "toNixExpr" $ do
       fetchgit {
         url = "https://example.com";
         rev = "fake_rev";
-        fetchSubmodules = false;
+        fetchSubmodules = true;
         deepClone = false;
         leaveDotGit = false;
         sha256 = "0000000000000000000000000000000000000000000000000000000000000000";
