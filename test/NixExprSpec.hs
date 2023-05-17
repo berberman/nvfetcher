@@ -46,8 +46,6 @@ spec = describe "toNixExpr" $ do
         repo = "repo";
         rev = "fake_rev";
         fetchSubmodules = false;
-        deepClone = false;
-        leaveDotGit = false;
         sha256 = "0000000000000000000000000000000000000000000000000000000000000000";
       }
     |]

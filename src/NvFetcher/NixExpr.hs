@@ -90,17 +90,31 @@ nixFetcher = \case
       _frepo = quote -> repo,
       _name = nameField -> n
     } ->
-      [trimming|
-          fetchFromGitHub {
-            owner = $owner;
-            repo = $repo;
-            rev = $rev;
-            fetchSubmodules = $fetchSubmodules;
-            deepClone = $deepClone;
-            leaveDotGit = $leaveDotGit;$n
-            sha256 = $sha256;
-          }
-      |]
+      -- TODO: fix fetchFromGitHub in Nixpkgs so that deepClone and
+      -- leaveDotGit won't get passed to fetchzip
+      if (deepClone == "true") || (leaveDotGit == "true")
+        then
+          [trimming|
+               fetchFromGitHub {
+                 owner = $owner;
+                 repo = $repo;
+                 rev = $rev;
+                 fetchSubmodules = $fetchSubmodules;
+                 deepClone = $deepClone;
+                 leaveDotGit = $leaveDotGit;$n
+                 sha256 = $sha256;
+               }
+         |]
+        else
+          [trimming|
+               fetchFromGitHub {
+                 owner = $owner;
+                 repo = $repo;
+                 rev = $rev;
+                 fetchSubmodules = $fetchSubmodules;$n
+                 sha256 = $sha256;
+               }
+         |]
   (FetchUrl (quote -> url) (nameField -> n) (coerce quote -> sha256)) ->
     [trimming|
           fetchurl {
