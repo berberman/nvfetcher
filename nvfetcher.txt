@@ -560,23 +560,23 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-tlsVerify :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Bool)
-sha256 :: forall k_iZN9. Lens' (NixFetcher k_iZN9) (FetchResult Checksum k_iZN9)
-rev :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Version
-name :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Text)
-leaveDotGit :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Bool
-imageTag :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Text
-imageName :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Text
-imageDigest :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (FetchResult ContainerDigest k_iZN9)
-furl :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Text
-frepo :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Text
-fowner :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Text
-fos :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Text)
-finalImageTag :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Text)
-finalImageName :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Text)
-fetchSubmodules :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Bool
-farch :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) (Maybe Text)
-deepClone :: forall k_iZN9. Traversal' (NixFetcher k_iZN9) Bool
+tlsVerify :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Bool)
+sha256 :: forall k_iZQT. Lens' (NixFetcher k_iZQT) (FetchResult Checksum k_iZQT)
+rev :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Version
+name :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Text)
+leaveDotGit :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Bool
+imageTag :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Text
+imageName :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Text
+imageDigest :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (FetchResult ContainerDigest k_iZQT)
+furl :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Text
+frepo :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Text
+fowner :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Text
+fos :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Text)
+finalImageTag :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Text)
+finalImageName :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Text)
+fetchSubmodules :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Bool
+farch :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Text)
+deepClone :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -652,12 +652,14 @@ nvcheckerCacheEnabled :: Action Bool
 
 -- | <a>NixFetcher</a> is used to describe how to fetch package sources.
 --   
---   There are three types of fetchers overall:
+--   There are five types of fetchers overall:
 --   
 --   <ol>
---   <li><a>FetchGit</a> -- nix-prefetch fetchgit</li>
---   <li><a>FetchGitHub</a> -- nix-prefetch fetchFromGitHub</li>
---   <li><a>FetchUrl</a> -- nix-prefetch fetchurl</li>
+--   <li><a>FetchGit</a> -- nix-prefetch-git</li>
+--   <li><a>FetchGitHub</a> -- nix-prefetch-git/nix-prefetch-url</li>
+--   <li><a>FetchUrl</a> -- nix-prefetch-url</li>
+--   <li><a>FetchTarball</a> -- nix-prefetch-url</li>
+--   <li><a>FetchDocker</a> -- nix-prefetch-docker</li>
 --   </ol>
 --   
 --   As you can see the type signature of <a>prefetch</a>: a fetcher will
@@ -752,6 +754,9 @@ vscodeMarketplaceFetcher :: (Text, Text) -> PackageFetcher
 
 -- | Create a fetcher from url, using fetchTarball
 tarballFetcher :: Text -> NixFetcher Fresh
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.NixFetcher.FetchedGit
+instance GHC.Generics.Generic NvFetcher.NixFetcher.FetchedGit
+instance GHC.Show.Show NvFetcher.NixFetcher.FetchedGit
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.NixFetcher.FetchedContainer
 instance GHC.Generics.Generic NvFetcher.NixFetcher.FetchedContainer
 instance GHC.Show.Show NvFetcher.NixFetcher.FetchedContainer
