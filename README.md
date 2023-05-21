@@ -157,7 +157,7 @@ Version source -- how do we track upstream version updates?
 - `src.openvsx = publisher.ext_name` -- the latest version of a vscode extension from open vsx
 - `src.vsmarketplace = publisher.ext_name` -- the latest version of a vscode extension from vscode marketplace
 - `src.cmd = cmd` -- the version from a shell command (e.g. `echo Meow`)
-= `src.container = owner/name` - the latest tag of a container from the Docker registry
+- `src.container = owner/name` - the latest tag of a container from the Docker registry
 
 Optional list options for some version sources (`src.github_tag`, `src.webpage`, and `src.httpheader` and `src.container`),
 see the corresponding [nvchecker documentation](https://nvchecker.readthedocs.io/en/latest/usage.html#list-options) for details.
