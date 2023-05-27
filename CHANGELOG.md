@@ -1,5 +1,9 @@
 # Revision history for nvfetcher
 
+## 0.6.1.0
+
+* Replace `nix-prefetch` with `nix-prefetch-git` and `nix-prefetch-url`
+
 ## 0.6.0.0
 
 * Parse error output from nvchecker
