@@ -1,142 +1,132 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
-module Config where
+module Config (prettyPackageConfigParseError, parseConfig, PackageConfigValidateError (..)) where
 
 import Config.PackageFetcher
 import Config.VersionSource
-import Data.Coerce (coerce)
-import Data.Either.Extra (mapLeft)
+import Control.Monad.Trans.Except
 import qualified Data.HashMap.Strict as HMap
-import Data.List (intersect)
-import Data.List.NonEmpty (NonEmpty ((:|)))
-import qualified Data.List.NonEmpty as NE
+import Data.List (foldl', intersect)
+import qualified Data.Map.Strict as Map
 import Data.Text (Text)
 import qualified Data.Text as T
 import NvFetcher.Types
-import Toml
-import Validation (validationToEither)
+import TOML
+import TOML.Decode
 
-data PackageConfigParseError = TomlErrors [TomlDecodeError] | KeyConflicts [[Key]]
+data PackageConfigValidateError
+  = TomlError TOMLError
+  | KeyConflicts PackageName [[Text]]
+  | KeyUnexpected PackageName [Text]
 
-instance Semigroup PackageConfigParseError where
-  TomlErrors e <> _ = TomlErrors e
-  _ <> TomlErrors e = TomlErrors e
-  KeyConflicts xs <> KeyConflicts ys = KeyConflicts $ xs <> ys
+prettyPackageConfigParseError :: PackageConfigValidateError -> Text
+prettyPackageConfigParseError (TomlError e) = "Failed to parse config file: " <> renderTOMLError e
+prettyPackageConfigParseError (KeyConflicts pkg xs) = T.unlines ["In [" <> pkg <> "], key conflicts occurred: " <> T.intercalate ", " ks | ks <- xs]
+prettyPackageConfigParseError (KeyUnexpected pkg xs) = T.unlines ["In [" <> pkg <> "], unexpected keys found: " <> k | k <- xs]
 
-prettyPackageConfigParseError :: PackageConfigParseError -> Text
-prettyPackageConfigParseError (TomlErrors e) = prettyTomlDecodeErrors e
-prettyPackageConfigParseError (KeyConflicts xs) = "Skip parsing!\n" <> T.unlines ["Key conflict: " <> T.intercalate ", " [prettyKey k | k <- ks] | ks <- xs]
-
-parseConfig :: TOML -> Either PackageConfigParseError [Package]
-parseConfig toml = go tables Nothing []
+parseConfig :: Text -> Either [PackageConfigValidateError] [Package]
+parseConfig raw = runExcept $ case decodeWith tableDecoder raw of
+  Right (Map.toList -> x) -> mapM (uncurry eachP) x
+  Left err -> throwE [TomlError err]
   where
-    go (Left errs : xs) (Just se) sp = go xs (Just (se <> errs)) sp
-    go (Left errs : xs) Nothing sp = go xs (Just errs) sp
-    go (Right x : xs) se sp = go xs se (x : sp)
-    go [] Nothing sp = Right sp
-    go [] (Just se) _ = Left se
-    tables =
-      [ fmap (toPackage (coerce k)) $ validateKeys v >> mapLeft TomlErrors (validationToEither (Toml.runTomlCodec packageConfigCodec v))
-        | (Toml.unKey -> (Toml.unPiece -> k) :| _, v) <- Toml.toList $ Toml.tomlTables toml
-      ]
-
-validateKeys :: TOML -> Either PackageConfigParseError ()
-validateKeys toml = if null e then Right () else Left $ foldl1 (<>) e
-  where
-    allKeys = HMap.keys $ Toml.tomlPairs toml
-    go xs = let intersection = xs `intersect` allKeys in if length intersection > 1 then intersection else []
-    e = [KeyConflicts [t] | k <- [versionSourceKeys, fetcherKeys], let t = go k, not $ null t]
+    tableDecoder =
+      makeDecoder $ \case
+        (Table t) -> pure t
+        v -> typeMismatch v
+    eachP pkg v@(Table _) = do
+      let keys = allKeys T.empty v
+      checkConflicts pkg keys
+      checkUnexpected pkg keys
+      case unDecodeM (runDecoder (packageConfigDecoder pkg) v) [] of
+        Left e -> throwE [TomlError $ uncurry DecodeError e]
+        Right x -> pure x
+    eachP pkg _ = throwE [KeyUnexpected pkg [pkg]]
+    allKeys prefix (Table t) = Map.keys t <> Map.foldrWithKey (\k v acc -> allKeys (prefix <> "." <> k) v <> acc) [] t
+    allKeys _ _ = []
+    checkConflicts pkg keys = throwN [KeyConflicts pkg [intersection] | k <- [versionSourceKeys, fetcherKeys], let intersection = keys `intersect` k, length intersection > 1]
+    checkUnexpected pkg keys =
+      throwN $
+        -- git
+        [ KeyUnexpected pkg gk
+          | let gk = filter (T.isPrefixOf "git.") keys,
+            not $ null gk,
+            "fetcher.git" `notElem` keys && "fetcher.github" `notElem` keys
+        ]
+          -- docker
+          <> [ KeyUnexpected pkg dk
+               | let dk = filter (T.isPrefixOf "docker.") keys,
+                 not $ null dk,
+                 "fetcher.docker" `notElem` keys
+             ]
+          -- list options
+          <> [ KeyUnexpected pkg lk
+               | let lk = listOptionsKeys `intersect` keys,
+                 not $ null lk,
+                 "src.docker" `notElem` keys
+                   && "src.httpheader" `notElem` keys
+                   && "src.container" `notElem` keys
+                   && "src.github_tag" `notElem` keys
+             ]
+    throwN [] = pure ()
+    throwN xs = throwE xs
 
 --------------------------------------------------------------------------------
 
-data PackageConfig = PackageConfig
-  { pcVersionSource :: VersionSource,
-    pcFetcher :: PackageFetcher,
-    pcExtractFiles :: Maybe PackageExtractSrc,
-    pcCargoLockFiles :: Maybe PackageCargoLockFiles,
-    pcNvcheckerOptions :: NvcheckerOptions,
-    pcPassthru :: PackagePassthru,
-    pcUseStale :: UseStaleVersion,
-    pcGitDateFormat :: DateFormat,
-    pcForceFetch :: ForceFetch
-  }
-
-toPackage :: PackageKey -> PackageConfig -> Package
-toPackage k PackageConfig {..} =
-  Package
-    (coerce k)
-    (CheckVersion pcVersionSource pcNvcheckerOptions)
-    pcFetcher
-    pcExtractFiles
-    pcCargoLockFiles
-    pcPassthru
-    pcUseStale
-    pcGitDateFormat
-    pcForceFetch
-
-packageConfigCodec :: TomlCodec PackageConfig
-packageConfigCodec =
-  PackageConfig
-    <$> versionSourceCodec .= pcVersionSource
-    <*> fetcherCodec .= pcFetcher
-    <*> extractFilesCodec .= pcExtractFiles
-    <*> cargoLockPathCodec .= pcCargoLockFiles
-    <*> nvcheckerOptionsCodec .= pcNvcheckerOptions
-    <*> passthruCodec .= pcPassthru
-    <*> pinnedCodec .= pcUseStale
-    <*> gitDateFormatCodec .= pcGitDateFormat
-    <*> forceFetchCodec .= pcForceFetch
+packageConfigDecoder :: PackageName -> Decoder Package
+packageConfigDecoder name =
+  Package name
+    <$> (CheckVersion <$> versionSourceDecoder <*> nvcheckerOptionsDecoder)
+    <*> fetcherDecoder
+    <*> extractFilesDecoder
+    <*> cargoLockPathDecoder
+    <*> passthruDecoder
+    <*> pinnedDecoder
+    <*> gitDateFormatDecoder
+    <*> forceFetchDecoder
 
 --------------------------------------------------------------------------------
 
-extractFilesCodec :: TomlCodec (Maybe PackageExtractSrc)
-extractFilesCodec =
-  dimap
-    (fmap (NE.toList . coerce))
-    (\mxs -> coerce <$> (mxs >>= NE.nonEmpty))
-    $ dioptional $ arrayOf _String "extract"
+extractFilesDecoder :: Decoder (Maybe PackageExtractSrc)
+extractFilesDecoder = fmap PackageExtractSrc <$> getFieldOpt "extract"
 
-cargoLockPathCodec :: TomlCodec (Maybe PackageCargoLockFiles)
-cargoLockPathCodec =
-  dimap
-    (fmap (NE.toList . coerce))
-    (\mxs -> coerce <$> (mxs >>= NE.nonEmpty))
-    $ dioptional $ arrayOf _String "cargo_locks"
+cargoLockPathDecoder :: Decoder (Maybe PackageCargoLockFiles)
+cargoLockPathDecoder = fmap PackageCargoLockFiles <$> getFieldOpt "cargo_locks"
 
-nvcheckerOptionsCodec :: TomlCodec NvcheckerOptions
-nvcheckerOptionsCodec =
+nvcheckerOptionsDecoder :: Decoder NvcheckerOptions
+nvcheckerOptionsDecoder =
   NvcheckerOptions
-    <$> dioptional (text "src.prefix") .= _stripPrefix
-    <*> dioptional (text "src.from_pattern") .= _fromPattern
-    <*> dioptional (text "src.to_pattern") .= _toPattern
+    <$> getFieldsOpt ["src", "prefix"]
+    <*> getFieldsOpt ["src", "from_pattern"]
+    <*> getFieldsOpt ["src", "to_pattern"]
 
-passthruCodec :: TomlCodec PackagePassthru
-passthruCodec = diwrap $ tableHashMap _KeyText text "passthru"
+passthruDecoder :: Decoder PackagePassthru
+passthruDecoder =
+  getFieldOpt @Value "passthru" >>= \case
+    Just (Table t) -> go T.empty t >>= \(mconcat -> fs) -> pure $ PackagePassthru $ foldl' (flip ($)) HMap.empty fs
+    _ -> makeDecoder typeMismatch
+  where
+    go prefix x =
+      sequenceA
+        [ case v of
+            (String text) -> pure [HMap.insert (prefix <> "." <> k) text]
+            Table t -> mconcat <$> go (prefix <> "." <> k) t
+            _ -> makeDecoder (\_ -> invalidValue "passthru value must be string for now" v)
+          | (k, v) <- Map.toList x
+        ]
 
-pinnedCodec :: TomlCodec UseStaleVersion
-pinnedCodec =
-  dimap
-    ( \case
-        PermanentStale -> Just True
-        TemporaryStale -> error "Impossible!"
-        NoStale -> Just False
-    )
-    (maybe NoStale (\x -> if x then PermanentStale else NoStale))
-    $ dioptional $ bool "pinned"
+pinnedDecoder :: Decoder UseStaleVersion
+pinnedDecoder =
+  maybe NoStale (\x -> if x then PermanentStale else NoStale)
+    <$> getFieldOpt "pinned"
 
-gitDateFormatCodec :: TomlCodec DateFormat
-gitDateFormatCodec = diwrap $ dioptional $ text "git.date_format"
+gitDateFormatDecoder :: Decoder DateFormat
+gitDateFormatDecoder = DateFormat <$> getFieldsOpt ["git", "date_format"]
 
-forceFetchCodec :: TomlCodec ForceFetch
-forceFetchCodec =
-  dimap
-    ( \case
-        ForceFetch -> Just True
-        NoForceFetch -> Just False
-    )
-    (maybe NoForceFetch (\x -> if x then ForceFetch else NoForceFetch))
-    $ dioptional $ bool "fetch.force"
+forceFetchDecoder :: Decoder ForceFetch
+forceFetchDecoder =
+  maybe NoForceFetch (\x -> if x then ForceFetch else NoForceFetch)
+    <$> getFieldsOpt ["fetch", "force"]

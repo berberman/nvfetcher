@@ -2,12 +2,12 @@
 , binary-instances, bytestring, containers, data-default, extra
 , free, hspec, hspec-discover, lib, microlens, microlens-th
 , neat-interpolation, optparse-simple, parsec, prettyprinter
-, regex-tdfa, shake, stm, text, tomland, transformers, unliftio
+, regex-tdfa, shake, stm, text, toml-reader, transformers, unliftio
 , unordered-containers, validation-selective
 }:
 mkDerivation {
   pname = "nvfetcher";
-  version = "0.6.0.0";
+  version = "0.6.1.0";
   src = ../.;
   isLibrary = true;
   isExecutable = true;
@@ -15,20 +15,21 @@ mkDerivation {
     aeson aeson-pretty base binary binary-instances bytestring
     containers data-default extra free microlens microlens-th
     neat-interpolation optparse-simple parsec prettyprinter regex-tdfa
-    shake text tomland transformers unordered-containers
+    shake text toml-reader transformers unordered-containers
   ];
   executableHaskellDepends = [
     aeson aeson-pretty base binary binary-instances bytestring
     containers data-default extra free microlens microlens-th
     neat-interpolation optparse-simple parsec prettyprinter regex-tdfa
-    shake text tomland transformers unordered-containers
+    shake text toml-reader transformers unordered-containers
     validation-selective
   ];
   testHaskellDepends = [
     aeson aeson-pretty async base binary binary-instances bytestring
     containers data-default extra free hspec microlens microlens-th
     neat-interpolation optparse-simple parsec prettyprinter regex-tdfa
-    shake stm text tomland transformers unliftio unordered-containers
+    shake stm text toml-reader transformers unliftio
+    unordered-containers
   ];
   testToolDepends = [ hspec-discover ];
   homepage = "https://github.com/berberman/nvfetcher";

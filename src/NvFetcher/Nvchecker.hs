@@ -1,3 +1,4 @@
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
@@ -35,11 +36,12 @@ where
 
 import Control.Monad (void)
 import Control.Monad.Extra (fromMaybeM)
+import Control.Monad.Trans.Writer.CPS
 import qualified Data.Aeson as A
 import qualified Data.ByteString.Char8 as BS
 import Data.Coerce (coerce)
 import Data.Maybe (fromJust)
-import Data.String (fromString)
+import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
 import Development.Shake.Rule
@@ -47,9 +49,6 @@ import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
 import NvFetcher.Utils
 import Prettyprinter (pretty, (<+>))
-import Toml (Value (Bool, Text))
-import qualified Toml
-import Toml.Type.Edsl
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()
@@ -105,7 +104,7 @@ oneShotRule = void $
 runNvchecker :: PackageKey -> NvcheckerOptions -> VersionSource -> Action Version
 runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ do
   mKeyfile <- getKeyfilePath
-  let nvcheckerConfig = T.unpack $ Toml.pretty $ mkToml $ genNvConfig pkg options mKeyfile versionSource
+  let nvcheckerConfig = T.unpack $ T.unlines $ execWriter $ genNvConfig pkg options mKeyfile versionSource
   putVerbose $ "Generated nvchecker config for " <> show pkg <> ":" <> nvcheckerConfig
   writeFile' config nvcheckerConfig
   (CmdTime t, Stdout out, CmdLine c) <- quietly . cmd $ "nvchecker --logger json -c " <> config
@@ -116,77 +115,81 @@ runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ d
       NvcheckerError err -> fail $ "Failed to run nvchecker: " <> T.unpack err
     _ -> fail $ "Failed to parse output from nvchecker: " <> out
 
-genNvConfig :: PackageKey -> NvcheckerOptions -> Maybe FilePath -> VersionSource -> TDSL
+type BuildTOML = Writer [Text] ()
+
+genNvConfig :: PackageKey -> NvcheckerOptions -> Maybe FilePath -> VersionSource -> BuildTOML
 genNvConfig pkg options mKeyfile versionSource =
   case mKeyfile of
     Just keyfile -> do
       table "__config__" $
-        "keyfile" =: Text (T.pack keyfile)
+        "keyfile" =: T.pack keyfile
     _ -> pure ()
     >> table
-      (fromString $ T.unpack $ coerce pkg)
+      (coerce pkg)
       ( do
           genVersionSource versionSource
           genOptions options
       )
   where
-    key =:? (Just x) = key =: Text x
+    key =: x = tell [key <> " = " <> x]
+    key =:? (Just x) = key =: x
     _ =:? _ = pure ()
+    table t m = tell ["[" <> t <> "]"] >> m >> tell [""]
     genVersionSource = \case
       GitHubRelease {..} -> do
         "source" =: "github"
-        "github" =: Text (_owner <> "/" <> _repo)
-        "use_latest_release" =: Bool True
+        "github" =: (_owner <> "/" <> _repo)
+        "use_latest_release" =: "true"
       GitHubTag {..} -> do
         "source" =: "github"
-        "github" =: Text (_owner <> "/" <> _repo)
-        "use_max_tag" =: Bool True
+        "github" =: (_owner <> "/" <> _repo)
+        "use_max_tag" =: "true"
         genListOptions _listOptions
       Git {..} -> do
         "source" =: "git"
-        "git" =: Text _vurl
+        "git" =: _vurl
         "branch" =:? coerce _vbranch
-        "use_commit" =: Bool True
+        "use_commit" =: "true"
       Aur {..} -> do
         "source" =: "aur"
-        "aur" =: Text _aur
-        "strip_release" =: Bool True
+        "aur" =: _aur
+        "strip_release" =: "true"
       ArchLinux {..} -> do
         "source" =: "archpkg"
-        "archpkg" =: Text _archpkg
-        "strip_release" =: Bool True
+        "archpkg" =: _archpkg
+        "strip_release" =: "true"
       Pypi {..} -> do
         "source" =: "pypi"
-        "pypi" =: Text _pypi
+        "pypi" =: _pypi
       Manual {..} -> do
         "source" =: "manual"
-        "manual" =: Text _manual
+        "manual" =: _manual
       Repology {..} -> do
         "source" =: "repology"
-        "repology" =: Text _repology
-        "repo" =: Text _repo
+        "repology" =: _repology
+        "repo" =: _repo
       Webpage {..} -> do
         "source" =: "regex"
-        "url" =: Text _vurl
-        "regex" =: Text _regex
+        "url" =: _vurl
+        "regex" =: _regex
         genListOptions _listOptions
       HttpHeader {..} -> do
         "source" =: "httpheader"
-        "url" =: Text _vurl
-        "regex" =: Text _regex
+        "url" =: _vurl
+        "regex" =: _regex
         genListOptions _listOptions
       OpenVsx {..} -> do
         "source" =: "openvsx"
-        "openvsx" =: Text (_ovPublisher <> "." <> _ovExtName)
+        "openvsx" =: (_ovPublisher <> "." <> _ovExtName)
       VscodeMarketplace {..} -> do
         "source" =: "vsmarketplace"
-        "vsmarketplace" =: Text (_vsmPublisher <> "." <> _vsmExtName)
+        "vsmarketplace" =: (_vsmPublisher <> "." <> _vsmExtName)
       Cmd {..} -> do
         "source" =: "cmd"
-        "cmd" =: Text _vcmd
+        "cmd" =: _vcmd
       Container {..} -> do
         "source" =: "container"
-        "container" =: Text _vcontainer
+        "container" =: _vcontainer
         genListOptions _listOptions
     genListOptions ListOptions {..} = do
       "include_regex" =:? _includeRegex

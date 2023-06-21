@@ -1,56 +1,48 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ViewPatterns #-}
 
-module Config.PackageFetcher
-  ( fetcherCodec,
-    fetcherKeys,
-  )
-where
+module Config.PackageFetcher (fetcherDecoder, fetcherKeys) where
 
+import Config.Common
 import Data.Coerce (coerce)
-import Data.Default (Default, def)
 import Data.Foldable (asum)
 import Data.Maybe (fromMaybe)
+import Data.Text (Text)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
 import Lens.Micro
-import Lens.Micro.Extras (view)
 import NvFetcher.NixFetcher
 import NvFetcher.Types
 import NvFetcher.Types.Lens
-import Toml
+import TOML
 
-unsupportError :: a
-unsupportError = error "serialization is unsupported"
-
-fetcherCodec :: TomlCodec PackageFetcher
-fetcherCodec =
+fetcherDecoder :: Decoder PackageFetcher
+fetcherDecoder =
   asum
-    [ gitHubCodec,
-      pypiCodec,
-      openVsxCodec,
-      vscodeMarketplaceCodec,
-      gitCodec,
-      urlCodec,
-      tarballCodec,
-      dockerCodec
+    [ gitHubDecoder,
+      pypiDecoder,
+      openVsxDecoder,
+      vscodeMarketplaceDecoder,
+      gitDecoder,
+      urlDecoder,
+      tarballDecoder,
+      dockerDecoder
     ]
 
-fetcherKeys :: [Key]
+fetcherKeys :: [Text]
 fetcherKeys =
-  [ "fetch.github",
-    "fetch.pypi",
-    "fetch.openvsx",
-    "fetch.vsmarketplace",
-    "fetch.git",
-    "fetch.url",
-    "fetch.tarball",
-    "fetch.docker"
+  [ "github",
+    "pypi",
+    "openvsx",
+    "vsmarketplace",
+    "git",
+    "url",
+    "tarball",
+    "docker"
   ]
 
 --------------------------------------------------------------------------------
@@ -60,14 +52,14 @@ data GitOptions = GitOptions
     goFetchSubmodules :: Maybe Bool,
     goLeaveDotGit :: Maybe Bool
   }
-  deriving (Eq, Generic, Default)
+  deriving (Eq, Generic)
 
-gitOptionsCodec :: TomlCodec GitOptions
-gitOptionsCodec =
+gitOptionsDecoder :: Decoder GitOptions
+gitOptionsDecoder =
   GitOptions
-    <$> dioptional (bool "git.deepClone") .= goDeepClone
-    <*> dioptional (bool "git.fetchSubmodules") .= goFetchSubmodules
-    <*> dioptional (bool "git.leaveDotGit") .= goLeaveDotGit
+    <$> getFieldsOpt ["git", "deepClone"]
+    <*> getFieldsOpt ["git", "fetchSubmodules"]
+    <*> getFieldsOpt ["git", "leaveDotGit"]
 
 _GitOptions :: Traversal' (NixFetcher f) GitOptions
 _GitOptions f x@FetchGit {..} =
@@ -90,108 +82,62 @@ _GitOptions _ x = pure x
 
 --------------------------------------------------------------------------------
 
-gitHubICodec :: TomlCodec PackageFetcher
-gitHubICodec =
-  textBy
-    unsupportError
-    ( \t -> case T.split (== '/') t of
-        [owner, repo] -> Right $ gitHubFetcher (owner, repo)
-        _ -> Left "unexpected github fetcher: it should be something like [owner]/[repo]"
-    )
-    "fetch.github"
-
-gitHubCodec :: TomlCodec PackageFetcher
-gitHubCodec =
-  dimap
-    ( \f -> let fake = f "$ver" in (f, fromMaybe def $ fake ^? _GitOptions)
-    )
-    (\(f, g) v -> f v & _GitOptions .~ g)
-    $ (,) <$> gitHubICodec .= view _1 <*> gitOptionsCodec .= view _2
-
---------------------------------------------------------------------------------
-gitICodec :: TomlCodec PackageFetcher
-gitICodec =
-  textBy
-    unsupportError
-    (Right . gitFetcher)
-    "fetch.git"
-
-gitCodec :: TomlCodec PackageFetcher
-gitCodec =
-  dimap
-    ( \f -> let fake = f "$ver" in (f, fromMaybe def $ fake ^? _GitOptions)
-    )
-    (\(f, g) v -> f v & _GitOptions .~ g)
-    $ (,) <$> gitICodec .= view _1 <*> gitOptionsCodec .= view _2
-
---------------------------------------------------------------------------------
-pypiCodec :: TomlCodec PackageFetcher
-pypiCodec =
-  Toml.textBy
-    unsupportError
-    (Right . pypiFetcher)
-    "fetch.pypi"
+gitHubDecoder :: Decoder PackageFetcher
+gitHubDecoder = do
+  (owner, repo) <- getFieldsWith githubDecoder ["fetch", "github"]
+  gitOptions <- gitOptionsDecoder
+  pure $ \v -> gitHubFetcher (owner, repo) v & _GitOptions .~ gitOptions
 
 --------------------------------------------------------------------------------
 
-openVsxCodec :: TomlCodec PackageFetcher
-openVsxCodec =
-  textBy
-    unsupportError
-    ( \t -> case T.split (== '.') t of
-        -- assume we can't have '.' in extension's name
-        [publisher, extName] -> Right $ openVsxFetcher (publisher, extName)
-        _ -> Left "unexpected openvsx fetcher: it should be something like [publisher]/[extName]"
-    )
-    "fetch.openvsx"
+gitDecoder :: Decoder PackageFetcher
+gitDecoder = do
+  url <- getFields ["fetch", "git"]
+  gitOptions <- gitOptionsDecoder
+  pure $ \v -> gitFetcher url v & _GitOptions .~ gitOptions
 
 --------------------------------------------------------------------------------
 
-vscodeMarketplaceCodec :: TomlCodec PackageFetcher
-vscodeMarketplaceCodec =
-  textBy
-    unsupportError
-    ( \t -> case T.split (== '.') t of
-        -- assume we can't have '.' in extension's name
-        [publisher, extName] -> Right $ vscodeMarketplaceFetcher (publisher, extName)
-        _ -> Left "unexpected vscode marketplace fetcher: it should be something like [publisher]/[extName]"
-    )
-    "fetch.vsmarketplace"
-
---------------------------------------------------------------------------------
-urlCodec :: TomlCodec PackageFetcher
-urlCodec =
-  Toml.textBy
-    unsupportError
-    (\t -> Right $ \(coerce -> v) -> urlFetcher $ T.replace "$ver" v t)
-    "fetch.url"
+pypiDecoder :: Decoder PackageFetcher
+pypiDecoder = pypiFetcher <$> getFields ["fetch", "pypi"]
 
 --------------------------------------------------------------------------------
 
-tarballCodec :: TomlCodec PackageFetcher
-tarballCodec =
-  Toml.textBy
-    unsupportError
-    (\t -> Right $ \(coerce -> v) -> tarballFetcher $ T.replace "$ver" v t)
-    "fetch.tarball"
+openVsxDecoder :: Decoder PackageFetcher
+openVsxDecoder = openVsxFetcher <$> getFieldsWith vscodeExtensionDecoder ["fetch", "openvsx"]
 
 --------------------------------------------------------------------------------
 
-dockerCodec :: TomlCodec PackageFetcher
-dockerCodec =
-  dimap unsupportError setImageTag codec
-  where
-    setImageTag t (Version v) = t & imageTag .~ v
+vscodeMarketplaceDecoder :: Decoder PackageFetcher
+vscodeMarketplaceDecoder = vscodeMarketplaceFetcher <$> getFieldsWith vscodeExtensionDecoder ["fetch", "vsmarketplace"]
 
-    codec :: TomlCodec (NixFetcher Fresh)
-    codec =
-      FetchDocker
-        <$> Toml.text "fetch.docker" .= _imageName
-        <*> pure "" -- will be set in setImageTag
-        <*> pure () .= _imageDigest
-        <*> pure () .= _sha256
-        <*> dioptional (text "docker.os") .= _fos
-        <*> dioptional (text "docker.arch") .= _farch
-        <*> dioptional (text "docker.finalImageName") .= _finalImageName
-        <*> dioptional (text "docker.finalImageTag") .= _finalImageTag
-        <*> dioptional (bool "docker.tlsVerify") .= _tlsVerify
+--------------------------------------------------------------------------------
+
+urlDecoder :: Decoder PackageFetcher
+urlDecoder = do
+  url <- getFields ["fetch", "url"]
+  pure $ \(coerce -> v) -> urlFetcher $ T.replace "$ver" v url
+
+--------------------------------------------------------------------------------
+
+tarballDecoder :: Decoder PackageFetcher
+tarballDecoder = do
+  url <- getFields ["fetch", "tarball"]
+  pure $ \(coerce -> v) -> tarballFetcher $ T.replace "$ver" v url
+
+--------------------------------------------------------------------------------
+
+dockerDecoder :: Decoder PackageFetcher
+dockerDecoder =
+  (\f (coerce -> v) -> f & imageTag .~ v)
+    <$> ( FetchDocker
+            <$> getFields ["fetch", "docker"]
+            <*> pure "" -- set in fmap
+            <*> pure ()
+            <*> pure ()
+            <*> getFieldsOpt ["docker", "os"]
+            <*> getFieldsOpt ["docker", "arch"]
+            <*> getFieldsOpt ["docker", "finalImageName"]
+            <*> getFieldsOpt ["docker", "finalImageTag"]
+            <*> getFieldsOpt ["docker", "tlsVerify"]
+        )
