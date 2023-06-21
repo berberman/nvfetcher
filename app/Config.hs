@@ -18,6 +18,12 @@ import NvFetcher.Types
 import TOML
 import TOML.Decode
 
+-- should be NE
+newtype MyKey = MyKey {unMyKey :: [Text]}
+
+myKeyToText :: MyKey -> Text
+myKeyToText = T.intercalate "." . unMyKey
+
 data PackageConfigValidateError
   = TomlError TOMLError
   | KeyConflicts PackageName [[Text]]
@@ -38,16 +44,32 @@ parseConfig raw = runExcept $ case decodeWith tableDecoder raw of
         (Table t) -> pure t
         v -> typeMismatch v
     eachP pkg v@(Table _) = do
-      let keys = allKeys T.empty v
+      let keys = myKeyToText <$> allKeys [] v
       checkConflicts pkg keys
       checkUnexpected pkg keys
       case unDecodeM (runDecoder (packageConfigDecoder pkg) v) [] of
         Left e -> throwE [TomlError $ uncurry DecodeError e]
         Right x -> pure x
     eachP pkg _ = throwE [KeyUnexpected pkg [pkg]]
-    allKeys prefix (Table t) = Map.keys t <> Map.foldrWithKey (\k v acc -> allKeys (prefix <> "." <> k) v <> acc) [] t
+    allKeys prefix (Table t) =
+      mconcat
+        [ case x of
+            (Table _) -> []
+            _ -> [MyKey $ prefix <> [k]]
+          | (k, x) <- Map.toList t
+        ]
+        <> Map.foldrWithKey (\k v acc -> allKeys (prefix <> [k]) v <> acc) [] t
     allKeys _ _ = []
-    checkConflicts pkg keys = throwN [KeyConflicts pkg [intersection] | k <- [versionSourceKeys, fetcherKeys], let intersection = keys `intersect` k, length intersection > 1]
+    checkConflicts pkg keys =
+      throwN
+        [ KeyConflicts pkg [intersection]
+          | k <-
+              [ ("src." <>) <$> versionSourceKeys,
+                ("fetch." <>) <$> fetcherKeys
+              ],
+            let intersection = keys `intersect` k,
+            length intersection > 1
+        ]
     checkUnexpected pkg keys =
       throwN $
         -- git
@@ -106,14 +128,15 @@ nvcheckerOptionsDecoder =
 passthruDecoder :: Decoder PackagePassthru
 passthruDecoder =
   getFieldOpt @Value "passthru" >>= \case
-    Just (Table t) -> go T.empty t >>= \(mconcat -> fs) -> pure $ PackagePassthru $ foldl' (flip ($)) HMap.empty fs
-    _ -> makeDecoder typeMismatch
+    Just (Table t) -> go [] t >>= \(mconcat -> fs) -> pure $ PackagePassthru $ foldl' (flip ($)) HMap.empty fs
+    Just _ -> makeDecoder typeMismatch
+    Nothing -> pure $ PackagePassthru HMap.empty
   where
     go prefix x =
       sequenceA
         [ case v of
-            (String text) -> pure [HMap.insert (prefix <> "." <> k) text]
-            Table t -> mconcat <$> go (prefix <> "." <> k) t
+            (String text) -> pure [HMap.insert (myKeyToText $ MyKey $ prefix <> [k]) text]
+            Table t -> mconcat <$> go (prefix <> [k]) t
             _ -> makeDecoder (\_ -> invalidValue "passthru value must be string for now" v)
           | (k, v) <- Map.toList x
         ]
