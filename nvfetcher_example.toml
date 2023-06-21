@@ -42,7 +42,7 @@ cargo_locks = ["Cargo.lock"]
 [vscode-LiveServer]
 src.openvsx = "ritwickdey.LiveServer"
 fetch.openvsx = "ritwickdey.LiveServer"
-passthru = { publisher = "ritwickdey", name = "LiveServer" }
+passthru = { a.b = "example", publisher = "ritwickdey", name = "LiveServer" }
 
 [cmd-example]
 src.cmd = "echo v2.5"

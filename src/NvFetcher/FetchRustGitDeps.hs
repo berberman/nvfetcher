@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
 -- | Copyright: (c) 2021-2022 berberman
@@ -36,10 +37,9 @@ import NvFetcher.ExtractSrc
 import NvFetcher.NixFetcher
 import NvFetcher.Types
 import Prettyprinter (pretty, (<+>))
+import qualified TOML as Toml
 import Text.Parsec
 import Text.Parsec.Text
-import Toml (TomlCodec, (.=))
-import qualified Toml
 
 -- | Rules of fetch rust git dependencies
 fetchRustGitDepsRule :: Rules ()
@@ -47,9 +47,9 @@ fetchRustGitDepsRule = void $
   addOracleCache $ \key@(FetchRustGitDepsQ fetcher lockPath) -> do
     putInfo . show $ "#" <+> pretty key
     cargoLock <- head . HMap.elems <$> extractSrc fetcher lockPath
-    deps <- case Toml.decode (Toml.list rustDepCodec "package") cargoLock of
+    deps <- case Toml.decodeWith (Toml.getFieldWith (Toml.getArrayOf rustDepDecoder) "package") cargoLock of
       Right r -> pure $ nubOrdOn rrawSrc r
-      Left err -> fail $ "Failed to parse Cargo.lock: " <> T.unpack (Toml.prettyTomlDecodeErrors err)
+      Left err -> fail $ "Failed to parse Cargo.lock: " <> T.unpack (Toml.renderTOMLError err)
     r <-
       parallel
         [ case parse gitSrcParser (T.unpack rname) src of
@@ -108,9 +108,9 @@ data RustDep = RustDep
   }
   deriving (Show, Eq, Ord)
 
-rustDepCodec :: TomlCodec RustDep
-rustDepCodec =
+rustDepDecoder :: Toml.Decoder RustDep
+rustDepDecoder =
   RustDep
-    <$> Toml.text "name" .= rname
-    <*> Toml.diwrap (Toml.text "version") .= rversion
-    <*> Toml.dioptional (Toml.text "source") .= rrawSrc
+    <$> Toml.getField "name"
+    <*> (coerce @Text <$> Toml.getField "version")
+    <*> Toml.getFieldOpt "source"
