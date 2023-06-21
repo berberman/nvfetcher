@@ -560,23 +560,23 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-tlsVerify :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Bool)
-sha256 :: forall k_iZQT. Lens' (NixFetcher k_iZQT) (FetchResult Checksum k_iZQT)
-rev :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Version
-name :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Text)
-leaveDotGit :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Bool
-imageTag :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Text
-imageName :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Text
-imageDigest :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (FetchResult ContainerDigest k_iZQT)
-furl :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Text
-frepo :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Text
-fowner :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Text
-fos :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Text)
-finalImageTag :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Text)
-finalImageName :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Text)
-fetchSubmodules :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Bool
-farch :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) (Maybe Text)
-deepClone :: forall k_iZQT. Traversal' (NixFetcher k_iZQT) Bool
+tlsVerify :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Bool)
+sha256 :: forall k_iZHt. Lens' (NixFetcher k_iZHt) (FetchResult Checksum k_iZHt)
+rev :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Version
+name :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Text)
+leaveDotGit :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Bool
+imageTag :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Text
+imageName :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Text
+imageDigest :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (FetchResult ContainerDigest k_iZHt)
+furl :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Text
+frepo :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Text
+fowner :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Text
+fos :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Text)
+finalImageTag :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Text)
+finalImageName :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Text)
+fetchSubmodules :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Bool
+farch :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Text)
+deepClone :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
