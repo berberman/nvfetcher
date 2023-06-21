@@ -224,6 +224,8 @@ _passthru_ config, an additional set of attrs to be generated.
 
 - `passthru = { k1 = "v1", k2 = "v2", ... }`
 
+Note: currently the values can only be strings
+
 #### Pinned
 
 If a package is pinned, we call nvchecker to check the new version iff there's no existing version.
