@@ -76,13 +76,13 @@ parseConfig raw = runExcept $ case decodeWith tableDecoder raw of
         [ KeyUnexpected pkg gk
           | let gk = filter (T.isPrefixOf "git.") keys,
             not $ null gk,
-            "fetcher.git" `notElem` keys && "fetcher.github" `notElem` keys
+            "fetch.git" `notElem` keys && "fetch.github" `notElem` keys
         ]
           -- docker
           <> [ KeyUnexpected pkg dk
                | let dk = filter (T.isPrefixOf "docker.") keys,
                  not $ null dk,
-                 "fetcher.docker" `notElem` keys
+                 "fetch.docker" `notElem` keys
              ]
           -- list options
           <> [ KeyUnexpected pkg lk
