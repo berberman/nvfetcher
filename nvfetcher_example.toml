@@ -56,3 +56,8 @@ fetch.tarball = "https://github.com/nixos/nixpkgs/archive/$ver.tar.gz"
 src.container = "library/alpine"
 src.include_regex = "3\\..*"
 fetch.docker = "library/alpine"
+
+[submodule-example]
+src.git = "https://github.com/githubtraining/example-dependency"
+fetch.git = "https://github.com/githubtraining/example-dependency"
+git.fetchSubmodules = true
