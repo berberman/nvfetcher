@@ -51,7 +51,8 @@
                   (overrideCabal (prev.haskellPackages.callPackage ./nix { })
                     (drv: {
                       # test needs network
-                      doCheck = false;
+                      # don't use `doCheck = false` here, because we still want to have test dependencies in dev shell
+                      checkPhase = "";
                       buildTools = drv.buildTools or [ ]
                         ++ [ final.makeWrapper ];
                       postInstall = with final;

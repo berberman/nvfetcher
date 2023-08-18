@@ -1,5 +1,9 @@
 # Revision history for nvfetcher
 
+## 0.6.2.0
+
+* Rework config parsing with toml-reader
+
 ## 0.6.1.0
 
 * Replace `nix-prefetch` with `nix-prefetch-git` and `nix-prefetch-url`
