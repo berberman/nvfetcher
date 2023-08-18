@@ -560,23 +560,23 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-tlsVerify :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Bool)
-sha256 :: forall k_iZHt. Lens' (NixFetcher k_iZHt) (FetchResult Checksum k_iZHt)
-rev :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Version
-name :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Text)
-leaveDotGit :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Bool
-imageTag :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Text
-imageName :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Text
-imageDigest :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (FetchResult ContainerDigest k_iZHt)
-furl :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Text
-frepo :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Text
-fowner :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Text
-fos :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Text)
-finalImageTag :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Text)
-finalImageName :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Text)
-fetchSubmodules :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Bool
-farch :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) (Maybe Text)
-deepClone :: forall k_iZHt. Traversal' (NixFetcher k_iZHt) Bool
+tlsVerify :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) (Maybe Bool)
+sha256 :: forall k_iYHt. Lens' (NixFetcher k_iYHt) (FetchResult Checksum k_iYHt)
+rev :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) Version
+name :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) (Maybe Text)
+leaveDotGit :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) Bool
+imageTag :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) Text
+imageName :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) Text
+imageDigest :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) (FetchResult ContainerDigest k_iYHt)
+furl :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) Text
+frepo :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) Text
+fowner :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) Text
+fos :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) (Maybe Text)
+finalImageTag :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) (Maybe Text)
+finalImageName :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) (Maybe Text)
+fetchSubmodules :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) Bool
+farch :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) (Maybe Text)
+deepClone :: forall k_iYHt. Traversal' (NixFetcher k_iYHt) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -800,7 +800,7 @@ runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 -- | A tagless final style DSL for constructing packages
 class PkgDSL f
 new :: PkgDSL f => f PackageName -> f (Prod '[PackageName])
-andThen :: PkgDSL f => f (Prod r) -> f a -> f (Prod (a : r))
+andThen :: PkgDSL f => f (Prod r) -> f a -> f (Prod (a ': r))
 end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, NvcheckerOptions, PackagePassthru, UseStaleVersion, DateFormat, ForceFetch] r) => f (Prod r) -> f ()
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
@@ -925,7 +925,7 @@ fetchGitHub :: Attach PackageFetcher (Text, Text)
 --   For example, you can enable fetch submodules like:
 --   
 --   <pre>
---   define $ package "qliveplayer" <a>sourceGitHub</a> (<a>THMonster</a>, <a>QLivePlayer</a>) <a>fetchGitHub</a>` (<a>THMonster</a>, <a>QLivePlayer</a>, fetchSubmodules .~ True)
+--   define $ package "qliveplayer" <a>sourceGitHub</a> (<a>THMonster</a>, <a>QLivePlayer</a>) <a>fetchGitHub'</a> (<a>THMonster</a>, <a>QLivePlayer</a>, fetchSubmodules .~ True)
 --   </pre>
 fetchGitHub' :: Attach PackageFetcher (Text, Text, NixFetcher Fresh -> NixFetcher Fresh)
 
@@ -1040,7 +1040,7 @@ type AttachMany xs arg = forall r. PackageSet (Prod r) -> arg -> PackageSet (Pro
 --   type. But it also works in more complicated settings, e.g. converting
 --   a list of newtypes to a list of concrete types.
 --   
---   This function is runtime-representation polymorphic, but the
+--   This function is representation-polymorphic, but the
 --   <tt>RuntimeRep</tt> type argument is marked as <tt>Inferred</tt>,
 --   meaning that it is not available for visible type application. This
 --   means the typechecker will accept <tt>coerce @Int @Age 42</tt>.
