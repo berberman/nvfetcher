@@ -3,11 +3,11 @@
 , free, hspec, hspec-discover, lib, microlens, microlens-th
 , neat-interpolation, optparse-simple, parsec, prettyprinter
 , regex-tdfa, shake, stm, text, toml-reader, transformers, unliftio
-, unordered-containers, validation-selective
+, unordered-containers
 }:
 mkDerivation {
   pname = "nvfetcher";
-  version = "0.6.1.0";
+  version = "0.6.2.0";
   src = ../.;
   isLibrary = true;
   isExecutable = true;
@@ -22,7 +22,6 @@ mkDerivation {
     containers data-default extra free microlens microlens-th
     neat-interpolation optparse-simple parsec prettyprinter regex-tdfa
     shake text toml-reader transformers unordered-containers
-    validation-selective
   ];
   testHaskellDepends = [
     aeson aeson-pretty async base binary binary-instances bytestring
