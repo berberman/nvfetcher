@@ -131,10 +131,10 @@ genNvConfig pkg options mKeyfile versionSource =
           genOptions options
       )
   where
-    key =: x = tell [key <> " = " <> T.pack (show $ T.unpack x)]
+    key =: x = tell [key <> " = " <> quote x]
     key =:? (Just x) = key =: x
     _ =:? _ = pure ()
-    table t m = tell ["[" <> t <> "]"] >> m >> tell [""]
+    table t m = tell ["[" <> quote t <> "]"] >> m >> tell [""]
     genVersionSource = \case
       GitHubRelease {..} -> do
         "source" =: "github"

@@ -57,7 +57,8 @@ src.container = "library/alpine"
 src.include_regex = "3\\..*"
 fetch.docker = "library/alpine"
 
-[submodule-example]
+# To demonstrate package key containing `.`
+["submodule.example"]
 src.git = "https://github.com/githubtraining/example-dependency"
 fetch.git = "https://github.com/githubtraining/example-dependency"
 git.fetchSubmodules = true
