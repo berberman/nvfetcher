@@ -39,10 +39,17 @@ spec = aroundShake $
 
     specifyChan "docker" $
       runPrefetchRule' (_sha256 &&& _imageDigest) testDockerFetcher
-        `shouldReturnJust`
-          ( Checksum "sha256-uaJxeiRm94tWDBTe51/KwUBKR2vj9i4i3rhotsYPxtM=",
-            ContainerDigest "sha256:65a2763f593ae85fab3b5406dc9e80f744ec5b449f269b699b5efd37a07ad32e"
-          )
+        `shouldReturnJust` ( Checksum "sha256-uaJxeiRm94tWDBTe51/KwUBKR2vj9i4i3rhotsYPxtM=",
+                             ContainerDigest "sha256:65a2763f593ae85fab3b5406dc9e80f744ec5b449f269b699b5efd37a07ad32e"
+                           )
+
+    specifyChan "url with name" $
+      runPrefetchRule
+        ( urlFetcher'
+            "https://files.yande.re/image/3fc51f6a2fb10c96b73dd0fce6ddb9c8/yande.re%201048717%20dress%20garter%20lolita_fashion%20ruo_gan_zhua.jpg"
+            (Just "foo.jpg")
+        )
+        `shouldReturnJust` Checksum "sha256-wkiXDN6vPFtx88krcQ4szK6dJNjtrDxrsNa3ZvHlfMQ="
 
 testDockerFetcher :: NixFetcher Fresh
 testDockerFetcher =

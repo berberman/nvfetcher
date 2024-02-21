@@ -84,7 +84,7 @@ _GitOptions _ x = pure x
 
 gitHubDecoder :: Decoder PackageFetcher
 gitHubDecoder = do
-  (owner, repo) <- getFieldsWith githubDecoder ["fetch", "github"]
+  (owner, repo) <- getFieldsWith gitHubNameDecoder ["fetch", "github"]
   gitOptions <- gitOptionsDecoder
   pure $ \v -> gitHubFetcher (owner, repo) v & _GitOptions .~ gitOptions
 
@@ -104,19 +104,20 @@ pypiDecoder = pypiFetcher <$> getFields ["fetch", "pypi"]
 --------------------------------------------------------------------------------
 
 openVsxDecoder :: Decoder PackageFetcher
-openVsxDecoder = openVsxFetcher <$> getFieldsWith vscodeExtensionDecoder ["fetch", "openvsx"]
+openVsxDecoder = openVsxFetcher <$> getFieldsWith vscodeExtensionNameDecoder ["fetch", "openvsx"]
 
 --------------------------------------------------------------------------------
 
 vscodeMarketplaceDecoder :: Decoder PackageFetcher
-vscodeMarketplaceDecoder = vscodeMarketplaceFetcher <$> getFieldsWith vscodeExtensionDecoder ["fetch", "vsmarketplace"]
+vscodeMarketplaceDecoder = vscodeMarketplaceFetcher <$> getFieldsWith vscodeExtensionNameDecoder ["fetch", "vsmarketplace"]
 
 --------------------------------------------------------------------------------
 
 urlDecoder :: Decoder PackageFetcher
 urlDecoder = do
   url <- getFields ["fetch", "url"]
-  pure $ \(coerce -> v) -> urlFetcher $ T.replace "$ver" v url
+  name <- getFieldsOpt ["url", "name"]
+  pure $ \(coerce -> v) -> urlFetcher' (T.replace "$ver" v url) name
 
 --------------------------------------------------------------------------------
 

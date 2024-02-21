@@ -78,6 +78,9 @@ parseConfig raw = runExcept $ case decodeWith tableDecoder raw of
             not $ null gk,
             "fetch.git" `notElem` keys && "fetch.github" `notElem` keys
         ]
+          <>
+          -- url
+          [KeyUnexpected pkg uk | let uk = filter ("url.name" ==) keys, not $ null uk, "fetch.url" `notElem` keys]
           -- docker
           <> [ KeyUnexpected pkg dk
                | let dk = filter (T.isPrefixOf "docker.") keys,

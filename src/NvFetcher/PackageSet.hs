@@ -75,6 +75,7 @@ module NvFetcher.PackageSet
     fetchGit,
     fetchGit',
     fetchUrl,
+    fetchUrl',
     fetchOpenVsx,
     fetchVscodeMarketplace,
     fetchTarball,
@@ -194,23 +195,23 @@ data Prod (r :: [Type]) where
 class Member (a :: Type) (r :: [Type]) where
   proj :: Prod r -> a
 
-instance {-# OVERLAPPING #-} NotElem x xs => Member x (x ': xs) where
+instance {-# OVERLAPPING #-} (NotElem x xs) => Member x (x ': xs) where
   proj (Cons x _) = x
 
-instance Member x xs => Member x (_y ': xs) where
+instance (Member x xs) => Member x (_y ': xs) where
   proj (Cons _ r) = proj r
 
-instance TypeError (ShowType x :<>: 'Text " is undefined") => Member x '[] where
+instance (TypeError (ShowType x :<>: 'Text " is undefined")) => Member x '[] where
   proj = undefined
 
 -- | Project optional elements from 'Prod'
 class OptionalMember (a :: Type) (r :: [Type]) where
   projMaybe :: Prod r -> Maybe a
 
-instance {-# OVERLAPPING #-} NotElem x xs => OptionalMember x (x ': xs) where
+instance {-# OVERLAPPING #-} (NotElem x xs) => OptionalMember x (x ': xs) where
   projMaybe (Cons x _) = Just x
 
-instance OptionalMember x xs => OptionalMember x (_y ': xs) where
+instance (OptionalMember x xs) => OptionalMember x (_y ': xs) where
   projMaybe (Cons _ r) = projMaybe r
 
 instance OptionalMember x '[] where
@@ -514,6 +515,12 @@ fetchGit' e (u, f) = fetch e $ f . gitFetcher u
 -- Arg is a function which constructs the url from a version
 fetchUrl :: Attach PackageFetcher (Version -> Text)
 fetchUrl e f = fetch e (urlFetcher . f)
+
+-- | This package is fetched from url
+--
+-- Args are a function which constructs the url from a version and a file name
+fetchUrl' :: Attach PackageFetcher (Text, Version -> Text)
+fetchUrl' e (name, f) = fetch e (\v -> FetchUrl (f v) (Just name) ())
 
 -- | This package is fetched from Open VSX
 --

@@ -77,13 +77,13 @@ listOptionsDecoder =
 --------------------------------------------------------------------------------
 
 gitHubReleaseDecoder :: Decoder VersionSource
-gitHubReleaseDecoder = uncurry GitHubRelease <$> getFieldWith githubDecoder "github"
+gitHubReleaseDecoder = uncurry GitHubRelease <$> getFieldWith gitHubNameDecoder "github"
 
 --------------------------------------------------------------------------------
 
 gitHubTagDecoder :: Decoder VersionSource
 gitHubTagDecoder = do
-  (_owner, _repo) <- getFieldWith githubDecoder "github_tag"
+  (_owner, _repo) <- getFieldWith gitHubNameDecoder "github_tag"
   _listOptions <- listOptionsDecoder
   pure GitHubTag {..}
 
@@ -142,12 +142,12 @@ httpHeaderDecoder = do
 --------------------------------------------------------------------------------
 
 openVsxDecoder :: Decoder VersionSource
-openVsxDecoder = uncurry OpenVsx <$> getFieldWith vscodeExtensionDecoder "openvsx"
+openVsxDecoder = uncurry OpenVsx <$> getFieldWith vscodeExtensionNameDecoder "openvsx"
 
 --------------------------------------------------------------------------------
 
 vscodeMarketplaceDecoder :: Decoder VersionSource
-vscodeMarketplaceDecoder = uncurry VscodeMarketplace <$> getFieldWith vscodeExtensionDecoder "vsmarketplace"
+vscodeMarketplaceDecoder = uncurry VscodeMarketplace <$> getFieldWith vscodeExtensionNameDecoder "vsmarketplace"
 
 --------------------------------------------------------------------------------
 
