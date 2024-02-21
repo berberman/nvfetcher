@@ -188,8 +188,11 @@ How do we fetch the package source if we have the target version number?
 - `fetch.tarball = tarball_url`
 - `fetch.docker = owner/name`
 
-Optional `nix-prefetch fetchgit` config, which make sense only when the fetcher equals to `fetch.github` or `fetch.git`.
-They can exist simultaneously.
+Optional config for `nix-prefetch-url`, applies when the fetcher equals to `fetch.url`.
+
+- `url.name = file_name`
+
+Optional config for `nix-prefetch-git`, applies when the fetcher equals to `fetch.github` or `fetch.git`.
 
 - `git.deepClone`
 - `git.fetchSubmodules`

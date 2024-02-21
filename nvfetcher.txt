@@ -746,6 +746,9 @@ gitFetcher :: Text -> PackageFetcher
 -- | Create a fetcher from url
 urlFetcher :: Text -> NixFetcher Fresh
 
+-- | Create a fetcher from url specifying the file name
+urlFetcher' :: Text -> Maybe Text -> NixFetcher Fresh
+
 -- | Create a fetcher from openvsx
 openVsxFetcher :: (Text, Text) -> PackageFetcher
 
@@ -959,6 +962,12 @@ fetchGit' :: Attach PackageFetcher (Text, NixFetcher Fresh -> NixFetcher Fresh)
 --   
 --   Arg is a function which constructs the url from a version
 fetchUrl :: Attach PackageFetcher (Version -> Text)
+
+-- | This package is fetched from url
+--   
+--   Args are a function which constructs the url from a version and a file
+--   name
+fetchUrl' :: Attach PackageFetcher (Text, Version -> Text)
 
 -- | This package is fetched from Open VSX
 --   
