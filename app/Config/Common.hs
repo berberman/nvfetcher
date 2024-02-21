@@ -7,15 +7,15 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import TOML
 
-githubDecoder :: Decoder (Text, Text)
-githubDecoder = makeDecoder $ \case
+gitHubNameDecoder :: Decoder (Text, Text)
+gitHubNameDecoder = makeDecoder $ \case
   v@(String s) -> case T.split (== '/') s of
     [owner, repo] -> pure (owner, repo)
     _ -> invalidValue "unexpected github format: it should be in the format of [owner]/[repo]" v
   v -> typeMismatch v
 
-vscodeExtensionDecoder :: Decoder (Text, Text)
-vscodeExtensionDecoder = makeDecoder $ \case
+vscodeExtensionNameDecoder :: Decoder (Text, Text)
+vscodeExtensionNameDecoder = makeDecoder $ \case
   -- assume that we can't have '.' in extension's name
   v@(String s) -> case T.split (== '.') s of
     [publisher, extName] -> pure (publisher, extName)

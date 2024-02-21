@@ -48,6 +48,7 @@ module NvFetcher.NixFetcher
     gitHubReleaseFetcher',
     gitFetcher,
     urlFetcher,
+    urlFetcher',
     openVsxFetcher,
     vscodeMarketplaceFetcher,
     tarballFetcher,
@@ -79,12 +80,14 @@ sha256ToSri sha256 = do
     [x] -> pure $ coerce x
     _ -> fail $ "Failed to parse output from nix hash to-sri: " <> T.unpack out
 
-runNixPrefetchUrl :: Text -> Bool -> Action Checksum
-runNixPrefetchUrl url unpack = do
+runNixPrefetchUrl :: Text -> Bool -> Maybe Text -> Action Checksum
+runNixPrefetchUrl url unpack name = do
   (CmdTime t, Stdout (T.decodeUtf8 -> out), CmdLine c) <-
     quietly $
       command [EchoStderr False] "nix-prefetch-url" $
-        [T.unpack url] <> ["--unpack" | unpack]
+        [T.unpack url]
+          <> ["--unpack" | unpack]
+          <> concat [["--name", T.unpack name] | Just name <- [name]]
   putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
   case takeWhile (not . T.null) $ reverse $ T.lines out of
     [x] -> sha256ToSri x
@@ -121,13 +124,13 @@ runFetcher = \case
     result <-
       if useFetchGit
         then runNixPrefetchGit [trimming|https://github.com/$_fowner/$_frepo|] (coerce _rev) _fetchSubmodules _deepClone _leaveDotGit
-        else runNixPrefetchUrl [trimming|https://github.com/$_fowner/$_frepo/archive/$ver.tar.gz|] True
+        else runNixPrefetchUrl [trimming|https://github.com/$_fowner/$_frepo/archive/$ver.tar.gz|] True mempty
     pure FetchGitHub {_sha256 = result, ..}
   FetchUrl {..} -> do
-    result <- runNixPrefetchUrl _furl False
+    result <- runNixPrefetchUrl _furl False _name
     pure FetchUrl {_sha256 = result, ..}
   FetchTarball {..} -> do
-    result <- runNixPrefetchUrl _furl True
+    result <- runNixPrefetchUrl _furl True mempty
     pure FetchTarball {_sha256 = result, ..}
   FetchDocker {..} -> do
     (CmdTime t, Stdout out, CmdLine c) <-
@@ -212,6 +215,10 @@ gitHubReleaseFetcher' (owner, repo) f (coerce -> ver) =
 -- | Create a fetcher from url
 urlFetcher :: Text -> NixFetcher Fresh
 urlFetcher url = FetchUrl url Nothing ()
+
+-- | Create a fetcher from url specifying the file name
+urlFetcher' :: Text -> Maybe Text -> NixFetcher Fresh
+urlFetcher' url name = FetchUrl url name ()
 
 -- | Create a fetcher from openvsx
 openVsxFetcher ::
