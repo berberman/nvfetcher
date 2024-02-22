@@ -51,7 +51,7 @@ module NvFetcher
   )
 where
 
-import Control.Monad.Extra (forM_, when, whenJust)
+import Control.Monad.Extra (forM_, unless, when, whenJust, whenM)
 import qualified Data.Aeson as A
 import qualified Data.Aeson.Encode.Pretty as A
 import qualified Data.Aeson.Types as A
@@ -113,7 +113,8 @@ applyCliOptions config CLIOptions {..} = do
             },
         filterRegex = optPkgNameFilter,
         retry = optRetry,
-        keyfile = aKeyfile
+        keyfile = aKeyfile,
+        keepOldFiles = optKeepOldFiles
       }
 
 logChangesToFile :: FilePath -> Action ()
@@ -167,14 +168,14 @@ runNvFetcherNoCLI config@Config {..} target packageSet = do
     -- Don't touch already pinned packages
     pinIfUnmatch x@Package {..}
       | Just regex <- filterRegex =
-        x
-          { _ppinned = case _ppinned of
-              PermanentStale -> PermanentStale
-              _ ->
-                if _pname =~ regex
-                  then NoStale
-                  else TemporaryStale
-          }
+          x
+            { _ppinned = case _ppinned of
+                PermanentStale -> PermanentStale
+                _ ->
+                  if _pname =~ regex
+                    then NoStale
+                    else TemporaryStale
+            }
       | otherwise = x
 
 --------------------------------------------------------------------------------
@@ -185,7 +186,18 @@ mainRules Config {..} = do
     getBuildDir >>= flip removeFilesAfter ["//*"]
     actionAfterClean
 
+  "purge" ~> do
+    shakeDir <- shakeFiles <$> getShakeOptions
+    removeFilesAfter shakeDir ["//*"]
+
   "build" ~> do
+    -- remove all files in build dir except generated nix and json
+    -- since core rule has always rerun, any file not generated in this run will be removed
+    unless keepOldFiles $
+      whenM (liftIO $ D.doesDirectoryExist buildDir) $ do
+        oldFiles <- (\\ [generatedJsonFileName, generatedNixFileName]) <$> liftIO (D.listDirectory buildDir)
+        putVerbose $ "Removing old files: " <> show oldFiles
+        liftIO $ removeFiles buildDir oldFiles
     allKeys <- getAllPackageKeys
     results <- parallel $ runPackage <$> allKeys
     -- Record removed packages to version changes

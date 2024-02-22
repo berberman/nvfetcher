@@ -19,17 +19,19 @@ where
 import Options.Applicative.Simple
 import qualified Paths_nvfetcher as Paths
 
-data Target = Build | Clean
+data Target = Build | Clean | Purge
   deriving (Eq)
 
 instance Show Target where
   show Build = "build"
   show Clean = "clean"
+  show Purge = "purge"
 
 targetParser :: ReadM Target
 targetParser = maybeReader $ \case
   "build" -> Just Build
   "clean" -> Just Clean
+  "purge" -> Just Purge
   _ -> Nothing
 
 -- | Options for nvfetcher CLI
@@ -43,6 +45,7 @@ data CLIOptions = CLIOptions
     optVerbose :: Bool,
     optPkgNameFilter :: Maybe String,
     optKeyfile :: Maybe FilePath,
+    optKeepOldFiles :: Bool,
     optTarget :: Target
   }
   deriving (Show)
@@ -108,12 +111,13 @@ cliOptionsParser =
               <> completer (bashCompleter "file")
           )
       )
+    <*> switch (long "keep-old" <> help "Don't remove old files other than generated json and nix before build")
     <*> argument
       targetParser
       ( metavar "TARGET"
-          <> help "Two targets are available: 1.build  2.clean"
+          <> help "Three targets are available: 1.build  2.clean (remove all generated files) 3.purge (remove shake db)"
           <> value Build
-          <> completer (listCompleter [show Build, show Clean])
+          <> completer (listCompleter [show Build, show Clean, show Purge])
           <> showDefault
       )
 
