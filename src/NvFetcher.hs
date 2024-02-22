@@ -198,7 +198,6 @@ mainRules Config {..} = do
         oldFiles <- (\\ [generatedJsonFileName, generatedNixFileName]) <$> liftIO (D.listDirectory buildDir)
         putVerbose $ "Removing old files: " <> show oldFiles
         liftIO $ removeFiles buildDir oldFiles
-    -- removeFiles buildDir $ oldFiles \\ [generatedNixFileName, generatedJsonFileName]
     allKeys <- getAllPackageKeys
     results <- parallel $ runPackage <$> allKeys
     -- Record removed packages to version changes
