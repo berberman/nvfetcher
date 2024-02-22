@@ -103,10 +103,11 @@ Basically, there are two ways to use nvfetcher, where the difference is how we p
 To run nvfetcher as a CLI program, you'll need to provide package sources defined in TOML.
 
 ```
-Usage: nvfetcher [--version] [--help] [-o|--build-dir DIR] [--commit-changes]
-                 [-l|--changelog FILE] [-j NUM] [-r|--retry NUM] [-t|--timing]
-                 [-v|--verbose] [-f|--filter REGEX] [-k|--keyfile FILE] [TARGET]
-                 [-c|--config FILE]
+Usage: nvfetcher [--version] [--help] [-o|--build-dir DIR] [--commit-changes] 
+                 [-l|--changelog FILE] [-j NUM] [-r|--retry NUM] [-t|--timing] 
+                 [-v|--verbose] [-f|--filter REGEX] [-k|--keyfile FILE] 
+                 [--keep-old] [TARGET] [-c|--config FILE]
+
   generate nix sources expr for the latest version of packages
 
 Available options:
@@ -125,7 +126,10 @@ Available options:
   -v,--verbose             Verbose mode
   -f,--filter REGEX        Regex to filter packages to be updated
   -k,--keyfile FILE        Nvchecker keyfile
-  TARGET                   Two targets are available: 1.build 2.clean
+  --keep-old               Don't remove old files other than generated json and
+                           nix before build
+  TARGET                   Three targets are available: 1.build 2.clean (remove
+                           all generated files) 3.purge (remove shake db)
                            (default: build)
   -c,--config FILE         Path to nvfetcher TOML config
                            (default: "nvfetcher.toml")

@@ -13,7 +13,7 @@ module NvFetcher.Config
 
 -- | Nvfetcher configuration
 data Config
-Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Bool -> Maybe FilePath -> Config
+Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Bool -> Bool -> Maybe FilePath -> Config
 [shakeConfig] :: Config -> ShakeOptions
 [buildDir] :: Config -> FilePath
 [customRules] :: Config -> Rules ()
@@ -22,6 +22,7 @@ Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int 
 [retry] :: Config -> Int
 [filterRegex] :: Config -> Maybe String
 [cacheNvchecker] :: Config -> Bool
+[keepOldFiles] :: Config -> Bool
 
 -- | Absolute path
 [keyfile] :: Config -> Maybe FilePath
@@ -560,23 +561,23 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-tlsVerify :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) (Maybe Bool)
-sha256 :: forall k_iYsZ. Lens' (NixFetcher k_iYsZ) (FetchResult Checksum k_iYsZ)
-rev :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) Version
-name :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) (Maybe Text)
-leaveDotGit :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) Bool
-imageTag :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) Text
-imageName :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) Text
-imageDigest :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) (FetchResult ContainerDigest k_iYsZ)
-furl :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) Text
-frepo :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) Text
-fowner :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) Text
-fos :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) (Maybe Text)
-finalImageTag :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) (Maybe Text)
-finalImageName :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) (Maybe Text)
-fetchSubmodules :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) Bool
-farch :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) (Maybe Text)
-deepClone :: forall k_iYsZ. Traversal' (NixFetcher k_iYsZ) Bool
+tlsVerify :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Bool)
+sha256 :: forall k_iYuM. Lens' (NixFetcher k_iYuM) (FetchResult Checksum k_iYuM)
+rev :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Version
+name :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Text)
+leaveDotGit :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Bool
+imageTag :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Text
+imageName :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Text
+imageDigest :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (FetchResult ContainerDigest k_iYuM)
+furl :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Text
+frepo :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Text
+fowner :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Text
+fos :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Text)
+finalImageTag :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Text)
+finalImageName :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Text)
+fetchSubmodules :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Bool
+farch :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Text)
+deepClone :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -1402,7 +1403,7 @@ module NvFetcher.Options
 
 -- | Options for nvfetcher CLI
 data CLIOptions
-CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> Maybe FilePath -> Target -> CLIOptions
+CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> Maybe FilePath -> Bool -> Target -> CLIOptions
 [optBuildDir] :: CLIOptions -> FilePath
 [optCommit] :: CLIOptions -> Bool
 [optLogPath] :: CLIOptions -> Maybe FilePath
@@ -1412,10 +1413,12 @@ CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -
 [optVerbose] :: CLIOptions -> Bool
 [optPkgNameFilter] :: CLIOptions -> Maybe String
 [optKeyfile] :: CLIOptions -> Maybe FilePath
+[optKeepOldFiles] :: CLIOptions -> Bool
 [optTarget] :: CLIOptions -> Target
 data Target
 Build :: Target
 Clean :: Target
+Purge :: Target
 cliOptionsParser :: Parser CLIOptions
 
 -- | Parse nvfetcher CLI options
