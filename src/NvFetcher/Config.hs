@@ -18,6 +18,7 @@ data Config = Config
     retry :: Int,
     filterRegex :: Maybe String,
     cacheNvchecker :: Bool,
+    keepOldFiles :: Bool,
     -- | Absolute path
     keyfile :: Maybe FilePath
   }
@@ -37,5 +38,6 @@ instance Default Config where
         retry = 3,
         filterRegex = Nothing,
         cacheNvchecker = True,
+        keepOldFiles = False,
         keyfile = Nothing
       }
