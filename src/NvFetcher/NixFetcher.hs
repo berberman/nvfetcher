@@ -55,6 +55,7 @@ module NvFetcher.NixFetcher
   )
 where
 
+import Control.Exception (ErrorCall)
 import Control.Monad (void, when)
 import qualified Data.Aeson as A
 import Data.Coerce (coerce)
@@ -168,10 +169,17 @@ prefetchRule = void $
   addOracleCache $ \(RunFetch force f) -> do
     when (force == ForceFetch) alwaysRerun
     putInfo . show $ "#" <+> pretty f
-    withRetry $ runFetcher f
+    keepGoing <- nvcheckerKeepGoing
+    if keepGoing
+      then -- If fetch failed, always rerun and return Nothing
+      actionCatch (fmap Just <$> withRetry $ runFetcher f) $ \(e :: ErrorCall) -> do
+        alwaysRerun
+        putError $ show e <> "\nKeep going..."
+        pure Nothing
+      else fmap Just <$> withRetry $ runFetcher f
 
 -- | Run nix fetcher
-prefetch :: NixFetcher Fresh -> ForceFetch -> Action (NixFetcher Fetched)
+prefetch :: NixFetcher Fresh -> ForceFetch -> Action (Maybe (NixFetcher Fetched))
 prefetch f force = askOracle $ RunFetch force f
 
 --------------------------------------------------------------------------------

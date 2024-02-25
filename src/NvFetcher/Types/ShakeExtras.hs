@@ -40,8 +40,9 @@ module NvFetcher.Types.ShakeExtras
     getAllOnDiskVersions,
     getLastVersionUpdated,
 
-    -- * Cache nvchecker
+    -- * Booleans
     nvcheckerCacheEnabled,
+    nvcheckerKeepGoing,
   )
 where
 
@@ -175,3 +176,7 @@ getAllOnDiskVersions = do
 -- | Get if 'cacheNvchecker' is enabled
 nvcheckerCacheEnabled :: Action Bool
 nvcheckerCacheEnabled = cacheNvchecker . config <$> getShakeExtras
+
+-- | Get if 'keepGoing' is enabled
+nvcheckerKeepGoing :: Action Bool
+nvcheckerKeepGoing = keepGoing . config <$> getShakeExtras

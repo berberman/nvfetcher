@@ -57,9 +57,9 @@ import qualified Data.Aeson.Encode.Pretty as A
 import qualified Data.Aeson.Types as A
 import qualified Data.ByteString.Lazy.Char8 as LBS
 import Data.Default
-import Data.List ((\\))
+import Data.List (partition, (\\))
 import qualified Data.Map.Strict as Map
-import Data.Maybe (catMaybes, fromMaybe)
+import Data.Maybe (catMaybes, fromJust, fromMaybe, isJust)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
@@ -114,7 +114,8 @@ applyCliOptions config CLIOptions {..} = do
         filterRegex = optPkgNameFilter,
         retry = optRetry,
         keyfile = aKeyfile,
-        keepOldFiles = optKeepOldFiles
+        keepOldFiles = optKeepOldFiles,
+        keepGoing = optKeepGoing
       }
 
 logChangesToFile :: FilePath -> Action ()
@@ -199,10 +200,12 @@ mainRules Config {..} = do
         putVerbose $ "Removing old files: " <> show oldFiles
         liftIO $ removeFiles buildDir oldFiles
     allKeys <- getAllPackageKeys
-    results <- parallel $ runPackage <$> allKeys
+    results <- fmap (zip allKeys) $ parallel $ runPackage <$> allKeys
+    let (fmap (fromJust . snd) -> successResults, fmap fst -> failureKeys) = partition (isJust . snd) results
     -- Record removed packages to version changes
+    -- Failure keys are also considered as removed in this run
     getAllOnDiskVersions
-      >>= \oldPkgs -> forM_ (Map.keys oldPkgs \\ allKeys) $
+      >>= \oldPkgs -> forM_ (Map.keys oldPkgs \\ (allKeys \\ failureKeys)) $
         \pkg -> recordVersionChange (coerce pkg) (oldPkgs Map.!? pkg) "∅"
     getVersionChanges >>= \changes ->
       if null changes
@@ -214,9 +217,9 @@ mainRules Config {..} = do
     let generatedNixPath = buildDir </> generatedNixFileName
         generatedJSONPath = buildDir </> generatedJsonFileName
     putVerbose $ "Generating " <> generatedNixPath
-    writeFileChanged generatedNixPath $ T.unpack $ srouces (T.unlines $ toNixExpr <$> results) <> "\n"
+    writeFileChanged generatedNixPath $ T.unpack $ srouces (T.unlines $ toNixExpr <$> successResults) <> "\n"
     putVerbose $ "Generating " <> generatedJSONPath
-    writeFileChanged generatedJSONPath $ LBS.unpack $ A.encodePretty $ A.object [aesonKey (_prname r) A..= r | r <- results]
+    writeFileChanged generatedJSONPath $ LBS.unpack $ A.encodePretty $ A.object [aesonKey (_prname r) A..= r | r <- successResults]
     actionAfterBuild
 
   customRules

@@ -20,7 +20,9 @@ data Config = Config
     cacheNvchecker :: Bool,
     keepOldFiles :: Bool,
     -- | Absolute path
-    keyfile :: Maybe FilePath
+    keyfile :: Maybe FilePath,
+    -- | When set to 'True', nvfetcher will keep going even if some packages failed to /fetch/
+    keepGoing :: Bool
   }
 
 instance Default Config where
@@ -29,7 +31,8 @@ instance Default Config where
       { shakeConfig =
           shakeOptions
             { shakeProgress = progressSimple,
-              shakeThreads = 0
+              shakeThreads = 0,
+              shakeVersion = "1"
             },
         buildDir = "_sources",
         customRules = pure (),
@@ -39,5 +42,6 @@ instance Default Config where
         filterRegex = Nothing,
         cacheNvchecker = True,
         keepOldFiles = False,
-        keyfile = Nothing
+        keyfile = Nothing,
+        keepGoing = False
       }
