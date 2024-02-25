@@ -3,6 +3,7 @@
 
 module FetchRustGitDepsSpec where
 
+import Control.Monad (join)
 import Control.Monad.Trans.Reader
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HMap
@@ -30,7 +31,7 @@ spec = aroundShake $
           ]
 
 runPrefetchRule :: NixFetcher Fresh -> ReaderT ActionQueue IO (Maybe (NixFetcher Fetched))
-runPrefetchRule fetcher = runActionChan $ prefetch fetcher NoForceFetch
+runPrefetchRule fetcher = fmap join $ runActionChan $ prefetch fetcher NoForceFetch
 
 runFetchRustGitDepsRule :: NixFetcher Fetched -> FilePath -> ReaderT ActionQueue IO (Maybe (HashMap Text Checksum))
 runFetchRustGitDepsRule fetcher lockPath = runActionChan $ fetchRustGitDeps fetcher lockPath

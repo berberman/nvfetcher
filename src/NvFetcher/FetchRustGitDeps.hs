@@ -24,6 +24,7 @@ module NvFetcher.FetchRustGitDeps
 where
 
 import Control.Monad (void)
+import Control.Monad.Extra (fromMaybeM)
 import Data.Binary.Instances ()
 import Data.Coerce (coerce)
 import Data.HashMap.Strict (HashMap)
@@ -54,7 +55,7 @@ fetchRustGitDepsRule = void $
       parallel
         [ case parse gitSrcParser (T.unpack rname) src of
             Right ParsedGitSrc {..} -> do
-              (_sha256 -> sha256) <- prefetch (gitFetcher pgurl pgsha) NoForceFetch
+              (_sha256 -> sha256) <- fromMaybeM (fail $ "Prefetch failed for " <> T.unpack pgurl) $ prefetch (gitFetcher pgurl pgsha) NoForceFetch
               -- @${name}-${version}@ -> sha256
               pure (rname <> "-" <> coerce rversion, sha256)
             Left err -> fail $ "Failed to parse git source in Cargo.lock: " <> show err

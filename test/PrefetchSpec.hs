@@ -4,6 +4,7 @@
 module PrefetchSpec where
 
 import Control.Arrow ((&&&))
+import Control.Monad (join)
 import Control.Monad.Trans.Reader
 import NvFetcher.NixFetcher
 import NvFetcher.Types
@@ -72,4 +73,4 @@ runPrefetchRule :: NixFetcher Fresh -> ReaderT ActionQueue IO (Maybe Checksum)
 runPrefetchRule = runPrefetchRule' _sha256
 
 runPrefetchRule' :: (NixFetcher Fetched -> a) -> NixFetcher Fresh -> ReaderT ActionQueue IO (Maybe a)
-runPrefetchRule' g f = runActionChan $ g <$> prefetch f NoForceFetch
+runPrefetchRule' g f = fmap join $ runActionChan $ prefetch f NoForceFetch >>= \m -> pure $ g <$> m

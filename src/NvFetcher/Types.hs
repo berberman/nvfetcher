@@ -383,7 +383,8 @@ instance Default ForceFetch where
 data RunFetch = RunFetch ForceFetch (NixFetcher Fresh)
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
-type instance RuleResult RunFetch = NixFetcher Fetched
+-- Prefetch rule never throws exceptions
+type instance RuleResult RunFetch = Maybe (NixFetcher Fetched)
 
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
@@ -702,7 +703,8 @@ newtype PackageKey = PackageKey PackageName
 data Core = Core
   deriving (Eq, Show, Ord, Typeable, Generic, Hashable, Binary, NFData)
 
-type instance RuleResult Core = PackageResult
+-- If prefetch fails, we don't want to fail the whole build
+type instance RuleResult Core = Maybe PackageResult
 
 -- | Decorate a rule's key with 'PackageKey'
 newtype WithPackageKey k = WithPackageKey (k, PackageKey)

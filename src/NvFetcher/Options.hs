@@ -46,6 +46,7 @@ data CLIOptions = CLIOptions
     optPkgNameFilter :: Maybe String,
     optKeyfile :: Maybe FilePath,
     optKeepOldFiles :: Bool,
+    optKeepGoing :: Bool,
     optTarget :: Target
   }
   deriving (Show)
@@ -112,6 +113,7 @@ cliOptionsParser =
           )
       )
     <*> switch (long "keep-old" <> help "Don't remove old files other than generated json and nix before build")
+    <*> switch (long "keep-going" <> help "Don't stop if some packages failed to be fetched")
     <*> argument
       targetParser
       ( metavar "TARGET"
