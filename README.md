@@ -106,7 +106,7 @@ To run nvfetcher as a CLI program, you'll need to provide package sources define
 Usage: nvfetcher [--version] [--help] [-o|--build-dir DIR] [--commit-changes] 
                  [-l|--changelog FILE] [-j NUM] [-r|--retry NUM] [-t|--timing] 
                  [-v|--verbose] [-f|--filter REGEX] [-k|--keyfile FILE] 
-                 [--keep-old] [TARGET] [-c|--config FILE]
+                 [--keep-old] [--keep-going] [TARGET] [-c|--config FILE]
 
   generate nix sources expr for the latest version of packages
 
@@ -128,6 +128,7 @@ Available options:
   -k,--keyfile FILE        Nvchecker keyfile
   --keep-old               Don't remove old files other than generated json and
                            nix before build
+  --keep-going             Don't stop if some packages failed to be fetched
   TARGET                   Three targets are available: 1.build 2.clean (remove
                            all generated files) 3.purge (remove shake db)
                            (default: build)

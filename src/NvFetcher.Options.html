@@ -20,7 +20,7 @@
 </span><span id="line-20"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html"><span class="hs-identifier">Paths_nvfetcher</span></a></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Paths</span></span><span>
 </span><span id="line-21"></span><span>
 </span><span id="line-22"></span><span class="hs-keyword">data</span><span> </span><span id="Target"><span class="annot"><a href="NvFetcher.Options.html#Target"><span class="hs-identifier hs-var">Target</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Build"><span class="annot"><a href="NvFetcher.Options.html#Build"><span class="hs-identifier hs-var">Build</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="Clean"><span class="annot"><a href="NvFetcher.Options.html#Clean"><span class="hs-identifier hs-var">Clean</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="Purge"><span class="annot"><a href="NvFetcher.Options.html#Purge"><span class="hs-identifier hs-var">Purge</span></a></span></span><span>
-</span><span id="line-23"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679410303"><span id="local-6989586621679410305"><span class="annot"><span class="annottext">Target -&gt; Target -&gt; Bool
+</span><span id="line-23"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679400866"><span id="local-6989586621679400868"><span class="annot"><span class="annottext">Target -&gt; Target -&gt; Bool
 (Target -&gt; Target -&gt; Bool)
 -&gt; (Target -&gt; Target -&gt; Bool) -&gt; Eq Target
 forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
@@ -30,9 +30,9 @@ $c/= :: Target -&gt; Target -&gt; Bool
 /= :: Target -&gt; Target -&gt; Bool
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">)</span><span>
 </span><span id="line-24"></span><span>
-</span><span id="line-25"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679410310"><span id="local-6989586621679410314"><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="annot"><a href="NvFetcher.Options.html#Target"><span class="hs-identifier hs-type">Target</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-26"></span><span>  </span><span id="local-6989586621679410317"><span class="annot"><span class="annottext">show :: Target -&gt; FilePath
-</span><a href="#local-6989586621679410317"><span class="hs-identifier hs-var hs-var hs-var hs-var">show</span></a></span></span><span> </span><span class="annot"><span class="annottext">Target
+</span><span id="line-25"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679400873"><span id="local-6989586621679400877"><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span> </span><span class="annot"><a href="NvFetcher.Options.html#Target"><span class="hs-identifier hs-type">Target</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-26"></span><span>  </span><span id="local-6989586621679400880"><span class="annot"><span class="annottext">show :: Target -&gt; FilePath
+</span><a href="#local-6989586621679400880"><span class="hs-identifier hs-var hs-var hs-var hs-var">show</span></a></span></span><span> </span><span class="annot"><span class="annottext">Target
 </span><a href="NvFetcher.Options.html#Build"><span class="hs-identifier hs-var">Build</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;build&quot;</span></span><span>
 </span><span id="line-27"></span><span>  </span><span class="annot"><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Target
@@ -92,10 +92,12 @@ forall a. Maybe a
 </span><a href="NvFetcher.Options.html#optKeyfile"><span class="hs-identifier hs-var hs-var">optKeyfile</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span class="hs-special">,</span><span>
 </span><span id="line-48"></span><span>    </span><span id="optKeepOldFiles"><span class="annot"><span class="annottext">CLIOptions -&gt; Bool
 </span><a href="NvFetcher.Options.html#optKeepOldFiles"><span class="hs-identifier hs-var hs-var">optKeepOldFiles</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
-</span><span id="line-49"></span><span>    </span><span id="optTarget"><span class="annot"><span class="annottext">CLIOptions -&gt; Target
+</span><span id="line-49"></span><span>    </span><span id="optKeepGoing"><span class="annot"><span class="annottext">CLIOptions -&gt; Bool
+</span><a href="NvFetcher.Options.html#optKeepGoing"><span class="hs-identifier hs-var hs-var">optKeepGoing</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
+</span><span id="line-50"></span><span>    </span><span id="optTarget"><span class="annot"><span class="annottext">CLIOptions -&gt; Target
 </span><a href="NvFetcher.Options.html#optTarget"><span class="hs-identifier hs-var hs-var">optTarget</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Options.html#Target"><span class="hs-identifier hs-type">Target</span></a></span><span>
-</span><span id="line-50"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-51"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679410334"><span id="local-6989586621679410351"><span id="local-6989586621679410355"><span class="annot"><span class="annottext">Int -&gt; CLIOptions -&gt; ShowS
+</span><span id="line-51"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-52"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679400898"><span id="local-6989586621679400916"><span id="local-6989586621679400920"><span class="annot"><span class="annottext">Int -&gt; CLIOptions -&gt; ShowS
 [CLIOptions] -&gt; ShowS
 CLIOptions -&gt; FilePath
 (Int -&gt; CLIOptions -&gt; ShowS)
@@ -111,11 +113,11 @@ show :: CLIOptions -&gt; FilePath
 $cshowList :: [CLIOptions] -&gt; ShowS
 showList :: [CLIOptions] -&gt; ShowS
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">)</span><span>
-</span><span id="line-52"></span><span>
-</span><span id="line-53"></span><span class="annot"><a href="NvFetcher.Options.html#cliOptionsParser"><span class="hs-identifier hs-type">cliOptionsParser</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Parser</span></span><span> </span><span class="annot"><a href="NvFetcher.Options.html#CLIOptions"><span class="hs-identifier hs-type">CLIOptions</span></a></span><span>
-</span><span id="line-54"></span><span id="cliOptionsParser"><span class="annot"><span class="annottext">cliOptionsParser :: Parser CLIOptions
+</span><span id="line-53"></span><span>
+</span><span id="line-54"></span><span class="annot"><a href="NvFetcher.Options.html#cliOptionsParser"><span class="hs-identifier hs-type">cliOptionsParser</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Parser</span></span><span> </span><span class="annot"><a href="NvFetcher.Options.html#CLIOptions"><span class="hs-identifier hs-type">CLIOptions</span></a></span><span>
+</span><span id="line-55"></span><span id="cliOptionsParser"><span class="annot"><span class="annottext">cliOptionsParser :: Parser CLIOptions
 </span><a href="NvFetcher.Options.html#cliOptionsParser"><span class="hs-identifier hs-var hs-var">cliOptionsParser</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-55"></span><span>  </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-56"></span><span>  </span><span class="annot"><span class="annottext">FilePath
 -&gt; Bool
 -&gt; Maybe FilePath
 -&gt; Int
@@ -124,11 +126,12 @@ showList :: [CLIOptions] -&gt; ShowS
 -&gt; Bool
 -&gt; Maybe FilePath
 -&gt; Maybe FilePath
+-&gt; Bool
 -&gt; Bool
 -&gt; Target
 -&gt; CLIOptions
 </span><a href="NvFetcher.Options.html#CLIOptions"><span class="hs-identifier hs-var">CLIOptions</span></a></span><span>
-</span><span id="line-56"></span><span>    </span><span class="annot"><span class="annottext">(FilePath
+</span><span id="line-57"></span><span>    </span><span class="annot"><span class="annottext">(FilePath
  -&gt; Bool
  -&gt; Maybe FilePath
  -&gt; Int
@@ -137,6 +140,7 @@ showList :: [CLIOptions] -&gt; ShowS
  -&gt; Bool
  -&gt; Maybe FilePath
  -&gt; Maybe FilePath
+ -&gt; Bool
  -&gt; Bool
  -&gt; Target
  -&gt; CLIOptions)
@@ -151,51 +155,52 @@ showList :: [CLIOptions] -&gt; ShowS
       -&gt; Maybe FilePath
       -&gt; Maybe FilePath
       -&gt; Bool
+      -&gt; Bool
       -&gt; Target
       -&gt; CLIOptions)
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">Mod OptionFields FilePath -&gt; Parser FilePath
 forall s. IsString s =&gt; Mod OptionFields s -&gt; Parser s
 </span><span class="hs-identifier hs-var">strOption</span></span><span>
-</span><span id="line-57"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
+</span><span id="line-58"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasName f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">long</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;build-dir&quot;</span></span><span>
-</span><span id="line-58"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-59"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Char -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasName f =&gt; Char -&gt; Mod f a
 </span><span class="hs-identifier hs-var">short</span></span><span> </span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'o'</span></span><span>
-</span><span id="line-59"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-60"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasMetavar f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">metavar</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;DIR&quot;</span></span><span>
-</span><span id="line-60"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-61"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Directory that nvfetcher puts artifacts to&quot;</span></span><span>
-</span><span id="line-61"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-62"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 forall a (f :: * -&gt; *). Show a =&gt; Mod f a
 </span><span class="hs-identifier hs-var">showDefault</span></span><span>
-</span><span id="line-62"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-63"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasValue f =&gt; a -&gt; Mod f a
 </span><span class="hs-identifier hs-var">value</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;_sources&quot;</span></span><span>
-</span><span id="line-63"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-64"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Completer -&gt; Mod OptionFields FilePath
@@ -203,8 +208,8 @@ forall (f :: * -&gt; *) a. HasCompleter f =&gt; Completer -&gt; Mod f a
 </span><span class="hs-identifier hs-var">completer</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Completer
 </span><span class="hs-identifier hs-var">bashCompleter</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;directory&quot;</span></span><span class="hs-special">)</span><span>
-</span><span id="line-64"></span><span>      </span><span class="hs-special">)</span><span>
-</span><span id="line-65"></span><span>    </span><span class="annot"><span class="annottext">Parser
+</span><span id="line-65"></span><span>      </span><span class="hs-special">)</span><span>
+</span><span id="line-66"></span><span>    </span><span class="annot"><span class="annottext">Parser
   (Bool
    -&gt; Maybe FilePath
    -&gt; Int
@@ -213,6 +218,7 @@ forall (f :: * -&gt; *) a. HasCompleter f =&gt; Completer -&gt; Mod f a
    -&gt; Bool
    -&gt; Maybe FilePath
    -&gt; Maybe FilePath
+   -&gt; Bool
    -&gt; Bool
    -&gt; Target
    -&gt; CLIOptions)
@@ -226,24 +232,25 @@ forall (f :: * -&gt; *) a. HasCompleter f =&gt; Completer -&gt; Mod f a
       -&gt; Maybe FilePath
       -&gt; Maybe FilePath
       -&gt; Bool
+      -&gt; Bool
       -&gt; Target
       -&gt; CLIOptions)
 forall a b. Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
 forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">Mod FlagFields Bool -&gt; Parser Bool
 </span><span class="hs-identifier hs-var">switch</span></span><span>
-</span><span id="line-66"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod FlagFields Bool
+</span><span id="line-67"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod FlagFields Bool
 forall (f :: * -&gt; *) a. HasName f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">long</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;commit-changes&quot;</span></span><span>
-</span><span id="line-67"></span><span>          </span><span class="annot"><span class="annottext">Mod FlagFields Bool -&gt; Mod FlagFields Bool -&gt; Mod FlagFields Bool
+</span><span id="line-68"></span><span>          </span><span class="annot"><span class="annottext">Mod FlagFields Bool -&gt; Mod FlagFields Bool -&gt; Mod FlagFields Bool
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod FlagFields Bool
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;`git commit` build dir with version changes as commit message&quot;</span></span><span>
-</span><span id="line-68"></span><span>      </span><span class="hs-special">)</span><span>
-</span><span id="line-69"></span><span>    </span><span class="annot"><span class="annottext">Parser
+</span><span id="line-69"></span><span>      </span><span class="hs-special">)</span><span>
+</span><span id="line-70"></span><span>    </span><span class="annot"><span class="annottext">Parser
   (Maybe FilePath
    -&gt; Int
    -&gt; Int
@@ -251,6 +258,7 @@ forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
    -&gt; Bool
    -&gt; Maybe FilePath
    -&gt; Maybe FilePath
+   -&gt; Bool
    -&gt; Bool
    -&gt; Target
    -&gt; CLIOptions)
@@ -263,6 +271,7 @@ forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
       -&gt; Maybe FilePath
       -&gt; Maybe FilePath
       -&gt; Bool
+      -&gt; Bool
       -&gt; Target
       -&gt; CLIOptions)
 forall a b. Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
@@ -270,35 +279,35 @@ forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">Parser FilePath -&gt; Parser (Maybe FilePath)
 forall (f :: * -&gt; *) a. Alternative f =&gt; f a -&gt; f (Maybe a)
 </span><span class="hs-identifier hs-var">optional</span></span><span>
-</span><span id="line-70"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Mod OptionFields FilePath -&gt; Parser FilePath
+</span><span id="line-71"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Mod OptionFields FilePath -&gt; Parser FilePath
 forall s. IsString s =&gt; Mod OptionFields s -&gt; Parser s
 </span><span class="hs-identifier hs-var">strOption</span></span><span>
-</span><span id="line-71"></span><span>          </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
+</span><span id="line-72"></span><span>          </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasName f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">long</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;changelog&quot;</span></span><span>
-</span><span id="line-72"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-73"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Char -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasName f =&gt; Char -&gt; Mod f a
 </span><span class="hs-identifier hs-var">short</span></span><span> </span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'l'</span></span><span>
-</span><span id="line-73"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-74"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasMetavar f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">metavar</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;FILE&quot;</span></span><span>
-</span><span id="line-74"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-75"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Dump version changes to a file&quot;</span></span><span>
-</span><span id="line-75"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-76"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Completer -&gt; Mod OptionFields FilePath
@@ -306,15 +315,16 @@ forall (f :: * -&gt; *) a. HasCompleter f =&gt; Completer -&gt; Mod f a
 </span><span class="hs-identifier hs-var">completer</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Completer
 </span><span class="hs-identifier hs-var">bashCompleter</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;file&quot;</span></span><span class="hs-special">)</span><span>
-</span><span id="line-76"></span><span>          </span><span class="hs-special">)</span><span>
-</span><span id="line-77"></span><span>      </span><span class="hs-special">)</span><span>
-</span><span id="line-78"></span><span>    </span><span class="annot"><span class="annottext">Parser
+</span><span id="line-77"></span><span>          </span><span class="hs-special">)</span><span>
+</span><span id="line-78"></span><span>      </span><span class="hs-special">)</span><span>
+</span><span id="line-79"></span><span>    </span><span class="annot"><span class="annottext">Parser
   (Int
    -&gt; Int
    -&gt; Bool
    -&gt; Bool
    -&gt; Maybe FilePath
    -&gt; Maybe FilePath
+   -&gt; Bool
    -&gt; Bool
    -&gt; Target
    -&gt; CLIOptions)
@@ -326,6 +336,7 @@ forall (f :: * -&gt; *) a. HasCompleter f =&gt; Completer -&gt; Mod f a
       -&gt; Maybe FilePath
       -&gt; Maybe FilePath
       -&gt; Bool
+      -&gt; Bool
       -&gt; Target
       -&gt; CLIOptions)
 forall a b. Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
@@ -333,47 +344,48 @@ forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">ReadM Int -&gt; Mod OptionFields Int -&gt; Parser Int
 forall a. ReadM a -&gt; Mod OptionFields a -&gt; Parser a
 </span><span class="hs-identifier hs-var">option</span></span><span>
-</span><span id="line-79"></span><span>      </span><span class="annot"><span class="annottext">ReadM Int
+</span><span id="line-80"></span><span>      </span><span class="annot"><span class="annottext">ReadM Int
 forall a. Read a =&gt; ReadM a
 </span><span class="hs-identifier hs-var">auto</span></span><span>
-</span><span id="line-80"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Mod OptionFields Int
+</span><span id="line-81"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Mod OptionFields Int
 forall (f :: * -&gt; *) a. HasName f =&gt; Char -&gt; Mod f a
 </span><span class="hs-identifier hs-var">short</span></span><span> </span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'j'</span></span><span>
-</span><span id="line-81"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
+</span><span id="line-82"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
 -&gt; Mod OptionFields Int -&gt; Mod OptionFields Int
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields Int
 forall (f :: * -&gt; *) a. HasMetavar f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">metavar</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;NUM&quot;</span></span><span>
-</span><span id="line-82"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
+</span><span id="line-83"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
 -&gt; Mod OptionFields Int -&gt; Mod OptionFields Int
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields Int
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Number of threads (0: detected number of processors)&quot;</span></span><span>
-</span><span id="line-83"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
+</span><span id="line-84"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
 -&gt; Mod OptionFields Int -&gt; Mod OptionFields Int
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Mod OptionFields Int
 forall (f :: * -&gt; *) a. HasValue f =&gt; a -&gt; Mod f a
 </span><span class="hs-identifier hs-var">value</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">0</span></span><span>
-</span><span id="line-84"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
+</span><span id="line-85"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
 -&gt; Mod OptionFields Int -&gt; Mod OptionFields Int
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Mod OptionFields Int
 forall a (f :: * -&gt; *). Show a =&gt; Mod f a
 </span><span class="hs-identifier hs-var">showDefault</span></span><span>
-</span><span id="line-85"></span><span>      </span><span class="hs-special">)</span><span>
-</span><span id="line-86"></span><span>    </span><span class="annot"><span class="annottext">Parser
+</span><span id="line-86"></span><span>      </span><span class="hs-special">)</span><span>
+</span><span id="line-87"></span><span>    </span><span class="annot"><span class="annottext">Parser
   (Int
    -&gt; Bool
    -&gt; Bool
    -&gt; Maybe FilePath
    -&gt; Maybe FilePath
+   -&gt; Bool
    -&gt; Bool
    -&gt; Target
    -&gt; CLIOptions)
@@ -384,6 +396,7 @@ forall a (f :: * -&gt; *). Show a =&gt; Mod f a
       -&gt; Maybe FilePath
       -&gt; Maybe FilePath
       -&gt; Bool
+      -&gt; Bool
       -&gt; Target
       -&gt; CLIOptions)
 forall a b. Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
@@ -391,53 +404,54 @@ forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">ReadM Int -&gt; Mod OptionFields Int -&gt; Parser Int
 forall a. ReadM a -&gt; Mod OptionFields a -&gt; Parser a
 </span><span class="hs-identifier hs-var">option</span></span><span>
-</span><span id="line-87"></span><span>      </span><span class="annot"><span class="annottext">ReadM Int
+</span><span id="line-88"></span><span>      </span><span class="annot"><span class="annottext">ReadM Int
 forall a. Read a =&gt; ReadM a
 </span><span class="hs-identifier hs-var">auto</span></span><span>
-</span><span id="line-88"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Mod OptionFields Int
+</span><span id="line-89"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Mod OptionFields Int
 forall (f :: * -&gt; *) a. HasName f =&gt; Char -&gt; Mod f a
 </span><span class="hs-identifier hs-var">short</span></span><span> </span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'r'</span></span><span>
-</span><span id="line-89"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
+</span><span id="line-90"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
 -&gt; Mod OptionFields Int -&gt; Mod OptionFields Int
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields Int
 forall (f :: * -&gt; *) a. HasName f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">long</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;retry&quot;</span></span><span>
-</span><span id="line-90"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
+</span><span id="line-91"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
 -&gt; Mod OptionFields Int -&gt; Mod OptionFields Int
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields Int
 forall (f :: * -&gt; *) a. HasMetavar f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">metavar</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;NUM&quot;</span></span><span>
-</span><span id="line-91"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
+</span><span id="line-92"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
 -&gt; Mod OptionFields Int -&gt; Mod OptionFields Int
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields Int
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Times to retry of some rules (nvchecker, prefetch, nix-build, etc.)&quot;</span></span><span>
-</span><span id="line-92"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
+</span><span id="line-93"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
 -&gt; Mod OptionFields Int -&gt; Mod OptionFields Int
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Mod OptionFields Int
 forall (f :: * -&gt; *) a. HasValue f =&gt; a -&gt; Mod f a
 </span><span class="hs-identifier hs-var">value</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">3</span></span><span>
-</span><span id="line-93"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
+</span><span id="line-94"></span><span>          </span><span class="annot"><span class="annottext">Mod OptionFields Int
 -&gt; Mod OptionFields Int -&gt; Mod OptionFields Int
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Mod OptionFields Int
 forall a (f :: * -&gt; *). Show a =&gt; Mod f a
 </span><span class="hs-identifier hs-var">showDefault</span></span><span>
-</span><span id="line-94"></span><span>      </span><span class="hs-special">)</span><span>
-</span><span id="line-95"></span><span>    </span><span class="annot"><span class="annottext">Parser
+</span><span id="line-95"></span><span>      </span><span class="hs-special">)</span><span>
+</span><span id="line-96"></span><span>    </span><span class="annot"><span class="annottext">Parser
   (Bool
    -&gt; Bool
    -&gt; Maybe FilePath
    -&gt; Maybe FilePath
+   -&gt; Bool
    -&gt; Bool
    -&gt; Target
    -&gt; CLIOptions)
@@ -446,6 +460,7 @@ forall a (f :: * -&gt; *). Show a =&gt; Mod f a
      (Bool
       -&gt; Maybe FilePath
       -&gt; Maybe FilePath
+      -&gt; Bool
       -&gt; Bool
       -&gt; Target
       -&gt; CLIOptions)
@@ -466,16 +481,18 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Show build time&quot;</span></span><span class="hs-special">)</span><span>
-</span><span id="line-96"></span><span>    </span><span class="annot"><span class="annottext">Parser
+</span><span id="line-97"></span><span>    </span><span class="annot"><span class="annottext">Parser
   (Bool
    -&gt; Maybe FilePath
    -&gt; Maybe FilePath
+   -&gt; Bool
    -&gt; Bool
    -&gt; Target
    -&gt; CLIOptions)
 -&gt; Parser Bool
 -&gt; Parser
-     (Maybe FilePath -&gt; Maybe FilePath -&gt; Bool -&gt; Target -&gt; CLIOptions)
+     (Maybe FilePath
+      -&gt; Maybe FilePath -&gt; Bool -&gt; Bool -&gt; Target -&gt; CLIOptions)
 forall a b. Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
 forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">Mod FlagFields Bool -&gt; Parser Bool
@@ -493,81 +510,83 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Verbose mode&quot;</span></span><span class="hs-special">)</span><span>
-</span><span id="line-97"></span><span>    </span><span class="annot"><span class="annottext">Parser
-  (Maybe FilePath -&gt; Maybe FilePath -&gt; Bool -&gt; Target -&gt; CLIOptions)
+</span><span id="line-98"></span><span>    </span><span class="annot"><span class="annottext">Parser
+  (Maybe FilePath
+   -&gt; Maybe FilePath -&gt; Bool -&gt; Bool -&gt; Target -&gt; CLIOptions)
 -&gt; Parser (Maybe FilePath)
--&gt; Parser (Maybe FilePath -&gt; Bool -&gt; Target -&gt; CLIOptions)
+-&gt; Parser (Maybe FilePath -&gt; Bool -&gt; Bool -&gt; Target -&gt; CLIOptions)
 forall a b. Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
 forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">Parser FilePath -&gt; Parser (Maybe FilePath)
 forall (f :: * -&gt; *) a. Alternative f =&gt; f a -&gt; f (Maybe a)
 </span><span class="hs-identifier hs-var">optional</span></span><span>
-</span><span id="line-98"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Mod OptionFields FilePath -&gt; Parser FilePath
+</span><span id="line-99"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Mod OptionFields FilePath -&gt; Parser FilePath
 forall s. IsString s =&gt; Mod OptionFields s -&gt; Parser s
 </span><span class="hs-identifier hs-var">strOption</span></span><span>
-</span><span id="line-99"></span><span>          </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Mod OptionFields FilePath
+</span><span id="line-100"></span><span>          </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasName f =&gt; Char -&gt; Mod f a
 </span><span class="hs-identifier hs-var">short</span></span><span> </span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'f'</span></span><span>
-</span><span id="line-100"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-101"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasName f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">long</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;filter&quot;</span></span><span>
-</span><span id="line-101"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-102"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasMetavar f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">metavar</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;REGEX&quot;</span></span><span>
-</span><span id="line-102"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-103"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Regex to filter packages to be updated&quot;</span></span><span>
-</span><span id="line-103"></span><span>          </span><span class="hs-special">)</span><span>
-</span><span id="line-104"></span><span>      </span><span class="hs-special">)</span><span>
-</span><span id="line-105"></span><span>    </span><span class="annot"><span class="annottext">Parser (Maybe FilePath -&gt; Bool -&gt; Target -&gt; CLIOptions)
--&gt; Parser (Maybe FilePath) -&gt; Parser (Bool -&gt; Target -&gt; CLIOptions)
+</span><span id="line-104"></span><span>          </span><span class="hs-special">)</span><span>
+</span><span id="line-105"></span><span>      </span><span class="hs-special">)</span><span>
+</span><span id="line-106"></span><span>    </span><span class="annot"><span class="annottext">Parser (Maybe FilePath -&gt; Bool -&gt; Bool -&gt; Target -&gt; CLIOptions)
+-&gt; Parser (Maybe FilePath)
+-&gt; Parser (Bool -&gt; Bool -&gt; Target -&gt; CLIOptions)
 forall a b. Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
 forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">Parser FilePath -&gt; Parser (Maybe FilePath)
 forall (f :: * -&gt; *) a. Alternative f =&gt; f a -&gt; f (Maybe a)
 </span><span class="hs-identifier hs-var">optional</span></span><span>
-</span><span id="line-106"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Mod OptionFields FilePath -&gt; Parser FilePath
+</span><span id="line-107"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Mod OptionFields FilePath -&gt; Parser FilePath
 forall s. IsString s =&gt; Mod OptionFields s -&gt; Parser s
 </span><span class="hs-identifier hs-var">strOption</span></span><span>
-</span><span id="line-107"></span><span>          </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Mod OptionFields FilePath
+</span><span id="line-108"></span><span>          </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasName f =&gt; Char -&gt; Mod f a
 </span><span class="hs-identifier hs-var">short</span></span><span> </span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'k'</span></span><span>
-</span><span id="line-108"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-109"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasName f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">long</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;keyfile&quot;</span></span><span>
-</span><span id="line-109"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-110"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. HasMetavar f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">metavar</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;FILE&quot;</span></span><span>
-</span><span id="line-110"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-111"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod OptionFields FilePath
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Nvchecker keyfile&quot;</span></span><span>
-</span><span id="line-111"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
+</span><span id="line-112"></span><span>              </span><span class="annot"><span class="annottext">Mod OptionFields FilePath
 -&gt; Mod OptionFields FilePath -&gt; Mod OptionFields FilePath
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Completer -&gt; Mod OptionFields FilePath
@@ -575,10 +594,10 @@ forall (f :: * -&gt; *) a. HasCompleter f =&gt; Completer -&gt; Mod f a
 </span><span class="hs-identifier hs-var">completer</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Completer
 </span><span class="hs-identifier hs-var">bashCompleter</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;file&quot;</span></span><span class="hs-special">)</span><span>
-</span><span id="line-112"></span><span>          </span><span class="hs-special">)</span><span>
-</span><span id="line-113"></span><span>      </span><span class="hs-special">)</span><span>
-</span><span id="line-114"></span><span>    </span><span class="annot"><span class="annottext">Parser (Bool -&gt; Target -&gt; CLIOptions)
--&gt; Parser Bool -&gt; Parser (Target -&gt; CLIOptions)
+</span><span id="line-113"></span><span>          </span><span class="hs-special">)</span><span>
+</span><span id="line-114"></span><span>      </span><span class="hs-special">)</span><span>
+</span><span id="line-115"></span><span>    </span><span class="annot"><span class="annottext">Parser (Bool -&gt; Bool -&gt; Target -&gt; CLIOptions)
+-&gt; Parser Bool -&gt; Parser (Bool -&gt; Target -&gt; CLIOptions)
 forall a b. Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
 forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">Mod FlagFields Bool -&gt; Parser Bool
@@ -591,33 +610,47 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Don't remove old files other than generated json and nix before build&quot;</span></span><span class="hs-special">)</span><span>
-</span><span id="line-115"></span><span>    </span><span class="annot"><span class="annottext">Parser (Target -&gt; CLIOptions) -&gt; Parser Target -&gt; Parser CLIOptions
+</span><span id="line-116"></span><span>    </span><span class="annot"><span class="annottext">Parser (Bool -&gt; Target -&gt; CLIOptions)
+-&gt; Parser Bool -&gt; Parser (Target -&gt; CLIOptions)
+forall a b. Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
+forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">Mod FlagFields Bool -&gt; Parser Bool
+</span><span class="hs-identifier hs-var">switch</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Mod FlagFields Bool
+forall (f :: * -&gt; *) a. HasName f =&gt; FilePath -&gt; Mod f a
+</span><span class="hs-identifier hs-var">long</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-string">&quot;keep-going&quot;</span></span><span> </span><span class="annot"><span class="annottext">Mod FlagFields Bool -&gt; Mod FlagFields Bool -&gt; Mod FlagFields Bool
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod FlagFields Bool
+forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
+</span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-string">&quot;Don't stop if some packages failed to be fetched&quot;</span></span><span class="hs-special">)</span><span>
+</span><span id="line-117"></span><span>    </span><span class="annot"><span class="annottext">Parser (Target -&gt; CLIOptions) -&gt; Parser Target -&gt; Parser CLIOptions
 forall a b. Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
 forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;*&gt;</span></span><span> </span><span class="annot"><span class="annottext">ReadM Target -&gt; Mod ArgumentFields Target -&gt; Parser Target
 forall a. ReadM a -&gt; Mod ArgumentFields a -&gt; Parser a
 </span><span class="hs-identifier hs-var">argument</span></span><span>
-</span><span id="line-116"></span><span>      </span><span class="annot"><span class="annottext">ReadM Target
+</span><span id="line-118"></span><span>      </span><span class="annot"><span class="annottext">ReadM Target
 </span><a href="NvFetcher.Options.html#targetParser"><span class="hs-identifier hs-var">targetParser</span></a></span><span>
-</span><span id="line-117"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod ArgumentFields Target
+</span><span id="line-119"></span><span>      </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod ArgumentFields Target
 forall (f :: * -&gt; *) a. HasMetavar f =&gt; FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">metavar</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;TARGET&quot;</span></span><span>
-</span><span id="line-118"></span><span>          </span><span class="annot"><span class="annottext">Mod ArgumentFields Target
+</span><span id="line-120"></span><span>          </span><span class="annot"><span class="annottext">Mod ArgumentFields Target
 -&gt; Mod ArgumentFields Target -&gt; Mod ArgumentFields Target
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Mod ArgumentFields Target
 forall (f :: * -&gt; *) a. FilePath -&gt; Mod f a
 </span><span class="hs-identifier hs-var">help</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Three targets are available: 1.build  2.clean (remove all generated files) 3.purge (remove shake db)&quot;</span></span><span>
-</span><span id="line-119"></span><span>          </span><span class="annot"><span class="annottext">Mod ArgumentFields Target
+</span><span id="line-121"></span><span>          </span><span class="annot"><span class="annottext">Mod ArgumentFields Target
 -&gt; Mod ArgumentFields Target -&gt; Mod ArgumentFields Target
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Target -&gt; Mod ArgumentFields Target
 forall (f :: * -&gt; *) a. HasValue f =&gt; a -&gt; Mod f a
 </span><span class="hs-identifier hs-var">value</span></span><span> </span><span class="annot"><span class="annottext">Target
 </span><a href="NvFetcher.Options.html#Build"><span class="hs-identifier hs-var">Build</span></a></span><span>
-</span><span id="line-120"></span><span>          </span><span class="annot"><span class="annottext">Mod ArgumentFields Target
+</span><span id="line-122"></span><span>          </span><span class="annot"><span class="annottext">Mod ArgumentFields Target
 -&gt; Mod ArgumentFields Target -&gt; Mod ArgumentFields Target
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Completer -&gt; Mod ArgumentFields Target
@@ -633,26 +666,26 @@ forall a. Show a =&gt; a -&gt; FilePath
 forall a. Show a =&gt; a -&gt; FilePath
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Target
 </span><a href="NvFetcher.Options.html#Purge"><span class="hs-identifier hs-var">Purge</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span>
-</span><span id="line-121"></span><span>          </span><span class="annot"><span class="annottext">Mod ArgumentFields Target
+</span><span id="line-123"></span><span>          </span><span class="annot"><span class="annottext">Mod ArgumentFields Target
 -&gt; Mod ArgumentFields Target -&gt; Mod ArgumentFields Target
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Mod ArgumentFields Target
 forall a (f :: * -&gt; *). Show a =&gt; Mod f a
 </span><span class="hs-identifier hs-var">showDefault</span></span><span>
-</span><span id="line-122"></span><span>      </span><span class="hs-special">)</span><span>
-</span><span id="line-123"></span><span>
-</span><span id="line-124"></span><span class="annot"><a href="NvFetcher.Options.html#version"><span class="hs-identifier hs-type">version</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-125"></span><span id="version"><span class="annot"><span class="annottext">version :: FilePath
-</span><a href="NvFetcher.Options.html#version"><span class="hs-identifier hs-var hs-var">version</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">$</span><span class="hs-special">(</span><span class="hs-identifier">simpleVersion</span><span> </span><span class="hs-identifier">Paths.version</span><span class="hs-special">)</span><span>
-</span><span id="line-126"></span><span>
-</span><span id="line-127"></span><span class="annot"><span class="hs-comment">-- | Parse nvfetcher CLI options</span></span><span>
-</span><span id="line-128"></span><span id="local-6989586621679410157"><span class="annot"><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-type">getCLIOptions</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Parser</span></span><span> </span><span class="annot"><a href="#local-6989586621679410157"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679410157"><span class="hs-identifier hs-type">a</span></a></span></span><span>
-</span><span id="line-129"></span><span id="getCLIOptions"><span class="annot"><span class="annottext">getCLIOptions :: forall a. Parser a -&gt; IO a
-</span><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-var hs-var">getCLIOptions</span></a></span></span><span> </span><span id="local-6989586621679410396"><span class="annot"><span class="annottext">Parser a
-</span><a href="#local-6989586621679410396"><span class="hs-identifier hs-var">parser</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-130"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679410397"><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679410397"><span class="hs-identifier hs-var">opts</span></a></span></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
-</span><span id="line-131"></span><span>    </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-124"></span><span>      </span><span class="hs-special">)</span><span>
+</span><span id="line-125"></span><span>
+</span><span id="line-126"></span><span class="annot"><a href="NvFetcher.Options.html#version"><span class="hs-identifier hs-type">version</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-127"></span><span id="version"><span class="annot"><span class="annottext">version :: FilePath
+</span><a href="NvFetcher.Options.html#version"><span class="hs-identifier hs-var hs-var">version</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">$</span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">simpleVersion</span></span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#version"><span class="hs-identifier hs-type">Paths.version</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-128"></span><span>
+</span><span id="line-129"></span><span class="annot"><span class="hs-comment">-- | Parse nvfetcher CLI options</span></span><span>
+</span><span id="line-130"></span><span id="local-6989586621679400717"><span class="annot"><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-type">getCLIOptions</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Parser</span></span><span> </span><span class="annot"><a href="#local-6989586621679400717"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679400717"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-131"></span><span id="getCLIOptions"><span class="annot"><span class="annottext">getCLIOptions :: forall a. Parser a -&gt; IO a
+</span><a href="NvFetcher.Options.html#getCLIOptions"><span class="hs-identifier hs-var hs-var">getCLIOptions</span></a></span></span><span> </span><span id="local-6989586621679400963"><span class="annot"><span class="annottext">Parser a
+</span><a href="#local-6989586621679400963"><span class="hs-identifier hs-var">parser</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-132"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679400964"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679400964"><span class="hs-identifier hs-var">opts</span></a></span></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span>
+</span><span id="line-133"></span><span>    </span><span class="annot"><span class="annottext">FilePath
 -&gt; FilePath
 -&gt; FilePath
 -&gt; Parser a
@@ -666,21 +699,21 @@ FilePath
 -&gt; ExceptT b (Writer (Mod CommandFields b)) ()
 -&gt; IO (a, b)
 </span><span class="hs-identifier hs-var">simpleOptions</span></span><span>
-</span><span id="line-132"></span><span>      </span><span class="annot"><span class="annottext">FilePath
-</span><a href="NvFetcher.Options.html#version"><span class="hs-identifier hs-var">version</span></a></span><span>
-</span><span id="line-133"></span><span>      </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;nvfetcher&quot;</span></span><span>
 </span><span id="line-134"></span><span>      </span><span class="annot"><span class="annottext">FilePath
+</span><a href="NvFetcher.Options.html#version"><span class="hs-identifier hs-var">version</span></a></span><span>
+</span><span id="line-135"></span><span>      </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-string">&quot;nvfetcher&quot;</span></span><span>
+</span><span id="line-136"></span><span>      </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;generate nix sources expr for the latest version of packages&quot;</span></span><span>
-</span><span id="line-135"></span><span>      </span><span class="annot"><span class="annottext">Parser a
-</span><a href="#local-6989586621679410396"><span class="hs-identifier hs-var">parser</span></a></span><span>
-</span><span id="line-136"></span><span>      </span><span class="annot"><span class="annottext">ExceptT () (Writer (Mod CommandFields ())) ()
+</span><span id="line-137"></span><span>      </span><span class="annot"><span class="annottext">Parser a
+</span><a href="#local-6989586621679400963"><span class="hs-identifier hs-var">parser</span></a></span><span>
+</span><span id="line-138"></span><span>      </span><span class="annot"><span class="annottext">ExceptT () (Writer (Mod CommandFields ())) ()
 forall a. ExceptT () (Writer (Mod CommandFields ())) a
 forall (f :: * -&gt; *) a. Alternative f =&gt; f a
 </span><span class="hs-identifier hs-var">empty</span></span><span>
-</span><span id="line-137"></span><span>  </span><span class="annot"><span class="annottext">a -&gt; IO a
+</span><span id="line-139"></span><span>  </span><span class="annot"><span class="annottext">a -&gt; IO a
 forall a. a -&gt; IO a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679410397"><span class="hs-identifier hs-var">opts</span></a></span><span>
-</span><span id="line-138"></span></pre></body></html>
+</span><a href="#local-6989586621679400964"><span class="hs-identifier hs-var">opts</span></a></span><span>
+</span><span id="line-140"></span></pre></body></html>

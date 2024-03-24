@@ -13,7 +13,7 @@ module NvFetcher.Config
 
 -- | Nvfetcher configuration
 data Config
-Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Bool -> Bool -> Maybe FilePath -> Config
+Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int -> Maybe String -> Bool -> Bool -> Maybe FilePath -> Bool -> Config
 [shakeConfig] :: Config -> ShakeOptions
 [buildDir] :: Config -> FilePath
 [customRules] :: Config -> Rules ()
@@ -26,6 +26,10 @@ Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int 
 
 -- | Absolute path
 [keyfile] :: Config -> Maybe FilePath
+
+-- | When set to <a>True</a>, nvfetcher will keep going even if some
+--   packages failed to <i>fetch</i>
+[keepGoing] :: Config -> Bool
 instance Data.Default.Class.Default NvFetcher.Config.Config
 
 
@@ -561,23 +565,23 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-tlsVerify :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Bool)
-sha256 :: forall k_iYuM. Lens' (NixFetcher k_iYuM) (FetchResult Checksum k_iYuM)
-rev :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Version
-name :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Text)
-leaveDotGit :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Bool
-imageTag :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Text
-imageName :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Text
-imageDigest :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (FetchResult ContainerDigest k_iYuM)
-furl :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Text
-frepo :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Text
-fowner :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Text
-fos :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Text)
-finalImageTag :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Text)
-finalImageName :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Text)
-fetchSubmodules :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Bool
-farch :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) (Maybe Text)
-deepClone :: forall k_iYuM. Traversal' (NixFetcher k_iYuM) Bool
+tlsVerify :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) (Maybe Bool)
+sha256 :: forall k_iYHa. Lens' (NixFetcher k_iYHa) (FetchResult Checksum k_iYHa)
+rev :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) Version
+name :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) (Maybe Text)
+leaveDotGit :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) Bool
+imageTag :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) Text
+imageName :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) Text
+imageDigest :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) (FetchResult ContainerDigest k_iYHa)
+furl :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) Text
+frepo :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) Text
+fowner :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) Text
+fos :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) (Maybe Text)
+finalImageTag :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) (Maybe Text)
+finalImageName :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) (Maybe Text)
+fetchSubmodules :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) Bool
+farch :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) (Maybe Text)
+deepClone :: forall k_iYHa. Traversal' (NixFetcher k_iYHa) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -649,6 +653,9 @@ getLastVersionUpdated :: PackageKey -> Action (Maybe Version)
 
 -- | Get if <a>cacheNvchecker</a> is enabled
 nvcheckerCacheEnabled :: Action Bool
+
+-- | Get if <a>keepGoing</a> is enabled
+nvcheckerKeepGoing :: Action Bool
 
 
 -- | <a>NixFetcher</a> is used to describe how to fetch package sources.
@@ -727,7 +734,7 @@ type family FetchResult a (k :: FetchStatus)
 prefetchRule :: Rules ()
 
 -- | Run nix fetcher
-prefetch :: NixFetcher Fresh -> ForceFetch -> Action (NixFetcher Fetched)
+prefetch :: NixFetcher Fresh -> ForceFetch -> Action (Maybe (NixFetcher Fetched))
 
 -- | Create a fetcher from github repo
 gitHubFetcher :: (Text, Text) -> PackageFetcher
@@ -1043,17 +1050,18 @@ type Attach x arg = AttachMany '[x] arg
 -- | Attach members <tt>xs</tt>, with a function argument <tt>arg</tt>
 type AttachMany xs arg = forall r. PackageSet (Prod r) -> arg -> PackageSet (Prod (Append xs r))
 
--- | The function <tt>coerce</tt> allows you to safely convert between
---   values of types that have the same representation with no run-time
---   overhead. In the simplest case you can use it instead of a newtype
---   constructor, to go from the newtype's concrete type to the abstract
---   type. But it also works in more complicated settings, e.g. converting
---   a list of newtypes to a list of concrete types.
+-- | The function <a>coerce</a> allows you to safely convert between values
+--   of types that have the same representation with no run-time overhead.
+--   In the simplest case you can use it instead of a newtype constructor,
+--   to go from the newtype's concrete type to the abstract type. But it
+--   also works in more complicated settings, e.g. converting a list of
+--   newtypes to a list of concrete types.
 --   
 --   This function is representation-polymorphic, but the
 --   <tt>RuntimeRep</tt> type argument is marked as <tt>Inferred</tt>,
 --   meaning that it is not available for visible type application. This
---   means the typechecker will accept <tt>coerce @Int @Age 42</tt>.
+--   means the typechecker will accept <tt><a>coerce</a> </tt><tt>Int</tt>
+--   <tt>Age 42</tt>.
 coerce :: forall {k :: RuntimeRep} (a :: TYPE k) (b :: TYPE k). Coercible a b => a -> b
 
 -- | Lift a computation from the <a>IO</a> monad. This allows us to run IO
@@ -1395,7 +1403,7 @@ coreRules :: Rules ()
 
 -- | <a>Core</a> rule take a <a>PackageKey</a>, find the corresponding
 --   <a>Package</a>, and run all needed rules to get <a>PackageResult</a>
-runPackage :: PackageKey -> Action PackageResult
+runPackage :: PackageKey -> Action (Maybe PackageResult)
 
 
 -- | CLI interface of nvfetcher
@@ -1403,7 +1411,7 @@ module NvFetcher.Options
 
 -- | Options for nvfetcher CLI
 data CLIOptions
-CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> Maybe FilePath -> Bool -> Target -> CLIOptions
+CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> Maybe FilePath -> Bool -> Bool -> Target -> CLIOptions
 [optBuildDir] :: CLIOptions -> FilePath
 [optCommit] :: CLIOptions -> Bool
 [optLogPath] :: CLIOptions -> Maybe FilePath
@@ -1414,6 +1422,7 @@ CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -
 [optPkgNameFilter] :: CLIOptions -> Maybe String
 [optKeyfile] :: CLIOptions -> Maybe FilePath
 [optKeepOldFiles] :: CLIOptions -> Bool
+[optKeepGoing] :: CLIOptions -> Bool
 [optTarget] :: CLIOptions -> Target
 data Target
 Build :: Target
