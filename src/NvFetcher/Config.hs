@@ -31,8 +31,7 @@ instance Default Config where
       { shakeConfig =
           shakeOptions
             { shakeProgress = progressSimple,
-              shakeThreads = 0,
-              shakeVersion = "1"
+              shakeThreads = 0
             },
         buildDir = "_sources",
         customRules = pure (),
