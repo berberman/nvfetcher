@@ -157,8 +157,8 @@ runNvFetcherNoCLI config@Config {..} target packageSet = do
   pkgs <- Map.map pinIfUnmatch <$> runPackageSet packageSet
   lastVersions <- parseLastVersions $ buildDir </> generatedJsonFileName
   shakeDir <- getDataDir
-  -- Set shakeFiles
-  let shakeOptions1 = shakeConfig {shakeFiles = shakeDir}
+  -- Set shakeFiles and shakeVersion
+  let shakeOptions1 = shakeConfig {shakeFiles = shakeDir, shakeVersion = "2"}
   -- shakeConfig in Config will be shakeOptions1 (not including shake extra)
   shakeExtras <- initShakeExtras (config {shakeConfig = shakeOptions1}) pkgs $ fromMaybe mempty lastVersions
   -- Set shakeExtra
