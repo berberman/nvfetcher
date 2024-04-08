@@ -103,7 +103,7 @@ applyCliOptions config CLIOptions {..} = do
       { buildDir = optBuildDir,
         actionAfterBuild = do
           whenJust optLogPath logChangesToFile
-          when optCommit commitChanges
+          when optCommit (commitChanges (fromMaybe "Update" optCommitSummary))
           actionAfterBuild config,
         shakeConfig =
           (shakeConfig config)
@@ -123,12 +123,12 @@ logChangesToFile fp = do
   changes <- getVersionChanges
   writeFile' fp $ unlines $ show <$> changes
 
-commitChanges :: Action ()
-commitChanges = do
+commitChanges :: String -> Action ()
+commitChanges commitSummary = do
   changes <- getVersionChanges
   let commitMsg = case changes of
         [x] -> Just $ show x
-        xs@(_ : _) -> Just $ "Update\n" <> unlines (show <$> xs)
+        xs@(_ : _) -> Just $ commitSummary <> "\n" <> unlines (show <$> xs)
         [] -> Nothing
   whenJust commitMsg $ \msg -> do
     putInfo "Commiting changes"

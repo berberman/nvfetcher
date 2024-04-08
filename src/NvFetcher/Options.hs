@@ -38,6 +38,7 @@ targetParser = maybeReader $ \case
 data CLIOptions = CLIOptions
   { optBuildDir :: FilePath,
     optCommit :: Bool,
+    optCommitSummary :: Maybe String,
     optLogPath :: Maybe FilePath,
     optThreads :: Int,
     optRetry :: Int,
@@ -66,6 +67,13 @@ cliOptionsParser =
     <*> switch
       ( long "commit-changes"
           <> help "`git commit` build dir with version changes as commit message"
+      )
+    <*> optional
+      ( strOption
+          ( long "commit-summary"
+              <> metavar "SUMMARY"
+              <> help "Summary to use when committing changes"
+          )
       )
     <*> optional
       ( strOption
