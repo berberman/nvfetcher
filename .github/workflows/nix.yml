@@ -7,8 +7,8 @@ jobs:
   nix-tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: cachix/install-nix-action@v18
+    - uses: actions/checkout@v4
+    - uses: cachix/install-nix-action@v25
       with:
         github_access_token: ${{ secrets.GITHUB_TOKEN }}
         nix_path: nixpkgs=channel:nixos-unstable
@@ -29,7 +29,7 @@ jobs:
     - name: Run CLI with nvfetcher_example.toml
       run : nix shell --command nvfetcher --config nvfetcher_example.toml
 
-    - name: Run generated.nix syntax check
+    - name: Eval generated.nix
       run : nix eval -f _sources/generated.nix
 
     - name: Cleanup
@@ -44,4 +44,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs
-        cname: nvfetcher.typed.icu
+        cname: nvfetcher.torus.icu
