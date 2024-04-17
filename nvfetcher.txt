@@ -1411,9 +1411,10 @@ module NvFetcher.Options
 
 -- | Options for nvfetcher CLI
 data CLIOptions
-CLIOptions :: FilePath -> Bool -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> Maybe FilePath -> Bool -> Bool -> Target -> CLIOptions
+CLIOptions :: FilePath -> Bool -> Maybe String -> Maybe FilePath -> Int -> Int -> Bool -> Bool -> Maybe String -> Maybe FilePath -> Bool -> Bool -> Target -> CLIOptions
 [optBuildDir] :: CLIOptions -> FilePath
 [optCommit] :: CLIOptions -> Bool
+[optCommitSummary] :: CLIOptions -> Maybe String
 [optLogPath] :: CLIOptions -> Maybe FilePath
 [optThreads] :: CLIOptions -> Int
 [optRetry] :: CLIOptions -> Int
