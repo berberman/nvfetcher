@@ -394,6 +394,7 @@ data NixFetcher (k :: FetchStatus)
         _deepClone :: Bool,
         _fetchSubmodules :: Bool,
         _leaveDotGit :: Bool,
+        _sparseCheckout :: [Text],
         _name :: Maybe Text,
         _sha256 :: FetchResult Checksum k
       }
@@ -404,6 +405,7 @@ data NixFetcher (k :: FetchStatus)
         _deepClone :: Bool,
         _fetchSubmodules :: Bool,
         _leaveDotGit :: Bool,
+        _sparseCheckout :: [Text],
         _name :: Maybe Text,
         _sha256 :: FetchResult Checksum k
       }
@@ -461,6 +463,7 @@ instance A.ToJSON (NixFetcher Fetched) where
         "deepClone" A..= _deepClone,
         "fetchSubmodules" A..= _fetchSubmodules,
         "leaveDotGit" A..= _leaveDotGit,
+        "sparseCheckout" A..= _sparseCheckout,
         "name" A..= _name,
         "sha256" A..= _sha256,
         "type" A..= A.String "git"
@@ -473,6 +476,7 @@ instance A.ToJSON (NixFetcher Fetched) where
         "deepClone" A..= _deepClone,
         "fetchSubmodules" A..= _fetchSubmodules,
         "leaveDotGit" A..= _leaveDotGit,
+        "sparseCheckout" A..= _sparseCheckout,
         "name" A..= _name,
         "sha256" A..= _sha256,
         "type" A..= A.String "github"
@@ -514,7 +518,8 @@ instance Pretty (NixFetcher k) where
               "rev" <> colon <+> pretty _rev,
               "deepClone" <> colon <+> pretty _deepClone,
               "fetchSubmodules" <> colon <+> pretty _fetchSubmodules,
-              "leaveDotGit" <> colon <+> pretty _leaveDotGit
+              "leaveDotGit" <> colon <+> pretty _leaveDotGit,
+              "sparseCheckout" <> colon <+> pretty _sparseCheckout
             ]
               <> ppField "name" _name
         )
@@ -529,7 +534,8 @@ instance Pretty (NixFetcher k) where
               "rev" <> colon <+> pretty _rev,
               "deepClone" <> colon <+> pretty _deepClone,
               "fetchSubmodules" <> colon <+> pretty _fetchSubmodules,
-              "leaveDotGit" <> colon <+> pretty _leaveDotGit
+              "leaveDotGit" <> colon <+> pretty _leaveDotGit,
+              "sparseCheckout" <> colon <+> pretty _sparseCheckout
             ]
               <> ppField "name" _name
         )

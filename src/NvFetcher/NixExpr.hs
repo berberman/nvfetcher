@@ -67,6 +67,7 @@ nixFetcher = \case
       _fetchSubmodules = toNixExpr -> fetchSubmodules,
       _deepClone = toNixExpr -> deepClone,
       _leaveDotGit = toNixExpr -> leaveDotGit,
+      _sparseCheckout = toNixExpr . map quote -> sparseCheckout,
       _furl = quote -> url,
       _name = nameField -> n
     } ->
@@ -76,7 +77,8 @@ nixFetcher = \case
             rev = $rev;
             fetchSubmodules = $fetchSubmodules;
             deepClone = $deepClone;
-            leaveDotGit = $leaveDotGit;$n
+            leaveDotGit = $leaveDotGit;
+            sparseCheckout = $sparseCheckout;$n
             sha256 = $sha256;
           }
     |]
@@ -86,6 +88,7 @@ nixFetcher = \case
       _fetchSubmodules = toNixExpr -> fetchSubmodules,
       _deepClone = toNixExpr -> deepClone,
       _leaveDotGit = toNixExpr -> leaveDotGit,
+      _sparseCheckout = toNixExpr . map quote -> sparseCheckout,
       _fowner = quote -> owner,
       _frepo = quote -> repo,
       _name = nameField -> n
@@ -101,7 +104,8 @@ nixFetcher = \case
                  rev = $rev;
                  fetchSubmodules = $fetchSubmodules;
                  deepClone = $deepClone;
-                 leaveDotGit = $leaveDotGit;$n
+                 leaveDotGit = $leaveDotGit;
+                 sparseCheckout = $sparseCheckout;$n
                  sha256 = $sha256;
                }
          |]
@@ -111,7 +115,8 @@ nixFetcher = \case
                  owner = $owner;
                  repo = $repo;
                  rev = $rev;
-                 fetchSubmodules = $fetchSubmodules;$n
+                 fetchSubmodules = $fetchSubmodules;
+                 sparseCheckout = $sparseCheckout;$n
                  sha256 = $sha256;
                }
          |]
