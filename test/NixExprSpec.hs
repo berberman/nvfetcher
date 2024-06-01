@@ -34,6 +34,7 @@ spec = describe "toNixExpr" $ do
         fetchSubmodules = true;
         deepClone = false;
         leaveDotGit = false;
+        sparseCheckout = [ ];
         sha256 = "0000000000000000000000000000000000000000000000000000000000000000";
       }
     |]
