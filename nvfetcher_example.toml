@@ -68,3 +68,9 @@ fetch.url = "https://files.yande.re/image/3fc51f6a2fb10c96b73dd0fce6ddb9c8/yande
 src.manual = "latest"
 # Override the name of the file in the Nix store
 url.name = "wallpaper.jpg"
+
+# To demonstrate how to use `sparseCheckout` option
+[noto-fonts-cjk-sans-fix-weight]
+src.manual = "Sans2.004"
+fetch.github = "notofonts/noto-cjk"
+git.sparseCheckout = [ "Sans/OTC" ]

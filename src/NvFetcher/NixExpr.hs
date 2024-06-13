@@ -67,6 +67,7 @@ nixFetcher = \case
       _fetchSubmodules = toNixExpr -> fetchSubmodules,
       _deepClone = toNixExpr -> deepClone,
       _leaveDotGit = toNixExpr -> leaveDotGit,
+      _sparseCheckout = toNixExpr . map quote -> sparseCheckout,
       _furl = quote -> url,
       _name = nameField -> n
     } ->
@@ -76,7 +77,8 @@ nixFetcher = \case
             rev = $rev;
             fetchSubmodules = $fetchSubmodules;
             deepClone = $deepClone;
-            leaveDotGit = $leaveDotGit;$n
+            leaveDotGit = $leaveDotGit;
+            sparseCheckout = $sparseCheckout;$n
             sha256 = $sha256;
           }
     |]
@@ -86,13 +88,14 @@ nixFetcher = \case
       _fetchSubmodules = toNixExpr -> fetchSubmodules,
       _deepClone = toNixExpr -> deepClone,
       _leaveDotGit = toNixExpr -> leaveDotGit,
+      _sparseCheckout = toNixExpr . map quote -> sparseCheckout,
       _fowner = quote -> owner,
       _frepo = quote -> repo,
       _name = nameField -> n
     } ->
-      -- TODO: fix fetchFromGitHub in Nixpkgs so that deepClone and
-      -- leaveDotGit won't get passed to fetchzip
-      if (deepClone == "true") || (leaveDotGit == "true")
+      -- TODO: fix fetchFromGitHub in Nixpkgs so that deepClone, leaveDotGit
+      -- and sparseCheckout won't get passed to fetchzip
+      if (deepClone == "true") || (leaveDotGit == "true") || (sparseCheckout /= "[ ]")
         then
           [trimming|
                fetchFromGitHub {
@@ -101,7 +104,8 @@ nixFetcher = \case
                  rev = $rev;
                  fetchSubmodules = $fetchSubmodules;
                  deepClone = $deepClone;
-                 leaveDotGit = $leaveDotGit;$n
+                 leaveDotGit = $leaveDotGit;
+                 sparseCheckout = $sparseCheckout;$n
                  sha256 = $sha256;
                }
          |]

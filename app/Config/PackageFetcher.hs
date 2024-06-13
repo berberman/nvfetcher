@@ -50,7 +50,8 @@ fetcherKeys =
 data GitOptions = GitOptions
   { goDeepClone :: Maybe Bool,
     goFetchSubmodules :: Maybe Bool,
-    goLeaveDotGit :: Maybe Bool
+    goLeaveDotGit :: Maybe Bool,
+    goSparseCheckout :: Maybe [Text]
   }
   deriving (Eq, Generic)
 
@@ -60,6 +61,7 @@ gitOptionsDecoder =
     <$> getFieldsOpt ["git", "deepClone"]
     <*> getFieldsOpt ["git", "fetchSubmodules"]
     <*> getFieldsOpt ["git", "leaveDotGit"]
+    <*> getFieldsOpt ["git", "sparseCheckout"]
 
 _GitOptions :: Traversal' (NixFetcher f) GitOptions
 _GitOptions f x@FetchGit {..} =
@@ -68,16 +70,18 @@ _GitOptions f x@FetchGit {..} =
         & deepClone .~ fromMaybe False goDeepClone
         & fetchSubmodules .~ fromMaybe False goFetchSubmodules
         & leaveDotGit .~ fromMaybe False goLeaveDotGit
+        & sparseCheckout .~ fromMaybe [] goSparseCheckout
   )
-    <$> f (GitOptions (Just _deepClone) (Just _fetchSubmodules) (Just _leaveDotGit))
+    <$> f (GitOptions (Just _deepClone) (Just _fetchSubmodules) (Just _leaveDotGit) (Just _sparseCheckout))
 _GitOptions f x@FetchGitHub {..} =
   ( \GitOptions {..} ->
       x
         & deepClone .~ fromMaybe False goDeepClone
         & fetchSubmodules .~ fromMaybe False goFetchSubmodules
         & leaveDotGit .~ fromMaybe False goLeaveDotGit
+        & sparseCheckout .~ fromMaybe [] goSparseCheckout
   )
-    <$> f (GitOptions (Just _deepClone) (Just _fetchSubmodules) (Just _leaveDotGit))
+    <$> f (GitOptions (Just _deepClone) (Just _fetchSubmodules) (Just _leaveDotGit) (Just _sparseCheckout))
 _GitOptions _ x = pure x
 
 --------------------------------------------------------------------------------
