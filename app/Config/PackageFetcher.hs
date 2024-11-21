@@ -121,7 +121,7 @@ urlDecoder :: Decoder PackageFetcher
 urlDecoder = do
   url <- getFields ["fetch", "url"]
   name <- getFieldsOpt ["url", "name"]
-  pure $ \(coerce -> v) -> urlFetcher' (T.replace "$ver" v url) name
+  pure $ \(coerce -> v) -> urlFetcher' (T.replace "$ver" v url) (fmap (T.replace "$ver" v) name)
 
 --------------------------------------------------------------------------------
 

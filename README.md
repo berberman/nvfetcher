@@ -194,6 +194,7 @@ How do we fetch the package source if we have the target version number?
 - `fetch.docker = owner/name`
 
 Optional config for `nix-prefetch-url`, applies when the fetcher equals to `fetch.url`.
+`$ver` is available in string, just like for the fetch config.
 
 - `url.name = file_name`
 
