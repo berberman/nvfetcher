@@ -34,16 +34,16 @@
 </span><span id="line-34"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.Utils.html"><span class="hs-identifier">NvFetcher.Utils</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier">quote</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="NvFetcher.Utils.html#quoteIfNeeds"><span class="hs-identifier">quoteIfNeeds</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-35"></span><span>
 </span><span id="line-36"></span><span class="annot"><span class="hs-comment">-- | Types can be converted into nix expr</span></span><span>
-</span><span id="line-37"></span><span class="hs-keyword">class</span><span> </span><span id="ToNixExpr"><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-var">ToNixExpr</span></a></span></span><span> </span><span id="local-6989586621679404107"><span class="annot"><a href="#local-6989586621679404107"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-38"></span><span>  </span><span id="toNixExpr"><span class="annot"><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-type">toNixExpr</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679404107"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span>
+</span><span id="line-37"></span><span class="hs-keyword">class</span><span> </span><span id="ToNixExpr"><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-var">ToNixExpr</span></a></span></span><span> </span><span id="local-6989586621679404722"><span class="annot"><a href="#local-6989586621679404722"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-38"></span><span>  </span><span id="toNixExpr"><span class="annot"><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-type">toNixExpr</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679404722"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span>
 </span><span id="line-39"></span><span>
 </span><span id="line-40"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#NixFetcher"><span class="hs-identifier hs-type">NixFetcher</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Fetched"><span class="hs-identifier hs-type">Fetched</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-41"></span><span>  </span><span id="local-6989586621679404205"><span class="annot"><span class="annottext">toNixExpr :: NixFetcher 'Fetched -&gt; Text
+</span><span id="line-41"></span><span>  </span><span id="local-6989586621679404820"><span class="annot"><span class="annottext">toNixExpr :: NixFetcher 'Fetched -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var hs-var hs-var hs-var">toNixExpr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fetched -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#nixFetcher"><span class="hs-identifier hs-var">nixFetcher</span></a></span><span>
 </span><span id="line-42"></span><span>
 </span><span id="line-43"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-44"></span><span>  </span><span id="local-6989586621679404210"><span class="annot"><span class="annottext">toNixExpr :: Bool -&gt; Text
+</span><span id="line-44"></span><span>  </span><span id="local-6989586621679404825"><span class="annot"><span class="annottext">toNixExpr :: Bool -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var hs-var hs-var hs-var">toNixExpr</span></a></span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">True</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;true&quot;</span></span><span>
@@ -51,18 +51,18 @@
 </span><span class="hs-identifier hs-var">False</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;false&quot;</span></span><span>
 </span><span id="line-46"></span><span>
-</span><span id="line-47"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679404106"><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679404106"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679404106"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">]</span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-48"></span><span>  </span><span id="local-6989586621679404223"><span class="annot"><span class="annottext">toNixExpr :: [a] -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var hs-var hs-var hs-var">toNixExpr</span></a></span></span><span> </span><span id="local-6989586621679404224"><span class="annot"><span class="annottext">[a]
-</span><a href="#local-6989586621679404224"><span class="hs-identifier hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Text -&gt; a -&gt; Text) -&gt; Text -&gt; [a] -&gt; Text
+</span><span id="line-47"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679404721"><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679404721"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679404721"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">]</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-48"></span><span>  </span><span id="local-6989586621679404838"><span class="annot"><span class="annottext">toNixExpr :: [a] -&gt; Text
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var hs-var hs-var hs-var">toNixExpr</span></a></span></span><span> </span><span id="local-6989586621679404839"><span class="annot"><span class="annottext">[a]
+</span><a href="#local-6989586621679404839"><span class="hs-identifier hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Text -&gt; a -&gt; Text) -&gt; Text -&gt; [a] -&gt; Text
 forall b a. (b -&gt; a -&gt; b) -&gt; b -&gt; [a] -&gt; b
 forall (t :: * -&gt; *) b a.
 Foldable t =&gt;
 (b -&gt; a -&gt; b) -&gt; b -&gt; t a -&gt; b
-</span><span class="hs-identifier hs-var">foldl</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679404226"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404226"><span class="hs-identifier hs-var">acc</span></a></span></span><span> </span><span id="local-6989586621679404227"><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679404227"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404226"><span class="hs-identifier hs-var">acc</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
+</span><span class="hs-identifier hs-var">foldl</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679404841"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404841"><span class="hs-identifier hs-var">acc</span></a></span></span><span> </span><span id="local-6989586621679404842"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679404842"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404841"><span class="hs-identifier hs-var">acc</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot; &quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
@@ -70,15 +70,15 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679404227"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404842"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;[&quot;</span></span><span> </span><span class="annot"><span class="annottext">[a]
-</span><a href="#local-6989586621679404224"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
+</span><a href="#local-6989586621679404839"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot; ]&quot;</span></span><span>
 </span><span id="line-49"></span><span>
-</span><span id="line-50"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679404114"><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679404114"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">NE.NonEmpty</span></span><span> </span><span class="annot"><a href="#local-6989586621679404114"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-51"></span><span>  </span><span id="local-6989586621679404232"><span class="annot"><span class="annottext">toNixExpr :: NonEmpty a -&gt; Text
+</span><span id="line-50"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679404729"><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679404729"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">NE.NonEmpty</span></span><span> </span><span class="annot"><a href="#local-6989586621679404729"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-51"></span><span>  </span><span id="local-6989586621679404847"><span class="annot"><span class="annottext">toNixExpr :: NonEmpty a -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var hs-var hs-var hs-var">toNixExpr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[a] -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="annot"><span class="annottext">([a] -&gt; Text) -&gt; (NonEmpty a -&gt; [a]) -&gt; NonEmpty a -&gt; Text
@@ -88,7 +88,7 @@ forall a. NonEmpty a -&gt; [a]
 </span><span class="hs-identifier hs-var">NE.toList</span></span><span>
 </span><span id="line-52"></span><span>
 </span><span id="line-53"></span><span class="hs-keyword">instance</span><span> </span><span class="hs-pragma">{-# OVERLAPS</span><span> </span><span class="hs-pragma">#-}</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-54"></span><span>  </span><span id="local-6989586621679404241"><span class="annot"><span class="annottext">toNixExpr :: String -&gt; Text
+</span><span id="line-54"></span><span>  </span><span id="local-6989586621679404856"><span class="annot"><span class="annottext">toNixExpr :: String -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var hs-var hs-var hs-var">toNixExpr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; Text
 </span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Text) -&gt; (String -&gt; String) -&gt; String -&gt; Text
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -97,13 +97,13 @@ forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span>
 </span><span id="line-55"></span><span>
 </span><span id="line-56"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-57"></span><span>  </span><span id="local-6989586621679404245"><span class="annot"><span class="annottext">toNixExpr :: Text -&gt; Text
+</span><span id="line-57"></span><span>  </span><span id="local-6989586621679404860"><span class="annot"><span class="annottext">toNixExpr :: Text -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var hs-var hs-var hs-var">toNixExpr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 forall a. a -&gt; a
 </span><span class="hs-identifier hs-var">id</span></span><span>
 </span><span id="line-58"></span><span>
 </span><span id="line-59"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-60"></span><span>  </span><span id="local-6989586621679404249"><span class="annot"><span class="annottext">toNixExpr :: Version -&gt; Text
+</span><span id="line-60"></span><span>  </span><span id="local-6989586621679404864"><span class="annot"><span class="annottext">toNixExpr :: Version -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var hs-var hs-var hs-var">toNixExpr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Text
 forall a b. Coercible a b =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">coerce</span></span><span>
@@ -116,31 +116,31 @@ forall a b. Coercible a b =&gt; a -&gt; b
 </span><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var">_sha256</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; Checksum -&gt; Text
 forall a b. Coercible a b =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404252"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404252"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404867"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404867"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-66"></span><span>      </span><span class="annot"><span class="annottext">_rev :: forall (k :: FetchStatus). NixFetcher k -&gt; Version
 </span><a href="NvFetcher.Types.html#_rev"><span class="hs-identifier hs-var">_rev</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; (Version -&gt; Text) -&gt; Version -&gt; Text
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404254"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404254"><span class="hs-identifier hs-var">rev</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404869"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404869"><span class="hs-identifier hs-var">rev</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-67"></span><span>      </span><span class="annot"><span class="annottext">_fetchSubmodules :: forall (k :: FetchStatus). NixFetcher k -&gt; Bool
 </span><a href="NvFetcher.Types.html#_fetchSubmodules"><span class="hs-identifier hs-var">_fetchSubmodules</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404256"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404256"><span class="hs-identifier hs-var">fetchSubmodules</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404871"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404871"><span class="hs-identifier hs-var">fetchSubmodules</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-68"></span><span>      </span><span class="annot"><span class="annottext">_deepClone :: forall (k :: FetchStatus). NixFetcher k -&gt; Bool
 </span><a href="NvFetcher.Types.html#_deepClone"><span class="hs-identifier hs-var">_deepClone</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404258"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404258"><span class="hs-identifier hs-var">deepClone</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404873"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404873"><span class="hs-identifier hs-var">deepClone</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-69"></span><span>      </span><span class="annot"><span class="annottext">_leaveDotGit :: forall (k :: FetchStatus). NixFetcher k -&gt; Bool
 </span><a href="NvFetcher.Types.html#_leaveDotGit"><span class="hs-identifier hs-var">_leaveDotGit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404260"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404260"><span class="hs-identifier hs-var">leaveDotGit</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404875"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404875"><span class="hs-identifier hs-var">leaveDotGit</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-70"></span><span>      </span><span class="annot"><span class="annottext">_sparseCheckout :: forall (k :: FetchStatus). NixFetcher k -&gt; [Text]
 </span><a href="NvFetcher.Types.html#_sparseCheckout"><span class="hs-identifier hs-var">_sparseCheckout</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Text] -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
@@ -149,16 +149,16 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; [Text] -&gt; [Text]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404262"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404262"><span class="hs-identifier hs-var">sparseCheckout</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404877"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404877"><span class="hs-identifier hs-var">sparseCheckout</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-71"></span><span>      </span><span class="annot"><span class="annottext">_furl :: forall (k :: FetchStatus). NixFetcher k -&gt; Text
 </span><a href="NvFetcher.Types.html#_furl"><span class="hs-identifier hs-var">_furl</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404264"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404264"><span class="hs-identifier hs-var">url</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404879"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404879"><span class="hs-identifier hs-var">url</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-72"></span><span>      </span><span class="annot"><span class="annottext">_name :: forall (k :: FetchStatus). NixFetcher k -&gt; Maybe Text
 </span><a href="NvFetcher.Types.html#_name"><span class="hs-identifier hs-var">_name</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe Text -&gt; Text
-</span><a href="#local-6989586621679404266"><span class="hs-identifier hs-var">nameField</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404267"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404267"><span class="hs-identifier hs-var">n</span></a></span></span><span>
+</span><a href="#local-6989586621679404881"><span class="hs-identifier hs-var">nameField</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404882"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404882"><span class="hs-identifier hs-var">n</span></a></span></span><span>
 </span><span id="line-73"></span><span>    </span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-74"></span><span>      </span><span class="annot"><span class="">[trimming|
           fetchgit {
@@ -176,31 +176,31 @@ forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var">_sha256</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; Checksum -&gt; Text
 forall a b. Coercible a b =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404273"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404273"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404888"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404888"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-87"></span><span>      </span><span class="annot"><span class="annottext">_rev :: forall (k :: FetchStatus). NixFetcher k -&gt; Version
 </span><a href="NvFetcher.Types.html#_rev"><span class="hs-identifier hs-var">_rev</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; (Version -&gt; Text) -&gt; Version -&gt; Text
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404274"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404274"><span class="hs-identifier hs-var">rev</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404889"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404889"><span class="hs-identifier hs-var">rev</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-88"></span><span>      </span><span class="annot"><span class="annottext">_fetchSubmodules :: forall (k :: FetchStatus). NixFetcher k -&gt; Bool
 </span><a href="NvFetcher.Types.html#_fetchSubmodules"><span class="hs-identifier hs-var">_fetchSubmodules</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404275"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404275"><span class="hs-identifier hs-var">fetchSubmodules</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404890"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404890"><span class="hs-identifier hs-var">fetchSubmodules</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-89"></span><span>      </span><span class="annot"><span class="annottext">_deepClone :: forall (k :: FetchStatus). NixFetcher k -&gt; Bool
 </span><a href="NvFetcher.Types.html#_deepClone"><span class="hs-identifier hs-var">_deepClone</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404276"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404276"><span class="hs-identifier hs-var">deepClone</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404891"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404891"><span class="hs-identifier hs-var">deepClone</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-90"></span><span>      </span><span class="annot"><span class="annottext">_leaveDotGit :: forall (k :: FetchStatus). NixFetcher k -&gt; Bool
 </span><a href="NvFetcher.Types.html#_leaveDotGit"><span class="hs-identifier hs-var">_leaveDotGit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404277"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404277"><span class="hs-identifier hs-var">leaveDotGit</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404892"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404892"><span class="hs-identifier hs-var">leaveDotGit</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-91"></span><span>      </span><span class="annot"><span class="annottext">_sparseCheckout :: forall (k :: FetchStatus). NixFetcher k -&gt; [Text]
 </span><a href="NvFetcher.Types.html#_sparseCheckout"><span class="hs-identifier hs-var">_sparseCheckout</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Text] -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
@@ -209,35 +209,35 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; [Text] -&gt; [Text]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404278"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404278"><span class="hs-identifier hs-var">sparseCheckout</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404893"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404893"><span class="hs-identifier hs-var">sparseCheckout</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-92"></span><span>      </span><span class="annot"><span class="annottext">_fowner :: forall (k :: FetchStatus). NixFetcher k -&gt; Text
 </span><a href="NvFetcher.Types.html#_fowner"><span class="hs-identifier hs-var">_fowner</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404280"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404280"><span class="hs-identifier hs-var">owner</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404895"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404895"><span class="hs-identifier hs-var">owner</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-93"></span><span>      </span><span class="annot"><span class="annottext">_frepo :: forall (k :: FetchStatus). NixFetcher k -&gt; Text
 </span><a href="NvFetcher.Types.html#_frepo"><span class="hs-identifier hs-var">_frepo</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404282"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404282"><span class="hs-identifier hs-var">repo</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404897"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404897"><span class="hs-identifier hs-var">repo</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-94"></span><span>      </span><span class="annot"><span class="annottext">_name :: forall (k :: FetchStatus). NixFetcher k -&gt; Maybe Text
 </span><a href="NvFetcher.Types.html#_name"><span class="hs-identifier hs-var">_name</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe Text -&gt; Text
-</span><a href="#local-6989586621679404266"><span class="hs-identifier hs-var">nameField</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404283"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404283"><span class="hs-identifier hs-var">n</span></a></span></span><span>
+</span><a href="#local-6989586621679404881"><span class="hs-identifier hs-var">nameField</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404898"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404898"><span class="hs-identifier hs-var">n</span></a></span></span><span>
 </span><span id="line-95"></span><span>    </span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-96"></span><span>      </span><span class="hs-comment">-- TODO: fix fetchFromGitHub in Nixpkgs so that deepClone, leaveDotGit</span><span>
 </span><span id="line-97"></span><span>      </span><span class="hs-comment">-- and sparseCheckout won't get passed to fetchzip</span><span>
 </span><span id="line-98"></span><span>      </span><span class="hs-keyword">if</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404276"><span class="hs-identifier hs-var">deepClone</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Bool
+</span><a href="#local-6989586621679404891"><span class="hs-identifier hs-var">deepClone</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Bool
 forall a. Eq a =&gt; a -&gt; a -&gt; Bool
 </span><span class="hs-operator hs-var">==</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;true&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Bool -&gt; Bool
 </span><span class="hs-operator hs-var">||</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404277"><span class="hs-identifier hs-var">leaveDotGit</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Bool
+</span><a href="#local-6989586621679404892"><span class="hs-identifier hs-var">leaveDotGit</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Bool
 forall a. Eq a =&gt; a -&gt; a -&gt; Bool
 </span><span class="hs-operator hs-var">==</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;true&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Bool -&gt; Bool
 </span><span class="hs-operator hs-var">||</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404278"><span class="hs-identifier hs-var">sparseCheckout</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Bool
+</span><a href="#local-6989586621679404893"><span class="hs-identifier hs-var">sparseCheckout</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Bool
 forall a. Eq a =&gt; a -&gt; a -&gt; Bool
 </span><span class="hs-operator hs-var">/=</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;[ ]&quot;</span></span><span class="hs-special">)</span><span>
@@ -265,14 +265,14 @@ forall a. Eq a =&gt; a -&gt; a -&gt; Bool
                }
          |]</span></span><span>
 </span><span id="line-122"></span><span>  </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchUrl"><span class="hs-identifier hs-type">FetchUrl</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404287"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404287"><span class="hs-identifier hs-var">url</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Maybe Text -&gt; Text
-</span><a href="#local-6989586621679404266"><span class="hs-identifier hs-var">nameField</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404288"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404288"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; Checksum -&gt; Text
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404902"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404902"><span class="hs-identifier hs-var">url</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Maybe Text -&gt; Text
+</span><a href="#local-6989586621679404881"><span class="hs-identifier hs-var">nameField</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404903"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404903"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; Checksum -&gt; Text
 forall a b. Coercible a b =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404289"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404289"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404904"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404904"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-123"></span><span>    </span><span class="annot"><span class="">[trimming|
           fetchurl {
             url = $url;$n
@@ -280,12 +280,12 @@ forall a b. Coercible a b =&gt; a -&gt; b
           }
     |]</span></span><span>
 </span><span id="line-129"></span><span>  </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#FetchTarball"><span class="hs-identifier hs-type">FetchTarball</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404291"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404291"><span class="hs-identifier hs-var">url</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; Checksum -&gt; Text
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404906"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404906"><span class="hs-identifier hs-var">url</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; Checksum -&gt; Text
 forall a b. Coercible a b =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404292"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404292"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404907"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404907"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-130"></span><span>    </span><span class="annot"><span class="">[trimming|
           fetchTarball {
             url = $url;
@@ -299,16 +299,16 @@ forall a b. Coercible a b =&gt; a -&gt; b
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404295"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404295"><span class="hs-identifier hs-var">imageName</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404910"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404910"><span class="hs-identifier hs-var">imageName</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-138"></span><span>      </span><span class="annot"><span class="annottext">_imageTag :: forall (k :: FetchStatus). NixFetcher k -&gt; Text
 </span><a href="NvFetcher.Types.html#_imageTag"><span class="hs-identifier hs-var">_imageTag</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; (Text -&gt; Text) -&gt; Text -&gt; Text
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404297"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404297"><span class="hs-identifier hs-var">imageTag</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404912"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404912"><span class="hs-identifier hs-var">imageTag</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-139"></span><span>      </span><span class="annot"><span class="annottext">_imageDigest :: forall (k :: FetchStatus).
 NixFetcher k -&gt; FetchResult ContainerDigest k
 </span><a href="NvFetcher.Types.html#_imageDigest"><span class="hs-identifier hs-var">_imageDigest</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#ContainerDigest"><span class="hs-identifier hs-type">ContainerDigest</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Text
@@ -316,46 +316,46 @@ NixFetcher k -&gt; FetchResult ContainerDigest k
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404300"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404300"><span class="hs-identifier hs-var">imageDigest</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404915"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404915"><span class="hs-identifier hs-var">imageDigest</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
 </span><span id="line-140"></span><span>      </span><span class="annot"><span class="annottext">_sha256 :: forall (k :: FetchStatus). NixFetcher k -&gt; FetchResult Checksum k
 </span><a href="NvFetcher.Types.html#_sha256"><span class="hs-identifier hs-var">_sha256</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; Checksum -&gt; Text
 forall a b. Coercible a b =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404301"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404301"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404916"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404916"><span class="hs-identifier hs-var">sha256</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-141"></span><span>      </span><span class="annot"><span class="annottext">_fos :: forall (k :: FetchStatus). NixFetcher k -&gt; Maybe Text
 </span><a href="NvFetcher.Types.html#_fos"><span class="hs-identifier hs-var">_fos</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; Text
-</span><a href="#local-6989586621679404303"><span class="hs-identifier hs-var">optionalStr</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><span class="hs-string">&quot;os&quot;</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404304"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404304"><span class="hs-identifier hs-var">os</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="#local-6989586621679404918"><span class="hs-identifier hs-var">optionalStr</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;os&quot;</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404919"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404919"><span class="hs-identifier hs-var">os</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-142"></span><span>      </span><span class="annot"><span class="annottext">_farch :: forall (k :: FetchStatus). NixFetcher k -&gt; Maybe Text
 </span><a href="NvFetcher.Types.html#_farch"><span class="hs-identifier hs-var">_farch</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; Text
-</span><a href="#local-6989586621679404303"><span class="hs-identifier hs-var">optionalStr</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><span class="hs-string">&quot;arch&quot;</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404306"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404306"><span class="hs-identifier hs-var">arch</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="#local-6989586621679404918"><span class="hs-identifier hs-var">optionalStr</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;arch&quot;</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404921"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404921"><span class="hs-identifier hs-var">arch</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-143"></span><span>      </span><span class="annot"><span class="annottext">_finalImageName :: forall (k :: FetchStatus). NixFetcher k -&gt; Maybe Text
 </span><a href="NvFetcher.Types.html#_finalImageName"><span class="hs-identifier hs-var">_finalImageName</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; Text
-</span><a href="#local-6989586621679404303"><span class="hs-identifier hs-var">optionalStr</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><span class="hs-string">&quot;finalImageName&quot;</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404308"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404308"><span class="hs-identifier hs-var">finalImageName</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="#local-6989586621679404918"><span class="hs-identifier hs-var">optionalStr</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;finalImageName&quot;</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404923"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404923"><span class="hs-identifier hs-var">finalImageName</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-144"></span><span>      </span><span class="annot"><span class="annottext">_finalImageTag :: forall (k :: FetchStatus). NixFetcher k -&gt; Maybe Text
 </span><a href="NvFetcher.Types.html#_finalImageTag"><span class="hs-identifier hs-var">_finalImageTag</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; (Text -&gt; Text) -&gt; Maybe Text -&gt; Text
 forall b a. b -&gt; (a -&gt; b) -&gt; Maybe a -&gt; b
 </span><span class="hs-identifier hs-var">maybe</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404297"><span class="hs-identifier hs-var">imageTag</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Text
+</span><a href="#local-6989586621679404912"><span class="hs-identifier hs-var">imageTag</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; (Text -&gt; Text) -&gt; Text -&gt; Text
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404311"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404311"><span class="hs-identifier hs-var">finalImageTag</span></a></span></span><span class="hs-special">,</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404926"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404926"><span class="hs-identifier hs-var">finalImageTag</span></a></span></span><span class="hs-special">,</span><span>
 </span><span id="line-145"></span><span>      </span><span class="annot"><span class="annottext">_tlsVerify :: forall (k :: FetchStatus). NixFetcher k -&gt; Maybe Bool
 </span><a href="NvFetcher.Types.html#_tlsVerify"><span class="hs-identifier hs-var">_tlsVerify</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Bool -&gt; Text
 forall {a}. ToNixExpr a =&gt; Text -&gt; Maybe a -&gt; Text
-</span><a href="#local-6989586621679404313"><span class="hs-identifier hs-var">optionalField</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><span class="hs-string">&quot;tlsVerify&quot;</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404314"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404314"><span class="hs-identifier hs-var">tlsVerify</span></a></span></span><span>
+</span><a href="#local-6989586621679404928"><span class="hs-identifier hs-var">optionalField</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;tlsVerify&quot;</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404929"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404929"><span class="hs-identifier hs-var">tlsVerify</span></a></span></span><span>
 </span><span id="line-146"></span><span>    </span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-147"></span><span>      </span><span class="annot"><span class="">[trimming|
             dockerTools.pullImage {
@@ -366,17 +366,17 @@ forall {a}. ToNixExpr a =&gt; Text -&gt; Maybe a -&gt; Text
             }
       |]</span></span><span>
 </span><span id="line-155"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-156"></span><span>    </span><span id="local-6989586621679404313"><span class="annot"><span class="annottext">optionalField :: Text -&gt; Maybe a -&gt; Text
-</span><a href="#local-6989586621679404313"><span class="hs-identifier hs-var hs-var">optionalField</span></a></span></span><span> </span><span id="local-6989586621679404325"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404325"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; (a -&gt; Text) -&gt; Maybe a -&gt; Text
+</span><span id="line-156"></span><span>    </span><span id="local-6989586621679404928"><span class="annot"><span class="annottext">optionalField :: Text -&gt; Maybe a -&gt; Text
+</span><a href="#local-6989586621679404928"><span class="hs-identifier hs-var hs-var">optionalField</span></a></span></span><span> </span><span id="local-6989586621679404940"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404940"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; (a -&gt; Text) -&gt; Maybe a -&gt; Text
 forall b a. b -&gt; (a -&gt; b) -&gt; Maybe a -&gt; b
 </span><span class="hs-identifier hs-var">maybe</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><span class="hs-string">&quot;&quot;</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679404326"><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679404326"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;&quot;</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679404941"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679404941"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;\n&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404325"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
+</span><a href="#local-6989586621679404940"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot; = &quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
@@ -384,16 +384,16 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="annot"><span class="annottext">a
-</span><a href="#local-6989586621679404326"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
+</span><a href="#local-6989586621679404941"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;;&quot;</span></span><span class="hs-special">)</span><span>
-</span><span id="line-157"></span><span>    </span><span id="local-6989586621679404303"><span class="annot"><span class="annottext">optionalStr :: Text -&gt; Maybe Text -&gt; Text
-</span><a href="#local-6989586621679404303"><span class="hs-identifier hs-var hs-var">optionalStr</span></a></span></span><span> </span><span id="local-6989586621679404330"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404330"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; Text
+</span><span id="line-157"></span><span>    </span><span id="local-6989586621679404918"><span class="annot"><span class="annottext">optionalStr :: Text -&gt; Maybe Text -&gt; Text
+</span><a href="#local-6989586621679404918"><span class="hs-identifier hs-var hs-var">optionalStr</span></a></span></span><span> </span><span id="local-6989586621679404945"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404945"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; Text
 forall {a}. ToNixExpr a =&gt; Text -&gt; Maybe a -&gt; Text
-</span><a href="#local-6989586621679404313"><span class="hs-identifier hs-var">optionalField</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404330"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">(Maybe Text -&gt; Text)
+</span><a href="#local-6989586621679404928"><span class="hs-identifier hs-var">optionalField</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404945"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">(Maybe Text -&gt; Text)
 -&gt; (Maybe Text -&gt; Maybe Text) -&gt; Maybe Text -&gt; Text
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text) -&gt; Maybe Text -&gt; Maybe Text
@@ -401,9 +401,9 @@ forall a b. (a -&gt; b) -&gt; Maybe a -&gt; Maybe b
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-identifier hs-var">fmap</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span>
-</span><span id="line-158"></span><span>    </span><span id="local-6989586621679404266"><span class="annot"><span class="annottext">nameField :: Maybe Text -&gt; Text
-</span><a href="#local-6989586621679404266"><span class="hs-identifier hs-var hs-var">nameField</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; Text
-</span><a href="#local-6989586621679404303"><span class="hs-identifier hs-var">optionalStr</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span id="line-158"></span><span>    </span><span id="local-6989586621679404881"><span class="annot"><span class="annottext">nameField :: Maybe Text -&gt; Text
+</span><a href="#local-6989586621679404881"><span class="hs-identifier hs-var hs-var">nameField</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; Text
+</span><a href="#local-6989586621679404918"><span class="hs-identifier hs-var">optionalStr</span></a></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;name&quot;</span></span><span>
 </span><span id="line-159"></span><span>
 </span><span id="line-160"></span><span class="hs-comment">-- | Create a trivial drv that extracts the source from a fetcher</span><span>
@@ -412,10 +412,10 @@ forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span id="line-163"></span><span id="fetcherToDrv"><span class="annot"><span class="annottext">fetcherToDrv :: NixFetcher 'Fetched -&gt; Text -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#fetcherToDrv"><span class="hs-identifier hs-var hs-var">fetcherToDrv</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">NixFetcher 'Fetched -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404332"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404332"><span class="hs-identifier hs-var">fetcherExpr</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404333"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404333"><span class="hs-identifier hs-var">drvName</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404947"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404947"><span class="hs-identifier hs-var">fetcherExpr</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Text
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404948"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404948"><span class="hs-identifier hs-var">drvName</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-164"></span><span>  </span><span class="annot"><span class="">[trimming|
     with import &lt;nixpkgs&gt; { };
     stdenv.mkDerivation {
@@ -444,8 +444,8 @@ forall a. ToNixExpr a =&gt; a -&gt; Text
 </span><span id="line-189"></span><span class="hs-comment">--   };</span><span>
 </span><span id="line-190"></span><span class="hs-comment">-- @</span><span>
 </span><span id="line-191"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="NvFetcher.NixExpr.html#ToNixExpr"><span class="hs-identifier hs-type">ToNixExpr</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageResult"><span class="hs-identifier hs-type">PackageResult</span></a></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-192"></span><span>  </span><span id="local-6989586621679404336"><span class="annot"><span class="annottext">toNixExpr :: PackageResult -&gt; Text
-</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var hs-var hs-var hs-var">toNixExpr</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageResult"><span class="hs-identifier hs-type">PackageResult</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679404338"><span id="local-6989586621679404339"><span id="local-6989586621679404340"><span id="local-6989586621679404341"><span id="local-6989586621679404342"><span id="local-6989586621679404343"><span id="local-6989586621679404344"><span id="local-6989586621679404345"><span class="annot"><span class="annottext">Maybe (HashMap String (Text, HashMap Text Checksum))
+</span><span id="line-192"></span><span>  </span><span id="local-6989586621679404951"><span class="annot"><span class="annottext">toNixExpr :: PackageResult -&gt; Text
+</span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var hs-var hs-var hs-var">toNixExpr</span></a></span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageResult"><span class="hs-identifier hs-type">PackageResult</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679404953"><span id="local-6989586621679404954"><span id="local-6989586621679404955"><span id="local-6989586621679404956"><span id="local-6989586621679404957"><span id="local-6989586621679404958"><span id="local-6989586621679404959"><span id="local-6989586621679404960"><span class="annot"><span class="annottext">Maybe (HashMap String (Text, HashMap Text Checksum))
 Maybe (HashMap String Text)
 Maybe (HashMap Text Text)
 Maybe Text
@@ -470,7 +470,7 @@ _prcargolock :: PackageResult
 -&gt; Maybe (HashMap String (Text, HashMap Text Checksum))
 _prpinned :: PackageResult -&gt; UseStaleVersion
 _prgitdate :: PackageResult -&gt; Maybe Text
-</span><a href="#local-6989586621679404338"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span>
+</span><a href="#local-6989586621679404953"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-193"></span><span>    </span><span class="annot"><span class="">[trimming|
         $name = {
           pname = $nameString;
@@ -479,16 +479,16 @@ _prgitdate :: PackageResult -&gt; Maybe Text
         };
     |]</span></span><span>
 </span><span id="line-200"></span><span>    </span><span class="hs-keyword">where</span><span>
-</span><span id="line-201"></span><span>      </span><span id="local-6989586621679404354"><span class="annot"><span class="annottext">name :: Text
-</span><a href="#local-6989586621679404354"><span class="hs-identifier hs-var hs-var">name</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
+</span><span id="line-201"></span><span>      </span><span id="local-6989586621679404969"><span class="annot"><span class="annottext">name :: Text
+</span><a href="#local-6989586621679404969"><span class="hs-identifier hs-var hs-var">name</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quoteIfNeeds"><span class="hs-identifier hs-var">quoteIfNeeds</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404338"><span class="hs-identifier hs-var">_prname</span></a></span><span>
-</span><span id="line-202"></span><span>      </span><span id="local-6989586621679404355"><span class="annot"><span class="annottext">nameString :: Text
-</span><a href="#local-6989586621679404355"><span class="hs-identifier hs-var hs-var">nameString</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
+</span><a href="#local-6989586621679404953"><span class="hs-identifier hs-var">_prname</span></a></span><span>
+</span><span id="line-202"></span><span>      </span><span id="local-6989586621679404970"><span class="annot"><span class="annottext">nameString :: Text
+</span><a href="#local-6989586621679404970"><span class="hs-identifier hs-var hs-var">nameString</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404338"><span class="hs-identifier hs-var">_prname</span></a></span><span>
-</span><span id="line-203"></span><span>      </span><span id="local-6989586621679404356"><span class="annot"><span class="annottext">version :: Text
-</span><a href="#local-6989586621679404356"><span class="hs-identifier hs-var hs-var">version</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
+</span><a href="#local-6989586621679404953"><span class="hs-identifier hs-var">_prname</span></a></span><span>
+</span><span id="line-203"></span><span>      </span><span id="local-6989586621679404971"><span class="annot"><span class="annottext">version :: Text
+</span><a href="#local-6989586621679404971"><span class="hs-identifier hs-var hs-var">version</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Text)
 -&gt; (NvcheckerResult -&gt; Text) -&gt; NvcheckerResult -&gt; Text
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -501,14 +501,14 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="NvFetcher.Types.html#nvNow"><span class="hs-identifier hs-var">nvNow</span></a></span><span> </span><span class="annot"><span class="annottext">(NvcheckerResult -&gt; Text) -&gt; NvcheckerResult -&gt; Text
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">NvcheckerResult
-</span><a href="#local-6989586621679404339"><span class="hs-identifier hs-var">_prversion</span></a></span><span>
-</span><span id="line-204"></span><span>      </span><span id="local-6989586621679404357"><span class="annot"><span class="annottext">src :: Text
-</span><a href="#local-6989586621679404357"><span class="hs-identifier hs-var hs-var">src</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fetched -&gt; Text
+</span><a href="#local-6989586621679404954"><span class="hs-identifier hs-var">_prversion</span></a></span><span>
+</span><span id="line-204"></span><span>      </span><span id="local-6989586621679404972"><span class="annot"><span class="annottext">src :: Text
+</span><a href="#local-6989586621679404972"><span class="hs-identifier hs-var hs-var">src</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fetched -&gt; Text
 forall a. ToNixExpr a =&gt; a -&gt; Text
 </span><a href="NvFetcher.NixExpr.html#toNixExpr"><span class="hs-identifier hs-var">toNixExpr</span></a></span><span> </span><span class="annot"><span class="annottext">NixFetcher 'Fetched
-</span><a href="#local-6989586621679404340"><span class="hs-identifier hs-var">_prfetched</span></a></span><span>
-</span><span id="line-205"></span><span>      </span><span id="local-6989586621679404368"><span class="annot"><span class="annottext">extract :: Text
-</span><a href="#local-6989586621679404368"><span class="hs-identifier hs-var hs-var">extract</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><a href="#local-6989586621679404955"><span class="hs-identifier hs-var">_prfetched</span></a></span><span>
+</span><span id="line-205"></span><span>      </span><span id="local-6989586621679404983"><span class="annot"><span class="annottext">extract :: Text
+</span><a href="#local-6989586621679404983"><span class="hs-identifier hs-var hs-var">extract</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-206"></span><span>        </span><span class="annot"><span class="annottext">Text
 -&gt; (HashMap String Text -&gt; Text)
 -&gt; Maybe (HashMap String Text)
@@ -517,14 +517,14 @@ forall b a. b -&gt; (a -&gt; b) -&gt; Maybe a -&gt; b
 </span><span class="hs-identifier hs-var">maybe</span></span><span>
 </span><span id="line-207"></span><span>          </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;&quot;</span></span><span>
-</span><span id="line-208"></span><span>          </span><span class="hs-special">(</span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679404369"><span class="annot"><span class="annottext">HashMap String Text
-</span><a href="#local-6989586621679404369"><span class="hs-identifier hs-var">ex</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-208"></span><span>          </span><span class="hs-special">(</span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679404984"><span class="annot"><span class="annottext">HashMap String Text
+</span><a href="#local-6989586621679404984"><span class="hs-identifier hs-var">ex</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-209"></span><span>              </span><span class="annot"><span class="annottext">[Text] -&gt; Text
 </span><span class="hs-identifier hs-var">T.unlines</span></span><span>
 </span><span id="line-210"></span><span>                </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quoteIfNeeds"><span class="hs-identifier hs-var">quoteIfNeeds</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
 </span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679404371"><span class="hs-identifier hs-var">name</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679404986"><span class="hs-identifier hs-var">name</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-211"></span><span>                    </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
@@ -532,39 +532,39 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span id="line-212"></span><span>                    </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404372"><span class="hs-identifier hs-var">fp</span></a></span><span>
+</span><a href="#local-6989586621679404987"><span class="hs-identifier hs-var">fp</span></a></span><span>
 </span><span id="line-213"></span><span>                    </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;;&quot;</span></span><span>
-</span><span id="line-214"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679404371"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679404371"><span class="hs-identifier hs-var">name</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679404372"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404372"><span class="hs-identifier hs-var">fp</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">HashMap String Text -&gt; [(String, Text)]
+</span><span id="line-214"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679404986"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679404986"><span class="hs-identifier hs-var">name</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679404987"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404987"><span class="hs-identifier hs-var">fp</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">HashMap String Text -&gt; [(String, Text)]
 forall k v. HashMap k v -&gt; [(k, v)]
 </span><span class="hs-identifier hs-var">HMap.toList</span></span><span> </span><span class="annot"><span class="annottext">HashMap String Text
-</span><a href="#local-6989586621679404369"><span class="hs-identifier hs-var">ex</span></a></span><span>
+</span><a href="#local-6989586621679404984"><span class="hs-identifier hs-var">ex</span></a></span><span>
 </span><span id="line-215"></span><span>                </span><span class="hs-special">]</span><span>
 </span><span id="line-216"></span><span>          </span><span class="hs-special">)</span><span>
 </span><span id="line-217"></span><span>          </span><span class="annot"><span class="annottext">Maybe (HashMap String Text)
-</span><a href="#local-6989586621679404342"><span class="hs-identifier hs-var">_prextract</span></a></span><span>
-</span><span id="line-218"></span><span>      </span><span id="local-6989586621679404381"><span class="annot"><span class="annottext">cargo :: Text
-</span><a href="#local-6989586621679404381"><span class="hs-identifier hs-var hs-var">cargo</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; Text
+</span><a href="#local-6989586621679404957"><span class="hs-identifier hs-var">_prextract</span></a></span><span>
+</span><span id="line-218"></span><span>      </span><span id="local-6989586621679404996"><span class="annot"><span class="annottext">cargo :: Text
+</span><a href="#local-6989586621679404996"><span class="hs-identifier hs-var hs-var">cargo</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; Text
 forall a. a -&gt; Maybe a -&gt; a
 </span><span class="hs-identifier hs-var">fromMaybe</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;&quot;</span></span><span> </span><span class="annot"><span class="annottext">(Maybe Text -&gt; Text) -&gt; Maybe Text -&gt; Text
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-219"></span><span>        </span><span id="local-6989586621679404382"><span class="annot"><span class="annottext">HashMap String (Text, HashMap Text Checksum)
-</span><a href="#local-6989586621679404382"><span class="hs-identifier hs-var">cargoLocks</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Maybe (HashMap String (Text, HashMap Text Checksum))
-</span><a href="#local-6989586621679404343"><span class="hs-identifier hs-var">_prcargolock</span></a></span><span>
-</span><span id="line-220"></span><span>        </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679404389"><span class="annot"><span class="annottext">depsSnippet :: HashMap Text Checksum -&gt; Text
-</span><a href="#local-6989586621679404389"><span class="hs-identifier hs-var hs-var">depsSnippet</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679404390"><span class="annot"><span class="annottext">HashMap Text Checksum
-</span><a href="#local-6989586621679404390"><span class="hs-identifier hs-var">deps</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">HashMap</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-type">Checksum</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-219"></span><span>        </span><span id="local-6989586621679404997"><span class="annot"><span class="annottext">HashMap String (Text, HashMap Text Checksum)
+</span><a href="#local-6989586621679404997"><span class="hs-identifier hs-var">cargoLocks</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Maybe (HashMap String (Text, HashMap Text Checksum))
+</span><a href="#local-6989586621679404958"><span class="hs-identifier hs-var">_prcargolock</span></a></span><span>
+</span><span id="line-220"></span><span>        </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679405004"><span class="annot"><span class="annottext">depsSnippet :: HashMap Text Checksum -&gt; Text
+</span><a href="#local-6989586621679405004"><span class="hs-identifier hs-var hs-var">depsSnippet</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679405005"><span class="annot"><span class="annottext">HashMap Text Checksum
+</span><a href="#local-6989586621679405005"><span class="hs-identifier hs-var">deps</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">HashMap</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-type">Checksum</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-221"></span><span>              </span><span class="annot"><span class="annottext">[Text] -&gt; Text
 </span><span class="hs-identifier hs-var">T.unlines</span></span><span>
 </span><span id="line-222"></span><span>                </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quoteIfNeeds"><span class="hs-identifier hs-var">quoteIfNeeds</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404391"><span class="hs-identifier hs-var">name</span></a></span><span>
+</span><a href="#local-6989586621679405006"><span class="hs-identifier hs-var">name</span></a></span><span>
 </span><span id="line-223"></span><span>                    </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
@@ -575,28 +575,28 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Checksum -&gt; Text
 forall a b. Coercible a b =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">Checksum
-</span><a href="#local-6989586621679404392"><span class="hs-identifier hs-var">sum</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679405007"><span class="hs-identifier hs-var">sum</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-225"></span><span>                    </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;;&quot;</span></span><span>
-</span><span id="line-226"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679404391"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404391"><span class="hs-identifier hs-var">name</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679404392"><span class="annot"><span class="annottext">Checksum
-</span><a href="#local-6989586621679404392"><span class="hs-identifier hs-var">sum</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">HashMap Text Checksum -&gt; [(Text, Checksum)]
+</span><span id="line-226"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679405006"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679405006"><span class="hs-identifier hs-var">name</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679405007"><span class="annot"><span class="annottext">Checksum
+</span><a href="#local-6989586621679405007"><span class="hs-identifier hs-var">sum</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">HashMap Text Checksum -&gt; [(Text, Checksum)]
 forall k v. HashMap k v -&gt; [(k, v)]
 </span><span class="hs-identifier hs-var">HMap.toList</span></span><span> </span><span class="annot"><span class="annottext">HashMap Text Checksum
-</span><a href="#local-6989586621679404390"><span class="hs-identifier hs-var">deps</span></a></span><span>
+</span><a href="#local-6989586621679405005"><span class="hs-identifier hs-var">deps</span></a></span><span>
 </span><span id="line-227"></span><span>                </span><span class="hs-special">]</span><span>
-</span><span id="line-228"></span><span>            </span><span id="local-6989586621679404393"><span class="annot"><span class="annottext">lockSnippet :: (String, (Text, HashMap Text Checksum)) -&gt; Text
-</span><a href="#local-6989586621679404393"><span class="hs-identifier hs-var hs-var">lockSnippet</span></a></span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
-</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404394"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404394"><span class="hs-identifier hs-var">fp</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679404396"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404396"><span class="hs-identifier hs-var">nixFP</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679404397"><span class="annot"><span class="annottext">HashMap Text Checksum
-</span><a href="#local-6989586621679404397"><span class="hs-identifier hs-var">deps</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">HashMap</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-type">Checksum</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-229"></span><span>              </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679404398"><span class="annot"><span class="annottext">hashes :: Text
-</span><a href="#local-6989586621679404398"><span class="hs-identifier hs-var hs-var">hashes</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">HashMap Text Checksum -&gt; Text
-</span><a href="#local-6989586621679404389"><span class="hs-identifier hs-var">depsSnippet</span></a></span><span> </span><span class="annot"><span class="annottext">HashMap Text Checksum
-</span><a href="#local-6989586621679404397"><span class="hs-identifier hs-var">deps</span></a></span><span>
+</span><span id="line-228"></span><span>            </span><span id="local-6989586621679405008"><span class="annot"><span class="annottext">lockSnippet :: (String, (Text, HashMap Text Checksum)) -&gt; Text
+</span><a href="#local-6989586621679405008"><span class="hs-identifier hs-var hs-var">lockSnippet</span></a></span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
+</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679405009"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679405009"><span class="hs-identifier hs-var">fp</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679405011"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679405011"><span class="hs-identifier hs-var">nixFP</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#NixExpr"><span class="hs-identifier hs-type">NixExpr</span></a></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679405012"><span class="annot"><span class="annottext">HashMap Text Checksum
+</span><a href="#local-6989586621679405012"><span class="hs-identifier hs-var">deps</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">HashMap</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Checksum"><span class="hs-identifier hs-type">Checksum</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-229"></span><span>              </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679405013"><span class="annot"><span class="annottext">hashes :: Text
+</span><a href="#local-6989586621679405013"><span class="hs-identifier hs-var hs-var">hashes</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">HashMap Text Checksum -&gt; Text
+</span><a href="#local-6989586621679405004"><span class="hs-identifier hs-var">depsSnippet</span></a></span><span> </span><span class="annot"><span class="annottext">HashMap Text Checksum
+</span><a href="#local-6989586621679405012"><span class="hs-identifier hs-var">deps</span></a></span><span>
 </span><span id="line-230"></span><span>               </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="">[trimming|
                     cargoLock.&quot;$fp&quot; = {
                       lockFile = $nixFP;
@@ -614,29 +614,29 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-identifier hs-var">T.unlines</span></span><span> </span><span class="annot"><span class="annottext">([Text] -&gt; Maybe Text) -&gt; [Text] -&gt; Maybe Text
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(String, (Text, HashMap Text Checksum)) -&gt; Text
-</span><a href="#local-6989586621679404393"><span class="hs-identifier hs-var">lockSnippet</span></a></span><span> </span><span class="annot"><span class="annottext">((String, (Text, HashMap Text Checksum)) -&gt; Text)
+</span><a href="#local-6989586621679405008"><span class="hs-identifier hs-var">lockSnippet</span></a></span><span> </span><span class="annot"><span class="annottext">((String, (Text, HashMap Text Checksum)) -&gt; Text)
 -&gt; [(String, (Text, HashMap Text Checksum))] -&gt; [Text]
 forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">HashMap String (Text, HashMap Text Checksum)
 -&gt; [(String, (Text, HashMap Text Checksum))]
 forall k v. HashMap k v -&gt; [(k, v)]
 </span><span class="hs-identifier hs-var">HMap.toList</span></span><span> </span><span class="annot"><span class="annottext">HashMap String (Text, HashMap Text Checksum)
-</span><a href="#local-6989586621679404382"><span class="hs-identifier hs-var">cargoLocks</span></a></span><span>
-</span><span id="line-239"></span><span>      </span><span id="local-6989586621679404406"><span class="annot"><span class="annottext">passthru :: Text
-</span><a href="#local-6989586621679404406"><span class="hs-identifier hs-var hs-var">passthru</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><a href="#local-6989586621679404997"><span class="hs-identifier hs-var">cargoLocks</span></a></span><span>
+</span><span id="line-239"></span><span>      </span><span id="local-6989586621679405021"><span class="annot"><span class="annottext">passthru :: Text
+</span><a href="#local-6989586621679405021"><span class="hs-identifier hs-var hs-var">passthru</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-240"></span><span>        </span><span class="annot"><span class="annottext">Text
 -&gt; (HashMap Text Text -&gt; Text) -&gt; Maybe (HashMap Text Text) -&gt; Text
 forall b a. b -&gt; (a -&gt; b) -&gt; Maybe a -&gt; b
 </span><span class="hs-identifier hs-var">maybe</span></span><span>
 </span><span id="line-241"></span><span>          </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;&quot;</span></span><span>
-</span><span id="line-242"></span><span>          </span><span class="hs-special">(</span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679404407"><span class="annot"><span class="annottext">HashMap Text Text
-</span><a href="#local-6989586621679404407"><span class="hs-identifier hs-var">pt</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-242"></span><span>          </span><span class="hs-special">(</span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679405022"><span class="annot"><span class="annottext">HashMap Text Text
+</span><a href="#local-6989586621679405022"><span class="hs-identifier hs-var">pt</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-243"></span><span>              </span><span class="annot"><span class="annottext">[Text] -&gt; Text
 </span><span class="hs-identifier hs-var">T.unlines</span></span><span>
 </span><span id="line-244"></span><span>                </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quoteIfNeeds"><span class="hs-identifier hs-var">quoteIfNeeds</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404408"><span class="hs-identifier hs-var">k</span></a></span><span>
+</span><a href="#local-6989586621679405023"><span class="hs-identifier hs-var">k</span></a></span><span>
 </span><span id="line-245"></span><span>                    </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
@@ -644,56 +644,56 @@ forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span id="line-246"></span><span>                    </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404409"><span class="hs-identifier hs-var">v</span></a></span><span>
+</span><a href="#local-6989586621679405024"><span class="hs-identifier hs-var">v</span></a></span><span>
 </span><span id="line-247"></span><span>                    </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;;&quot;</span></span><span>
-</span><span id="line-248"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679404408"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404408"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679404409"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404409"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">HashMap Text Text -&gt; [(Text, Text)]
+</span><span id="line-248"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679405023"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679405023"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679405024"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679405024"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">HashMap Text Text -&gt; [(Text, Text)]
 forall k v. HashMap k v -&gt; [(k, v)]
 </span><span class="hs-identifier hs-var">HMap.toList</span></span><span> </span><span class="annot"><span class="annottext">HashMap Text Text
-</span><a href="#local-6989586621679404407"><span class="hs-identifier hs-var">pt</span></a></span><span>
+</span><a href="#local-6989586621679405022"><span class="hs-identifier hs-var">pt</span></a></span><span>
 </span><span id="line-249"></span><span>                </span><span class="hs-special">]</span><span>
 </span><span id="line-250"></span><span>          </span><span class="hs-special">)</span><span>
 </span><span id="line-251"></span><span>          </span><span class="annot"><span class="annottext">Maybe (HashMap Text Text)
-</span><a href="#local-6989586621679404341"><span class="hs-identifier hs-var">_prpassthru</span></a></span><span>
-</span><span id="line-252"></span><span>      </span><span id="local-6989586621679404415"><span class="annot"><span class="annottext">date :: Text
-</span><a href="#local-6989586621679404415"><span class="hs-identifier hs-var hs-var">date</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; (Text -&gt; Text) -&gt; Maybe Text -&gt; Text
+</span><a href="#local-6989586621679404956"><span class="hs-identifier hs-var">_prpassthru</span></a></span><span>
+</span><span id="line-252"></span><span>      </span><span id="local-6989586621679405030"><span class="annot"><span class="annottext">date :: Text
+</span><a href="#local-6989586621679405030"><span class="hs-identifier hs-var hs-var">date</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; (Text -&gt; Text) -&gt; Maybe Text -&gt; Text
 forall b a. b -&gt; (a -&gt; b) -&gt; Maybe a -&gt; b
 </span><span class="hs-identifier hs-var">maybe</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><span class="hs-string">&quot;&quot;</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679404416"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404416"><span class="hs-identifier hs-var">d</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;&quot;</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679405031"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679405031"><span class="hs-identifier hs-var">d</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;date = &quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404416"><span class="hs-identifier hs-var">d</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
+</span><a href="#local-6989586621679405031"><span class="hs-identifier hs-var">d</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;;&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Maybe Text
-</span><a href="#local-6989586621679404345"><span class="hs-identifier hs-var">_prgitdate</span></a></span><span>
-</span><span id="line-253"></span><span>      </span><span id="local-6989586621679404420"><span class="annot"><span class="annottext">joined :: Text
-</span><a href="#local-6989586621679404420"><span class="hs-identifier hs-var hs-var">joined</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404368"><span class="hs-identifier hs-var">extract</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
+</span><a href="#local-6989586621679404960"><span class="hs-identifier hs-var">_prgitdate</span></a></span><span>
+</span><span id="line-253"></span><span>      </span><span id="local-6989586621679405035"><span class="annot"><span class="annottext">joined :: Text
+</span><a href="#local-6989586621679405035"><span class="hs-identifier hs-var hs-var">joined</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679404983"><span class="hs-identifier hs-var">extract</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404381"><span class="hs-identifier hs-var">cargo</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
+</span><a href="#local-6989586621679404996"><span class="hs-identifier hs-var">cargo</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404406"><span class="hs-identifier hs-var">passthru</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
+</span><a href="#local-6989586621679405021"><span class="hs-identifier hs-var">passthru</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404415"><span class="hs-identifier hs-var">date</span></a></span><span>
-</span><span id="line-254"></span><span>      </span><span id="local-6989586621679404358"><span class="annot"><span class="annottext">appending :: Text
-</span><a href="#local-6989586621679404358"><span class="hs-identifier hs-var hs-var">appending</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">if</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Bool
+</span><a href="#local-6989586621679405030"><span class="hs-identifier hs-var">date</span></a></span><span>
+</span><span id="line-254"></span><span>      </span><span id="local-6989586621679404973"><span class="annot"><span class="annottext">appending :: Text
+</span><a href="#local-6989586621679404973"><span class="hs-identifier hs-var hs-var">appending</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">if</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Bool
 </span><span class="hs-identifier hs-var">T.null</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404420"><span class="hs-identifier hs-var">joined</span></a></span><span> </span><span class="hs-keyword">then</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679405035"><span class="hs-identifier hs-var">joined</span></a></span><span> </span><span class="hs-keyword">then</span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;&quot;</span></span><span> </span><span class="hs-keyword">else</span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;\n&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Text
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679404420"><span class="hs-identifier hs-var">joined</span></a></span><span>
+</span><a href="#local-6989586621679405035"><span class="hs-identifier hs-var">joined</span></a></span><span>
 </span><span id="line-255"></span></pre></body></html>

@@ -1,5 +1,16 @@
 # Revision history for nvfetcher
 
+## 0.7.0.0
+
+Now nvfetcher removes all files *except* `generated.json` and `generated.nix` in `_sources` before each run. If you do want to keep those files, you can use the new CLI option `--keep-old`. In addition, a new target `purge` is introduced for resetting the state of nvfetcher by deleting the shake database saved in XDG directory. 
+
+* Quote package name passed to nvchecker
+* Add `url.name` option to specify the file name in prefetch
+* Clean build dir before build
+* Support keep going on fetch failure
+* Add `--commit-summary`
+* Support sparseCheckout
+
 ## 0.6.2.0
 
 * Rework config parsing with toml-reader

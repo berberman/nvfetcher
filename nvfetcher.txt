@@ -6,7 +6,7 @@
 --   
 --   Please see <a>README</a>
 @package nvfetcher
-@version 0.6.2.0
+@version 0.7.0.0
 
 
 module NvFetcher.Config
@@ -567,24 +567,24 @@ manual :: Traversal' VersionSource Text
 listOptions :: Traversal' VersionSource ListOptions
 aur :: Traversal' VersionSource Text
 archpkg :: Traversal' VersionSource Text
-tlsVerify :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) (Maybe Bool)
-sparseCheckout :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) [Text]
-sha256 :: forall k_iZjA. Lens' (NixFetcher k_iZjA) (FetchResult Checksum k_iZjA)
-rev :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) Version
-name :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) (Maybe Text)
-leaveDotGit :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) Bool
-imageTag :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) Text
-imageName :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) Text
-imageDigest :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) (FetchResult ContainerDigest k_iZjA)
-furl :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) Text
-frepo :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) Text
-fowner :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) Text
-fos :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) (Maybe Text)
-finalImageTag :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) (Maybe Text)
-finalImageName :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) (Maybe Text)
-fetchSubmodules :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) Bool
-farch :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) (Maybe Text)
-deepClone :: forall k_iZjA. Traversal' (NixFetcher k_iZjA) Bool
+tlsVerify :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Bool)
+sparseCheckout :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) [Text]
+sha256 :: forall k_iZtH. Lens' (NixFetcher k_iZtH) (FetchResult Checksum k_iZtH)
+rev :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Version
+name :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Text)
+leaveDotGit :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Bool
+imageTag :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Text
+imageName :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Text
+imageDigest :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (FetchResult ContainerDigest k_iZtH)
+furl :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Text
+frepo :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Text
+fowner :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Text
+fos :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Text)
+finalImageTag :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Text)
+finalImageName :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Text)
+fetchSubmodules :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Bool
+farch :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Text)
+deepClone :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Bool
 pversion :: Lens' Package CheckVersion
 ppinned :: Lens' Package UseStaleVersion
 ppassthru :: Lens' Package PackagePassthru
@@ -1062,11 +1062,31 @@ type AttachMany xs arg = forall r. PackageSet (Prod r) -> arg -> PackageSet (Pro
 --   also works in more complicated settings, e.g. converting a list of
 --   newtypes to a list of concrete types.
 --   
+--   When used in conversions involving a newtype wrapper, make sure the
+--   newtype constructor is in scope.
+--   
 --   This function is representation-polymorphic, but the
 --   <tt>RuntimeRep</tt> type argument is marked as <tt>Inferred</tt>,
 --   meaning that it is not available for visible type application. This
---   means the typechecker will accept <tt><a>coerce</a> </tt><tt>Int</tt>
---   <tt>Age 42</tt>.
+--   means the typechecker will accept <tt><a>coerce</a> @<tt>Int</tt> @Age
+--   42</tt>.
+--   
+--   <h3><b>Examples</b></h3>
+--   
+--   <pre>
+--   &gt;&gt;&gt; newtype TTL = TTL Int deriving (Eq, Ord, Show)
+--   
+--   &gt;&gt;&gt; newtype Age = Age Int deriving (Eq, Ord, Show)
+--   
+--   &gt;&gt;&gt; coerce (Age 42) :: TTL
+--   TTL 42
+--   
+--   &gt;&gt;&gt; coerce (+ (1 :: Int)) (Age 42) :: TTL
+--   TTL 43
+--   
+--   &gt;&gt;&gt; coerce (map (+ (1 :: Int))) [Age 42, Age 24] :: [TTL]
+--   [TTL 43,TTL 25]
+--   </pre>
 coerce :: forall {k :: RuntimeRep} (a :: TYPE k) (b :: TYPE k). Coercible a b => a -> b
 
 -- | Lift a computation from the <a>IO</a> monad. This allows us to run IO
