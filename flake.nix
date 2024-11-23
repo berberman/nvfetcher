@@ -70,7 +70,20 @@
               });
           });
           nvfetcher-bin = with final;
-            haskell.lib.justStaticExecutables haskellPackages.nvfetcher;
+          let 
+            hl = haskell.lib;
+            nvfetcherStatic = hl.justStaticExecutables haskellPackages.nvfetcher;
+            scope = nvfetcherStatic.scope;
+          in 
+            hl.overrideCabal nvfetcherStatic (drv: {
+              postInstall = ''
+                ${drv.postInstall or ""}
+                remove-references-to -t ${scope.shake} "$out/bin/.nvfetcher-wrapped"
+                remove-references-to -t ${scope.js-jquery} "$out/bin/.nvfetcher-wrapped"
+                remove-references-to -t ${scope.js-flot} "$out/bin/.nvfetcher-wrapped"
+                remove-references-to -t ${scope.js-dgtable} "$out/bin/.nvfetcher-wrapped"
+              '';
+            });
         };
       };
 }
