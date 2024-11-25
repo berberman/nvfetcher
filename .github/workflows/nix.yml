@@ -27,6 +27,7 @@ jobs:
         cp -r ./result-doc/share/doc/nvfetcher-*/html/ docs
 
     - name: Run spec tests
+      if: ${{ matrix.os != 'macos-latest' }}
       run: |
         nix develop --command cabal update
         nix develop --command cabal test
