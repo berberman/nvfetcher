@@ -52,10 +52,10 @@ fetch.github = "lilydjwg/nvchecker"
 src.git = "https://github.com/NixOS/nixpkgs"
 fetch.tarball = "https://github.com/nixos/nixpkgs/archive/$ver.tar.gz"
 
-[alpine]
-src.container = "library/alpine"
-src.include_regex = "3\\..*"
-fetch.docker = "library/alpine"
+# [alpine]
+# src.container = "library/alpine"
+# src.include_regex = "3\\..*"
+# fetch.docker = "library/alpine"
 
 # To demonstrate package key containing `.`
 ["submodule.example"]
