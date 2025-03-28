@@ -55,6 +55,7 @@ module NvFetcher.NixFetcher
   )
 where
 
+import Control.Applicative ((<|>))
 import Control.Exception (ErrorCall)
 import Control.Monad (void, when)
 import qualified Data.Aeson as A
@@ -147,15 +148,21 @@ runFetcher = \case
     putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
     case A.eitherDecode out of
       Right FetchedContainer {..} -> do
-        sri <- sha256ToSri sha256
+        sri <- sha256ToSri hash
         pure FetchDocker {_sha256 = sri, _imageDigest = imageDigest, ..}
       Left e -> fail $ "Failed to parse output from nix-prefetch-docker as JSON: " <> e
 
 data FetchedContainer = FetchedContainer
   { imageDigest :: ContainerDigest,
-    sha256 :: Text
+    hash :: Text
   }
-  deriving (Show, Generic, A.FromJSON)
+  deriving (Show, Generic)
+
+instance A.FromJSON FetchedContainer where
+  parseJSON = A.withObject "FetchedContainer" $ \o -> do
+    imageDigest <- o A..: "imageDigest"
+    hash <- o A..: "sha256" <|> o A..: "hash"
+    pure FetchedContainer {..}
 
 pypiUrl :: Text -> Version -> Text
 pypiUrl pypi (coerce -> ver) =
