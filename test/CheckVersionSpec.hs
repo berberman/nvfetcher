@@ -30,7 +30,7 @@ versionSourcesSpec = aroundShake $
       runNvcheckerRule (Pypi "example") `shouldReturnJust` Version "0.1.0"
 
     specifyChan "archpkg" $
-      runNvcheckerRule (ArchLinux "lib32-libva-vdpau-driver") `shouldReturnJust` Version "0.7.4"
+      runNvcheckerRule (ArchLinux "xfce4-artwork") `shouldReturnJust` Version "0.1.1a_git20110420"
 
     specifyChan "aur" $
       runNvcheckerRule (Aur "ssed") `shouldReturnJust` Version "3.62"
@@ -76,7 +76,7 @@ versionSourcesSpec = aroundShake $
       runNvcheckerRule (Cmd "echo Meow") `shouldReturnJust` Version "Meow"
 
     specifyChan "container" $
-      runNvcheckerRule (Container "testcontainers/helloworld" def) `shouldReturnJust` Version "1.1.0"
+      runNvcheckerRule (Container "testcontainers/helloworld" def) `shouldReturnJust` Version "1.3.0"
 
 --------------------------------------------------------------------------------
 
