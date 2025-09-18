@@ -178,7 +178,7 @@ NoStale :: UseStaleVersion
 
 -- | The input of prefetch rule
 data RunFetch
-RunFetch :: ForceFetch -> NixFetcher Fresh -> RunFetch
+RunFetch :: ForceFetch -> NixFetcher 'Fresh -> RunFetch
 
 -- | Whether to cache the fetched sha256
 --   
@@ -236,7 +236,7 @@ Fetched :: FetchStatus
 
 -- | Extract file contents from package source e.g. <tt>Cargo.lock</tt>
 data ExtractSrcQ
-ExtractSrcQ :: NixFetcher Fetched -> NonEmpty FilePath -> ExtractSrcQ
+ExtractSrcQ :: NixFetcher 'Fetched -> NonEmpty FilePath -> ExtractSrcQ
 
 -- | Fetch <tt>outputHashes</tt> for git dependencies in
 --   <tt>Cargo.lock</tt>. See
@@ -244,7 +244,7 @@ ExtractSrcQ :: NixFetcher Fetched -> NonEmpty FilePath -> ExtractSrcQ
 --   for details. We need fetched source and the file path to
 --   <tt>Cargo.lock</tt>.
 data FetchRustGitDepsQ
-FetchRustGitDepsQ :: NixFetcher Fetched -> FilePath -> FetchRustGitDepsQ
+FetchRustGitDepsQ :: NixFetcher 'Fetched -> FilePath -> FetchRustGitDepsQ
 
 -- | <tt>strftime</tt> format
 --   
@@ -269,7 +269,7 @@ Core :: Core
 type PackageName = Text
 
 -- | How to create package source fetcher given a version
-type PackageFetcher = Version -> NixFetcher Fresh
+type PackageFetcher = Version -> NixFetcher 'Fresh
 newtype PackageExtractSrc
 PackageExtractSrc :: NonEmpty FilePath -> PackageExtractSrc
 newtype PackageCargoLockFiles
@@ -327,196 +327,196 @@ PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe 
 [_prcargolock] :: PackageResult -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum))
 [_prpinned] :: PackageResult -> UseStaleVersion
 [_prgitdate] :: PackageResult -> Maybe Text
-instance Control.DeepSeq.NFData NvFetcher.Types.Version
-instance Data.Binary.Class.Binary NvFetcher.Types.Version
-instance Data.Hashable.Class.Hashable NvFetcher.Types.Version
-instance GHC.Generics.Generic NvFetcher.Types.Version
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.Version
-instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.Version
-instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.Version
-instance GHC.Base.Monoid NvFetcher.Types.Version
-instance GHC.Base.Semigroup NvFetcher.Types.Version
-instance Data.String.IsString NvFetcher.Types.Version
-instance GHC.Classes.Ord NvFetcher.Types.Version
-instance GHC.Show.Show NvFetcher.Types.Version
-instance GHC.Classes.Eq NvFetcher.Types.Version
-instance Control.DeepSeq.NFData NvFetcher.Types.Checksum
-instance Data.Binary.Class.Binary NvFetcher.Types.Checksum
-instance Data.Hashable.Class.Hashable NvFetcher.Types.Checksum
-instance GHC.Generics.Generic NvFetcher.Types.Checksum
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.Checksum
-instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.Checksum
-instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.Checksum
-instance GHC.Classes.Ord NvFetcher.Types.Checksum
-instance GHC.Classes.Eq NvFetcher.Types.Checksum
-instance GHC.Show.Show NvFetcher.Types.Checksum
-instance Control.DeepSeq.NFData NvFetcher.Types.ContainerDigest
-instance Data.Binary.Class.Binary NvFetcher.Types.ContainerDigest
-instance Data.Hashable.Class.Hashable NvFetcher.Types.ContainerDigest
-instance GHC.Generics.Generic NvFetcher.Types.ContainerDigest
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.ContainerDigest
-instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.ContainerDigest
-instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.ContainerDigest
-instance GHC.Classes.Ord NvFetcher.Types.ContainerDigest
-instance GHC.Classes.Eq NvFetcher.Types.ContainerDigest
-instance GHC.Show.Show NvFetcher.Types.ContainerDigest
-instance Control.DeepSeq.NFData NvFetcher.Types.Branch
 instance Data.Binary.Class.Binary NvFetcher.Types.Branch
-instance Data.Hashable.Class.Hashable NvFetcher.Types.Branch
-instance GHC.Generics.Generic NvFetcher.Types.Branch
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.Branch
-instance Data.Default.Class.Default NvFetcher.Types.Branch
-instance GHC.Classes.Ord NvFetcher.Types.Branch
-instance GHC.Classes.Eq NvFetcher.Types.Branch
-instance GHC.Show.Show NvFetcher.Types.Branch
-instance Control.DeepSeq.NFData NvFetcher.Types.VersionSortMethod
-instance Data.Binary.Class.Binary NvFetcher.Types.VersionSortMethod
-instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSortMethod
-instance GHC.Generics.Generic NvFetcher.Types.VersionSortMethod
-instance GHC.Enum.Enum NvFetcher.Types.VersionSortMethod
-instance GHC.Classes.Ord NvFetcher.Types.VersionSortMethod
-instance GHC.Classes.Eq NvFetcher.Types.VersionSortMethod
-instance Data.Default.Class.Default NvFetcher.Types.ListOptions
-instance Control.DeepSeq.NFData NvFetcher.Types.ListOptions
-instance Data.Binary.Class.Binary NvFetcher.Types.ListOptions
-instance Data.Hashable.Class.Hashable NvFetcher.Types.ListOptions
-instance GHC.Generics.Generic NvFetcher.Types.ListOptions
-instance GHC.Classes.Ord NvFetcher.Types.ListOptions
-instance GHC.Classes.Eq NvFetcher.Types.ListOptions
-instance GHC.Show.Show NvFetcher.Types.ListOptions
-instance Data.Default.Class.Default NvFetcher.Types.NvcheckerOptions
-instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerOptions
-instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerOptions
-instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerOptions
-instance GHC.Generics.Generic NvFetcher.Types.NvcheckerOptions
-instance GHC.Classes.Ord NvFetcher.Types.NvcheckerOptions
-instance GHC.Classes.Eq NvFetcher.Types.NvcheckerOptions
-instance GHC.Show.Show NvFetcher.Types.NvcheckerOptions
-instance Control.DeepSeq.NFData NvFetcher.Types.VersionSource
-instance Data.Binary.Class.Binary NvFetcher.Types.VersionSource
-instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSource
-instance GHC.Generics.Generic NvFetcher.Types.VersionSource
-instance GHC.Classes.Ord NvFetcher.Types.VersionSource
-instance GHC.Classes.Eq NvFetcher.Types.VersionSource
-instance GHC.Show.Show NvFetcher.Types.VersionSource
-instance Control.DeepSeq.NFData NvFetcher.Types.CheckVersion
 instance Data.Binary.Class.Binary NvFetcher.Types.CheckVersion
-instance Data.Hashable.Class.Hashable NvFetcher.Types.CheckVersion
-instance GHC.Generics.Generic NvFetcher.Types.CheckVersion
-instance GHC.Classes.Ord NvFetcher.Types.CheckVersion
-instance GHC.Classes.Eq NvFetcher.Types.CheckVersion
-instance GHC.Show.Show NvFetcher.Types.CheckVersion
-instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerResult
-instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerResult
-instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerResult
-instance GHC.Generics.Generic NvFetcher.Types.NvcheckerResult
-instance GHC.Classes.Eq NvFetcher.Types.NvcheckerResult
-instance GHC.Show.Show NvFetcher.Types.NvcheckerResult
-instance GHC.Generics.Generic NvFetcher.Types.NvcheckerRaw
-instance GHC.Classes.Eq NvFetcher.Types.NvcheckerRaw
-instance GHC.Show.Show NvFetcher.Types.NvcheckerRaw
-instance GHC.Generics.Generic NvFetcher.Types.ForceFetch
-instance Data.Binary.Class.Binary NvFetcher.Types.ForceFetch
-instance Control.DeepSeq.NFData NvFetcher.Types.ForceFetch
-instance Data.Hashable.Class.Hashable NvFetcher.Types.ForceFetch
-instance GHC.Classes.Ord NvFetcher.Types.ForceFetch
-instance GHC.Classes.Eq NvFetcher.Types.ForceFetch
-instance GHC.Show.Show NvFetcher.Types.ForceFetch
-instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
-instance GHC.Generics.Generic NvFetcher.Types.RunFetch
-instance Data.Binary.Class.Binary NvFetcher.Types.RunFetch
-instance Control.DeepSeq.NFData NvFetcher.Types.RunFetch
-instance Data.Hashable.Class.Hashable NvFetcher.Types.RunFetch
-instance GHC.Classes.Ord NvFetcher.Types.RunFetch
-instance GHC.Classes.Eq NvFetcher.Types.RunFetch
-instance GHC.Show.Show NvFetcher.Types.RunFetch
-instance GHC.Generics.Generic NvFetcher.Types.ExtractSrcQ
-instance Data.Binary.Class.Binary NvFetcher.Types.ExtractSrcQ
-instance Control.DeepSeq.NFData NvFetcher.Types.ExtractSrcQ
-instance Data.Hashable.Class.Hashable NvFetcher.Types.ExtractSrcQ
-instance GHC.Classes.Ord NvFetcher.Types.ExtractSrcQ
-instance GHC.Classes.Eq NvFetcher.Types.ExtractSrcQ
-instance GHC.Show.Show NvFetcher.Types.ExtractSrcQ
-instance GHC.Generics.Generic NvFetcher.Types.FetchRustGitDepsQ
-instance Data.Binary.Class.Binary NvFetcher.Types.FetchRustGitDepsQ
-instance Control.DeepSeq.NFData NvFetcher.Types.FetchRustGitDepsQ
-instance Data.Hashable.Class.Hashable NvFetcher.Types.FetchRustGitDepsQ
-instance GHC.Classes.Ord NvFetcher.Types.FetchRustGitDepsQ
-instance GHC.Classes.Eq NvFetcher.Types.FetchRustGitDepsQ
-instance GHC.Show.Show NvFetcher.Types.FetchRustGitDepsQ
-instance Control.DeepSeq.NFData NvFetcher.Types.DateFormat
-instance Data.Binary.Class.Binary NvFetcher.Types.DateFormat
-instance Data.Hashable.Class.Hashable NvFetcher.Types.DateFormat
-instance GHC.Generics.Generic NvFetcher.Types.DateFormat
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.DateFormat
-instance Data.Default.Class.Default NvFetcher.Types.DateFormat
-instance GHC.Classes.Ord NvFetcher.Types.DateFormat
-instance GHC.Classes.Eq NvFetcher.Types.DateFormat
-instance GHC.Show.Show NvFetcher.Types.DateFormat
-instance GHC.Generics.Generic NvFetcher.Types.GetGitCommitDate
-instance Data.Binary.Class.Binary NvFetcher.Types.GetGitCommitDate
-instance Control.DeepSeq.NFData NvFetcher.Types.GetGitCommitDate
-instance Data.Hashable.Class.Hashable NvFetcher.Types.GetGitCommitDate
-instance GHC.Classes.Ord NvFetcher.Types.GetGitCommitDate
-instance GHC.Classes.Eq NvFetcher.Types.GetGitCommitDate
-instance GHC.Show.Show NvFetcher.Types.GetGitCommitDate
-instance GHC.Classes.Eq NvFetcher.Types.VersionChange
-instance GHC.Base.Monoid NvFetcher.Types.PackagePassthru
-instance GHC.Base.Semigroup NvFetcher.Types.PackagePassthru
-instance Control.DeepSeq.NFData NvFetcher.Types.UseStaleVersion
-instance Data.Binary.Class.Binary NvFetcher.Types.UseStaleVersion
-instance Data.Hashable.Class.Hashable NvFetcher.Types.UseStaleVersion
-instance GHC.Generics.Generic NvFetcher.Types.UseStaleVersion
-instance GHC.Classes.Ord NvFetcher.Types.UseStaleVersion
-instance GHC.Show.Show NvFetcher.Types.UseStaleVersion
-instance GHC.Classes.Eq NvFetcher.Types.UseStaleVersion
-instance Control.DeepSeq.NFData NvFetcher.Types.PackageKey
-instance Data.Binary.Class.Binary NvFetcher.Types.PackageKey
-instance Data.Hashable.Class.Hashable NvFetcher.Types.PackageKey
-instance GHC.Generics.Generic NvFetcher.Types.PackageKey
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.PackageKey
-instance GHC.Classes.Ord NvFetcher.Types.PackageKey
-instance GHC.Show.Show NvFetcher.Types.PackageKey
-instance GHC.Classes.Eq NvFetcher.Types.PackageKey
-instance Control.DeepSeq.NFData NvFetcher.Types.Core
+instance Data.Binary.Class.Binary NvFetcher.Types.Checksum
+instance Data.Binary.Class.Binary NvFetcher.Types.ContainerDigest
 instance Data.Binary.Class.Binary NvFetcher.Types.Core
-instance Data.Hashable.Class.Hashable NvFetcher.Types.Core
-instance GHC.Generics.Generic NvFetcher.Types.Core
-instance GHC.Classes.Ord NvFetcher.Types.Core
-instance GHC.Show.Show NvFetcher.Types.Core
-instance GHC.Classes.Eq NvFetcher.Types.Core
-instance Control.DeepSeq.NFData k => Control.DeepSeq.NFData (NvFetcher.Types.WithPackageKey k)
-instance Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.WithPackageKey k)
-instance Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.WithPackageKey k)
-instance GHC.Classes.Eq k => GHC.Classes.Eq (NvFetcher.Types.WithPackageKey k)
-instance Control.DeepSeq.NFData NvFetcher.Types.PackageResult
-instance GHC.Generics.Generic NvFetcher.Types.PackageResult
-instance GHC.Show.Show NvFetcher.Types.PackageResult
-instance NvFetcher.Types.ForFetchResult GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.NixFetcher k)
-instance NvFetcher.Types.ForFetchResult GHC.Classes.Eq k => GHC.Classes.Eq (NvFetcher.Types.NixFetcher k)
-instance NvFetcher.Types.ForFetchResult GHC.Classes.Ord k => GHC.Classes.Ord (NvFetcher.Types.NixFetcher k)
-instance NvFetcher.Types.ForFetchResult Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.NixFetcher k)
+instance Data.Binary.Class.Binary NvFetcher.Types.DateFormat
+instance Data.Binary.Class.Binary NvFetcher.Types.ExtractSrcQ
+instance Data.Binary.Class.Binary NvFetcher.Types.FetchRustGitDepsQ
+instance Data.Binary.Class.Binary NvFetcher.Types.ForceFetch
+instance Data.Binary.Class.Binary NvFetcher.Types.GetGitCommitDate
+instance Data.Binary.Class.Binary NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.NixFetcher k)
-instance NvFetcher.Types.ForFetchResult Control.DeepSeq.NFData k => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
-instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.PackageResult
-instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
-instance GHC.Show.Show NvFetcher.Types.VersionChange
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.GetGitCommitDate
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.FetchRustGitDepsQ
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.ExtractSrcQ
-instance Data.Aeson.Types.ToJSON.ToJSON (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
-instance Prettyprinter.Internal.Pretty (NvFetcher.Types.NixFetcher k)
-instance (c (NvFetcher.Types.FetchResult NvFetcher.Types.Checksum k), c (NvFetcher.Types.FetchResult NvFetcher.Types.ContainerDigest k)) => NvFetcher.Types.ForFetchResult c k
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.ForceFetch
+instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerOptions
+instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerResult
+instance Data.Binary.Class.Binary NvFetcher.Types.PackageKey
+instance Data.Binary.Class.Binary NvFetcher.Types.RunFetch
+instance Data.Binary.Class.Binary NvFetcher.Types.UseStaleVersion
+instance Data.Binary.Class.Binary NvFetcher.Types.Version
+instance Data.Binary.Class.Binary NvFetcher.Types.VersionSortMethod
+instance Data.Binary.Class.Binary NvFetcher.Types.VersionSource
+instance Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.WithPackageKey k)
+instance Data.Default.Class.Default NvFetcher.Types.Branch
+instance Data.Default.Class.Default NvFetcher.Types.DateFormat
 instance Data.Default.Class.Default NvFetcher.Types.ForceFetch
-instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerRaw
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.CheckVersion
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.VersionSource
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.NvcheckerOptions
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.ListOptions
-instance GHC.Show.Show NvFetcher.Types.VersionSortMethod
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.VersionSortMethod
+instance Data.Default.Class.Default NvFetcher.Types.ListOptions
+instance Data.Default.Class.Default NvFetcher.Types.NvcheckerOptions
 instance Data.Default.Class.Default NvFetcher.Types.VersionSortMethod
+instance GHC.Enum.Enum NvFetcher.Types.VersionSortMethod
+instance GHC.Classes.Eq NvFetcher.Types.Branch
+instance GHC.Classes.Eq NvFetcher.Types.CheckVersion
+instance GHC.Classes.Eq NvFetcher.Types.Checksum
+instance GHC.Classes.Eq NvFetcher.Types.ContainerDigest
+instance GHC.Classes.Eq NvFetcher.Types.Core
+instance GHC.Classes.Eq NvFetcher.Types.DateFormat
+instance GHC.Classes.Eq NvFetcher.Types.ExtractSrcQ
+instance GHC.Classes.Eq NvFetcher.Types.FetchRustGitDepsQ
+instance GHC.Classes.Eq NvFetcher.Types.ForceFetch
+instance GHC.Classes.Eq NvFetcher.Types.GetGitCommitDate
+instance GHC.Classes.Eq NvFetcher.Types.ListOptions
+instance NvFetcher.Types.ForFetchResult GHC.Classes.Eq k => GHC.Classes.Eq (NvFetcher.Types.NixFetcher k)
+instance GHC.Classes.Eq NvFetcher.Types.NvcheckerOptions
+instance GHC.Classes.Eq NvFetcher.Types.NvcheckerRaw
+instance GHC.Classes.Eq NvFetcher.Types.NvcheckerResult
+instance GHC.Classes.Eq NvFetcher.Types.PackageKey
+instance GHC.Classes.Eq NvFetcher.Types.RunFetch
+instance GHC.Classes.Eq NvFetcher.Types.UseStaleVersion
+instance GHC.Classes.Eq NvFetcher.Types.Version
+instance GHC.Classes.Eq NvFetcher.Types.VersionChange
+instance GHC.Classes.Eq NvFetcher.Types.VersionSortMethod
+instance GHC.Classes.Eq NvFetcher.Types.VersionSource
+instance GHC.Classes.Eq k => GHC.Classes.Eq (NvFetcher.Types.WithPackageKey k)
+instance (c (NvFetcher.Types.FetchResult NvFetcher.Types.Checksum k), c (NvFetcher.Types.FetchResult NvFetcher.Types.ContainerDigest k)) => NvFetcher.Types.ForFetchResult c k
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.Checksum
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.ContainerDigest
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerRaw
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.Version
+instance GHC.Generics.Generic NvFetcher.Types.Branch
+instance GHC.Generics.Generic NvFetcher.Types.CheckVersion
+instance GHC.Generics.Generic NvFetcher.Types.Checksum
+instance GHC.Generics.Generic NvFetcher.Types.ContainerDigest
+instance GHC.Generics.Generic NvFetcher.Types.Core
+instance GHC.Generics.Generic NvFetcher.Types.DateFormat
+instance GHC.Generics.Generic NvFetcher.Types.ExtractSrcQ
+instance GHC.Generics.Generic NvFetcher.Types.FetchRustGitDepsQ
+instance GHC.Generics.Generic NvFetcher.Types.ForceFetch
+instance GHC.Generics.Generic NvFetcher.Types.GetGitCommitDate
+instance GHC.Generics.Generic NvFetcher.Types.ListOptions
+instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
+instance GHC.Generics.Generic NvFetcher.Types.NvcheckerOptions
+instance GHC.Generics.Generic NvFetcher.Types.NvcheckerRaw
+instance GHC.Generics.Generic NvFetcher.Types.NvcheckerResult
+instance GHC.Generics.Generic NvFetcher.Types.PackageKey
+instance GHC.Generics.Generic NvFetcher.Types.PackageResult
+instance GHC.Generics.Generic NvFetcher.Types.RunFetch
+instance GHC.Generics.Generic NvFetcher.Types.UseStaleVersion
+instance GHC.Generics.Generic NvFetcher.Types.Version
+instance GHC.Generics.Generic NvFetcher.Types.VersionSortMethod
+instance GHC.Generics.Generic NvFetcher.Types.VersionSource
+instance Data.Hashable.Class.Hashable NvFetcher.Types.Branch
+instance Data.Hashable.Class.Hashable NvFetcher.Types.CheckVersion
+instance Data.Hashable.Class.Hashable NvFetcher.Types.Checksum
+instance Data.Hashable.Class.Hashable NvFetcher.Types.ContainerDigest
+instance Data.Hashable.Class.Hashable NvFetcher.Types.Core
+instance Data.Hashable.Class.Hashable NvFetcher.Types.DateFormat
+instance Data.Hashable.Class.Hashable NvFetcher.Types.ExtractSrcQ
+instance Data.Hashable.Class.Hashable NvFetcher.Types.FetchRustGitDepsQ
+instance Data.Hashable.Class.Hashable NvFetcher.Types.ForceFetch
+instance Data.Hashable.Class.Hashable NvFetcher.Types.GetGitCommitDate
+instance Data.Hashable.Class.Hashable NvFetcher.Types.ListOptions
+instance NvFetcher.Types.ForFetchResult Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.NixFetcher k)
+instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerOptions
+instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerResult
+instance Data.Hashable.Class.Hashable NvFetcher.Types.PackageKey
+instance Data.Hashable.Class.Hashable NvFetcher.Types.RunFetch
+instance Data.Hashable.Class.Hashable NvFetcher.Types.UseStaleVersion
+instance Data.Hashable.Class.Hashable NvFetcher.Types.Version
+instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSortMethod
+instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSource
+instance Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.WithPackageKey k)
+instance Data.String.IsString NvFetcher.Types.Version
+instance GHC.Base.Monoid NvFetcher.Types.PackagePassthru
+instance GHC.Base.Monoid NvFetcher.Types.Version
+instance Control.DeepSeq.NFData NvFetcher.Types.Branch
+instance Control.DeepSeq.NFData NvFetcher.Types.CheckVersion
+instance Control.DeepSeq.NFData NvFetcher.Types.Checksum
+instance Control.DeepSeq.NFData NvFetcher.Types.ContainerDigest
+instance Control.DeepSeq.NFData NvFetcher.Types.Core
+instance Control.DeepSeq.NFData NvFetcher.Types.DateFormat
+instance Control.DeepSeq.NFData NvFetcher.Types.ExtractSrcQ
+instance Control.DeepSeq.NFData NvFetcher.Types.FetchRustGitDepsQ
+instance Control.DeepSeq.NFData NvFetcher.Types.ForceFetch
+instance Control.DeepSeq.NFData NvFetcher.Types.GetGitCommitDate
+instance Control.DeepSeq.NFData NvFetcher.Types.ListOptions
+instance NvFetcher.Types.ForFetchResult Control.DeepSeq.NFData k => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
+instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerOptions
+instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerResult
+instance Control.DeepSeq.NFData NvFetcher.Types.PackageKey
+instance Control.DeepSeq.NFData NvFetcher.Types.PackageResult
+instance Control.DeepSeq.NFData NvFetcher.Types.RunFetch
+instance Control.DeepSeq.NFData NvFetcher.Types.UseStaleVersion
+instance Control.DeepSeq.NFData NvFetcher.Types.Version
+instance Control.DeepSeq.NFData NvFetcher.Types.VersionSortMethod
+instance Control.DeepSeq.NFData NvFetcher.Types.VersionSource
+instance Control.DeepSeq.NFData k => Control.DeepSeq.NFData (NvFetcher.Types.WithPackageKey k)
+instance GHC.Classes.Ord NvFetcher.Types.Branch
+instance GHC.Classes.Ord NvFetcher.Types.CheckVersion
+instance GHC.Classes.Ord NvFetcher.Types.Checksum
+instance GHC.Classes.Ord NvFetcher.Types.ContainerDigest
+instance GHC.Classes.Ord NvFetcher.Types.Core
+instance GHC.Classes.Ord NvFetcher.Types.DateFormat
+instance GHC.Classes.Ord NvFetcher.Types.ExtractSrcQ
+instance GHC.Classes.Ord NvFetcher.Types.FetchRustGitDepsQ
+instance GHC.Classes.Ord NvFetcher.Types.ForceFetch
+instance GHC.Classes.Ord NvFetcher.Types.GetGitCommitDate
+instance GHC.Classes.Ord NvFetcher.Types.ListOptions
+instance NvFetcher.Types.ForFetchResult GHC.Classes.Ord k => GHC.Classes.Ord (NvFetcher.Types.NixFetcher k)
+instance GHC.Classes.Ord NvFetcher.Types.NvcheckerOptions
+instance GHC.Classes.Ord NvFetcher.Types.PackageKey
+instance GHC.Classes.Ord NvFetcher.Types.RunFetch
+instance GHC.Classes.Ord NvFetcher.Types.UseStaleVersion
+instance GHC.Classes.Ord NvFetcher.Types.Version
+instance GHC.Classes.Ord NvFetcher.Types.VersionSortMethod
+instance GHC.Classes.Ord NvFetcher.Types.VersionSource
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.Branch
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.CheckVersion
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.Checksum
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.ContainerDigest
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.DateFormat
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.ExtractSrcQ
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.FetchRustGitDepsQ
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.ForceFetch
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.GetGitCommitDate
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.ListOptions
+instance Prettyprinter.Internal.Pretty (NvFetcher.Types.NixFetcher k)
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.NvcheckerOptions
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.PackageKey
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.Version
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.VersionSortMethod
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.VersionSource
+instance GHC.Base.Semigroup NvFetcher.Types.PackagePassthru
+instance GHC.Base.Semigroup NvFetcher.Types.Version
+instance GHC.Show.Show NvFetcher.Types.Branch
+instance GHC.Show.Show NvFetcher.Types.CheckVersion
+instance GHC.Show.Show NvFetcher.Types.Checksum
+instance GHC.Show.Show NvFetcher.Types.ContainerDigest
+instance GHC.Show.Show NvFetcher.Types.Core
+instance GHC.Show.Show NvFetcher.Types.DateFormat
+instance GHC.Show.Show NvFetcher.Types.ExtractSrcQ
+instance GHC.Show.Show NvFetcher.Types.FetchRustGitDepsQ
+instance GHC.Show.Show NvFetcher.Types.ForceFetch
+instance GHC.Show.Show NvFetcher.Types.GetGitCommitDate
+instance GHC.Show.Show NvFetcher.Types.ListOptions
+instance NvFetcher.Types.ForFetchResult GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.NixFetcher k)
+instance GHC.Show.Show NvFetcher.Types.NvcheckerOptions
+instance GHC.Show.Show NvFetcher.Types.NvcheckerRaw
+instance GHC.Show.Show NvFetcher.Types.NvcheckerResult
+instance GHC.Show.Show NvFetcher.Types.PackageKey
+instance GHC.Show.Show NvFetcher.Types.PackageResult
+instance GHC.Show.Show NvFetcher.Types.RunFetch
+instance GHC.Show.Show NvFetcher.Types.UseStaleVersion
+instance GHC.Show.Show NvFetcher.Types.Version
+instance GHC.Show.Show NvFetcher.Types.VersionChange
+instance GHC.Show.Show NvFetcher.Types.VersionSortMethod
+instance GHC.Show.Show NvFetcher.Types.VersionSource
+instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
+instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.Checksum
+instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.ContainerDigest
+instance Data.Aeson.Types.ToJSON.ToJSON (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
+instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.PackageResult
+instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.Version
 
 
 -- | This module provides mechanisms for obtaining the git commit date. The
@@ -543,57 +543,57 @@ getGitCommitDate :: Text -> Text -> DateFormat -> Action Text
 
 -- | Lenses for <a>NvFetcher.Types</a>
 module NvFetcher.Types.Lens
-sortVersionKey :: Lens' ListOptions (Maybe VersionSortMethod)
-includeRegex :: Lens' ListOptions (Maybe Text)
-ignored :: Lens' ListOptions (Maybe Text)
 excludeRegex :: Lens' ListOptions (Maybe Text)
-toPattern :: Lens' NvcheckerOptions (Maybe Text)
-stripPrefix :: Lens' NvcheckerOptions (Maybe Text)
+ignored :: Lens' ListOptions (Maybe Text)
+includeRegex :: Lens' ListOptions (Maybe Text)
+sortVersionKey :: Lens' ListOptions (Maybe VersionSortMethod)
 fromPattern :: Lens' NvcheckerOptions (Maybe Text)
-vurl :: Traversal' VersionSource Text
-vsmPublisher :: Traversal' VersionSource Text
-vsmExtName :: Traversal' VersionSource Text
-vcontainer :: Traversal' VersionSource Text
-vcmd :: Traversal' VersionSource Text
-vbranch :: Traversal' VersionSource Branch
-repology :: Traversal' VersionSource Text
-repo :: Traversal' VersionSource Text
-regex :: Traversal' VersionSource Text
-pypi :: Traversal' VersionSource Text
-owner :: Traversal' VersionSource Text
-ovPublisher :: Traversal' VersionSource Text
-ovExtName :: Traversal' VersionSource Text
-manual :: Traversal' VersionSource Text
-listOptions :: Traversal' VersionSource ListOptions
-aur :: Traversal' VersionSource Text
+stripPrefix :: Lens' NvcheckerOptions (Maybe Text)
+toPattern :: Lens' NvcheckerOptions (Maybe Text)
 archpkg :: Traversal' VersionSource Text
-tlsVerify :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Bool)
-sparseCheckout :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) [Text]
-sha256 :: forall k_iZtH. Lens' (NixFetcher k_iZtH) (FetchResult Checksum k_iZtH)
-rev :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Version
-name :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Text)
-leaveDotGit :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Bool
-imageTag :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Text
-imageName :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Text
-imageDigest :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (FetchResult ContainerDigest k_iZtH)
-furl :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Text
-frepo :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Text
-fowner :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Text
-fos :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Text)
-finalImageTag :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Text)
-finalImageName :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Text)
-fetchSubmodules :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Bool
-farch :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) (Maybe Text)
-deepClone :: forall k_iZtH. Traversal' (NixFetcher k_iZtH) Bool
-pversion :: Lens' Package CheckVersion
-ppinned :: Lens' Package UseStaleVersion
-ppassthru :: Lens' Package PackagePassthru
-pname :: Lens' Package PackageName
-pgitdateformat :: Lens' Package DateFormat
-pforcefetch :: Lens' Package ForceFetch
-pfetcher :: Lens' Package PackageFetcher
-pextract :: Lens' Package (Maybe PackageExtractSrc)
+aur :: Traversal' VersionSource Text
+listOptions :: Traversal' VersionSource ListOptions
+manual :: Traversal' VersionSource Text
+ovExtName :: Traversal' VersionSource Text
+ovPublisher :: Traversal' VersionSource Text
+owner :: Traversal' VersionSource Text
+pypi :: Traversal' VersionSource Text
+regex :: Traversal' VersionSource Text
+repo :: Traversal' VersionSource Text
+repology :: Traversal' VersionSource Text
+vbranch :: Traversal' VersionSource Branch
+vcmd :: Traversal' VersionSource Text
+vcontainer :: Traversal' VersionSource Text
+vsmExtName :: Traversal' VersionSource Text
+vsmPublisher :: Traversal' VersionSource Text
+vurl :: Traversal' VersionSource Text
+deepClone :: forall (k :: FetchStatus) f. Applicative f => (Bool -> f Bool) -> NixFetcher k -> f (NixFetcher k)
+farch :: forall (k :: FetchStatus) f. Applicative f => (Maybe Text -> f (Maybe Text)) -> NixFetcher k -> f (NixFetcher k)
+fetchSubmodules :: forall (k :: FetchStatus) f. Applicative f => (Bool -> f Bool) -> NixFetcher k -> f (NixFetcher k)
+finalImageName :: forall (k :: FetchStatus) f. Applicative f => (Maybe Text -> f (Maybe Text)) -> NixFetcher k -> f (NixFetcher k)
+finalImageTag :: forall (k :: FetchStatus) f. Applicative f => (Maybe Text -> f (Maybe Text)) -> NixFetcher k -> f (NixFetcher k)
+fos :: forall (k :: FetchStatus) f. Applicative f => (Maybe Text -> f (Maybe Text)) -> NixFetcher k -> f (NixFetcher k)
+fowner :: forall (k :: FetchStatus) f. Applicative f => (Text -> f Text) -> NixFetcher k -> f (NixFetcher k)
+frepo :: forall (k :: FetchStatus) f. Applicative f => (Text -> f Text) -> NixFetcher k -> f (NixFetcher k)
+furl :: forall (k :: FetchStatus) f. Applicative f => (Text -> f Text) -> NixFetcher k -> f (NixFetcher k)
+imageDigest :: forall (k :: FetchStatus) f. Applicative f => (FetchResult ContainerDigest k -> f (FetchResult ContainerDigest k)) -> NixFetcher k -> f (NixFetcher k)
+imageName :: forall (k :: FetchStatus) f. Applicative f => (Text -> f Text) -> NixFetcher k -> f (NixFetcher k)
+imageTag :: forall (k :: FetchStatus) f. Applicative f => (Text -> f Text) -> NixFetcher k -> f (NixFetcher k)
+leaveDotGit :: forall (k :: FetchStatus) f. Applicative f => (Bool -> f Bool) -> NixFetcher k -> f (NixFetcher k)
+name :: forall (k :: FetchStatus) f. Applicative f => (Maybe Text -> f (Maybe Text)) -> NixFetcher k -> f (NixFetcher k)
+rev :: forall (k :: FetchStatus) f. Applicative f => (Version -> f Version) -> NixFetcher k -> f (NixFetcher k)
+sha256 :: forall (k :: FetchStatus) f. Functor f => (FetchResult Checksum k -> f (FetchResult Checksum k)) -> NixFetcher k -> f (NixFetcher k)
+sparseCheckout :: forall (k :: FetchStatus) f. Applicative f => ([Text] -> f [Text]) -> NixFetcher k -> f (NixFetcher k)
+tlsVerify :: forall (k :: FetchStatus) f. Applicative f => (Maybe Bool -> f (Maybe Bool)) -> NixFetcher k -> f (NixFetcher k)
 pcargo :: Lens' Package (Maybe PackageCargoLockFiles)
+pextract :: Lens' Package (Maybe PackageExtractSrc)
+pfetcher :: Lens' Package PackageFetcher
+pforcefetch :: Lens' Package ForceFetch
+pgitdateformat :: Lens' Package DateFormat
+pname :: Lens' Package PackageName
+ppassthru :: Lens' Package PackagePassthru
+ppinned :: Lens' Package UseStaleVersion
+pversion :: Lens' Package CheckVersion
 
 
 -- | This module is about global information we use in rules.
@@ -679,7 +679,7 @@ module NvFetcher.NixFetcher
 
 -- | The input of prefetch rule
 data RunFetch
-RunFetch :: ForceFetch -> NixFetcher Fresh -> RunFetch
+RunFetch :: ForceFetch -> NixFetcher 'Fresh -> RunFetch
 
 -- | Whether to cache the fetched sha256
 --   
@@ -739,7 +739,7 @@ type family FetchResult a (k :: FetchStatus)
 prefetchRule :: Rules ()
 
 -- | Run nix fetcher
-prefetch :: NixFetcher Fresh -> ForceFetch -> Action (Maybe (NixFetcher Fetched))
+prefetch :: NixFetcher 'Fresh -> ForceFetch -> Action (Maybe (NixFetcher 'Fetched))
 
 -- | Create a fetcher from github repo
 gitHubFetcher :: (Text, Text) -> PackageFetcher
@@ -757,10 +757,10 @@ gitHubReleaseFetcher' :: (Text, Text) -> (Version -> Text) -> PackageFetcher
 gitFetcher :: Text -> PackageFetcher
 
 -- | Create a fetcher from url
-urlFetcher :: Text -> NixFetcher Fresh
+urlFetcher :: Text -> NixFetcher 'Fresh
 
 -- | Create a fetcher from url specifying the file name
-urlFetcher' :: Text -> Maybe Text -> NixFetcher Fresh
+urlFetcher' :: Text -> Maybe Text -> NixFetcher 'Fresh
 
 -- | Create a fetcher from openvsx
 openVsxFetcher :: (Text, Text) -> PackageFetcher
@@ -769,13 +769,13 @@ openVsxFetcher :: (Text, Text) -> PackageFetcher
 vscodeMarketplaceFetcher :: (Text, Text) -> PackageFetcher
 
 -- | Create a fetcher from url, using fetchTarball
-tarballFetcher :: Text -> NixFetcher Fresh
-instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.NixFetcher.FetchedGit
-instance GHC.Generics.Generic NvFetcher.NixFetcher.FetchedGit
-instance GHC.Show.Show NvFetcher.NixFetcher.FetchedGit
+tarballFetcher :: Text -> NixFetcher 'Fresh
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.NixFetcher.FetchedContainer
+instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.NixFetcher.FetchedGit
 instance GHC.Generics.Generic NvFetcher.NixFetcher.FetchedContainer
+instance GHC.Generics.Generic NvFetcher.NixFetcher.FetchedGit
 instance GHC.Show.Show NvFetcher.NixFetcher.FetchedContainer
+instance GHC.Show.Show NvFetcher.NixFetcher.FetchedGit
 
 
 -- | This module mainly contains two things: <a>PackageSet</a> and
@@ -814,10 +814,10 @@ purePackageSet :: [Package] -> PackageSet ()
 runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 
 -- | A tagless final style DSL for constructing packages
-class PkgDSL f
+class PkgDSL (f :: Type -> Type)
 new :: PkgDSL f => f PackageName -> f (Prod '[PackageName])
-andThen :: PkgDSL f => f (Prod r) -> f a -> f (Prod (a ': r))
-end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, NvcheckerOptions, PackagePassthru, UseStaleVersion, DateFormat, ForceFetch] r) => f (Prod r) -> f ()
+andThen :: forall (r :: [Type]) a. PkgDSL f => f (Prod r) -> f a -> f (Prod (a ': r))
+end :: forall (r :: [Type]). (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, NvcheckerOptions, PackagePassthru, UseStaleVersion, DateFormat, ForceFetch] r) => f (Prod r) -> f ()
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
@@ -826,7 +826,7 @@ end :: (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, Optio
 --   <pre>
 --   define $ package "nvfetcher-git" <a>sourceGit</a> "<a>https://github.com/berberman/nvfetcher"</a> <a>fetchGitHub</a> ("berberman", "nvfetcher")
 --   </pre>
-define :: (Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, PackagePassthru, NvcheckerOptions, UseStaleVersion, DateFormat, ForceFetch] r) => PackageSet (Prod r) -> PackageSet ()
+define :: forall (r :: [Type]). (Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, PackagePassthru, NvcheckerOptions, UseStaleVersion, DateFormat, ForceFetch] r) => PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])
@@ -841,13 +841,13 @@ fetch :: Attach PackageFetcher PackageFetcher
 fromGitHub :: AttachMany '[PackageFetcher, VersionSource] (Text, Text)
 
 -- | A synonym of <a>fetchGitHub'</a> and <a>sourceGitHub</a>
-fromGitHub' :: AttachMany '[PackageFetcher, VersionSource] (Text, Text, NixFetcher Fresh -> NixFetcher Fresh)
+fromGitHub' :: AttachMany '[PackageFetcher, VersionSource] (Text, Text, NixFetcher 'Fresh -> NixFetcher 'Fresh)
 
 -- | A synonym of <a>fetchGitHub</a> and <a>sourceGitHubTag</a>
 fromGitHubTag :: AttachMany '[PackageFetcher, VersionSource] (Text, Text, ListOptions -> ListOptions)
 
 -- | A synonym of <a>fetchGitHub'</a> and <a>sourceGitHubTag</a>
-fromGitHubTag' :: AttachMany '[PackageFetcher, VersionSource] (Text, Text, ListOptions -> ListOptions, NixFetcher Fresh -> NixFetcher Fresh)
+fromGitHubTag' :: AttachMany '[PackageFetcher, VersionSource] (Text, Text, ListOptions -> ListOptions, NixFetcher 'Fresh -> NixFetcher 'Fresh)
 
 -- | A synonym of <a>fetchPypi</a> and <a>sourcePypi</a>
 fromPypi :: AttachMany '[PackageFetcher, VersionSource] Text
@@ -943,7 +943,7 @@ fetchGitHub :: Attach PackageFetcher (Text, Text)
 --   <pre>
 --   define $ package "qliveplayer" <a>sourceGitHub</a> (<a>THMonster</a>, <a>QLivePlayer</a>) <a>fetchGitHub'</a> (<a>THMonster</a>, <a>QLivePlayer</a>, fetchSubmodules .~ True)
 --   </pre>
-fetchGitHub' :: Attach PackageFetcher (Text, Text, NixFetcher Fresh -> NixFetcher Fresh)
+fetchGitHub' :: Attach PackageFetcher (Text, Text, NixFetcher 'Fresh -> NixFetcher 'Fresh)
 
 -- | This package is fetched from a file in github release
 --   
@@ -969,7 +969,7 @@ fetchGit :: Attach PackageFetcher Text
 --   
 --   Similar to <a>fetchGit</a>, but allows a modifier to the fetcher. See
 --   <a>fetchGitHub'</a> for a concret example.
-fetchGit' :: Attach PackageFetcher (Text, NixFetcher Fresh -> NixFetcher Fresh)
+fetchGit' :: Attach PackageFetcher (Text, NixFetcher 'Fresh -> NixFetcher 'Fresh)
 
 -- | This package is fetched from url
 --   
@@ -1018,7 +1018,7 @@ passthru :: Attach PackagePassthru [(Text, Text)]
 -- | Pin a package
 --   
 --   new version won't be checked if we have a stale version
-pinned :: PackageSet (Prod r) -> PackageSet (Prod (UseStaleVersion : r))
+pinned :: forall (r :: [Type]). PackageSet (Prod r) -> PackageSet (Prod (UseStaleVersion ': r))
 
 -- | Specify the date format for getting git commit date
 --   
@@ -1026,34 +1026,34 @@ pinned :: PackageSet (Prod r) -> PackageSet (Prod (UseStaleVersion : r))
 gitDateFormat :: Attach DateFormat (Maybe Text)
 
 -- | Set always fetching regardless of the version changing
-forceFetch :: PackageSet (Prod r) -> PackageSet (Prod (ForceFetch : r))
+forceFetch :: forall (r :: [Type]). PackageSet (Prod r) -> PackageSet (Prod (ForceFetch ': r))
 
 -- | Simple HList
 data Prod (r :: [Type])
 
 -- | <tt>xs ++ ys</tt>, at type level
-type family Append xs ys
+type family Append (xs :: [Type]) (ys :: [Type]) :: [Type]
 
 -- | Project elements from <a>Prod</a>
-class Member (a :: Type) (r :: [Type])
+class Member a (r :: [Type])
 
 -- | Project optional elements from <a>Prod</a>
-class OptionalMember (a :: Type) (r :: [Type])
+class OptionalMember a (r :: [Type])
 
 -- | Constraint for producing error messages
-type family NotElem (x :: Type) (xs :: [Type]) :: Constraint
+type family NotElem x (xs :: [Type])
 
 -- | A list of <a>Member</a>
-type family Members xs r :: Constraint
+type family Members (xs :: [Type]) (r :: [Type])
 
 -- | A list of <a>OptionalMember</a>
-type family OptionalMembers xs r :: Constraint
+type family OptionalMembers (xs :: [Type]) (r :: [Type])
 
 -- | Attach member <tt>x</tt>, with a function <tt>arg</tt>
 type Attach x arg = AttachMany '[x] arg
 
 -- | Attach members <tt>xs</tt>, with a function argument <tt>arg</tt>
-type AttachMany xs arg = forall r. PackageSet (Prod r) -> arg -> PackageSet (Prod (Append xs r))
+type AttachMany (xs :: [Type]) arg = forall (r :: [Type]). () => PackageSet Prod r -> arg -> PackageSet Prod Append xs r
 
 -- | The function <a>coerce</a> allows you to safely convert between values
 --   of types that have the same representation with no run-time overhead.
@@ -1087,7 +1087,7 @@ type AttachMany xs arg = forall r. PackageSet (Prod r) -> arg -> PackageSet (Pro
 --   &gt;&gt;&gt; coerce (map (+ (1 :: Int))) [Age 42, Age 24] :: [TTL]
 --   [TTL 43,TTL 25]
 --   </pre>
-coerce :: forall {k :: RuntimeRep} (a :: TYPE k) (b :: TYPE k). Coercible a b => a -> b
+coerce :: Coercible a b => a -> b
 
 -- | Lift a computation from the <a>IO</a> monad. This allows us to run IO
 --   computations in any monadic stack, so long as it supports these kinds
@@ -1134,9 +1134,22 @@ liftIO :: MonadIO m => IO a -> m a
 --   forward application operator <a>$</a>, which allows <a>&amp;</a> to be
 --   nested in <a>$</a>.
 --   
+--   This is a version of <tt><a>flip</a> <a>id</a></tt>, where <a>id</a>
+--   is specialized from <tt>a -&gt; a</tt> to <tt>(a -&gt; b) -&gt; (a
+--   -&gt; b)</tt> which by the associativity of <tt>(-&gt;)</tt> is <tt>(a
+--   -&gt; b) -&gt; a -&gt; b</tt>. flipping this yields <tt>a -&gt; (a
+--   -&gt; b) -&gt; b</tt> which is the type signature of <a>&amp;</a>
+--   
+--   <h4><b>Examples</b></h4>
+--   
 --   <pre>
 --   &gt;&gt;&gt; 5 &amp; (+1) &amp; show
 --   "6"
+--   </pre>
+--   
+--   <pre>
+--   &gt;&gt;&gt; sqrt $ [1 / n^2 | n &lt;- [1..1000]] &amp; sum &amp; (*6)
+--   3.1406380562059946
 --   </pre>
 (&) :: a -> (a -> b) -> b
 infixl 1 &
@@ -1230,15 +1243,15 @@ infixl 8 ^.
 --   </pre>
 (?~) :: ASetter s t a (Maybe b) -> b -> s -> t
 infixr 4 ?~
-instance NvFetcher.PackageSet.PkgDSL NvFetcher.PackageSet.PackageSet
+instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
 instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.Member x (x : xs)
-instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.OptionalMember x (x : xs)
-instance NvFetcher.PackageSet.OptionalMember x xs => NvFetcher.PackageSet.OptionalMember x (_y : xs)
-instance NvFetcher.PackageSet.OptionalMember x '[]
 instance NvFetcher.PackageSet.Member x xs => NvFetcher.PackageSet.Member x (_y : xs)
 instance (TypeError ...) => NvFetcher.PackageSet.Member x '[]
 instance Control.Monad.IO.Class.MonadIO NvFetcher.PackageSet.PackageSet
-instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
+instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.OptionalMember x (x : xs)
+instance NvFetcher.PackageSet.OptionalMember x xs => NvFetcher.PackageSet.OptionalMember x (_y : xs)
+instance NvFetcher.PackageSet.OptionalMember x '[]
+instance NvFetcher.PackageSet.PkgDSL NvFetcher.PackageSet.PackageSet
 
 
 -- | <a>nvchecker</a> is a program checking new versions of packages. We
@@ -1361,15 +1374,15 @@ toNixExpr :: ToNixExpr a => a -> NixExpr
 
 -- | Create a trivial drv that extracts the source from a fetcher TODO:
 --   Avoid using <tt>NIX_PATH</tt>
-fetcherToDrv :: NixFetcher Fetched -> Text -> NixExpr
-instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
+fetcherToDrv :: NixFetcher 'Fetched -> Text -> NixExpr
 instance NvFetcher.NixExpr.ToNixExpr GHC.Types.Bool
 instance NvFetcher.NixExpr.ToNixExpr a => NvFetcher.NixExpr.ToNixExpr [a]
-instance NvFetcher.NixExpr.ToNixExpr a => NvFetcher.NixExpr.ToNixExpr (GHC.Base.NonEmpty a)
 instance NvFetcher.NixExpr.ToNixExpr GHC.Base.String
+instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
+instance NvFetcher.NixExpr.ToNixExpr a => NvFetcher.NixExpr.ToNixExpr (GHC.Base.NonEmpty a)
+instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.PackageResult
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.NixExpr
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.Version
-instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.PackageResult
 
 
 -- | This module provides function that extracs files contents from package
@@ -1380,16 +1393,16 @@ module NvFetcher.ExtractSrc
 
 -- | Extract file contents from package source e.g. <tt>Cargo.lock</tt>
 data ExtractSrcQ
-ExtractSrcQ :: NixFetcher Fetched -> NonEmpty FilePath -> ExtractSrcQ
+ExtractSrcQ :: NixFetcher 'Fetched -> NonEmpty FilePath -> ExtractSrcQ
 
 -- | Rules of extract source
 extractSrcRule :: Rules ()
 
 -- | Run extract source
-extractSrc :: NixFetcher Fetched -> FilePath -> Action (HashMap FilePath Text)
+extractSrc :: NixFetcher 'Fetched -> FilePath -> Action (HashMap FilePath Text)
 
 -- | Run extract source with many sources
-extractSrcs :: NixFetcher Fetched -> NonEmpty FilePath -> Action (HashMap FilePath Text)
+extractSrcs :: NixFetcher 'Fetched -> NonEmpty FilePath -> Action (HashMap FilePath Text)
 
 
 -- | This module provides function to calculate <tt>cargoLock</tt> used in
@@ -1402,18 +1415,18 @@ module NvFetcher.FetchRustGitDeps
 --   for details. We need fetched source and the file path to
 --   <tt>Cargo.lock</tt>.
 data FetchRustGitDepsQ
-FetchRustGitDepsQ :: NixFetcher Fetched -> FilePath -> FetchRustGitDepsQ
+FetchRustGitDepsQ :: NixFetcher 'Fetched -> FilePath -> FetchRustGitDepsQ
 
 -- | Rules of fetch rust git dependencies
 fetchRustGitDepsRule :: Rules ()
 
 -- | Run fetch rust git dependencies
-fetchRustGitDeps :: NixFetcher Fetched -> FilePath -> Action (HashMap Text Checksum)
-instance GHC.Classes.Ord NvFetcher.FetchRustGitDeps.ParsedGitSrc
+fetchRustGitDeps :: NixFetcher 'Fetched -> FilePath -> Action (HashMap Text Checksum)
 instance GHC.Classes.Eq NvFetcher.FetchRustGitDeps.ParsedGitSrc
-instance GHC.Show.Show NvFetcher.FetchRustGitDeps.ParsedGitSrc
-instance GHC.Classes.Ord NvFetcher.FetchRustGitDeps.RustDep
 instance GHC.Classes.Eq NvFetcher.FetchRustGitDeps.RustDep
+instance GHC.Classes.Ord NvFetcher.FetchRustGitDeps.ParsedGitSrc
+instance GHC.Classes.Ord NvFetcher.FetchRustGitDeps.RustDep
+instance GHC.Show.Show NvFetcher.FetchRustGitDeps.ParsedGitSrc
 instance GHC.Show.Show NvFetcher.FetchRustGitDeps.RustDep
 
 
