@@ -1,7 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TemplateHaskell #-}
 
--- | Copyright: (c) 2021-2022 berberman
+-- | Copyright: (c) 2021-2025 berberman
 -- SPDX-License-Identifier: MIT
 -- Maintainer: berberman <berberman@yandex.com>
 -- Stability: experimental
