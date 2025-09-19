@@ -12,10 +12,8 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as LBS
 import Data.Text (Text)
 import qualified Data.Text as T
-import Development.Shake (Action, liftIO, putVerbose)
-import Development.Shake.FilePath (takeDirectory)
 import NvFetcher.Types
-import System.Directory.Extra (XdgDirectory (XdgData), copyFile, createDirectoryIfMissing, getXdgDirectory)
+import System.Directory.Extra (XdgDirectory (..), getXdgDirectory)
 import System.FilePath.Glob (Pattern, compile)
 import Text.Regex.TDFA ((=~))
 
@@ -47,13 +45,6 @@ getDataDir = getXdgDirectory XdgData "nvfetcher"
 -- See <https://hackage.haskell.org/package/Glob/docs/System-FilePath-Glob.html#v:compile> for details.
 compileGlob :: Glob -> Pattern
 compileGlob (Glob txt) = compile txt
-
-copyFile'' :: FilePath -> FilePath -> Action ()
-copyFile'' old new = do
-  putVerbose $ "Copying from " ++ old ++ " to " ++ new
-  liftIO $ do
-    createDirectoryIfMissing True (takeDirectory new)
-    copyFile old new
 
 #if MIN_VERSION_aeson(2,0,0)
 aesonKey :: Text -> A.Key

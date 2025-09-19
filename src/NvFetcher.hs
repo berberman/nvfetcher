@@ -166,7 +166,7 @@ runNvFetcherNoCLI config@Config {..} target packageSet = do
       rules = mainRules config
 
   -- Remove all files in build dir except generated nix and json
-  -- Since extract src rule core rule has always rerun, any file not generated in this run will be removed
+  -- Since core rule has always rerun, any file not generated in this run will be removed
   -- Put it here to avoid removing files generated in this run
   unless (keepOldFiles || (target /= Build)) $
     whenM (D.doesDirectoryExist buildDir) $ do

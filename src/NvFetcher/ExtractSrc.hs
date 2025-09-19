@@ -37,7 +37,7 @@ import Development.Shake.FilePath (makeRelative, (</>))
 import NvFetcher.NixExpr
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
-import NvFetcher.Utils (compileGlob, copyFile'')
+import NvFetcher.Utils (compileGlob)
 import Prettyprinter (pretty, (<+>))
 import qualified System.Directory.Extra as IO
 import System.FilePath.Glob (globDir1)
@@ -46,8 +46,6 @@ import System.FilePath.Glob (globDir1)
 extractSrcRule :: Rules ()
 extractSrcRule = void $
   addOracle $ \q@(ExtractSrcQ fetcher files) -> do
-    -- Always rerun as we generate new files in the build directory
-    alwaysRerun
     withTempFile $ \fp -> withRetry $ do
       putInfo . show $ "#" <+> pretty q
       let nixExpr = T.unpack $ fetcherToDrv fetcher "nvfetcher-extract"
@@ -75,7 +73,7 @@ extractSrcRule = void $
                     -- Copy the file to the build directory under the hash of the fetcher
                     -- Also replace slashes in the hash with underscores
                     let dst = (T.unpack . T.replace "/" "_" . coerce $ _sha256 fetcher) </> file
-                    copyFile'' (out </> file) (buildDir </> dst)
+                    copyFile' (out </> file) (buildDir </> dst)
                     pure (file, dst)
                 | glob <- NE.toList files
               ]
