@@ -17,9 +17,7 @@ where
 
 import Data.Coerce (coerce)
 import qualified Data.HashMap.Strict as HMap
-import qualified Data.Text as T
 import Development.Shake
-import Development.Shake.FilePath
 import Development.Shake.Rule
 import NvFetcher.ExtractSrc
 import NvFetcher.FetchRustGitDeps
@@ -39,8 +37,8 @@ coreRules = do
   fetchRustGitDepsRule
   getGitCommitDateRule
   addBuiltinRule noLint noIdentity $ \(WithPackageKey (Core, pkg)) _ _ -> do
-    -- it's important to always rerun
-    -- since the package definition is not tracked at all
+    -- It's important to always rerun since the package definition is not tracked at all
+    -- Also we generate new files in the build directory
     alwaysRerun
     lookupPackage pkg >>= \case
       Nothing -> fail $ "Unknown package key: " <> show pkg
@@ -55,27 +53,12 @@ coreRules = do
           -- If we fail to prefetch, we should fail on this package
           case _prfetched of
             Just _prfetched -> do
-              buildDir <- getBuildDir
               -- extract src
               _prextract <-
                 case _pextract of
                   Just (PackageExtractSrc extract) -> do
-                    result <- HMap.toList <$> extractSrcs _prfetched extract
-                    Just . HMap.fromList
-                      <$> sequence
-                        [ do
-                            -- write extracted files to build dir
-                            -- and read them in nix using 'builtins.readFile'
-                            writeFile' (buildDir </> path) (T.unpack v)
-                            pure (k, T.pack path)
-                          | (k, v) <- result,
-                            let path =
-                                  "./"
-                                    <> T.unpack _pname
-                                    <> "-"
-                                    <> T.unpack (coerce version)
-                                    </> k
-                        ]
+                    result <- extractSrcs _prfetched extract
+                    pure $ Just result
                   _ -> pure Nothing
               -- cargo locks
               _prcargolock <-
@@ -83,17 +66,9 @@ coreRules = do
                   Just (PackageCargoLockFiles lockPath) -> do
                     lockFiles <- HMap.toList <$> extractSrcs _prfetched lockPath
                     result <- parallel $
-                      flip fmap lockFiles $ \(lockPath, lockData) -> do
-                        result <- fetchRustGitDeps _prfetched lockPath
-                        let lockPath' =
-                              T.unpack _pname
-                                <> "-"
-                                <> T.unpack (coerce version)
-                                </> lockPath
-                            lockPathNix = "./" <> T.pack lockPath'
-                        -- similar to extract src, write lock file to build dir
-                        writeFile' (buildDir </> lockPath') $ T.unpack lockData
-                        pure (lockPath, (lockPathNix, result))
+                      flip fmap lockFiles $ \(srcLockPath, dstLockPath) -> do
+                        result <- fetchRustGitDeps _prfetched srcLockPath
+                        pure (srcLockPath, (dstLockPath, result))
                     pure . Just $ HMap.fromList result
                   _ -> pure Nothing
 

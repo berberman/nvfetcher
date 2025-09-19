@@ -543,13 +543,13 @@ fetchTarball e f = fetch e (tarballFetcher . f)
 --------------------------------------------------------------------------------
 
 -- | Extract files from fetched package source
-extractSource :: Attach PackageExtractSrc [FilePath]
+extractSource :: Attach PackageExtractSrc [Glob]
 extractSource = (. pure . PackageExtractSrc . NE.fromList) . andThen
 
 -- | Run 'FetchRustGitDependencies' given the path to @Cargo.lock@ files
 --
 -- The lock files will be extracted as well.
-hasCargoLocks :: Attach PackageCargoLockFiles [FilePath]
+hasCargoLocks :: Attach PackageCargoLockFiles [Glob]
 hasCargoLocks = (. pure . PackageCargoLockFiles . NE.fromList) . andThen
 
 -- | Set 'NvcheckerOptions' for a package, which can tweak the version number we obtain

@@ -1,6 +1,6 @@
 { mkDerivation, aeson, aeson-pretty, async, base, binary
 , binary-instances, bytestring, containers, data-default, extra
-, free, hspec, hspec-discover, lib, microlens, microlens-th
+, free, Glob, hspec, hspec-discover, lib, microlens, microlens-th
 , neat-interpolation, optparse-simple, parsec, prettyprinter
 , regex-tdfa, shake, stm, text, toml-reader, transformers, unliftio
 , unordered-containers
@@ -13,22 +13,22 @@ mkDerivation {
   isExecutable = true;
   libraryHaskellDepends = [
     aeson aeson-pretty base binary binary-instances bytestring
-    containers data-default extra free microlens microlens-th
+    containers data-default extra free Glob microlens microlens-th
     neat-interpolation optparse-simple parsec prettyprinter regex-tdfa
     shake text toml-reader transformers unordered-containers
   ];
   executableHaskellDepends = [
     aeson aeson-pretty base binary binary-instances bytestring
-    containers data-default extra free microlens microlens-th
+    containers data-default extra free Glob microlens microlens-th
     neat-interpolation optparse-simple parsec prettyprinter regex-tdfa
     shake text toml-reader transformers unordered-containers
   ];
   testHaskellDepends = [
     aeson aeson-pretty async base binary binary-instances bytestring
-    containers data-default extra free hspec microlens microlens-th
-    neat-interpolation optparse-simple parsec prettyprinter regex-tdfa
-    shake stm text toml-reader transformers unliftio
-    unordered-containers
+    containers data-default extra free Glob hspec microlens
+    microlens-th neat-interpolation optparse-simple parsec
+    prettyprinter regex-tdfa shake stm text toml-reader transformers
+    unliftio unordered-containers
   ];
   testToolDepends = [ hspec-discover ];
   homepage = "https://github.com/berberman/nvfetcher";

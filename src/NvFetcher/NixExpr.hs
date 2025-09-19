@@ -44,10 +44,10 @@ instance ToNixExpr Bool where
   toNixExpr True = "true"
   toNixExpr False = "false"
 
-instance ToNixExpr a => ToNixExpr [a] where
+instance (ToNixExpr a) => ToNixExpr [a] where
   toNixExpr xs = foldl (\acc x -> acc <> " " <> toNixExpr x) "[" xs <> " ]"
 
-instance ToNixExpr a => ToNixExpr (NE.NonEmpty a) where
+instance (ToNixExpr a) => ToNixExpr (NE.NonEmpty a) where
   toNixExpr = toNixExpr . NE.toList
 
 instance {-# OVERLAPS #-} ToNixExpr String where
@@ -207,14 +207,23 @@ instance ToNixExpr PackageResult where
           ""
           ( \ex ->
               T.unlines
-                [ quoteIfNeeds (T.pack name)
-                    <> " = builtins.readFile "
-                    <> fp
+                [ quoteIfNeeds (T.pack src)
+                    <> " = ./. + "
+                    <> quote ("/" <> T.pack dst)
                     <> ";"
-                  | (name, fp) <- HMap.toList ex
+                  | (src, dst) <- HMap.toList ex
                 ]
           )
           _prextract
+      extracted' =
+        if T.null extract
+          then ""
+          else
+            [trimming|
+              extracts = {
+                $extract
+              };
+            |]
       cargo = fromMaybe "" $ do
         cargoLocks <- _prcargolock
         let depsSnippet (deps :: HashMap Text Checksum) =
@@ -225,11 +234,11 @@ instance ToNixExpr PackageResult where
                     <> ";"
                   | (name, sum) <- HMap.toList deps
                 ]
-            lockSnippet ((T.pack -> fp) :: FilePath, (nixFP :: NixExpr, deps :: HashMap Text Checksum)) =
+            lockSnippet ((T.pack -> src) :: FilePath, ((T.pack -> dst) :: FilePath, deps :: HashMap Text Checksum)) =
               let hashes = depsSnippet deps
                in [trimming|
-                    cargoLock."$fp" = {
-                      lockFile = $nixFP;
+                    cargoLocks."$src" = {
+                      lockFile = ./. + "/$dst";
                       outputHashes = {
                         $hashes
                       };
@@ -250,5 +259,5 @@ instance ToNixExpr PackageResult where
           )
           _prpassthru
       date = maybe "" (\d -> "date = " <> quote d <> ";") _prgitdate
-      joined = extract <> cargo <> passthru <> date
+      joined = extracted' <> cargo <> passthru <> date
       appending = if T.null joined then "" else "\n" <> joined

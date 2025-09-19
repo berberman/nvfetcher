@@ -164,6 +164,15 @@ runNvFetcherNoCLI config@Config {..} target packageSet = do
   -- Set shakeExtra
   let shakeOptions2 = shakeOptions1 {shakeExtra = addShakeExtra shakeExtras (shakeExtra shakeConfig)}
       rules = mainRules config
+
+  -- Remove all files in build dir except generated nix and json
+  -- Since extract src rule core rule has always rerun, any file not generated in this run will be removed
+  -- Put it here to avoid removing files generated in this run
+  unless (keepOldFiles || (target /= Build)) $
+    whenM (D.doesDirectoryExist buildDir) $ do
+      oldFiles <- (\\ [generatedJsonFileName, generatedNixFileName]) <$> D.listDirectory buildDir
+      putStrLn $ "Removing old files: " <> show oldFiles
+      liftIO $ removeFiles buildDir oldFiles
   shake shakeOptions2 $ want [show target] >> rules
   where
     -- Don't touch already pinned packages
@@ -192,13 +201,6 @@ mainRules Config {..} = do
     removeFilesAfter shakeDir ["//*"]
 
   "build" ~> do
-    -- remove all files in build dir except generated nix and json
-    -- since core rule has always rerun, any file not generated in this run will be removed
-    unless keepOldFiles $
-      whenM (liftIO $ D.doesDirectoryExist buildDir) $ do
-        oldFiles <- (\\ [generatedJsonFileName, generatedNixFileName]) <$> liftIO (D.listDirectory buildDir)
-        putVerbose $ "Removing old files: " <> show oldFiles
-        liftIO $ removeFiles buildDir oldFiles
     allKeys <- getAllPackageKeys
     results <- fmap (zip allKeys) $ parallel $ runPackage <$> allKeys
     let (fmap (fromJust . snd) -> successResults, fmap fst -> failureKeys) = partition (isJust . snd) results
