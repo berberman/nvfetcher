@@ -28,7 +28,12 @@ decode' :: (Binary a) => BS.ByteString -> a
 decode' = decode . LBS.fromChunks . pure
 
 quote :: Text -> Text
-quote = T.pack . show
+quote x = T.concat [q, x, q]
+  where
+    q = T.pack "\""
+
+quoteAndEscape :: Text -> Text
+quoteAndEscape = T.pack . show
 
 isLegalNixId :: Text -> Bool
 isLegalNixId x = x =~ "^[a-zA-Z_][a-zA-Z0-9_'-]*$"
