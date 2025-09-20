@@ -82,7 +82,7 @@ module NvFetcher.PackageSet
 
     -- * Addons
     extractSource,
-    hasCargoLocks,
+    hasCargoLock,
     tweakVersion,
     passthru,
     pinned,
@@ -549,8 +549,8 @@ extractSource = (. pure . PackageExtractSrc . NE.fromList) . andThen
 -- | Run 'FetchRustGitDependencies' given the path to @Cargo.lock@ files
 --
 -- The lock files will be extracted as well.
-hasCargoLocks :: Attach PackageCargoLockFiles [Glob]
-hasCargoLocks = (. pure . PackageCargoLockFiles . NE.fromList) . andThen
+hasCargoLock :: Attach PackageCargoLockFiles [Glob]
+hasCargoLock = (. pure . PackageCargoLockFiles . NE.fromList) . andThen
 
 -- | Set 'NvcheckerOptions' for a package, which can tweak the version number we obtain
 tweakVersion :: Attach NvcheckerOptions (NvcheckerOptions -> NvcheckerOptions)
