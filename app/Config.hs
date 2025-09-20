@@ -111,7 +111,7 @@ packageConfigDecoder name =
     <*> cargoLockPathDecoder
     <*> passthruDecoder
     <*> pinnedDecoder
-    <*> gitDateFormatDecoder
+    <*> ((,) <$> gitDateFormatDecoder <*> gitTimeZoneDecoder)
     <*> forceFetchDecoder
 
 --------------------------------------------------------------------------------
@@ -150,8 +150,11 @@ pinnedDecoder =
   maybe NoStale (\x -> if x then PermanentStale else NoStale)
     <$> getFieldOpt "pinned"
 
-gitDateFormatDecoder :: Decoder DateFormat
-gitDateFormatDecoder = DateFormat <$> getFieldsOpt ["git", "date_format"]
+gitDateFormatDecoder :: Decoder GitDateFormat
+gitDateFormatDecoder = GitDateFormat <$> getFieldsOpt ["git", "date_format"]
+
+gitTimeZoneDecoder :: Decoder GitTimeZone
+gitTimeZoneDecoder = GitTimeZone <$> getFieldsOpt ["git", "date_tz"]
 
 forceFetchDecoder :: Decoder ForceFetch
 forceFetchDecoder =

@@ -129,6 +129,7 @@ test-suite tests
     , hspec
     , nvfetcher
     , stm
+    , time
     , unliftio
 
   build-tool-depends: hspec-discover:hspec-discover

@@ -87,6 +87,7 @@ module NvFetcher.PackageSet
     passthru,
     pinned,
     gitDateFormat,
+    gitTimeZone,
     forceFetch,
 
     -- ** Miscellaneous
@@ -160,11 +161,11 @@ newPackage ::
   Maybe PackageCargoLockFiles ->
   PackagePassthru ->
   UseStaleVersion ->
-  DateFormat ->
+  (GitDateFormat, GitTimeZone) ->
   ForceFetch ->
   PackageSet ()
-newPackage name source fetcher extract cargo pasthru useStale format force =
-  liftF $ NewPackage (Package name source fetcher extract cargo pasthru useStale format force) ()
+newPackage name source fetcher extract cargo pasthru useStale (format, tz) force =
+  liftF $ NewPackage (Package name source fetcher extract cargo pasthru useStale (format, tz) force) ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -263,7 +264,8 @@ class PkgDSL f where
            NvcheckerOptions,
            PackagePassthru,
            UseStaleVersion,
-           DateFormat,
+           GitDateFormat,
+           GitTimeZone,
            ForceFetch
          ]
         r
@@ -289,7 +291,7 @@ instance PkgDSL PackageSet where
       (projMaybe p)
       (fromMaybe mempty (projMaybe p))
       (fromMaybe NoStale (projMaybe p))
-      (fromMaybe (DateFormat Nothing) (projMaybe p))
+      (fromMaybe (GitDateFormat Nothing) (projMaybe p), fromMaybe (GitTimeZone Nothing) (projMaybe p))
       (fromMaybe NoForceFetch (projMaybe p))
 
 -- | 'PkgDSL' version of 'newPackage'
@@ -312,7 +314,8 @@ define ::
          PackagePassthru,
          NvcheckerOptions,
          UseStaleVersion,
-         DateFormat,
+         GitDateFormat,
+         GitTimeZone,
          ForceFetch
        ]
       r
@@ -571,8 +574,14 @@ pinned = flip andThen . pure $ PermanentStale
 -- | Specify the date format for getting git commit date
 --
 -- Available only for git version source
-gitDateFormat :: Attach DateFormat (Maybe Text)
-gitDateFormat = (. pure . DateFormat) . andThen
+gitDateFormat :: Attach GitDateFormat (Maybe Text)
+gitDateFormat = (. pure . GitDateFormat) . andThen
+
+-- | Specify the time zone for getting git commit date
+--
+-- Available only for git version source
+gitTimeZone :: Attach GitTimeZone (Maybe Text)
+gitTimeZone = (. pure . GitTimeZone) . andThen
 
 -- | Set always fetching regardless of the version changing
 forceFetch :: PackageSet (Prod r) -> PackageSet (Prod (ForceFetch : r))
