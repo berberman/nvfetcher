@@ -74,3 +74,10 @@ url.name = "wallpaper.jpg"
 src.manual = "Sans2.004"
 fetch.github = "notofonts/noto-cjk"
 git.sparseCheckout = [ "Sans/OTC" ]
+
+# To demonstrate how to use `extract` option with multiple files
+[wallpapers]
+src.github = "George-Miao/wallpaper"
+fetch.github = "George-Miao/wallpaper"
+# Pull wallpapers into build dir
+extract = ["wallpaper/*.jpg"]
