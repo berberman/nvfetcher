@@ -120,7 +120,7 @@ extractFilesDecoder :: Decoder (Maybe PackageExtractSrc)
 extractFilesDecoder = fmap (PackageExtractSrc . fmap Glob) <$> getFieldOpt @(NE.NonEmpty String) "extract"
 
 cargoLockPathDecoder :: Decoder (Maybe PackageCargoLockFiles)
-cargoLockPathDecoder = fmap (PackageCargoLockFiles . fmap Glob) <$> getFieldOpt @(NE.NonEmpty String) "cargo_locks"
+cargoLockPathDecoder = fmap (PackageCargoLockFiles . fmap Glob) <$> getFieldOpt @(NE.NonEmpty String) "cargo_lock"
 
 nvcheckerOptionsDecoder :: Decoder NvcheckerOptions
 nvcheckerOptionsDecoder =

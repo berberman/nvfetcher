@@ -757,7 +757,7 @@ instance A.ToJSON PackageResult where
         "src" A..= _prfetched,
         "extract" A..= _prextract,
         "passthru" A..= _prpassthru,
-        "cargoLocks" A..= _prcargolock,
+        "cargoLock" A..= _prcargolock,
         "pinned" A..= case _prpinned of
           PermanentStale -> True
           _ -> False,

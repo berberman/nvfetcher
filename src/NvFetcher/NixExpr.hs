@@ -220,7 +220,7 @@ instance ToNixExpr PackageResult where
           then ""
           else
             [trimming|
-              extracts = {
+              extract = {
                 $extract
               };
             |]
@@ -237,7 +237,7 @@ instance ToNixExpr PackageResult where
             lockSnippet ((T.pack -> src) :: FilePath, ((T.pack -> dst) :: FilePath, deps :: HashMap Text Checksum)) =
               let hashes = depsSnippet deps
                in [trimming|
-                    cargoLocks."$src" = {
+                    cargoLock."$src" = {
                       lockFile = ./. + "/$dst";
                       outputHashes = {
                         $hashes
