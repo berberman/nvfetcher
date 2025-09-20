@@ -13,6 +13,7 @@
 module NvFetcher.ExtractSrc
   ( -- * Types
     ExtractSrcQ (..),
+    Glob (..),
 
     -- * Rules
     extractSrcRule,

@@ -8,11 +8,13 @@ import Control.Monad.Trans.Reader
 import qualified Data.HashMap.Strict as HMap
 import qualified Data.List.NonEmpty as NE
 import Data.Maybe (fromJust)
+import Development.Shake (liftIO)
 import Development.Shake.FilePath ((</>))
 import FetchRustGitDepsSpec (runPrefetchRule)
-import NvFetcher
+import NvFetcher (getBuildDir)
 import NvFetcher.ExtractSrc
 import NvFetcher.NixFetcher
+import NvFetcher.Types
 import qualified System.Directory.Extra as IO
 import Test.Hspec
 import Utils

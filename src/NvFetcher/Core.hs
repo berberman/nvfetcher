@@ -74,7 +74,7 @@ coreRules = do
 
               -- Only git version source supports git commit date
               _prgitdate <- case versionSource of
-                Git {..} -> Just <$> getGitCommitDate _vurl (coerce version) _pgitdateformat
+                Git {..} -> Just <$> getGitCommitDate _vurl (coerce version) _pgitdate
                 _ -> pure Nothing
 
               -- update changelog

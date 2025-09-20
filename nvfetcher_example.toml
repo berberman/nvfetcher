@@ -11,6 +11,9 @@ fetch.url = "https://github.com/samuelngs/apple-emoji-linux/releases/download/al
 # Follow the latest git commit
 src.git = "https://github.com/berberman/nvfetcher"
 fetch.github = "berberman/nvfetcher"
+# Get the commit date in the specified format and time zone
+git.date_format = "%Y-%m-%d %H:%M:%S %Z"
+git.date_tz = "UTC"
 
 [gcc-10]
 # Find a tag by regex
@@ -72,7 +75,7 @@ url.name = "wallpaper.jpg"
 [noto-fonts-cjk-sans-fix-weight]
 src.manual = "Sans2.004"
 fetch.github = "notofonts/noto-cjk"
-git.sparseCheckout = [ "Sans/OTC" ]
+git.sparseCheckout = ["Sans/OTC"]
 
 # To demonstrate how to use `extract` option with multiple files
 [wallpapers]

@@ -136,7 +136,7 @@ fakePackage =
       _pextract = undefined,
       _ppassthru = undefined,
       _ppinned = NoStale,
-      _pgitdateformat = undefined,
+      _pgitdate = undefined,
       _pforcefetch = undefined
     }
 

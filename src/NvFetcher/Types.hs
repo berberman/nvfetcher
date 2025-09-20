@@ -2,14 +2,16 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
@@ -58,8 +60,9 @@ module NvFetcher.Types
     FetchRustGitDepsQ (..),
 
     -- * GetGitCommitDate types
-    DateFormat (..),
+    GitDateFormat (..),
     GetGitCommitDate (..),
+    GitTimeZone (..),
 
     -- * Core types
     Core (..),
@@ -82,15 +85,29 @@ import Data.Default
 import Data.HashMap.Strict (HashMap)
 import qualified Data.List.NonEmpty as NE
 import Data.Maybe (fromMaybe, isNothing)
+import Data.Proxy (Proxy (..))
 import Data.String (IsString)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
 import Development.Shake.Classes
 import GHC.Generics (Generic)
+import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
 import Prettyprinter
 
 --------------------------------------------------------------------------------
+
+-- | Helper type for generating 'Show' and 'Pretty' instances
+-- Type level string @d@ denotes the string used for the default value 'Nothing'
+newtype DefaultableText (d :: Symbol) = DefaultableText (Maybe Text)
+
+instance (KnownSymbol d) => Show (DefaultableText d) where
+  show (DefaultableText Nothing) = "default (" <> symbolVal (Proxy :: Proxy d) <> ")"
+  show (DefaultableText x) = show x
+
+instance (KnownSymbol d) => Pretty (DefaultableText d) where
+  pretty (DefaultableText Nothing) = pretty $ "default (" <> symbolVal (Proxy :: Proxy d) <> ")"
+  pretty (DefaultableText (Just x)) = pretty x
 
 -- | Package version
 newtype Version = Version Text
@@ -112,9 +129,10 @@ newtype ContainerDigest = ContainerDigest Text
 
 -- | Git branch ('Nothing': master)
 newtype Branch = Branch (Maybe Text)
-  deriving newtype (Show, Eq, Ord, Default, Pretty)
+  deriving newtype (Eq, Ord, Default)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
+  deriving (Pretty, Show) via DefaultableText "master"
 
 -- | Version change of a package
 --
@@ -626,18 +644,31 @@ instance Pretty FetchRustGitDepsQ where
 --------------------------------------------------------------------------------
 
 -- | @strftime@ format
---
--- Nothing defaults to @%Y-%m-%d@
-newtype DateFormat = DateFormat (Maybe Text)
-  deriving newtype (Show, Eq, Ord, Default, Pretty)
+-- Defaults to @%Y-%m-%d@
+newtype GitDateFormat = GitDateFormat (Maybe Text)
+  deriving newtype (Eq, Ord, Default)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
+  deriving (Pretty, Show) via DefaultableText "%Y-%m-%d"
+
+-- | Defaults to commit's time zone.
+-- When set to @local@, current local time zone is used.
+-- Only used in 'GetGitCommitDate'.
+newtype GitTimeZone = GitTimeZone (Maybe Text)
+  deriving newtype (Eq, Ord, Default)
+  deriving stock (Typeable, Generic)
+  deriving anyclass (Hashable, Binary, NFData)
+  deriving (Pretty, Show) via DefaultableText "commit's time zone"
 
 -- | Get the commit date by using shallow clone
 --
 -- @_gformat@ is in.
 -- Note: Requires git >= 2.5
-data GetGitCommitDate = GetGitCommitDate {_gurl :: Text, _grev :: Text, _gformat :: DateFormat}
+data GetGitCommitDate = GetGitCommitDate
+  { _gurl :: Text,
+    _grev :: Text,
+    _gformat :: (GitDateFormat, GitTimeZone)
+  }
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
 type instance RuleResult GetGitCommitDate = Text
@@ -692,7 +723,7 @@ data UseStaleVersion
 -- 5. optional @Cargo.lock@ paths (if it's a rust package)
 -- 6. an optional pass through map
 -- 7. if the package version was pinned
--- 8. optional git date format (if the version source is git)
+-- 8. optional git date format with time zone (if the version source is git)
 -- 9. whether to always fetch a package regardless of the version changing
 -- /INVARIANT: 'Version' passed to 'PackageFetcher' MUST be used textually,/
 -- /i.e. can only be concatenated with other strings,/
@@ -705,7 +736,7 @@ data Package = Package
     _pcargo :: Maybe PackageCargoLockFiles,
     _ppassthru :: PackagePassthru,
     _ppinned :: UseStaleVersion,
-    _pgitdateformat :: DateFormat,
+    _pgitdate :: (GitDateFormat, GitTimeZone),
     _pforcefetch :: ForceFetch
   }
 

@@ -2,8 +2,8 @@
 , binary-instances, bytestring, containers, data-default, extra
 , free, Glob, hspec, hspec-discover, lib, microlens, microlens-th
 , neat-interpolation, optparse-simple, parsec, prettyprinter
-, regex-tdfa, shake, stm, text, toml-reader, transformers, unliftio
-, unordered-containers
+, regex-tdfa, shake, stm, text, time, toml-reader, transformers
+, unliftio, unordered-containers
 }:
 mkDerivation {
   pname = "nvfetcher";
@@ -27,8 +27,8 @@ mkDerivation {
     aeson aeson-pretty async base binary binary-instances bytestring
     containers data-default extra free Glob hspec microlens
     microlens-th neat-interpolation optparse-simple parsec
-    prettyprinter regex-tdfa shake stm text toml-reader transformers
-    unliftio unordered-containers
+    prettyprinter regex-tdfa shake stm text time toml-reader
+    transformers unliftio unordered-containers
   ];
   testToolDepends = [ hspec-discover ];
   homepage = "https://github.com/berberman/nvfetcher";
