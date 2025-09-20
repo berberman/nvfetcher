@@ -11,35 +11,36 @@
 </span><span id="line-11"></span><span class="hs-comment">-- The cloned repo will not be preserved.</span><span>
 </span><span id="line-12"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">NvFetcher.GetGitCommitDate</span><span>
 </span><span id="line-13"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="hs-comment">-- * Types</span></span><span>
-</span><span id="line-14"></span><span>    </span><span class="annot"><a href="NvFetcher.Types.html#DateFormat"><span class="hs-identifier">DateFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-14"></span><span>    </span><span class="annot"><a href="NvFetcher.Types.html#GitDateFormat"><span class="hs-identifier">GitDateFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
 </span><span id="line-15"></span><span>    </span><span class="annot"><a href="NvFetcher.Types.html#GetGitCommitDate"><span class="hs-identifier">GetGitCommitDate</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
-</span><span id="line-16"></span><span>
-</span><span id="line-17"></span><span>    </span><span class="annot"><span class="hs-comment">-- * Rules</span></span><span>
-</span><span id="line-18"></span><span>    </span><span class="annot"><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDateRule"><span class="hs-identifier">getGitCommitDateRule</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-19"></span><span>
-</span><span id="line-20"></span><span>    </span><span class="annot"><span class="hs-comment">-- * Functions</span></span><span>
-</span><span id="line-21"></span><span>    </span><span class="annot"><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDate"><span class="hs-identifier">getGitCommitDate</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-22"></span><span>  </span><span class="hs-special">)</span><span>
-</span><span id="line-23"></span><span class="hs-keyword">where</span><span>
-</span><span id="line-24"></span><span>
-</span><span id="line-25"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Control.Monad</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">void</span></span><span class="hs-special">)</span><span>
-</span><span id="line-26"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Coerce</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">coerce</span></span><span class="hs-special">)</span><span>
-</span><span id="line-27"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Maybe</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">fromMaybe</span></span><span class="hs-special">)</span><span>
-</span><span id="line-28"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Text</span></span><span class="hs-special">)</span><span>
-</span><span id="line-29"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">T</span></span><span>
-</span><span id="line-30"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Development.Shake</span></span><span>
-</span><span id="line-31"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.Types.html"><span class="hs-identifier">NvFetcher.Types</span></a></span><span>
-</span><span id="line-32"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Prettyprinter</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">pretty</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-operator">(&lt;+&gt;)</span></span><span class="hs-special">)</span><span>
-</span><span id="line-33"></span><span>
-</span><span id="line-34"></span><span class="annot"><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDateRule"><span class="hs-identifier hs-type">getGitCommitDateRule</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Rules</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
-</span><span id="line-35"></span><span id="getGitCommitDateRule"><span class="annot"><span class="annottext">getGitCommitDateRule :: Rules ()
+</span><span id="line-16"></span><span>    </span><span class="annot"><a href="NvFetcher.Types.html#GitTimeZone"><span class="hs-identifier">GitTimeZone</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-17"></span><span>
+</span><span id="line-18"></span><span>    </span><span class="annot"><span class="hs-comment">-- * Rules</span></span><span>
+</span><span id="line-19"></span><span>    </span><span class="annot"><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDateRule"><span class="hs-identifier">getGitCommitDateRule</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-20"></span><span>
+</span><span id="line-21"></span><span>    </span><span class="annot"><span class="hs-comment">-- * Functions</span></span><span>
+</span><span id="line-22"></span><span>    </span><span class="annot"><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDate"><span class="hs-identifier">getGitCommitDate</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-23"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-24"></span><span class="hs-keyword">where</span><span>
+</span><span id="line-25"></span><span>
+</span><span id="line-26"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Control.Monad</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">void</span></span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Coerce</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">coerce</span></span><span class="hs-special">)</span><span>
+</span><span id="line-28"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Maybe</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">fromMaybe</span></span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Text</span></span><span class="hs-special">)</span><span>
+</span><span id="line-30"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">T</span></span><span>
+</span><span id="line-31"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Development.Shake</span></span><span>
+</span><span id="line-32"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="NvFetcher.Types.html"><span class="hs-identifier">NvFetcher.Types</span></a></span><span>
+</span><span id="line-33"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Prettyprinter</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">pretty</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-operator">(&lt;+&gt;)</span></span><span class="hs-special">)</span><span>
+</span><span id="line-34"></span><span>
+</span><span id="line-35"></span><span class="annot"><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDateRule"><span class="hs-identifier hs-type">getGitCommitDateRule</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Rules</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-36"></span><span id="getGitCommitDateRule"><span class="annot"><span class="annottext">getGitCommitDateRule :: Rules ()
 </span><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDateRule"><span class="hs-identifier hs-var hs-var">getGitCommitDateRule</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Rules (GetGitCommitDate -&gt; Action Text) -&gt; Rules ()
 forall (f :: * -&gt; *) a. Functor f =&gt; f a -&gt; f ()
 </span><span class="hs-identifier hs-var">void</span></span><span> </span><span class="annot"><span class="annottext">(Rules (GetGitCommitDate -&gt; Action Text) -&gt; Rules ())
 -&gt; Rules (GetGitCommitDate -&gt; Action Text) -&gt; Rules ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-36"></span><span>  </span><span class="annot"><span class="annottext">(GetGitCommitDate -&gt; Action Text)
+</span><span id="line-37"></span><span>  </span><span class="annot"><span class="annottext">(GetGitCommitDate -&gt; Action Text)
 -&gt; Rules (GetGitCommitDate -&gt; Action Text)
 forall q a.
 (RuleResult q ~ a, ShakeValue q, ShakeValue a, Partial) =&gt;
@@ -49,20 +50,25 @@ forall q a.
 -&gt; (GetGitCommitDate -&gt; Action Text)
 -&gt; Rules (GetGitCommitDate -&gt; Action Text)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679426608"><span class="annot"><span class="annottext">q :: GetGitCommitDate
-</span><a href="#local-6989586621679426608"><span class="hs-identifier hs-var">q</span></a></span></span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#GetGitCommitDate"><span class="hs-identifier hs-type">GetGitCommitDate</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; String
-</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679426611"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426611"><span class="hs-identifier hs-var">url</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; String
-</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679426612"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426612"><span class="hs-identifier hs-var">rev</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679426613"><span class="annot"><span class="annottext">DateFormat
-</span><a href="#local-6989586621679426613"><span class="hs-identifier hs-var">format</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action Text) -&gt; Action Text
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679432383"><span class="annot"><span class="annottext">q :: GetGitCommitDate
+</span><a href="#local-6989586621679432383"><span class="hs-identifier hs-var">q</span></a></span></span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#GetGitCommitDate"><span class="hs-identifier hs-type">GetGitCommitDate</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; String
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679432386"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679432386"><span class="hs-identifier hs-var">url</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; String
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679432387"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679432387"><span class="hs-identifier hs-var">rev</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">GitDateFormat -&gt; Maybe Text
+forall a b. Coercible a b =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679432388"><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679432388"><span class="hs-identifier hs-var">format</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">GitTimeZone -&gt; Maybe Text
+forall a b. Coercible a b =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679432389"><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679432389"><span class="hs-identifier hs-var">tz</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action Text) -&gt; Action Text
 forall a. (String -&gt; Action a) -&gt; Action a
 </span><span class="hs-identifier hs-var">withTempDir</span></span><span> </span><span class="annot"><span class="annottext">((String -&gt; Action Text) -&gt; Action Text)
 -&gt; (String -&gt; Action Text) -&gt; Action Text
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679426615"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426615"><span class="hs-identifier hs-var">repo</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-37"></span><span>    </span><span class="annot"><span class="annottext">String -&gt; Action ()
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679432391"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679432391"><span class="hs-identifier hs-var">repo</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-38"></span><span>    </span><span class="annot"><span class="annottext">String -&gt; Action ()
 </span><span class="hs-identifier hs-var">putInfo</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ())
 -&gt; (Doc Any -&gt; String) -&gt; Doc Any -&gt; Action ()
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
@@ -77,29 +83,29 @@ forall ann. Doc ann -&gt; Doc ann -&gt; Doc ann
 forall a ann. Pretty a =&gt; a -&gt; Doc ann
 forall ann. GetGitCommitDate -&gt; Doc ann
 </span><span class="hs-identifier hs-var">pretty</span></span><span> </span><span class="annot"><span class="annottext">GetGitCommitDate
-</span><a href="#local-6989586621679426608"><span class="hs-identifier hs-var">q</span></a></span><span>
-</span><span id="line-38"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">StdoutTrim</span></span><span> </span><span id="local-6989586621679426620"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426620"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Action (StdoutTrim String) -&gt; Action (StdoutTrim String)
+</span><a href="#local-6989586621679432383"><span class="hs-identifier hs-var">q</span></a></span><span>
+</span><span id="line-39"></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">StdoutTrim</span></span><span> </span><span id="local-6989586621679432396"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679432396"><span class="hs-identifier hs-var">out</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Action (StdoutTrim String) -&gt; Action (StdoutTrim String)
 forall a. Action a -&gt; Action a
 </span><span class="hs-identifier hs-var">quietly</span></span><span> </span><span class="annot"><span class="annottext">(Action (StdoutTrim String) -&gt; Action (StdoutTrim String))
 -&gt; Action (StdoutTrim String) -&gt; Action (StdoutTrim String)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-39"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption] -&gt; String -&gt; Action ()
+</span><span id="line-40"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption] -&gt; String -&gt; Action ()
 forall args. (Partial, CmdArguments args, Unit args) =&gt; args
 </span><span class="hs-identifier hs-var">cmd_</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String -&gt; CmdOption
 </span><span class="hs-identifier hs-var">Cwd</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426615"><span class="hs-identifier hs-var">repo</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; CmdOption
+</span><a href="#local-6989586621679432391"><span class="hs-identifier hs-var">repo</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; CmdOption
 </span><span class="hs-identifier hs-var">EchoStderr</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; CmdOption
 </span><span class="hs-identifier hs-var">EchoStdout</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span class="hs-special">]</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;git init&quot;</span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">)</span><span>
-</span><span id="line-40"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption] -&gt; String -&gt; Action ()
+</span><span id="line-41"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption] -&gt; String -&gt; Action ()
 forall args. (Partial, CmdArguments args, Unit args) =&gt; args
 </span><span class="hs-identifier hs-var">cmd_</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String -&gt; CmdOption
 </span><span class="hs-identifier hs-var">Cwd</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426615"><span class="hs-identifier hs-var">repo</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; CmdOption
+</span><a href="#local-6989586621679432391"><span class="hs-identifier hs-var">repo</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; CmdOption
 </span><span class="hs-identifier hs-var">EchoStderr</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ()) -&gt; String -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
@@ -107,12 +113,12 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-string">&quot;git remote add origin &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426611"><span class="hs-identifier hs-var">url</span></a></span><span>
-</span><span id="line-41"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption] -&gt; String -&gt; Action ()
+</span><a href="#local-6989586621679432386"><span class="hs-identifier hs-var">url</span></a></span><span>
+</span><span id="line-42"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption] -&gt; String -&gt; Action ()
 forall args. (Partial, CmdArguments args, Unit args) =&gt; args
 </span><span class="hs-identifier hs-var">cmd_</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String -&gt; CmdOption
 </span><span class="hs-identifier hs-var">Cwd</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426615"><span class="hs-identifier hs-var">repo</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; CmdOption
+</span><a href="#local-6989586621679432391"><span class="hs-identifier hs-var">repo</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; CmdOption
 </span><span class="hs-identifier hs-var">EchoStderr</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action ()) -&gt; String -&gt; Action ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
@@ -120,63 +126,97 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-string">&quot;git fetch --depth 1 origin &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426612"><span class="hs-identifier hs-var">rev</span></a></span><span>
-</span><span id="line-42"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption] -&gt; String -&gt; Action ()
+</span><a href="#local-6989586621679432387"><span class="hs-identifier hs-var">rev</span></a></span><span>
+</span><span id="line-43"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption] -&gt; String -&gt; Action ()
 forall args. (Partial, CmdArguments args, Unit args) =&gt; args
 </span><span class="hs-identifier hs-var">cmd_</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String -&gt; CmdOption
 </span><span class="hs-identifier hs-var">Cwd</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426615"><span class="hs-identifier hs-var">repo</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; CmdOption
+</span><a href="#local-6989586621679432391"><span class="hs-identifier hs-var">repo</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; CmdOption
 </span><span class="hs-identifier hs-var">EchoStderr</span></span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">False</span></span><span class="hs-special">]</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;git checkout FETCH_HEAD&quot;</span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">)</span><span>
-</span><span id="line-43"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption] -&gt; String -&gt; Action (StdoutTrim String)
+</span><span id="line-44"></span><span>      </span><span class="annot"><span class="annottext">[CmdOption] -&gt; String -&gt; Action (StdoutTrim String)
 forall args r. (Partial, CmdArguments args) =&gt; args
-</span><span class="hs-identifier hs-var">cmd</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String -&gt; CmdOption
+</span><span class="hs-identifier hs-var">cmd</span></span><span>
+</span><span id="line-45"></span><span>        </span><span class="hs-special">(</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String -&gt; CmdOption
 </span><span class="hs-identifier hs-var">Cwd</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426615"><span class="hs-identifier hs-var">repo</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">CmdOption
-</span><span class="hs-identifier hs-var">Shell</span></span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Action (StdoutTrim String))
+</span><a href="#local-6989586621679432391"><span class="hs-identifier hs-var">repo</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">CmdOption
+</span><span class="hs-identifier hs-var">Shell</span></span><span class="hs-special">]</span><span>
+</span><span id="line-46"></span><span>            </span><span class="hs-comment">-- If the time zone is not local, set it in the environment</span><span>
+</span><span id="line-47"></span><span>            </span><span class="annot"><span class="annottext">[CmdOption] -&gt; [CmdOption] -&gt; [CmdOption]
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String -&gt; String -&gt; CmdOption
+</span><span class="hs-identifier hs-var">AddEnv</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;TZ&quot;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679432405"><span class="hs-identifier hs-var">tz'</span></a></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; String
+</span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679432405"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679432405"><span class="hs-identifier hs-var">tz'</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679432389"><span class="hs-identifier hs-var">tz</span></a></span><span class="hs-special">]</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679432405"><span class="hs-identifier hs-var">tz'</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">/=</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;local&quot;</span></span><span class="hs-special">]</span><span>
+</span><span id="line-48"></span><span>        </span><span class="hs-special">)</span><span>
+</span><span id="line-49"></span><span>        </span><span class="annot"><span class="annottext">(String -&gt; Action (StdoutTrim String))
 -&gt; String -&gt; Action (StdoutTrim String)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><span class="hs-string">&quot;git --no-pager log -1 --format=%cd --date=format:\&quot;&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><span class="hs-string">&quot;git --no-pager log -1 &quot;</span></span><span>
+</span><span id="line-50"></span><span>          </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;--format=%cd --date=format&quot;</span></span><span>
+</span><span id="line-51"></span><span>          </span><span class="hs-comment">-- Use --date-local instead of --date if a time zone is specified</span><span>
+</span><span id="line-52"></span><span>          </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; (Text -&gt; String) -&gt; Maybe Text -&gt; String
+forall b a. b -&gt; (a -&gt; b) -&gt; Maybe a -&gt; b
+</span><span class="hs-identifier hs-var">maybe</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&quot;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text -&gt; String
+forall a b. a -&gt; b -&gt; a
+</span><span class="hs-identifier hs-var">const</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;-local&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679432389"><span class="hs-identifier hs-var">tz</span></a></span><span>
+</span><span id="line-53"></span><span>          </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;:\&quot;&quot;</span></span><span>
+</span><span id="line-54"></span><span>          </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String
 </span><span class="hs-identifier hs-var">T.unpack</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; Text
 forall a. a -&gt; Maybe a -&gt; a
 </span><span class="hs-identifier hs-var">fromMaybe</span></span><span> </span><span class="annot"><span class="annottext">Text
-</span><span class="hs-string">&quot;%Y-%m-%d&quot;</span></span><span> </span><span class="annot"><span class="annottext">(Maybe Text -&gt; Text) -&gt; Maybe Text -&gt; Text
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">DateFormat -&gt; Maybe Text
-forall a b. Coercible a b =&gt; a -&gt; b
-</span><span class="hs-identifier hs-var">coerce</span></span><span> </span><span class="annot"><span class="annottext">DateFormat
-</span><a href="#local-6989586621679426613"><span class="hs-identifier hs-var">format</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><span class="hs-string">&quot;%Y-%m-%d&quot;</span></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679432388"><span class="hs-identifier hs-var">format</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-55"></span><span>          </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;\&quot;&quot;</span></span><span>
-</span><span id="line-44"></span><span>    </span><span class="annot"><span class="annottext">Text -&gt; Action Text
+</span><span id="line-56"></span><span>    </span><span class="annot"><span class="annottext">Text -&gt; Action Text
 forall a. a -&gt; Action a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Text -&gt; Action Text) -&gt; Text -&gt; Action Text
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; Text
 </span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679426620"><span class="hs-identifier hs-var">out</span></a></span><span>
-</span><span id="line-45"></span><span>
-</span><span id="line-46"></span><span class="annot"><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDate"><span class="hs-identifier hs-type">getGitCommitDate</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#DateFormat"><span class="hs-identifier hs-type">DateFormat</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
-</span><span id="line-47"></span><span id="getGitCommitDate"><span class="annot"><span class="annottext">getGitCommitDate :: Text -&gt; Text -&gt; DateFormat -&gt; Action Text
-</span><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDate"><span class="hs-identifier hs-var hs-var">getGitCommitDate</span></a></span></span><span> </span><span id="local-6989586621679426629"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679426629"><span class="hs-identifier hs-var">url</span></a></span></span><span> </span><span id="local-6989586621679426630"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679426630"><span class="hs-identifier hs-var">rev</span></a></span></span><span> </span><span id="local-6989586621679426631"><span class="annot"><span class="annottext">DateFormat
-</span><a href="#local-6989586621679426631"><span class="hs-identifier hs-var">format</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">GetGitCommitDate -&gt; Action Text
+</span><a href="#local-6989586621679432396"><span class="hs-identifier hs-var">out</span></a></span><span>
+</span><span id="line-57"></span><span>
+</span><span id="line-58"></span><span class="annot"><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDate"><span class="hs-identifier hs-type">getGitCommitDate</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#GitDateFormat"><span class="hs-identifier hs-type">GitDateFormat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#GitTimeZone"><span class="hs-identifier hs-type">GitTimeZone</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
+</span><span id="line-59"></span><span id="getGitCommitDate"><span class="annot"><span class="annottext">getGitCommitDate :: Text -&gt; Text -&gt; (GitDateFormat, GitTimeZone) -&gt; Action Text
+</span><a href="NvFetcher.GetGitCommitDate.html#getGitCommitDate"><span class="hs-identifier hs-var hs-var">getGitCommitDate</span></a></span></span><span> </span><span id="local-6989586621679432410"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679432410"><span class="hs-identifier hs-var">url</span></a></span></span><span> </span><span id="local-6989586621679432411"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679432411"><span class="hs-identifier hs-var">rev</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">GetGitCommitDate -&gt; Action Text
 forall q a.
 (RuleResult q ~ a, ShakeValue q, ShakeValue a) =&gt;
 q -&gt; Action a
 </span><span class="hs-identifier hs-var">askOracle</span></span><span> </span><span class="annot"><span class="annottext">(GetGitCommitDate -&gt; Action Text)
--&gt; GetGitCommitDate -&gt; Action Text
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; DateFormat -&gt; GetGitCommitDate
+-&gt; ((GitDateFormat, GitTimeZone) -&gt; GetGitCommitDate)
+-&gt; (GitDateFormat, GitTimeZone)
+-&gt; Action Text
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; (GitDateFormat, GitTimeZone) -&gt; GetGitCommitDate
 </span><a href="NvFetcher.Types.html#GetGitCommitDate"><span class="hs-identifier hs-var">GetGitCommitDate</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679426629"><span class="hs-identifier hs-var">url</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679426630"><span class="hs-identifier hs-var">rev</span></a></span><span> </span><span class="annot"><span class="annottext">DateFormat
-</span><a href="#local-6989586621679426631"><span class="hs-identifier hs-var">format</span></a></span><span>
-</span><span id="line-48"></span></pre></body></html>
+</span><a href="#local-6989586621679432410"><span class="hs-identifier hs-var">url</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679432411"><span class="hs-identifier hs-var">rev</span></a></span><span>
+</span><span id="line-60"></span></pre></body></html>

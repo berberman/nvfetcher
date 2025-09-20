@@ -253,20 +253,23 @@ ExtractSrcQ :: NixFetcher 'Fetched -> NonEmpty Glob -> ExtractSrcQ
 data FetchRustGitDepsQ
 FetchRustGitDepsQ :: NixFetcher 'Fetched -> FilePath -> FetchRustGitDepsQ
 
--- | <tt>strftime</tt> format
---   
---   Nothing defaults to <tt>%Y-%m-%d</tt>
-newtype DateFormat
-DateFormat :: Maybe Text -> DateFormat
+-- | <tt>strftime</tt> format Defaults to <tt>%Y-%m-%d</tt>
+newtype GitDateFormat
+GitDateFormat :: Maybe Text -> GitDateFormat
 
 -- | Get the commit date by using shallow clone
 --   
 --   <tt>_gformat</tt> is in. Note: Requires git &gt;= 2.5
 data GetGitCommitDate
-GetGitCommitDate :: Text -> Text -> DateFormat -> GetGitCommitDate
+GetGitCommitDate :: Text -> Text -> (GitDateFormat, GitTimeZone) -> GetGitCommitDate
 [_gurl] :: GetGitCommitDate -> Text
 [_grev] :: GetGitCommitDate -> Text
-[_gformat] :: GetGitCommitDate -> DateFormat
+[_gformat] :: GetGitCommitDate -> (GitDateFormat, GitTimeZone)
+
+-- | Defaults to commit's time zone. When set to <tt>local</tt>, current
+--   local time zone is used. Only used in <a>GetGitCommitDate</a>.
+newtype GitTimeZone
+GitTimeZone :: Maybe Text -> GitTimeZone
 
 -- | The key type of nvfetcher rule. See <a>NvFetcher.Core</a>
 data Core
@@ -294,7 +297,8 @@ PackagePassthru :: HashMap Text Text -> PackagePassthru
 --   <li>optional <tt>Cargo.lock</tt> paths (if it's a rust package)</li>
 --   <li>an optional pass through map</li>
 --   <li>if the package version was pinned</li>
---   <li>optional git date format (if the version source is git)</li>
+--   <li>optional git date format with time zone (if the version source is
+--   git)</li>
 --   <li>whether to always fetch a package regardless of the version
 --   changing <i>INVARIANT: <a>Version</a> passed to <a>PackageFetcher</a>
 --   MUST be used textually,</i> <i>i.e. can only be concatenated with
@@ -302,7 +306,7 @@ PackagePassthru :: HashMap Text Text -> PackagePassthru
 --   fetcher functions.</i></li>
 --   </ol>
 data Package
-Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> DateFormat -> ForceFetch -> Package
+Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> (GitDateFormat, GitTimeZone) -> ForceFetch -> Package
 [_pname] :: Package -> PackageName
 [_pversion] :: Package -> CheckVersion
 [_pfetcher] :: Package -> PackageFetcher
@@ -310,7 +314,7 @@ Package :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtract
 [_pcargo] :: Package -> Maybe PackageCargoLockFiles
 [_ppassthru] :: Package -> PackagePassthru
 [_ppinned] :: Package -> UseStaleVersion
-[_pgitdateformat] :: Package -> DateFormat
+[_pgitdate] :: Package -> (GitDateFormat, GitTimeZone)
 [_pforcefetch] :: Package -> ForceFetch
 
 -- | Package key is the name of a package. We use this type to index
@@ -340,11 +344,12 @@ instance Data.Binary.Class.Binary NvFetcher.Types.CheckVersion
 instance Data.Binary.Class.Binary NvFetcher.Types.Checksum
 instance Data.Binary.Class.Binary NvFetcher.Types.ContainerDigest
 instance Data.Binary.Class.Binary NvFetcher.Types.Core
-instance Data.Binary.Class.Binary NvFetcher.Types.DateFormat
 instance Data.Binary.Class.Binary NvFetcher.Types.ExtractSrcQ
 instance Data.Binary.Class.Binary NvFetcher.Types.FetchRustGitDepsQ
 instance Data.Binary.Class.Binary NvFetcher.Types.ForceFetch
 instance Data.Binary.Class.Binary NvFetcher.Types.GetGitCommitDate
+instance Data.Binary.Class.Binary NvFetcher.Types.GitDateFormat
+instance Data.Binary.Class.Binary NvFetcher.Types.GitTimeZone
 instance Data.Binary.Class.Binary NvFetcher.Types.Glob
 instance Data.Binary.Class.Binary NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.NixFetcher k)
@@ -358,8 +363,9 @@ instance Data.Binary.Class.Binary NvFetcher.Types.VersionSortMethod
 instance Data.Binary.Class.Binary NvFetcher.Types.VersionSource
 instance Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.WithPackageKey k)
 instance Data.Default.Class.Default NvFetcher.Types.Branch
-instance Data.Default.Class.Default NvFetcher.Types.DateFormat
 instance Data.Default.Class.Default NvFetcher.Types.ForceFetch
+instance Data.Default.Class.Default NvFetcher.Types.GitDateFormat
+instance Data.Default.Class.Default NvFetcher.Types.GitTimeZone
 instance Data.Default.Class.Default NvFetcher.Types.ListOptions
 instance Data.Default.Class.Default NvFetcher.Types.NvcheckerOptions
 instance Data.Default.Class.Default NvFetcher.Types.VersionSortMethod
@@ -369,11 +375,12 @@ instance GHC.Classes.Eq NvFetcher.Types.CheckVersion
 instance GHC.Classes.Eq NvFetcher.Types.Checksum
 instance GHC.Classes.Eq NvFetcher.Types.ContainerDigest
 instance GHC.Classes.Eq NvFetcher.Types.Core
-instance GHC.Classes.Eq NvFetcher.Types.DateFormat
 instance GHC.Classes.Eq NvFetcher.Types.ExtractSrcQ
 instance GHC.Classes.Eq NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Classes.Eq NvFetcher.Types.ForceFetch
 instance GHC.Classes.Eq NvFetcher.Types.GetGitCommitDate
+instance GHC.Classes.Eq NvFetcher.Types.GitDateFormat
+instance GHC.Classes.Eq NvFetcher.Types.GitTimeZone
 instance GHC.Classes.Eq NvFetcher.Types.Glob
 instance GHC.Classes.Eq NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult GHC.Classes.Eq k => GHC.Classes.Eq (NvFetcher.Types.NixFetcher k)
@@ -398,11 +405,12 @@ instance GHC.Generics.Generic NvFetcher.Types.CheckVersion
 instance GHC.Generics.Generic NvFetcher.Types.Checksum
 instance GHC.Generics.Generic NvFetcher.Types.ContainerDigest
 instance GHC.Generics.Generic NvFetcher.Types.Core
-instance GHC.Generics.Generic NvFetcher.Types.DateFormat
 instance GHC.Generics.Generic NvFetcher.Types.ExtractSrcQ
 instance GHC.Generics.Generic NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Generics.Generic NvFetcher.Types.ForceFetch
 instance GHC.Generics.Generic NvFetcher.Types.GetGitCommitDate
+instance GHC.Generics.Generic NvFetcher.Types.GitDateFormat
+instance GHC.Generics.Generic NvFetcher.Types.GitTimeZone
 instance GHC.Generics.Generic NvFetcher.Types.Glob
 instance GHC.Generics.Generic NvFetcher.Types.ListOptions
 instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
@@ -421,11 +429,12 @@ instance Data.Hashable.Class.Hashable NvFetcher.Types.CheckVersion
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Checksum
 instance Data.Hashable.Class.Hashable NvFetcher.Types.ContainerDigest
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Core
-instance Data.Hashable.Class.Hashable NvFetcher.Types.DateFormat
 instance Data.Hashable.Class.Hashable NvFetcher.Types.ExtractSrcQ
 instance Data.Hashable.Class.Hashable NvFetcher.Types.FetchRustGitDepsQ
 instance Data.Hashable.Class.Hashable NvFetcher.Types.ForceFetch
 instance Data.Hashable.Class.Hashable NvFetcher.Types.GetGitCommitDate
+instance Data.Hashable.Class.Hashable NvFetcher.Types.GitDateFormat
+instance Data.Hashable.Class.Hashable NvFetcher.Types.GitTimeZone
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Glob
 instance Data.Hashable.Class.Hashable NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.NixFetcher k)
@@ -447,11 +456,12 @@ instance Control.DeepSeq.NFData NvFetcher.Types.CheckVersion
 instance Control.DeepSeq.NFData NvFetcher.Types.Checksum
 instance Control.DeepSeq.NFData NvFetcher.Types.ContainerDigest
 instance Control.DeepSeq.NFData NvFetcher.Types.Core
-instance Control.DeepSeq.NFData NvFetcher.Types.DateFormat
 instance Control.DeepSeq.NFData NvFetcher.Types.ExtractSrcQ
 instance Control.DeepSeq.NFData NvFetcher.Types.FetchRustGitDepsQ
 instance Control.DeepSeq.NFData NvFetcher.Types.ForceFetch
 instance Control.DeepSeq.NFData NvFetcher.Types.GetGitCommitDate
+instance Control.DeepSeq.NFData NvFetcher.Types.GitDateFormat
+instance Control.DeepSeq.NFData NvFetcher.Types.GitTimeZone
 instance Control.DeepSeq.NFData NvFetcher.Types.Glob
 instance Control.DeepSeq.NFData NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult Control.DeepSeq.NFData k => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
@@ -470,11 +480,12 @@ instance GHC.Classes.Ord NvFetcher.Types.CheckVersion
 instance GHC.Classes.Ord NvFetcher.Types.Checksum
 instance GHC.Classes.Ord NvFetcher.Types.ContainerDigest
 instance GHC.Classes.Ord NvFetcher.Types.Core
-instance GHC.Classes.Ord NvFetcher.Types.DateFormat
 instance GHC.Classes.Ord NvFetcher.Types.ExtractSrcQ
 instance GHC.Classes.Ord NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Classes.Ord NvFetcher.Types.ForceFetch
 instance GHC.Classes.Ord NvFetcher.Types.GetGitCommitDate
+instance GHC.Classes.Ord NvFetcher.Types.GitDateFormat
+instance GHC.Classes.Ord NvFetcher.Types.GitTimeZone
 instance GHC.Classes.Ord NvFetcher.Types.Glob
 instance GHC.Classes.Ord NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult GHC.Classes.Ord k => GHC.Classes.Ord (NvFetcher.Types.NixFetcher k)
@@ -489,11 +500,13 @@ instance Prettyprinter.Internal.Pretty NvFetcher.Types.Branch
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.CheckVersion
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.Checksum
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ContainerDigest
-instance Prettyprinter.Internal.Pretty NvFetcher.Types.DateFormat
+instance GHC.TypeLits.KnownSymbol d => Prettyprinter.Internal.Pretty (NvFetcher.Types.DefaultableText d)
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ExtractSrcQ
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.FetchRustGitDepsQ
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ForceFetch
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.GetGitCommitDate
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.GitDateFormat
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.GitTimeZone
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.Glob
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ListOptions
 instance Prettyprinter.Internal.Pretty (NvFetcher.Types.NixFetcher k)
@@ -509,11 +522,13 @@ instance GHC.Show.Show NvFetcher.Types.CheckVersion
 instance GHC.Show.Show NvFetcher.Types.Checksum
 instance GHC.Show.Show NvFetcher.Types.ContainerDigest
 instance GHC.Show.Show NvFetcher.Types.Core
-instance GHC.Show.Show NvFetcher.Types.DateFormat
+instance GHC.TypeLits.KnownSymbol d => GHC.Show.Show (NvFetcher.Types.DefaultableText d)
 instance GHC.Show.Show NvFetcher.Types.ExtractSrcQ
 instance GHC.Show.Show NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Show.Show NvFetcher.Types.ForceFetch
 instance GHC.Show.Show NvFetcher.Types.GetGitCommitDate
+instance GHC.Show.Show NvFetcher.Types.GitDateFormat
+instance GHC.Show.Show NvFetcher.Types.GitTimeZone
 instance GHC.Show.Show NvFetcher.Types.Glob
 instance GHC.Show.Show NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.NixFetcher k)
@@ -540,22 +555,25 @@ instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.Version
 --   cloned repo will not be preserved.
 module NvFetcher.GetGitCommitDate
 
--- | <tt>strftime</tt> format
---   
---   Nothing defaults to <tt>%Y-%m-%d</tt>
-newtype DateFormat
-DateFormat :: Maybe Text -> DateFormat
+-- | <tt>strftime</tt> format Defaults to <tt>%Y-%m-%d</tt>
+newtype GitDateFormat
+GitDateFormat :: Maybe Text -> GitDateFormat
 
 -- | Get the commit date by using shallow clone
 --   
 --   <tt>_gformat</tt> is in. Note: Requires git &gt;= 2.5
 data GetGitCommitDate
-GetGitCommitDate :: Text -> Text -> DateFormat -> GetGitCommitDate
+GetGitCommitDate :: Text -> Text -> (GitDateFormat, GitTimeZone) -> GetGitCommitDate
 [_gurl] :: GetGitCommitDate -> Text
 [_grev] :: GetGitCommitDate -> Text
-[_gformat] :: GetGitCommitDate -> DateFormat
+[_gformat] :: GetGitCommitDate -> (GitDateFormat, GitTimeZone)
+
+-- | Defaults to commit's time zone. When set to <tt>local</tt>, current
+--   local time zone is used. Only used in <a>GetGitCommitDate</a>.
+newtype GitTimeZone
+GitTimeZone :: Maybe Text -> GitTimeZone
 getGitCommitDateRule :: Rules ()
-getGitCommitDate :: Text -> Text -> DateFormat -> Action Text
+getGitCommitDate :: Text -> Text -> (GitDateFormat, GitTimeZone) -> Action Text
 
 
 -- | Lenses for <a>NvFetcher.Types</a>
@@ -606,7 +624,7 @@ pcargo :: Lens' Package (Maybe PackageCargoLockFiles)
 pextract :: Lens' Package (Maybe PackageExtractSrc)
 pfetcher :: Lens' Package PackageFetcher
 pforcefetch :: Lens' Package ForceFetch
-pgitdateformat :: Lens' Package DateFormat
+pgitdate :: Lens' Package (GitDateFormat, GitTimeZone)
 pname :: Lens' Package PackageName
 ppassthru :: Lens' Package PackagePassthru
 ppinned :: Lens' Package UseStaleVersion
@@ -819,7 +837,7 @@ data PackageSetF f
 type PackageSet = Free PackageSetF
 
 -- | Add a package to package set
-newPackage :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> DateFormat -> ForceFetch -> PackageSet ()
+newPackage :: PackageName -> CheckVersion -> PackageFetcher -> Maybe PackageExtractSrc -> Maybe PackageCargoLockFiles -> PackagePassthru -> UseStaleVersion -> (GitDateFormat, GitTimeZone) -> ForceFetch -> PackageSet ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
@@ -834,7 +852,7 @@ runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 class PkgDSL (f :: Type -> Type)
 new :: PkgDSL f => f PackageName -> f (Prod '[PackageName])
 andThen :: forall (r :: [Type]) a. PkgDSL f => f (Prod r) -> f a -> f (Prod (a ': r))
-end :: forall (r :: [Type]). (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, NvcheckerOptions, PackagePassthru, UseStaleVersion, DateFormat, ForceFetch] r) => f (Prod r) -> f ()
+end :: forall (r :: [Type]). (PkgDSL f, Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, NvcheckerOptions, PackagePassthru, UseStaleVersion, GitDateFormat, GitTimeZone, ForceFetch] r) => f (Prod r) -> f ()
 
 -- | <a>PkgDSL</a> version of <a>newPackage</a>
 --   
@@ -843,7 +861,7 @@ end :: forall (r :: [Type]). (PkgDSL f, Members '[PackageName, VersionSource, Pa
 --   <pre>
 --   define $ package "nvfetcher-git" <a>sourceGit</a> "<a>https://github.com/berberman/nvfetcher"</a> <a>fetchGitHub</a> ("berberman", "nvfetcher")
 --   </pre>
-define :: forall (r :: [Type]). (Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, PackagePassthru, NvcheckerOptions, UseStaleVersion, DateFormat, ForceFetch] r) => PackageSet (Prod r) -> PackageSet ()
+define :: forall (r :: [Type]). (Members '[PackageName, VersionSource, PackageFetcher] r, OptionalMembers '[PackageExtractSrc, PackageCargoLockFiles, PackagePassthru, NvcheckerOptions, UseStaleVersion, GitDateFormat, GitTimeZone, ForceFetch] r) => PackageSet (Prod r) -> PackageSet ()
 
 -- | Start chaining with the name of package to define
 package :: PackageName -> PackageSet (Prod '[PackageName])
@@ -1040,7 +1058,12 @@ pinned :: forall (r :: [Type]). PackageSet (Prod r) -> PackageSet (Prod (UseStal
 -- | Specify the date format for getting git commit date
 --   
 --   Available only for git version source
-gitDateFormat :: Attach DateFormat (Maybe Text)
+gitDateFormat :: Attach GitDateFormat (Maybe Text)
+
+-- | Specify the time zone for getting git commit date
+--   
+--   Available only for git version source
+gitTimeZone :: Attach GitTimeZone (Maybe Text)
 
 -- | Set always fetching regardless of the version changing
 forceFetch :: forall (r :: [Type]). PackageSet (Prod r) -> PackageSet (Prod (ForceFetch ': r))
@@ -1412,6 +1435,11 @@ module NvFetcher.ExtractSrc
 --   processed.
 data ExtractSrcQ
 ExtractSrcQ :: NixFetcher 'Fetched -> NonEmpty Glob -> ExtractSrcQ
+
+-- | Zsh style glob pattern Notably, recursive wildcards like <tt>**/</tt>
+--   are supported.
+newtype Glob
+Glob :: FilePath -> Glob
 
 -- | Rules of extract source
 extractSrcRule :: Rules ()
