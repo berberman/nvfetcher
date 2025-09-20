@@ -33,32 +33,44 @@ import Data.List.Extra (nubOrdOn)
 import Data.Maybe (maybeToList)
 import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Text.IO as T
 import Development.Shake
+import Development.Shake.FilePath ((</>))
 import NvFetcher.ExtractSrc
 import NvFetcher.NixFetcher
 import NvFetcher.Types
+import NvFetcher.Types.ShakeExtras (getBuildDir)
 import Prettyprinter (pretty, (<+>))
 import qualified TOML as Toml
 import Text.Parsec
 import Text.Parsec.Text
+
+-- | Read extracted cargo lock content
+getExtractedLock :: HashMap FilePath FilePath -> Action (FilePath, Text)
+getExtractedLock result = case HMap.toList result of
+  [(s, fp)] -> do
+    buildDir <- getBuildDir
+    content <- liftIO $ T.readFile (buildDir </> fp)
+    pure (s, content)
+  _ -> fail "Failed to extract cargo lock content. The size of extracted file is not 1."
 
 -- | Rules of fetch rust git dependencies
 fetchRustGitDepsRule :: Rules ()
 fetchRustGitDepsRule = void $
   addOracleCache $ \key@(FetchRustGitDepsQ fetcher lockPath) -> do
     putInfo . show $ "#" <+> pretty key
-    cargoLock <- head . HMap.elems <$> extractSrc fetcher lockPath
+    (s, cargoLock) <- extractSrc fetcher (Glob lockPath) >>= getExtractedLock
     deps <- case Toml.decodeWith (Toml.getFieldWith (Toml.getArrayOf rustDepDecoder) "package") cargoLock of
       Right r -> pure $ nubOrdOn rrawSrc r
-      Left err -> fail $ "Failed to parse Cargo.lock: " <> T.unpack (Toml.renderTOMLError err)
+      Left err -> fail $ "Failed to parse Cargo lock file " <> s <> ": " <> T.unpack (Toml.renderTOMLError err)
     r <-
       parallel
-        [ case parse gitSrcParser (T.unpack rname) src of
+        [ case parse gitSrcParser s src of
             Right ParsedGitSrc {..} -> do
               (_sha256 -> sha256) <- fromMaybeM (fail $ "Prefetch failed for " <> T.unpack pgurl) $ prefetch (gitFetcher pgurl pgsha) NoForceFetch
               -- @${name}-${version}@ -> sha256
               pure (rname <> "-" <> coerce rversion, sha256)
-            Left err -> fail $ "Failed to parse git source in Cargo.lock: " <> show err
+            Left err -> fail $ "Failed to parse git source in Cargo lock file: " <> show err
           | RustDep {..} <- deps,
             -- it's a dependency
             src <- maybeToList rrawSrc,

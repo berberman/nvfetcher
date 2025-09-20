@@ -11,6 +11,7 @@ import Config.VersionSource
 import Control.Monad.Trans.Except
 import qualified Data.HashMap.Strict as HMap
 import Data.List (foldl', intersect)
+import qualified Data.List.NonEmpty as NE
 import qualified Data.Map.Strict as Map
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -116,10 +117,10 @@ packageConfigDecoder name =
 --------------------------------------------------------------------------------
 
 extractFilesDecoder :: Decoder (Maybe PackageExtractSrc)
-extractFilesDecoder = fmap PackageExtractSrc <$> getFieldOpt "extract"
+extractFilesDecoder = fmap (PackageExtractSrc . fmap Glob) <$> getFieldOpt @(NE.NonEmpty String) "extract"
 
 cargoLockPathDecoder :: Decoder (Maybe PackageCargoLockFiles)
-cargoLockPathDecoder = fmap PackageCargoLockFiles <$> getFieldOpt "cargo_locks"
+cargoLockPathDecoder = fmap (PackageCargoLockFiles . fmap Glob) <$> getFieldOpt @(NE.NonEmpty String) "cargo_lock"
 
 nvcheckerOptionsDecoder :: Decoder NvcheckerOptions
 nvcheckerOptionsDecoder =

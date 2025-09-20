@@ -36,7 +36,7 @@ packageSet = do
     package "rust-git-dependency-example"
       `sourceManual` "8a5f37a8f80a3b05290707febf57e88661cee442"
       `fetchGit` "https://gist.github.com/NickCao/6c4dbc4e15db5da107de6cdb89578375"
-      `hasCargoLocks` ["Cargo.lock"]
+      `hasCargoLock` ["Cargo.lock"]
 
   define $ package "vscode-LiveServer" `fromOpenVsx` ("ritwickdey", "LiveServer")
 
@@ -44,4 +44,4 @@ packageSet = do
     package "revda"
       `sourceGit` "https://github.com/THMonster/Revda"
       `fetchGitHub'` ("THMonster", "Revda", fetchSubmodules .~ True)
-      `hasCargoLocks` ["dmlive/Cargo.lock", "dmlive/tars-stream/Cargo.lock"]
+      `hasCargoLock` ["dmlive/Cargo.lock", "dmlive/tars-stream/Cargo.lock"]

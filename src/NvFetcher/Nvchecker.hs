@@ -105,7 +105,7 @@ runNvchecker :: PackageKey -> NvcheckerOptions -> VersionSource -> Action Versio
 runNvchecker pkg options versionSource = withTempFile $ \config -> withRetry $ do
   mKeyfile <- getKeyfilePath
   let nvcheckerConfig = T.unpack $ T.unlines $ execWriter $ genNvConfig pkg options mKeyfile versionSource
-  putVerbose $ "Generated nvchecker config for " <> show pkg <> ":" <> nvcheckerConfig
+  putVerbose $ "Generated nvchecker config for " <> show pkg <> ":\n" <> nvcheckerConfig
   writeFile' config nvcheckerConfig
   (CmdTime t, Stdout out, CmdLine c) <- quietly . cmd $ "nvchecker --logger json -c " <> config
   putVerbose $ "Finishing running " <> c <> ", took " <> show t <> "s"
@@ -131,7 +131,7 @@ genNvConfig pkg options mKeyfile versionSource =
           genOptions options
       )
   where
-    key =: x = tell [key <> " = " <> quote x]
+    key =: x = tell [key <> " = " <> quoteAndEscape x]
     key =:? (Just x) = key =: x
     _ =:? _ = pure ()
     table t m = tell ["[" <> quote t <> "]"] >> m >> tell [""]

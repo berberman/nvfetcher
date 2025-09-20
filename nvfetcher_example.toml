@@ -27,16 +27,15 @@ fetch.github = "gcc-mirror/gcc"
 # src.from_pattern = "(.+)"
 # src.to_pattern = "v\\1"
 
-[fd]
-src.github = "sharkdp/fd"
-fetch.github = "sharkdp/fd"
-# Pull the contents of `Cargo.lock` into generated nix expr
+[rustdeck]
+src.github = "rustdesk/rustdesk"
+fetch.github = "rustdesk/rustdesk"
+# Compute outputHashes for git dependencies in cargo lock
 extract = ["Cargo.lock"]
 
 [rust-git-dependency-example]
 src.manual = "8a5f37a8f80a3b05290707febf57e88661cee442"
 fetch.git = "https://gist.github.com/NickCao/6c4dbc4e15db5da107de6cdb89578375"
-# Calculate outputHashes for git dependencies in cargo lock
 cargo_locks = ["Cargo.lock"]
 
 [vscode-LiveServer]
@@ -74,3 +73,10 @@ url.name = "wallpaper.jpg"
 src.manual = "Sans2.004"
 fetch.github = "notofonts/noto-cjk"
 git.sparseCheckout = [ "Sans/OTC" ]
+
+# To demonstrate how to use `extract` option with multiple files
+[wallpapers]
+src.github = "George-Miao/wallpaper"
+fetch.github = "George-Miao/wallpaper"
+# Pull wallpapers into build dir
+extract = ["wallpaper/*.jpg"]

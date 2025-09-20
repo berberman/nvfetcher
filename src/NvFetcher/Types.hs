@@ -32,6 +32,7 @@ module NvFetcher.Types
     NixExpr,
     VersionChange (..),
     WithPackageKey (..),
+    Glob (..),
 
     -- * Nvchecker types
     VersionSortMethod (..),
@@ -213,7 +214,7 @@ instance Pretty NvcheckerOptions where
               ]
         )
 
-ppField :: Pretty a => Doc ann -> Maybe a -> [Doc ann]
+ppField :: (Pretty a) => Doc ann -> Maybe a -> [Doc ann]
 ppField _ Nothing = []
 ppField s (Just x) = [s <> colon <+> pretty x]
 
@@ -435,17 +436,17 @@ class (c (FetchResult Checksum k), c (FetchResult ContainerDigest k)) => ForFetc
 
 instance (c (FetchResult Checksum k), c (FetchResult ContainerDigest k)) => ForFetchResult c k
 
-deriving instance Show `ForFetchResult` k => Show (NixFetcher k)
+deriving instance (Show `ForFetchResult` k) => Show (NixFetcher k)
 
-deriving instance Eq `ForFetchResult` k => Eq (NixFetcher k)
+deriving instance (Eq `ForFetchResult` k) => Eq (NixFetcher k)
 
-deriving instance Ord `ForFetchResult` k => Ord (NixFetcher k)
+deriving instance (Ord `ForFetchResult` k) => Ord (NixFetcher k)
 
-deriving instance Hashable `ForFetchResult` k => Hashable (NixFetcher k)
+deriving instance (Hashable `ForFetchResult` k) => Hashable (NixFetcher k)
 
-deriving instance Binary `ForFetchResult` k => Binary (NixFetcher k)
+deriving instance (Binary `ForFetchResult` k) => Binary (NixFetcher k)
 
-deriving instance NFData `ForFetchResult` k => NFData (NixFetcher k)
+deriving instance (NFData `ForFetchResult` k) => NFData (NixFetcher k)
 
 -- | Fetch status
 data FetchStatus = Fresh | Fetched
@@ -568,12 +569,24 @@ instance Pretty (NixFetcher k) where
 
 --------------------------------------------------------------------------------
 
+-- | Zsh style glob pattern
+-- Notably, recursive wildcards like @**/@ are supported.
+newtype Glob = Glob FilePath
+  deriving newtype (Show, Eq, Ord, IsString, Pretty)
+  deriving stock (Typeable, Generic)
+  deriving anyclass (Hashable, Binary, NFData)
+
 -- | Extract file contents from package source
--- e.g. @Cargo.lock@
-data ExtractSrcQ = ExtractSrcQ (NixFetcher Fetched) (NE.NonEmpty FilePath)
+-- Matched files will be copied to build dir.
+-- All matched directories are ignored. Only files will be processed.
+data ExtractSrcQ = ExtractSrcQ (NixFetcher Fetched) (NE.NonEmpty Glob)
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
-type instance RuleResult ExtractSrcQ = HashMap FilePath Text
+-- | Rule result for extracting source files. 'Text' is the file contents,
+-- only available if the second element of the tuple in 'ExtractSrcQ' is @True@.
+-- The key of the result map is the file path relative to the package source,
+-- and the value is the file path relative to the build directory.
+type instance RuleResult ExtractSrcQ = HashMap FilePath FilePath
 
 instance Pretty ExtractSrcQ where
   pretty (ExtractSrcQ f n) =
@@ -650,9 +663,9 @@ type PackageName = Text
 -- | How to create package source fetcher given a version
 type PackageFetcher = Version -> NixFetcher Fresh
 
-newtype PackageExtractSrc = PackageExtractSrc (NE.NonEmpty FilePath)
+newtype PackageExtractSrc = PackageExtractSrc (NE.NonEmpty Glob)
 
-newtype PackageCargoLockFiles = PackageCargoLockFiles (NE.NonEmpty FilePath)
+newtype PackageCargoLockFiles = PackageCargoLockFiles (NE.NonEmpty Glob)
 
 newtype PackagePassthru = PackagePassthru (HashMap Text Text)
   deriving newtype (Semigroup, Monoid)
@@ -676,7 +689,7 @@ data UseStaleVersion
 -- 2. how to track its version
 -- 3. how to fetch it as we have the version
 -- 4. optional file paths to extract (dump to build dir)
--- 5. optional @Cargo.lock@ path (if it's a rust package)
+-- 5. optional @Cargo.lock@ paths (if it's a rust package)
 -- 6. an optional pass through map
 -- 7. if the package version was pinned
 -- 8. optional git date format (if the version source is git)
@@ -716,7 +729,7 @@ type instance RuleResult Core = Maybe PackageResult
 newtype WithPackageKey k = WithPackageKey (k, PackageKey)
   deriving newtype (Eq, Hashable, Binary, NFData)
 
-instance Show k => Show (WithPackageKey k) where
+instance (Show k) => Show (WithPackageKey k) where
   show (WithPackageKey (k, n)) = show k <> " (" <> show n <> ")"
 
 type instance RuleResult (WithPackageKey k) = RuleResult k
@@ -727,10 +740,10 @@ data PackageResult = PackageResult
     _prversion :: NvcheckerResult,
     _prfetched :: NixFetcher 'Fetched,
     _prpassthru :: Maybe (HashMap Text Text),
-    -- | extracted file name -> file path in build dir
-    _prextract :: Maybe (HashMap FilePath NixExpr),
-    -- | cargo lock file path in build dir -> (file path in nix, git dependencies)
-    _prcargolock :: Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum)),
+    -- | file path relative to package source -> file path relative to build dir
+    _prextract :: Maybe (HashMap FilePath FilePath),
+    -- | cargo lock file path relative to package source -> (lock file path relative to build dir, git dependencies)
+    _prcargolock :: Maybe (HashMap FilePath (FilePath, HashMap Text Checksum)),
     _prpinned :: UseStaleVersion,
     _prgitdate :: Maybe Text
   }
@@ -744,7 +757,7 @@ instance A.ToJSON PackageResult where
         "src" A..= _prfetched,
         "extract" A..= _prextract,
         "passthru" A..= _prpassthru,
-        "cargoLocks" A..= _prcargolock,
+        "cargoLock" A..= _prcargolock,
         "pinned" A..= case _prpinned of
           PermanentStale -> True
           _ -> False,

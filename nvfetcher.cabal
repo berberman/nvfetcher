@@ -36,6 +36,7 @@ common common-options
     , data-default          ^>=0.7   || ^>=0.8
     , extra                 ^>=1.7   || ^>=1.8
     , free                  >=5.1    && <5.3
+    , Glob                  ^>=0.10
     , microlens
     , microlens-th
     , neat-interpolation    ^>=0.5.1
@@ -114,6 +115,7 @@ test-suite tests
   main-is:            Spec.hs
   other-modules:
     CheckVersionSpec
+    ExtractSpec
     FetchRustGitDepsSpec
     GetGitCommitDateSpec
     NixExprSpec
