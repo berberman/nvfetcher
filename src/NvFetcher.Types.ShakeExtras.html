@@ -82,12 +82,12 @@
 forall a b. Action a -&gt; (a -&gt; Action b) -&gt; Action b
 forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
 </span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
-</span><span id="line-75"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679424104"><span class="annot"><span class="annottext">ShakeExtras
-</span><a href="#local-6989586621679424104"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">ShakeExtras -&gt; Action ShakeExtras
+</span><span id="line-75"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679428641"><span class="annot"><span class="annottext">ShakeExtras
+</span><a href="#local-6989586621679428641"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">ShakeExtras -&gt; Action ShakeExtras
 forall a. a -&gt; Action a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">ShakeExtras
-</span><a href="#local-6989586621679424104"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><a href="#local-6989586621679428641"><span class="hs-identifier hs-var">x</span></a></span><span>
 </span><span id="line-76"></span><span>    </span><span class="annot"><span class="annottext">Maybe ShakeExtras
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Action ShakeExtras
 forall a. String -&gt; Action a
@@ -102,18 +102,18 @@ forall (m :: * -&gt; *) a. MonadFail m =&gt; String -&gt; m a
 -&gt; Map PackageKey Package
 -&gt; Map PackageKey Version
 -&gt; IO ShakeExtras
-</span><a href="NvFetcher.Types.ShakeExtras.html#initShakeExtras"><span class="hs-identifier hs-var hs-var">initShakeExtras</span></a></span></span><span> </span><span id="local-6989586621679424105"><span class="annot"><span class="annottext">Config
-</span><a href="#local-6989586621679424105"><span class="hs-identifier hs-var">config</span></a></span></span><span> </span><span id="local-6989586621679424106"><span class="annot"><span class="annottext">Map PackageKey Package
-</span><a href="#local-6989586621679424106"><span class="hs-identifier hs-var">targetPackages</span></a></span></span><span> </span><span id="local-6989586621679424107"><span class="annot"><span class="annottext">Map PackageKey Version
-</span><a href="#local-6989586621679424107"><span class="hs-identifier hs-var">lv</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-82"></span><span>  </span><span id="local-6989586621679424108"><span class="annot"><span class="annottext">Var [VersionChange]
-</span><a href="#local-6989586621679424108"><span class="hs-identifier hs-var">versionChanges</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[VersionChange] -&gt; IO (Var [VersionChange])
+</span><a href="NvFetcher.Types.ShakeExtras.html#initShakeExtras"><span class="hs-identifier hs-var hs-var">initShakeExtras</span></a></span></span><span> </span><span id="local-6989586621679428642"><span class="annot"><span class="annottext">Config
+</span><a href="#local-6989586621679428642"><span class="hs-identifier hs-var">config</span></a></span></span><span> </span><span id="local-6989586621679428643"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><a href="#local-6989586621679428643"><span class="hs-identifier hs-var">targetPackages</span></a></span></span><span> </span><span id="local-6989586621679428644"><span class="annot"><span class="annottext">Map PackageKey Version
+</span><a href="#local-6989586621679428644"><span class="hs-identifier hs-var">lv</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-82"></span><span>  </span><span id="local-6989586621679428645"><span class="annot"><span class="annottext">Var [VersionChange]
+</span><a href="#local-6989586621679428645"><span class="hs-identifier hs-var">versionChanges</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[VersionChange] -&gt; IO (Var [VersionChange])
 forall a. a -&gt; IO (Var a)
 </span><span class="hs-identifier hs-var">newVar</span></span><span> </span><span class="annot"><span class="annottext">[VersionChange]
 forall a. Monoid a =&gt; a
 </span><span class="hs-identifier hs-var">mempty</span></span><span>
-</span><span id="line-83"></span><span>  </span><span id="local-6989586621679424110"><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion)
-</span><a href="#local-6989586621679424110"><span class="hs-identifier hs-var">lastVersions</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; IO (Var (Map PackageKey LastVersion))
+</span><span id="line-83"></span><span>  </span><span id="local-6989586621679428647"><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion)
+</span><a href="#local-6989586621679428647"><span class="hs-identifier hs-var">lastVersions</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; IO (Var (Map PackageKey LastVersion))
 forall a. a -&gt; IO (Var a)
 </span><span class="hs-identifier hs-var">newVar</span></span><span> </span><span class="annot"><span class="annottext">(Map PackageKey LastVersion
  -&gt; IO (Var (Map PackageKey LastVersion)))
@@ -125,7 +125,7 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 forall a b k. (a -&gt; b) -&gt; Map k a -&gt; Map k b
 </span><span class="hs-identifier hs-var">Map.map</span></span><span> </span><span class="annot"><span class="annottext">Version -&gt; LastVersion
 </span><a href="NvFetcher.Types.ShakeExtras.html#OnDisk"><span class="hs-identifier hs-var">OnDisk</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey Version
-</span><a href="#local-6989586621679424107"><span class="hs-identifier hs-var">lv</span></a></span><span>
+</span><a href="#local-6989586621679428644"><span class="hs-identifier hs-var">lv</span></a></span><span>
 </span><span id="line-84"></span><span>  </span><span class="annot"><span class="annottext">ShakeExtras -&gt; IO ShakeExtras
 forall a. a -&gt; IO a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
@@ -147,7 +147,7 @@ lastVersions :: Var (Map PackageKey LastVersion)
 </span><span id="line-87"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#getAllPackageKeys"><span class="hs-identifier hs-type">getAllPackageKeys</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-88"></span><span id="getAllPackageKeys"><span class="annot"><span class="annottext">getAllPackageKeys :: Action [PackageKey]
 </span><a href="NvFetcher.Types.ShakeExtras.html#getAllPackageKeys"><span class="hs-identifier hs-var hs-var">getAllPackageKeys</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-89"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679424112"><span id="local-6989586621679424113"><span id="local-6989586621679424114"><span id="local-6989586621679424115"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><span id="line-89"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679428649"><span id="local-6989586621679428650"><span id="local-6989586621679428651"><span id="local-6989586621679428652"><span class="annot"><span class="annottext">Map PackageKey Package
 Var [VersionChange]
 Var (Map PackageKey LastVersion)
 Config
@@ -170,14 +170,14 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Map PackageKey Package -&gt; [PackageKey]
 forall k a. Map k a -&gt; [k]
 </span><span class="hs-identifier hs-var">Map.keys</span></span><span> </span><span class="annot"><span class="annottext">Map PackageKey Package
-</span><a href="#local-6989586621679424114"><span class="hs-identifier hs-var">targetPackages</span></a></span><span>
+</span><a href="#local-6989586621679428651"><span class="hs-identifier hs-var">targetPackages</span></a></span><span>
 </span><span id="line-91"></span><span>
 </span><span id="line-92"></span><span class="annot"><span class="hs-comment">-- | Find a package given its key</span></span><span>
 </span><span id="line-93"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#lookupPackage"><span class="hs-identifier hs-type">lookupPackage</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Package"><span class="hs-identifier hs-type">Package</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-94"></span><span id="lookupPackage"><span class="annot"><span class="annottext">lookupPackage :: PackageKey -&gt; Action (Maybe Package)
-</span><a href="NvFetcher.Types.ShakeExtras.html#lookupPackage"><span class="hs-identifier hs-var hs-var">lookupPackage</span></a></span></span><span> </span><span id="local-6989586621679424117"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424117"><span class="hs-identifier hs-var">key</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-95"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679424118"><span id="local-6989586621679424119"><span id="local-6989586621679424120"><span id="local-6989586621679424121"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><a href="NvFetcher.Types.ShakeExtras.html#lookupPackage"><span class="hs-identifier hs-var hs-var">lookupPackage</span></a></span></span><span> </span><span id="local-6989586621679428654"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679428654"><span class="hs-identifier hs-var">key</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-95"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679428655"><span id="local-6989586621679428656"><span id="local-6989586621679428657"><span id="local-6989586621679428658"><span class="annot"><span class="annottext">Map PackageKey Package
 Var [VersionChange]
 Var (Map PackageKey LastVersion)
 Config
@@ -200,17 +200,17 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; Map PackageKey Package -&gt; Maybe Package
 forall k a. Ord k =&gt; k -&gt; Map k a -&gt; Maybe a
 </span><span class="hs-identifier hs-var">Map.lookup</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424117"><span class="hs-identifier hs-var">key</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey Package
-</span><a href="#local-6989586621679424120"><span class="hs-identifier hs-var">targetPackages</span></a></span><span>
+</span><a href="#local-6989586621679428654"><span class="hs-identifier hs-var">key</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey Package
+</span><a href="#local-6989586621679428657"><span class="hs-identifier hs-var">targetPackages</span></a></span><span>
 </span><span id="line-97"></span><span>
 </span><span id="line-98"></span><span class="annot"><span class="hs-comment">-- | Check if we need build this package</span></span><span>
 </span><span id="line-99"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#isPackageKeyTarget"><span class="hs-identifier hs-type">isPackageKeyTarget</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span>
 </span><span id="line-100"></span><span id="isPackageKeyTarget"><span class="annot"><span class="annottext">isPackageKeyTarget :: PackageKey -&gt; Action Bool
-</span><a href="NvFetcher.Types.ShakeExtras.html#isPackageKeyTarget"><span class="hs-identifier hs-var hs-var">isPackageKeyTarget</span></a></span></span><span> </span><span id="local-6989586621679424123"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424123"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; Map PackageKey Package -&gt; Bool
+</span><a href="NvFetcher.Types.ShakeExtras.html#isPackageKeyTarget"><span class="hs-identifier hs-var hs-var">isPackageKeyTarget</span></a></span></span><span> </span><span id="local-6989586621679428660"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679428660"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">PackageKey -&gt; Map PackageKey Package -&gt; Bool
 forall k a. Ord k =&gt; k -&gt; Map k a -&gt; Bool
 </span><span class="hs-identifier hs-var">Map.member</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424123"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="annot"><span class="annottext">(Map PackageKey Package -&gt; Bool)
+</span><a href="#local-6989586621679428660"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="annot"><span class="annottext">(Map PackageKey Package -&gt; Bool)
 -&gt; (ShakeExtras -&gt; Map PackageKey Package) -&gt; ShakeExtras -&gt; Bool
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">ShakeExtras -&gt; Map PackageKey Package
@@ -222,11 +222,11 @@ forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span id="line-102"></span><span class="annot"><span class="hs-comment">-- | Record version change of a package</span></span><span>
 </span><span id="line-103"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#recordVersionChange"><span class="hs-identifier hs-type">recordVersionChange</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageName"><span class="hs-identifier hs-type">PackageName</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
 </span><span id="line-104"></span><span id="recordVersionChange"><span class="annot"><span class="annottext">recordVersionChange :: PackageName -&gt; Maybe Version -&gt; Version -&gt; Action ()
-</span><a href="NvFetcher.Types.ShakeExtras.html#recordVersionChange"><span class="hs-identifier hs-var hs-var">recordVersionChange</span></a></span></span><span> </span><span id="local-6989586621679424127"><span class="annot"><span class="annottext">PackageName
-</span><a href="#local-6989586621679424127"><span class="hs-identifier hs-var">vcName</span></a></span></span><span> </span><span id="local-6989586621679424128"><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679424128"><span class="hs-identifier hs-var">vcOld</span></a></span></span><span> </span><span id="local-6989586621679424129"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424129"><span class="hs-identifier hs-var">vcNew</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-105"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679424130"><span id="local-6989586621679424131"><span id="local-6989586621679424132"><span id="local-6989586621679424133"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><a href="NvFetcher.Types.ShakeExtras.html#recordVersionChange"><span class="hs-identifier hs-var hs-var">recordVersionChange</span></a></span></span><span> </span><span id="local-6989586621679428664"><span class="annot"><span class="annottext">PackageName
+</span><a href="#local-6989586621679428664"><span class="hs-identifier hs-var">vcName</span></a></span></span><span> </span><span id="local-6989586621679428665"><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679428665"><span class="hs-identifier hs-var">vcOld</span></a></span></span><span> </span><span id="local-6989586621679428666"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428666"><span class="hs-identifier hs-var">vcNew</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-105"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679428667"><span id="local-6989586621679428668"><span id="local-6989586621679428669"><span id="local-6989586621679428670"><span class="annot"><span class="annottext">Map PackageKey Package
 Var [VersionChange]
 Var (Map PackageKey LastVersion)
 Config
@@ -249,7 +249,7 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 -&gt; ([VersionChange] -&gt; IO [VersionChange]) -&gt; IO ()
 forall a. Var a -&gt; (a -&gt; IO a) -&gt; IO ()
 </span><span class="hs-identifier hs-var">modifyVar_</span></span><span> </span><span class="annot"><span class="annottext">Var [VersionChange]
-</span><a href="#local-6989586621679424131"><span class="hs-identifier hs-var">versionChanges</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[VersionChange] -&gt; IO [VersionChange]
+</span><a href="#local-6989586621679428668"><span class="hs-identifier hs-var">versionChanges</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[VersionChange] -&gt; IO [VersionChange]
 forall a. a -&gt; IO a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">([VersionChange] -&gt; IO [VersionChange])
@@ -268,13 +268,13 @@ vcNew :: Version
 vcNew :: Version
 vcOld :: Maybe Version
 vcName :: PackageName
-</span><a href="#local-6989586621679424127"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span><span class="hs-special">}</span><span class="hs-special">]</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679428664"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span><span class="hs-special">}</span><span class="hs-special">]</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
 </span><span id="line-107"></span><span>
 </span><span id="line-108"></span><span class="annot"><span class="hs-comment">-- | Get version changes since the last run</span></span><span>
 </span><span id="line-109"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#getVersionChanges"><span class="hs-identifier hs-type">getVersionChanges</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="NvFetcher.Types.html#VersionChange"><span class="hs-identifier hs-type">VersionChange</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-110"></span><span id="getVersionChanges"><span class="annot"><span class="annottext">getVersionChanges :: Action [VersionChange]
 </span><a href="NvFetcher.Types.ShakeExtras.html#getVersionChanges"><span class="hs-identifier hs-var hs-var">getVersionChanges</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-111"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679424140"><span id="local-6989586621679424141"><span id="local-6989586621679424142"><span id="local-6989586621679424143"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><span id="line-111"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679428677"><span id="local-6989586621679428678"><span id="local-6989586621679428679"><span id="local-6989586621679428680"><span class="annot"><span class="annottext">Map PackageKey Package
 Var [VersionChange]
 Var (Map PackageKey LastVersion)
 Config
@@ -297,17 +297,17 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Var [VersionChange] -&gt; IO [VersionChange]
 forall a. Var a -&gt; IO a
 </span><span class="hs-identifier hs-var">readVar</span></span><span> </span><span class="annot"><span class="annottext">Var [VersionChange]
-</span><a href="#local-6989586621679424141"><span class="hs-identifier hs-var">versionChanges</span></a></span><span>
+</span><a href="#local-6989586621679428678"><span class="hs-identifier hs-var">versionChanges</span></a></span><span>
 </span><span id="line-113"></span><span>
 </span><span id="line-114"></span><span class="annot"><span class="hs-comment">-- | Run an action, retry at most 'retry' times (defined in config) if it throws an exception</span></span><span>
-</span><span id="line-115"></span><span id="local-6989586621679424003"><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#withRetry"><span class="hs-identifier hs-type">withRetry</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="#local-6989586621679424003"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="#local-6989586621679424003"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-115"></span><span id="local-6989586621679428540"><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#withRetry"><span class="hs-identifier hs-type">withRetry</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="#local-6989586621679428540"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><a href="#local-6989586621679428540"><span class="hs-identifier hs-type">a</span></a></span></span><span>
 </span><span id="line-116"></span><span id="withRetry"><span class="annot"><span class="annottext">withRetry :: forall a. Action a -&gt; Action a
-</span><a href="NvFetcher.Types.ShakeExtras.html#withRetry"><span class="hs-identifier hs-var hs-var">withRetry</span></a></span></span><span> </span><span id="local-6989586621679424147"><span class="annot"><span class="annottext">Action a
-</span><a href="#local-6989586621679424147"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Action ShakeExtras
+</span><a href="NvFetcher.Types.ShakeExtras.html#withRetry"><span class="hs-identifier hs-var hs-var">withRetry</span></a></span></span><span> </span><span id="local-6989586621679428684"><span class="annot"><span class="annottext">Action a
+</span><a href="#local-6989586621679428684"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Action ShakeExtras
 </span><a href="NvFetcher.Types.ShakeExtras.html#getShakeExtras"><span class="hs-identifier hs-var">getShakeExtras</span></a></span><span> </span><span class="annot"><span class="annottext">Action ShakeExtras -&gt; (ShakeExtras -&gt; Action a) -&gt; Action a
 forall a b. Action a -&gt; (a -&gt; Action b) -&gt; Action b
 forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
-</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="hs-glyph">\</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679424148"><span id="local-6989586621679424149"><span id="local-6989586621679424150"><span id="local-6989586621679424151"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="hs-glyph">\</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679428685"><span id="local-6989586621679428686"><span id="local-6989586621679428687"><span id="local-6989586621679428688"><span class="annot"><span class="annottext">Map PackageKey Package
 Var [VersionChange]
 Var (Map PackageKey LastVersion)
 Config
@@ -323,8 +323,8 @@ lastVersions :: Var (Map PackageKey LastVersion)
 forall a. Int -&gt; Action a -&gt; Action a
 </span><span class="hs-identifier hs-var">actionRetry</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Config -&gt; Int
 </span><a href="NvFetcher.Config.html#retry"><span class="hs-identifier hs-var">retry</span></a></span><span> </span><span class="annot"><span class="annottext">Config
-</span><a href="#local-6989586621679424148"><span class="hs-identifier hs-var">config</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Action a
-</span><a href="#local-6989586621679424147"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><a href="#local-6989586621679428685"><span class="hs-identifier hs-var">config</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Action a
+</span><a href="#local-6989586621679428684"><span class="hs-identifier hs-var">a</span></a></span><span>
 </span><span id="line-117"></span><span>
 </span><span id="line-118"></span><span class="annot"><span class="hs-comment">-- | Get build dir</span></span><span>
 </span><span id="line-119"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#getBuildDir"><span class="hs-identifier hs-type">getBuildDir</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
@@ -356,9 +356,9 @@ forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
 </span><span id="line-126"></span><span class="annot"><span class="hs-comment">-- | Get initial version of a package</span></span><span>
 </span><span id="line-127"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#getLastVersionOnDisk"><span class="hs-identifier hs-type">getLastVersionOnDisk</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-128"></span><span id="getLastVersionOnDisk"><span class="annot"><span class="annottext">getLastVersionOnDisk :: PackageKey -&gt; Action (Maybe Version)
-</span><a href="NvFetcher.Types.ShakeExtras.html#getLastVersionOnDisk"><span class="hs-identifier hs-var hs-var">getLastVersionOnDisk</span></a></span></span><span> </span><span id="local-6989586621679424156"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424156"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-129"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679424157"><span id="local-6989586621679424158"><span id="local-6989586621679424159"><span id="local-6989586621679424160"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><a href="NvFetcher.Types.ShakeExtras.html#getLastVersionOnDisk"><span class="hs-identifier hs-var hs-var">getLastVersionOnDisk</span></a></span></span><span> </span><span id="local-6989586621679428693"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679428693"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-129"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679428694"><span id="local-6989586621679428695"><span id="local-6989586621679428696"><span id="local-6989586621679428697"><span class="annot"><span class="annottext">Map PackageKey Package
 Var [VersionChange]
 Var (Map PackageKey LastVersion)
 Config
@@ -372,8 +372,8 @@ targetPackages :: Map PackageKey Package
 lastVersions :: Var (Map PackageKey LastVersion)
 </span><a href="NvFetcher.Types.ShakeExtras.html#config"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Action ShakeExtras
 </span><a href="NvFetcher.Types.ShakeExtras.html#getShakeExtras"><span class="hs-identifier hs-var">getShakeExtras</span></a></span><span>
-</span><span id="line-130"></span><span>  </span><span id="local-6989586621679424161"><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424161"><span class="hs-identifier hs-var">versions</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (Map PackageKey LastVersion)
+</span><span id="line-130"></span><span>  </span><span id="local-6989586621679428698"><span class="annot"><span class="annottext">Map PackageKey LastVersion
+</span><a href="#local-6989586621679428698"><span class="hs-identifier hs-var">versions</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (Map PackageKey LastVersion)
 -&gt; Action (Map PackageKey LastVersion)
 forall a. IO a -&gt; Action a
 forall (m :: * -&gt; *) a. MonadIO m =&gt; IO a -&gt; m a
@@ -385,7 +385,7 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion) -&gt; IO (Map PackageKey LastVersion)
 forall a. Var a -&gt; IO a
 </span><span class="hs-identifier hs-var">readVar</span></span><span> </span><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion)
-</span><a href="#local-6989586621679424160"><span class="hs-identifier hs-var">lastVersions</span></a></span><span>
+</span><a href="#local-6989586621679428697"><span class="hs-identifier hs-var">lastVersions</span></a></span><span>
 </span><span id="line-131"></span><span>  </span><span class="annot"><span class="annottext">Maybe Version -&gt; Action (Maybe Version)
 forall a. a -&gt; Action a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
@@ -393,19 +393,19 @@ forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 -&gt; Maybe Version -&gt; Action (Maybe Version)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424161"><span class="hs-identifier hs-var">versions</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; PackageKey -&gt; Maybe LastVersion
+</span><a href="#local-6989586621679428698"><span class="hs-identifier hs-var">versions</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; PackageKey -&gt; Maybe LastVersion
 forall k a. Ord k =&gt; Map k a -&gt; k -&gt; Maybe a
 </span><span class="hs-operator hs-var">Map.!?</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424156"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-132"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-type">Updated</span></a></span><span> </span><span id="local-6989586621679424163"><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679424163"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428693"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-132"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-type">Updated</span></a></span><span> </span><span id="local-6989586621679428700"><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679428700"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="annot"><span class="annottext">Version
 </span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679424163"><span class="hs-identifier hs-var">v</span></a></span><span>
-</span><span id="line-133"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#OnDisk"><span class="hs-identifier hs-type">OnDisk</span></a></span><span> </span><span id="local-6989586621679424164"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424164"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
+</span><a href="#local-6989586621679428700"><span class="hs-identifier hs-var">v</span></a></span><span>
+</span><span id="line-133"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#OnDisk"><span class="hs-identifier hs-type">OnDisk</span></a></span><span> </span><span id="local-6989586621679428701"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428701"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
 forall a. a -&gt; Maybe a
 </span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424164"><span class="hs-identifier hs-var">v</span></a></span><span>
+</span><a href="#local-6989586621679428701"><span class="hs-identifier hs-var">v</span></a></span><span>
 </span><span id="line-134"></span><span>    </span><span class="annot"><span class="annottext">Maybe LastVersion
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Maybe Version
 forall a. Maybe a
@@ -414,9 +414,9 @@ forall a. Maybe a
 </span><span id="line-136"></span><span class="annot"><span class="hs-comment">-- | Get version of a package, no matter it was initial one or rule result</span></span><span>
 </span><span id="line-137"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#getRecentLastVersion"><span class="hs-identifier hs-type">getRecentLastVersion</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-138"></span><span id="getRecentLastVersion"><span class="annot"><span class="annottext">getRecentLastVersion :: PackageKey -&gt; Action (Maybe Version)
-</span><a href="NvFetcher.Types.ShakeExtras.html#getRecentLastVersion"><span class="hs-identifier hs-var hs-var">getRecentLastVersion</span></a></span></span><span> </span><span id="local-6989586621679424165"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424165"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-139"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679424166"><span id="local-6989586621679424167"><span id="local-6989586621679424168"><span id="local-6989586621679424169"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><a href="NvFetcher.Types.ShakeExtras.html#getRecentLastVersion"><span class="hs-identifier hs-var hs-var">getRecentLastVersion</span></a></span></span><span> </span><span id="local-6989586621679428702"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679428702"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-139"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679428703"><span id="local-6989586621679428704"><span id="local-6989586621679428705"><span id="local-6989586621679428706"><span class="annot"><span class="annottext">Map PackageKey Package
 Var [VersionChange]
 Var (Map PackageKey LastVersion)
 Config
@@ -430,8 +430,8 @@ targetPackages :: Map PackageKey Package
 lastVersions :: Var (Map PackageKey LastVersion)
 </span><a href="NvFetcher.Types.ShakeExtras.html#config"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Action ShakeExtras
 </span><a href="NvFetcher.Types.ShakeExtras.html#getShakeExtras"><span class="hs-identifier hs-var">getShakeExtras</span></a></span><span>
-</span><span id="line-140"></span><span>  </span><span id="local-6989586621679424170"><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424170"><span class="hs-identifier hs-var">versions</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (Map PackageKey LastVersion)
+</span><span id="line-140"></span><span>  </span><span id="local-6989586621679428707"><span class="annot"><span class="annottext">Map PackageKey LastVersion
+</span><a href="#local-6989586621679428707"><span class="hs-identifier hs-var">versions</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (Map PackageKey LastVersion)
 -&gt; Action (Map PackageKey LastVersion)
 forall a. IO a -&gt; Action a
 forall (m :: * -&gt; *) a. MonadIO m =&gt; IO a -&gt; m a
@@ -443,7 +443,7 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion) -&gt; IO (Map PackageKey LastVersion)
 forall a. Var a -&gt; IO a
 </span><span class="hs-identifier hs-var">readVar</span></span><span> </span><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion)
-</span><a href="#local-6989586621679424169"><span class="hs-identifier hs-var">lastVersions</span></a></span><span>
+</span><a href="#local-6989586621679428706"><span class="hs-identifier hs-var">lastVersions</span></a></span><span>
 </span><span id="line-141"></span><span>  </span><span class="annot"><span class="annottext">Maybe Version -&gt; Action (Maybe Version)
 forall a. a -&gt; Action a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
@@ -451,21 +451,21 @@ forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 -&gt; Maybe Version -&gt; Action (Maybe Version)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424170"><span class="hs-identifier hs-var">versions</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; PackageKey -&gt; Maybe LastVersion
+</span><a href="#local-6989586621679428707"><span class="hs-identifier hs-var">versions</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; PackageKey -&gt; Maybe LastVersion
 forall k a. Ord k =&gt; Map k a -&gt; k -&gt; Maybe a
 </span><span class="hs-operator hs-var">Map.!?</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424165"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><a href="#local-6989586621679428702"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-keyword">of</span><span>
 </span><span id="line-142"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-type">Updated</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Version
-</span><span class="hs-identifier">_</span></span><span> </span><span id="local-6989586621679424171"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424171"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
+</span><span class="hs-identifier">_</span></span><span> </span><span id="local-6989586621679428708"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428708"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
 forall a. a -&gt; Maybe a
 </span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424171"><span class="hs-identifier hs-var">v</span></a></span><span>
-</span><span id="line-143"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#OnDisk"><span class="hs-identifier hs-type">OnDisk</span></a></span><span> </span><span id="local-6989586621679424172"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424172"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
+</span><a href="#local-6989586621679428708"><span class="hs-identifier hs-var">v</span></a></span><span>
+</span><span id="line-143"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#OnDisk"><span class="hs-identifier hs-type">OnDisk</span></a></span><span> </span><span id="local-6989586621679428709"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428709"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
 forall a. a -&gt; Maybe a
 </span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424172"><span class="hs-identifier hs-var">v</span></a></span><span>
+</span><a href="#local-6989586621679428709"><span class="hs-identifier hs-var">v</span></a></span><span>
 </span><span id="line-144"></span><span>    </span><span class="annot"><span class="annottext">Maybe LastVersion
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Maybe Version
 forall a. Maybe a
@@ -474,9 +474,9 @@ forall a. Maybe a
 </span><span id="line-146"></span><span class="annot"><span class="hs-comment">-- | Get updated version of a package</span></span><span>
 </span><span id="line-147"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#getLastVersionUpdated"><span class="hs-identifier hs-type">getLastVersionUpdated</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-148"></span><span id="getLastVersionUpdated"><span class="annot"><span class="annottext">getLastVersionUpdated :: PackageKey -&gt; Action (Maybe Version)
-</span><a href="NvFetcher.Types.ShakeExtras.html#getLastVersionUpdated"><span class="hs-identifier hs-var hs-var">getLastVersionUpdated</span></a></span></span><span> </span><span id="local-6989586621679424173"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424173"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-149"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679424174"><span id="local-6989586621679424175"><span id="local-6989586621679424176"><span id="local-6989586621679424177"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><a href="NvFetcher.Types.ShakeExtras.html#getLastVersionUpdated"><span class="hs-identifier hs-var hs-var">getLastVersionUpdated</span></a></span></span><span> </span><span id="local-6989586621679428710"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679428710"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-149"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679428711"><span id="local-6989586621679428712"><span id="local-6989586621679428713"><span id="local-6989586621679428714"><span class="annot"><span class="annottext">Map PackageKey Package
 Var [VersionChange]
 Var (Map PackageKey LastVersion)
 Config
@@ -490,8 +490,8 @@ targetPackages :: Map PackageKey Package
 lastVersions :: Var (Map PackageKey LastVersion)
 </span><a href="NvFetcher.Types.ShakeExtras.html#config"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Action ShakeExtras
 </span><a href="NvFetcher.Types.ShakeExtras.html#getShakeExtras"><span class="hs-identifier hs-var">getShakeExtras</span></a></span><span>
-</span><span id="line-150"></span><span>  </span><span id="local-6989586621679424178"><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424178"><span class="hs-identifier hs-var">versions</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (Map PackageKey LastVersion)
+</span><span id="line-150"></span><span>  </span><span id="local-6989586621679428715"><span class="annot"><span class="annottext">Map PackageKey LastVersion
+</span><a href="#local-6989586621679428715"><span class="hs-identifier hs-var">versions</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (Map PackageKey LastVersion)
 -&gt; Action (Map PackageKey LastVersion)
 forall a. IO a -&gt; Action a
 forall (m :: * -&gt; *) a. MonadIO m =&gt; IO a -&gt; m a
@@ -503,7 +503,7 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion) -&gt; IO (Map PackageKey LastVersion)
 forall a. Var a -&gt; IO a
 </span><span class="hs-identifier hs-var">readVar</span></span><span> </span><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion)
-</span><a href="#local-6989586621679424177"><span class="hs-identifier hs-var">lastVersions</span></a></span><span>
+</span><a href="#local-6989586621679428714"><span class="hs-identifier hs-var">lastVersions</span></a></span><span>
 </span><span id="line-151"></span><span>  </span><span class="annot"><span class="annottext">Maybe Version -&gt; Action (Maybe Version)
 forall a. a -&gt; Action a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
@@ -511,16 +511,16 @@ forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 -&gt; Maybe Version -&gt; Action (Maybe Version)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424178"><span class="hs-identifier hs-var">versions</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; PackageKey -&gt; Maybe LastVersion
+</span><a href="#local-6989586621679428715"><span class="hs-identifier hs-var">versions</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; PackageKey -&gt; Maybe LastVersion
 forall k a. Ord k =&gt; Map k a -&gt; k -&gt; Maybe a
 </span><span class="hs-operator hs-var">Map.!?</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424173"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><a href="#local-6989586621679428710"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-keyword">of</span><span>
 </span><span id="line-152"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-type">Updated</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Version
-</span><span class="hs-identifier">_</span></span><span> </span><span id="local-6989586621679424179"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424179"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
+</span><span class="hs-identifier">_</span></span><span> </span><span id="local-6989586621679428716"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428716"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
 forall a. a -&gt; Maybe a
 </span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424179"><span class="hs-identifier hs-var">v</span></a></span><span>
+</span><a href="#local-6989586621679428716"><span class="hs-identifier hs-var">v</span></a></span><span>
 </span><span id="line-153"></span><span>    </span><span class="annot"><span class="annottext">Maybe LastVersion
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Maybe Version
 forall a. Maybe a
@@ -529,10 +529,10 @@ forall a. Maybe a
 </span><span id="line-155"></span><span class="annot"><span class="hs-comment">-- | Add nvchecker result of a package</span></span><span>
 </span><span id="line-156"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#updateLastVersion"><span class="hs-identifier hs-type">updateLastVersion</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
 </span><span id="line-157"></span><span id="updateLastVersion"><span class="annot"><span class="annottext">updateLastVersion :: PackageKey -&gt; Version -&gt; Action ()
-</span><a href="NvFetcher.Types.ShakeExtras.html#updateLastVersion"><span class="hs-identifier hs-var hs-var">updateLastVersion</span></a></span></span><span> </span><span id="local-6989586621679424180"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424180"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span id="local-6989586621679424181"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424181"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-158"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679424182"><span id="local-6989586621679424183"><span id="local-6989586621679424184"><span id="local-6989586621679424185"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><a href="NvFetcher.Types.ShakeExtras.html#updateLastVersion"><span class="hs-identifier hs-var hs-var">updateLastVersion</span></a></span></span><span> </span><span id="local-6989586621679428717"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679428717"><span class="hs-identifier hs-var">k</span></a></span></span><span> </span><span id="local-6989586621679428718"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428718"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-158"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679428719"><span id="local-6989586621679428720"><span id="local-6989586621679428721"><span id="local-6989586621679428722"><span class="annot"><span class="annottext">Map PackageKey Package
 Var [VersionChange]
 Var (Map PackageKey LastVersion)
 Config
@@ -557,50 +557,50 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 -&gt; IO ()
 forall a. Var a -&gt; (a -&gt; IO a) -&gt; IO ()
 </span><span class="hs-identifier hs-var">modifyVar_</span></span><span> </span><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion)
-</span><a href="#local-6989586621679424185"><span class="hs-identifier hs-var">lastVersions</span></a></span><span> </span><span class="annot"><span class="annottext">((Map PackageKey LastVersion -&gt; IO (Map PackageKey LastVersion))
+</span><a href="#local-6989586621679428722"><span class="hs-identifier hs-var">lastVersions</span></a></span><span> </span><span class="annot"><span class="annottext">((Map PackageKey LastVersion -&gt; IO (Map PackageKey LastVersion))
  -&gt; IO ())
 -&gt; (Map PackageKey LastVersion -&gt; IO (Map PackageKey LastVersion))
 -&gt; IO ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679424186"><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424186"><span class="hs-identifier hs-var">versions</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; IO (Map PackageKey LastVersion)
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679428723"><span class="annot"><span class="annottext">Map PackageKey LastVersion
+</span><a href="#local-6989586621679428723"><span class="hs-identifier hs-var">versions</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; IO (Map PackageKey LastVersion)
 forall a. a -&gt; IO a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(Map PackageKey LastVersion -&gt; IO (Map PackageKey LastVersion))
 -&gt; Map PackageKey LastVersion -&gt; IO (Map PackageKey LastVersion)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424186"><span class="hs-identifier hs-var">versions</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; PackageKey -&gt; Maybe LastVersion
+</span><a href="#local-6989586621679428723"><span class="hs-identifier hs-var">versions</span></a></span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion -&gt; PackageKey -&gt; Maybe LastVersion
 forall k a. Ord k =&gt; Map k a -&gt; k -&gt; Maybe a
 </span><span class="hs-operator hs-var">Map.!?</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424180"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-161"></span><span>      </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-type">Updated</span></a></span><span> </span><span id="local-6989586621679424187"><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679424187"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428717"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-161"></span><span>      </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-type">Updated</span></a></span><span> </span><span id="local-6989586621679428724"><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679428724"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="annot"><span class="annottext">Version
 </span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">PackageKey
 -&gt; LastVersion
 -&gt; Map PackageKey LastVersion
 -&gt; Map PackageKey LastVersion
 forall k a. Ord k =&gt; k -&gt; a -&gt; Map k a -&gt; Map k a
 </span><span class="hs-identifier hs-var">Map.insert</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424180"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Maybe Version -&gt; Version -&gt; LastVersion
+</span><a href="#local-6989586621679428717"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Maybe Version -&gt; Version -&gt; LastVersion
 </span><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-var">Updated</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679424187"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424181"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424186"><span class="hs-identifier hs-var">versions</span></a></span><span>
-</span><span id="line-162"></span><span>      </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#OnDisk"><span class="hs-identifier hs-type">OnDisk</span></a></span><span> </span><span id="local-6989586621679424189"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424189"><span class="hs-identifier hs-var">lv</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679428724"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428718"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
+</span><a href="#local-6989586621679428723"><span class="hs-identifier hs-var">versions</span></a></span><span>
+</span><span id="line-162"></span><span>      </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#OnDisk"><span class="hs-identifier hs-type">OnDisk</span></a></span><span> </span><span id="local-6989586621679428726"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428726"><span class="hs-identifier hs-var">lv</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">PackageKey
 -&gt; LastVersion
 -&gt; Map PackageKey LastVersion
 -&gt; Map PackageKey LastVersion
 forall k a. Ord k =&gt; k -&gt; a -&gt; Map k a -&gt; Map k a
 </span><span class="hs-identifier hs-var">Map.insert</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424180"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Maybe Version -&gt; Version -&gt; LastVersion
+</span><a href="#local-6989586621679428717"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Maybe Version -&gt; Version -&gt; LastVersion
 </span><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-var">Updated</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
 forall a. a -&gt; Maybe a
 </span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424189"><span class="hs-identifier hs-var">lv</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424181"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424186"><span class="hs-identifier hs-var">versions</span></a></span><span>
+</span><a href="#local-6989586621679428726"><span class="hs-identifier hs-var">lv</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428718"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
+</span><a href="#local-6989586621679428723"><span class="hs-identifier hs-var">versions</span></a></span><span>
 </span><span id="line-163"></span><span>      </span><span class="annot"><span class="annottext">Maybe LastVersion
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">PackageKey
 -&gt; LastVersion
@@ -608,18 +608,18 @@ forall a. a -&gt; Maybe a
 -&gt; Map PackageKey LastVersion
 forall k a. Ord k =&gt; k -&gt; a -&gt; Map k a -&gt; Map k a
 </span><span class="hs-identifier hs-var">Map.insert</span></span><span> </span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424180"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Maybe Version -&gt; Version -&gt; LastVersion
+</span><a href="#local-6989586621679428717"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Maybe Version -&gt; Version -&gt; LastVersion
 </span><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-var">Updated</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Version
 forall a. Maybe a
 </span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424181"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424186"><span class="hs-identifier hs-var">versions</span></a></span><span>
+</span><a href="#local-6989586621679428718"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
+</span><a href="#local-6989586621679428723"><span class="hs-identifier hs-var">versions</span></a></span><span>
 </span><span id="line-164"></span><span>
 </span><span id="line-165"></span><span class="annot"><span class="hs-comment">-- | Get all initial versions</span></span><span>
 </span><span id="line-166"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#getAllOnDiskVersions"><span class="hs-identifier hs-type">getAllOnDiskVersions</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Map</span></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#PackageKey"><span class="hs-identifier hs-type">PackageKey</span></a></span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-167"></span><span id="getAllOnDiskVersions"><span class="annot"><span class="annottext">getAllOnDiskVersions :: Action (Map PackageKey Version)
 </span><a href="NvFetcher.Types.ShakeExtras.html#getAllOnDiskVersions"><span class="hs-identifier hs-var hs-var">getAllOnDiskVersions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-168"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679424190"><span id="local-6989586621679424191"><span id="local-6989586621679424192"><span id="local-6989586621679424193"><span class="annot"><span class="annottext">Map PackageKey Package
+</span><span id="line-168"></span><span>  </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#ShakeExtras"><span class="hs-identifier hs-type">ShakeExtras</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679428727"><span id="local-6989586621679428728"><span id="local-6989586621679428729"><span id="local-6989586621679428730"><span class="annot"><span class="annottext">Map PackageKey Package
 Var [VersionChange]
 Var (Map PackageKey LastVersion)
 Config
@@ -633,8 +633,8 @@ targetPackages :: Map PackageKey Package
 lastVersions :: Var (Map PackageKey LastVersion)
 </span><a href="NvFetcher.Types.ShakeExtras.html#config"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Action ShakeExtras
 </span><a href="NvFetcher.Types.ShakeExtras.html#getShakeExtras"><span class="hs-identifier hs-var">getShakeExtras</span></a></span><span>
-</span><span id="line-169"></span><span>  </span><span id="local-6989586621679424194"><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424194"><span class="hs-identifier hs-var">versions</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (Map PackageKey LastVersion)
+</span><span id="line-169"></span><span>  </span><span id="local-6989586621679428731"><span class="annot"><span class="annottext">Map PackageKey LastVersion
+</span><a href="#local-6989586621679428731"><span class="hs-identifier hs-var">versions</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO (Map PackageKey LastVersion)
 -&gt; Action (Map PackageKey LastVersion)
 forall a. IO a -&gt; Action a
 forall (m :: * -&gt; *) a. MonadIO m =&gt; IO a -&gt; m a
@@ -646,9 +646,9 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion) -&gt; IO (Map PackageKey LastVersion)
 forall a. Var a -&gt; IO a
 </span><span class="hs-identifier hs-var">readVar</span></span><span> </span><span class="annot"><span class="annottext">Var (Map PackageKey LastVersion)
-</span><a href="#local-6989586621679424193"><span class="hs-identifier hs-var">lastVersions</span></a></span><span>
-</span><span id="line-170"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679424195"><span class="annot"><span class="annottext">xs :: [(PackageKey, Maybe Version)]
-</span><a href="#local-6989586621679424195"><span class="hs-identifier hs-var hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Map PackageKey (Maybe Version) -&gt; [(PackageKey, Maybe Version)]
+</span><a href="#local-6989586621679428730"><span class="hs-identifier hs-var">lastVersions</span></a></span><span>
+</span><span id="line-170"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679428732"><span class="annot"><span class="annottext">xs :: [(PackageKey, Maybe Version)]
+</span><a href="#local-6989586621679428732"><span class="hs-identifier hs-var hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Map PackageKey (Maybe Version) -&gt; [(PackageKey, Maybe Version)]
 forall k a. Map k a -&gt; [(k, a)]
 </span><span class="hs-identifier hs-var">Map.toList</span></span><span> </span><span class="annot"><span class="annottext">(Map PackageKey (Maybe Version) -&gt; [(PackageKey, Maybe Version)])
 -&gt; Map PackageKey (Maybe Version) -&gt; [(PackageKey, Maybe Version)]
@@ -664,19 +664,19 @@ forall a b c. (a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c
 -&gt; Map PackageKey LastVersion -&gt; Map PackageKey (Maybe Version)
 forall a b k. (a -&gt; b) -&gt; Map k a -&gt; Map k b
 </span><span class="hs-identifier hs-var">Map.map</span></span><span> </span><span class="annot"><span class="annottext">Map PackageKey LastVersion
-</span><a href="#local-6989586621679424194"><span class="hs-identifier hs-var">versions</span></a></span><span> </span><span class="annot"><span class="annottext">((LastVersion -&gt; Maybe Version) -&gt; Map PackageKey (Maybe Version))
+</span><a href="#local-6989586621679428731"><span class="hs-identifier hs-var">versions</span></a></span><span> </span><span class="annot"><span class="annottext">((LastVersion -&gt; Maybe Version) -&gt; Map PackageKey (Maybe Version))
 -&gt; (LastVersion -&gt; Maybe Version) -&gt; Map PackageKey (Maybe Version)
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
-</span><span id="line-172"></span><span>          </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#OnDisk"><span class="hs-identifier hs-type">OnDisk</span></a></span><span> </span><span id="local-6989586621679424198"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424198"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
+</span><span id="line-172"></span><span>          </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#OnDisk"><span class="hs-identifier hs-type">OnDisk</span></a></span><span> </span><span id="local-6989586621679428735"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428735"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Version -&gt; Maybe Version
 forall a. a -&gt; Maybe a
 </span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424198"><span class="hs-identifier hs-var">v</span></a></span><span>
-</span><span id="line-173"></span><span>          </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-type">Updated</span></a></span><span> </span><span id="local-6989586621679424199"><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679424199"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428735"><span class="hs-identifier hs-var">v</span></a></span><span>
+</span><span id="line-173"></span><span>          </span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#Updated"><span class="hs-identifier hs-type">Updated</span></a></span><span> </span><span id="local-6989586621679428736"><span class="annot"><span class="annottext">Maybe Version
+</span><a href="#local-6989586621679428736"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="annot"><span class="annottext">Version
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Maybe Version
-</span><a href="#local-6989586621679424199"><span class="hs-identifier hs-var">v</span></a></span><span>
+</span><a href="#local-6989586621679428736"><span class="hs-identifier hs-var">v</span></a></span><span>
 </span><span id="line-174"></span><span>  </span><span class="annot"><span class="annottext">Map PackageKey Version -&gt; Action (Map PackageKey Version)
 forall a. a -&gt; Action a
 forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
@@ -686,11 +686,11 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[(PackageKey, Version)] -&gt; Map PackageKey Version
 forall k a. Ord k =&gt; [(k, a)] -&gt; Map k a
 </span><span class="hs-identifier hs-var">Map.fromList</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424201"><span class="hs-identifier hs-var">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424202"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">|</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679424201"><span class="annot"><span class="annottext">PackageKey
-</span><a href="#local-6989586621679424201"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679424202"><span class="annot"><span class="annottext">Version
-</span><a href="#local-6989586621679424202"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[(PackageKey, Maybe Version)]
-</span><a href="#local-6989586621679424195"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679428738"><span class="hs-identifier hs-var">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428739"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">|</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679428738"><span class="annot"><span class="annottext">PackageKey
+</span><a href="#local-6989586621679428738"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679428739"><span class="annot"><span class="annottext">Version
+</span><a href="#local-6989586621679428739"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[(PackageKey, Maybe Version)]
+</span><a href="#local-6989586621679428732"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-175"></span><span>
 </span><span id="line-176"></span><span class="annot"><span class="hs-comment">-- | Get if 'cacheNvchecker' is enabled</span></span><span>
 </span><span id="line-177"></span><span class="annot"><a href="NvFetcher.Types.ShakeExtras.html#nvcheckerCacheEnabled"><span class="hs-identifier hs-type">nvcheckerCacheEnabled</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Action</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span>

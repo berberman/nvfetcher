@@ -75,6 +75,11 @@ VersionChange :: PackageName -> Maybe Version -> Version -> VersionChange
 -- | Decorate a rule's key with <a>PackageKey</a>
 newtype WithPackageKey k
 WithPackageKey :: (k, PackageKey) -> WithPackageKey k
+
+-- | Zsh style glob pattern Notably, recursive wildcards like <tt>**/</tt>
+--   are supported.
+newtype Glob
+Glob :: FilePath -> Glob
 data VersionSortMethod
 ParseVersion :: VersionSortMethod
 Vercmp :: VersionSortMethod
@@ -234,9 +239,11 @@ data FetchStatus
 Fresh :: FetchStatus
 Fetched :: FetchStatus
 
--- | Extract file contents from package source e.g. <tt>Cargo.lock</tt>
+-- | Extract file contents from package source Matched files will be copied
+--   to build dir. All matched directories are ignored. Only files will be
+--   processed.
 data ExtractSrcQ
-ExtractSrcQ :: NixFetcher 'Fetched -> NonEmpty FilePath -> ExtractSrcQ
+ExtractSrcQ :: NixFetcher 'Fetched -> NonEmpty Glob -> ExtractSrcQ
 
 -- | Fetch <tt>outputHashes</tt> for git dependencies in
 --   <tt>Cargo.lock</tt>. See
@@ -271,9 +278,9 @@ type PackageName = Text
 -- | How to create package source fetcher given a version
 type PackageFetcher = Version -> NixFetcher 'Fresh
 newtype PackageExtractSrc
-PackageExtractSrc :: NonEmpty FilePath -> PackageExtractSrc
+PackageExtractSrc :: NonEmpty Glob -> PackageExtractSrc
 newtype PackageCargoLockFiles
-PackageCargoLockFiles :: NonEmpty FilePath -> PackageCargoLockFiles
+PackageCargoLockFiles :: NonEmpty Glob -> PackageCargoLockFiles
 newtype PackagePassthru
 PackagePassthru :: HashMap Text Text -> PackagePassthru
 
@@ -284,7 +291,7 @@ PackagePassthru :: HashMap Text Text -> PackagePassthru
 --   <li>how to track its version</li>
 --   <li>how to fetch it as we have the version</li>
 --   <li>optional file paths to extract (dump to build dir)</li>
---   <li>optional <tt>Cargo.lock</tt> path (if it's a rust package)</li>
+--   <li>optional <tt>Cargo.lock</tt> paths (if it's a rust package)</li>
 --   <li>an optional pass through map</li>
 --   <li>if the package version was pinned</li>
 --   <li>optional git date format (if the version source is git)</li>
@@ -313,18 +320,19 @@ PackageKey :: PackageName -> PackageKey
 
 -- | Result type of <a>Core</a>
 data PackageResult
-PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe (HashMap Text Text) -> Maybe (HashMap FilePath NixExpr) -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum)) -> UseStaleVersion -> Maybe Text -> PackageResult
+PackageResult :: PackageName -> NvcheckerResult -> NixFetcher 'Fetched -> Maybe (HashMap Text Text) -> Maybe (HashMap FilePath FilePath) -> Maybe (HashMap FilePath (FilePath, HashMap Text Checksum)) -> UseStaleVersion -> Maybe Text -> PackageResult
 [_prname] :: PackageResult -> PackageName
 [_prversion] :: PackageResult -> NvcheckerResult
 [_prfetched] :: PackageResult -> NixFetcher 'Fetched
 [_prpassthru] :: PackageResult -> Maybe (HashMap Text Text)
 
--- | extracted file name -&gt; file path in build dir
-[_prextract] :: PackageResult -> Maybe (HashMap FilePath NixExpr)
+-- | file path relative to package source -&gt; file path relative to build
+--   dir
+[_prextract] :: PackageResult -> Maybe (HashMap FilePath FilePath)
 
--- | cargo lock file path in build dir -&gt; (file path in nix, git
---   dependencies)
-[_prcargolock] :: PackageResult -> Maybe (HashMap FilePath (NixExpr, HashMap Text Checksum))
+-- | cargo lock file path relative to package source -&gt; (lock file path
+--   relative to build dir, git dependencies)
+[_prcargolock] :: PackageResult -> Maybe (HashMap FilePath (FilePath, HashMap Text Checksum))
 [_prpinned] :: PackageResult -> UseStaleVersion
 [_prgitdate] :: PackageResult -> Maybe Text
 instance Data.Binary.Class.Binary NvFetcher.Types.Branch
@@ -337,6 +345,7 @@ instance Data.Binary.Class.Binary NvFetcher.Types.ExtractSrcQ
 instance Data.Binary.Class.Binary NvFetcher.Types.FetchRustGitDepsQ
 instance Data.Binary.Class.Binary NvFetcher.Types.ForceFetch
 instance Data.Binary.Class.Binary NvFetcher.Types.GetGitCommitDate
+instance Data.Binary.Class.Binary NvFetcher.Types.Glob
 instance Data.Binary.Class.Binary NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.NixFetcher k)
 instance Data.Binary.Class.Binary NvFetcher.Types.NvcheckerOptions
@@ -365,6 +374,7 @@ instance GHC.Classes.Eq NvFetcher.Types.ExtractSrcQ
 instance GHC.Classes.Eq NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Classes.Eq NvFetcher.Types.ForceFetch
 instance GHC.Classes.Eq NvFetcher.Types.GetGitCommitDate
+instance GHC.Classes.Eq NvFetcher.Types.Glob
 instance GHC.Classes.Eq NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult GHC.Classes.Eq k => GHC.Classes.Eq (NvFetcher.Types.NixFetcher k)
 instance GHC.Classes.Eq NvFetcher.Types.NvcheckerOptions
@@ -393,6 +403,7 @@ instance GHC.Generics.Generic NvFetcher.Types.ExtractSrcQ
 instance GHC.Generics.Generic NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Generics.Generic NvFetcher.Types.ForceFetch
 instance GHC.Generics.Generic NvFetcher.Types.GetGitCommitDate
+instance GHC.Generics.Generic NvFetcher.Types.Glob
 instance GHC.Generics.Generic NvFetcher.Types.ListOptions
 instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
 instance GHC.Generics.Generic NvFetcher.Types.NvcheckerOptions
@@ -415,6 +426,7 @@ instance Data.Hashable.Class.Hashable NvFetcher.Types.ExtractSrcQ
 instance Data.Hashable.Class.Hashable NvFetcher.Types.FetchRustGitDepsQ
 instance Data.Hashable.Class.Hashable NvFetcher.Types.ForceFetch
 instance Data.Hashable.Class.Hashable NvFetcher.Types.GetGitCommitDate
+instance Data.Hashable.Class.Hashable NvFetcher.Types.Glob
 instance Data.Hashable.Class.Hashable NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.NixFetcher k)
 instance Data.Hashable.Class.Hashable NvFetcher.Types.NvcheckerOptions
@@ -426,6 +438,7 @@ instance Data.Hashable.Class.Hashable NvFetcher.Types.Version
 instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSortMethod
 instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSource
 instance Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.WithPackageKey k)
+instance Data.String.IsString NvFetcher.Types.Glob
 instance Data.String.IsString NvFetcher.Types.Version
 instance GHC.Base.Monoid NvFetcher.Types.PackagePassthru
 instance GHC.Base.Monoid NvFetcher.Types.Version
@@ -439,6 +452,7 @@ instance Control.DeepSeq.NFData NvFetcher.Types.ExtractSrcQ
 instance Control.DeepSeq.NFData NvFetcher.Types.FetchRustGitDepsQ
 instance Control.DeepSeq.NFData NvFetcher.Types.ForceFetch
 instance Control.DeepSeq.NFData NvFetcher.Types.GetGitCommitDate
+instance Control.DeepSeq.NFData NvFetcher.Types.Glob
 instance Control.DeepSeq.NFData NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult Control.DeepSeq.NFData k => Control.DeepSeq.NFData (NvFetcher.Types.NixFetcher k)
 instance Control.DeepSeq.NFData NvFetcher.Types.NvcheckerOptions
@@ -461,6 +475,7 @@ instance GHC.Classes.Ord NvFetcher.Types.ExtractSrcQ
 instance GHC.Classes.Ord NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Classes.Ord NvFetcher.Types.ForceFetch
 instance GHC.Classes.Ord NvFetcher.Types.GetGitCommitDate
+instance GHC.Classes.Ord NvFetcher.Types.Glob
 instance GHC.Classes.Ord NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult GHC.Classes.Ord k => GHC.Classes.Ord (NvFetcher.Types.NixFetcher k)
 instance GHC.Classes.Ord NvFetcher.Types.NvcheckerOptions
@@ -479,6 +494,7 @@ instance Prettyprinter.Internal.Pretty NvFetcher.Types.ExtractSrcQ
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.FetchRustGitDepsQ
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ForceFetch
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.GetGitCommitDate
+instance Prettyprinter.Internal.Pretty NvFetcher.Types.Glob
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ListOptions
 instance Prettyprinter.Internal.Pretty (NvFetcher.Types.NixFetcher k)
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.NvcheckerOptions
@@ -498,6 +514,7 @@ instance GHC.Show.Show NvFetcher.Types.ExtractSrcQ
 instance GHC.Show.Show NvFetcher.Types.FetchRustGitDepsQ
 instance GHC.Show.Show NvFetcher.Types.ForceFetch
 instance GHC.Show.Show NvFetcher.Types.GetGitCommitDate
+instance GHC.Show.Show NvFetcher.Types.Glob
 instance GHC.Show.Show NvFetcher.Types.ListOptions
 instance NvFetcher.Types.ForFetchResult GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.NixFetcher k)
 instance GHC.Show.Show NvFetcher.Types.NvcheckerOptions
@@ -998,13 +1015,13 @@ fetchVscodeMarketplace :: Attach PackageFetcher (Text, Text)
 fetchTarball :: Attach PackageFetcher (Version -> Text)
 
 -- | Extract files from fetched package source
-extractSource :: Attach PackageExtractSrc [FilePath]
+extractSource :: Attach PackageExtractSrc [Glob]
 
 -- | Run <tt>FetchRustGitDependencies</tt> given the path to
 --   <tt>Cargo.lock</tt> files
 --   
 --   The lock files will be extracted as well.
-hasCargoLocks :: Attach PackageCargoLockFiles [FilePath]
+hasCargoLock :: Attach PackageCargoLockFiles [Glob]
 
 -- | Set <a>NvcheckerOptions</a> for a package, which can tweak the version
 --   number we obtain
@@ -1385,24 +1402,25 @@ instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.NixExpr
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.Version
 
 
--- | This module provides function that extracs files contents from package
---   sources. It uses <a>IFD</a> under the hood, pulling <i>textual</i>
---   files from source drv. Because we use <tt>nix-instantiate</tt> to
---   build drv, so <tt><a>nixpkgs</a></tt> (<tt>NIX_PATH</tt>) is required.
+-- | This module provides function that extracts files contents from
+--   package sources. Because we use <tt>nix-instantiate</tt> to build drv,
+--   so <tt><a>nixpkgs</a></tt> (<tt>NIX_PATH</tt>) is required.
 module NvFetcher.ExtractSrc
 
--- | Extract file contents from package source e.g. <tt>Cargo.lock</tt>
+-- | Extract file contents from package source Matched files will be copied
+--   to build dir. All matched directories are ignored. Only files will be
+--   processed.
 data ExtractSrcQ
-ExtractSrcQ :: NixFetcher 'Fetched -> NonEmpty FilePath -> ExtractSrcQ
+ExtractSrcQ :: NixFetcher 'Fetched -> NonEmpty Glob -> ExtractSrcQ
 
 -- | Rules of extract source
 extractSrcRule :: Rules ()
 
 -- | Run extract source
-extractSrc :: NixFetcher 'Fetched -> FilePath -> Action (HashMap FilePath Text)
+extractSrc :: NixFetcher 'Fetched -> Glob -> Action (HashMap FilePath FilePath)
 
 -- | Run extract source with many sources
-extractSrcs :: NixFetcher 'Fetched -> NonEmpty FilePath -> Action (HashMap FilePath Text)
+extractSrcs :: NixFetcher 'Fetched -> NonEmpty Glob -> Action (HashMap FilePath FilePath)
 
 
 -- | This module provides function to calculate <tt>cargoLock</tt> used in
