@@ -294,7 +294,7 @@ in the format of `%Y-%m-%d` by default. You can provide your own [`strftime`](ht
 - `git.date_format = "strftime_format"`
 - `git.date_tz = "timezone"`
 
-You can use the `git.time_zone` option to specify the time zone for the commit date. Accepts IANA time zone names, e.g. `git.time_zone = "America/New_York"`. Plus, you can use `git.time_zone = "local"` to refer to the local time zone.
+You can use the `git.date_tz` option to specify the time zone for the commit date. Accepts IANA time zone names, e.g. `git.date_tz = "America/New_York"`. Plus, you can use `git.date_tz = "local"` to refer to the local time zone.
 
 #### Force fetching
 
