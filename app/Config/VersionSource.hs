@@ -67,6 +67,7 @@ listOptionsDecoder =
     <$> getFieldOpt "include_regex"
     <*> getFieldOpt "exclude_regex"
     <*> ( getFieldOpt @Text "sort_version_key" >>= \case
+            Just "awesomeversion" -> pure $ Just AwesomeVersion
             Just "parse_version" -> pure $ Just ParseVersion
             Just "vercmp" -> pure $ Just Vercmp
             Just _ -> makeDecoder $ invalidValue "unexpected sort_version_key: it should be either parse_version or vercmp"
