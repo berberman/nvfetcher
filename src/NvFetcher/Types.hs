@@ -157,17 +157,19 @@ type NixExpr = Text
 
 --------------------------------------------------------------------------------
 
-data VersionSortMethod = ParseVersion | Vercmp
+data VersionSortMethod = ParseVersion | Vercmp | AwesomeVersion
   deriving (Typeable, Eq, Ord, Enum, Generic, Hashable, Binary, NFData)
 
 instance Show VersionSortMethod where
   show = \case
     ParseVersion -> "parse_version"
     Vercmp -> "vercmp"
+    AwesomeVersion -> "awesomeversion"
 
 instance Pretty VersionSortMethod where
   pretty ParseVersion = "ParseVersion"
   pretty Vercmp = "Vercmp"
+  pretty AwesomeVersion = "AwesomeVersion"
 
 instance Default VersionSortMethod where
   def = ParseVersion
