@@ -28,18 +28,25 @@ spec =
         runGetGitCommitDateRule repo rev (GitDateFormat $ Just "%H:%M:%S", GitTimeZone $ Just "UTC")
           -- The commit was made at UTC+8; hence we expect the time to be 8 hours earlier
           `shouldReturnJust` "10:43:48"
-      specifyChan "local time zone" $ do
-        -- Get the current time zone
-        tz <- liftIO getCurrentTimeZone
-        -- Get commit time at UTC
-        rawCommitTime <- runGetGitCommitDateRule repo rev (GitDateFormat $ Just "%Y-%m-%d %H:%M:%S", GitTimeZone $ Just "UTC")
-        shouldBeJust rawCommitTime
-        parsedCommitTime :: UTCTime <- parseTimeM True defaultTimeLocale "%Y-%m-%d %H:%M:%S" . T.unpack . fromJust $ rawCommitTime
-        -- Convert UTC time to local time
-        let localTimeStr = T.pack $ formatTime defaultTimeLocale "%H:%M:%S" $ utcToLocalTime tz parsedCommitTime
-        -- Rule should return the same result as we computed
-        runGetGitCommitDateRule repo rev (GitDateFormat $ Just "%H:%M:%S", GitTimeZone $ Just "local")
-          `shouldReturnJust` localTimeStr
+
+      -- TODO
+      -- Test commented out as this logic does not work:
+      -- The git command with --date=local returns DST time zone if the commit time falls within DST, 
+      -- but our conversion always uses current local time zone, which may not match git's output.
+      -- It's not clear how to check whether DST applies for a given time zone at a specific date/time in Haskell.
+      --
+      -- specifyChan "local time zone" $ do
+      --   -- Get the current time zone
+      --   tz <- liftIO getCurrentTimeZone
+      --   -- Get commit time at UTC
+      --   rawCommitTime <- runGetGitCommitDateRule repo rev (GitDateFormat $ Just "%Y-%m-%d %H:%M:%S", GitTimeZone $ Just "UTC")
+      --   shouldBeJust rawCommitTime
+      --   parsedCommitTime :: UTCTime <- parseTimeM True defaultTimeLocale "%Y-%m-%d %H:%M:%S" . T.unpack . fromJust $ rawCommitTime
+      --   -- Convert UTC time to local time
+      --   let localTimeStr = T.pack $ formatTime defaultTimeLocale "%H:%M:%S" $ utcToLocalTime tz parsedCommitTime
+      --   -- Rule should return the same result as we computed
+      --   runGetGitCommitDateRule repo rev (GitDateFormat $ Just "%H:%M:%S", GitTimeZone $ Just "local")
+      --     `shouldReturnJust` localTimeStr
 
 repo :: Text
 repo = "https://gist.github.com/NickCao/6c4dbc4e15db5da107de6cdb89578375"
