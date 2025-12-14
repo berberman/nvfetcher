@@ -1,5 +1,21 @@
 # Revision history for nvfetcher
 
+## 0.8.0.0
+
+There is a major rework on Source File Extract, which is a *breaking change* and requires users to update their configuration files and the usage of generated Nix expressions.
+
+1. Now both `extract` and `cargo_lock` (renamed from `cargo_locks`) options accept a list of zsh style globs.
+2. `ExtractSrc` rule now copies all matched files to the output directory and generates a mapping between relative paths in the output directory and original paths in the source repository, rather than loading them into memory as text files. This makes extracting binary files possible.
+3. There are several structural changes in generated Nix expressions. See https://github.com/berberman/nvfetcher/pull/139 for details.
+
+Other changes:
+* Add option `git.date_tz` to specify the time zone for `GetGitCommitDate` rule.
+* Add `awesomeversion` sort_version_key for nvchecker. Thanks to @auscyber.
+* Generate `hash` for Docker fetcher. Thanks to @amesgen.
+* Fix binary packaging issue on aarch64-darwin. Thanks to @truelecter.
+* Make generated Nix file satisfy nixfmt-rfc-style. Thanks to @zzzsyyy.
+
+
 ## 0.7.0.0
 
 Now nvfetcher removes all files *except* `generated.json` and `generated.nix` in `_sources` before each run. If you do want to keep those files, you can use the new CLI option `--keep-old`. In addition, a new target `purge` is introduced for resetting the state of nvfetcher by deleting the shake database saved in XDG directory. 

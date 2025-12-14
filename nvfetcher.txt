@@ -6,7 +6,7 @@
 --   
 --   Please see <a>README</a>
 @package nvfetcher
-@version 0.7.0.0
+@version 0.8.0.0
 
 
 module NvFetcher.Config
