@@ -5,7 +5,7 @@
 #endif
 </span><span class="hs-pragma">{-# OPTIONS_GHC -fno-warn-missing-import-lists #-}</span><span>
 </span><span id="line-7"></span><span class="hs-pragma">{-# OPTIONS_GHC -w #-}</span><span>
-</span><span id="line-8"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Paths_nvfetcher</span><span> </span><span class="hs-special">(</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html"><span class="hs-identifier">Paths_nvfetcher</span></a></span><span> </span><span class="hs-special">(</span><span>
 </span><span id="line-9"></span><span>    </span><span class="annot"><a href="Paths_nvfetcher.html#version"><span class="hs-identifier">version</span></a></span><span class="hs-special">,</span><span>
 </span><span id="line-10"></span><span>    </span><span class="annot"><a href="Paths_nvfetcher.html#getBinDir"><span class="hs-identifier">getBinDir</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#getLibDir"><span class="hs-identifier">getLibDir</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#getDynLibDir"><span class="hs-identifier">getDynLibDir</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#getDataDir"><span class="hs-identifier">getDataDir</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#getLibexecDir"><span class="hs-identifier">getLibexecDir</span></a></span><span class="hs-special">,</span><span>
 </span><span id="line-11"></span><span>    </span><span class="annot"><a href="Paths_nvfetcher.html#getDataFileName"><span class="hs-identifier">getDataFileName</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#getSysconfDir"><span class="hs-identifier">getSysconfDir</span></a></span><span>
@@ -22,7 +22,7 @@
 #if defined(VERSION_base)
 </span><span class="hs-cpp">
 #if MIN_VERSION_base(4,0,0)
-</span><span id="local-6989586621679438380"><span class="annot"><a href="Paths_nvfetcher.html#catchIO"><span class="hs-identifier hs-type">catchIO</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679438380"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Exception.IOException</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679438380"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679438380"><span class="hs-identifier hs-type">a</span></a></span></span><span class="hs-cpp">
+</span><span id="local-6989586621679446482"><span class="annot"><a href="Paths_nvfetcher.html#catchIO"><span class="hs-identifier hs-type">catchIO</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679446482"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Exception.IOException</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679446482"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679446482"><span class="hs-identifier hs-type">a</span></a></span></span><span class="hs-cpp">
 #else
 </span><span class="hs-identifier">catchIO</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier">IO</span><span> </span><span class="hs-identifier">a</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="hs-identifier">Exception.Exception</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-identifier">IO</span><span> </span><span class="hs-identifier">a</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-identifier">IO</span><span> </span><span class="hs-identifier">a</span><span class="hs-cpp">
 #endif
@@ -46,18 +46,11 @@ forall e a. Exception e =&gt; IO a -&gt; (e -&gt; IO a) -&gt; IO a
 </span><span id="line-37"></span><span>
 </span><span id="line-38"></span><span class="annot"><a href="Paths_nvfetcher.html#getDataFileName"><span class="hs-identifier hs-type">getDataFileName</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
 </span><span id="line-39"></span><span id="getDataFileName"><span class="annot"><span class="annottext">getDataFileName :: String -&gt; IO String
-</span><a href="Paths_nvfetcher.html#getDataFileName"><span class="hs-identifier hs-var hs-var">getDataFileName</span></a></span></span><span> </span><span id="local-6989586621679438421"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438421"><span class="hs-identifier hs-var">name</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-40"></span><span>  </span><span id="local-6989586621679438422"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438422"><span class="hs-identifier hs-var">dir</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO String
+</span><a href="Paths_nvfetcher.html#getDataFileName"><span class="hs-identifier hs-var hs-var">getDataFileName</span></a></span></span><span> </span><span id="local-6989586621679446523"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679446523"><span class="hs-identifier hs-var">name</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-40"></span><span>  </span><span id="local-6989586621679446524"><span class="annot"><a href="#local-6989586621679446524"><span class="hs-identifier hs-var">dir</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO String
 </span><a href="Paths_nvfetcher.html#getDataDir"><span class="hs-identifier hs-var">getDataDir</span></a></span><span>
-</span><span id="line-41"></span><span>  </span><span class="annot"><span class="annottext">String -&gt; IO String
-forall a. a -&gt; IO a
-forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
-</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438422"><span class="hs-identifier hs-var">dir</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
-</span><a href="Paths_nvfetcher.html#joinFileName"><span class="hs-operator hs-var">`joinFileName`</span></a></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438421"><span class="hs-identifier hs-var">name</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-41"></span><span>  </span><span class="annot"><span class="hs-identifier hs-type">return</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679446524"><span class="hs-identifier hs-type">dir</span></a></span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#joinFileName"><span class="hs-operator hs-type">`joinFileName`</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679446523"><span class="hs-identifier hs-type">name</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-42"></span><span>
 </span><span id="line-43"></span><span class="annot"><a href="Paths_nvfetcher.html#getBinDir"><span class="hs-identifier hs-type">getBinDir</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#getLibDir"><span class="hs-identifier hs-type">getLibDir</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#getDynLibDir"><span class="hs-identifier hs-type">getDynLibDir</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#getDataDir"><span class="hs-identifier hs-type">getDataDir</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#getLibexecDir"><span class="hs-identifier hs-type">getLibexecDir</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Paths_nvfetcher.html#getSysconfDir"><span class="hs-identifier hs-type">getSysconfDir</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
 </span><span id="line-44"></span><span>
@@ -70,16 +63,16 @@ forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
 </span><span class="hs-string">&quot;/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-nvfetcher-0.7.0.0/bin&quot;</span></span><span>
 </span><span id="line-50"></span><span id="libdir"><span class="annot"><span class="annottext">libdir :: String
 </span><a href="Paths_nvfetcher.html#libdir"><span class="hs-identifier hs-var hs-var">libdir</span></a></span></span><span>     </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><span class="hs-string">&quot;/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-nvfetcher-0.7.0.0/lib/ghc-9.8.4/lib/x86_64-linux-ghc-9.8.4/nvfetcher-0.7.0.0-AhFFh7reJc9KmNyxRtjlmD&quot;</span></span><span>
+</span><span class="hs-string">&quot;/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-nvfetcher-0.7.0.0/lib/ghc-9.10.3/lib/x86_64-linux-ghc-9.10.3-b976/nvfetcher-0.7.0.0-5PmCVbEbJ51CQR6jlsp4uW&quot;</span></span><span>
 </span><span id="line-51"></span><span id="dynlibdir"><span class="annot"><span class="annottext">dynlibdir :: String
 </span><a href="Paths_nvfetcher.html#dynlibdir"><span class="hs-identifier hs-var hs-var">dynlibdir</span></a></span></span><span>  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><span class="hs-string">&quot;/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-nvfetcher-0.7.0.0/lib/ghc-9.8.4/lib/x86_64-linux-ghc-9.8.4&quot;</span></span><span>
+</span><span class="hs-string">&quot;/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-nvfetcher-0.7.0.0/lib/ghc-9.10.3/lib/x86_64-linux-ghc-9.10.3-b976&quot;</span></span><span>
 </span><span id="line-52"></span><span id="datadir"><span class="annot"><span class="annottext">datadir :: String
 </span><a href="Paths_nvfetcher.html#datadir"><span class="hs-identifier hs-var hs-var">datadir</span></a></span></span><span>    </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><span class="hs-string">&quot;/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-nvfetcher-0.7.0.0/share/x86_64-linux-ghc-9.8.4/nvfetcher-0.7.0.0&quot;</span></span><span>
+</span><span class="hs-string">&quot;/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-nvfetcher-0.7.0.0/share/x86_64-linux-ghc-9.10.3-b976/nvfetcher-0.7.0.0&quot;</span></span><span>
 </span><span id="line-53"></span><span id="libexecdir"><span class="annot"><span class="annottext">libexecdir :: String
 </span><a href="Paths_nvfetcher.html#libexecdir"><span class="hs-identifier hs-var hs-var">libexecdir</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><span class="hs-string">&quot;/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-nvfetcher-0.7.0.0/libexec/x86_64-linux-ghc-9.8.4/nvfetcher-0.7.0.0&quot;</span></span><span>
+</span><span class="hs-string">&quot;/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-nvfetcher-0.7.0.0/libexec/x86_64-linux-ghc-9.10.3-b976/nvfetcher-0.7.0.0&quot;</span></span><span>
 </span><span id="line-54"></span><span id="sysconfdir"><span class="annot"><span class="annottext">sysconfdir :: String
 </span><a href="Paths_nvfetcher.html#sysconfdir"><span class="hs-identifier hs-var hs-var">sysconfdir</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-nvfetcher-0.7.0.0/etc&quot;</span></span><span>
@@ -156,38 +149,38 @@ forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
 </span><span id="line-65"></span><span class="annot"><a href="Paths_nvfetcher.html#joinFileName"><span class="hs-identifier hs-type">joinFileName</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
 </span><span id="line-66"></span><span id="joinFileName"><span class="annot"><span class="annottext">joinFileName :: String -&gt; String -&gt; String
 </span><a href="Paths_nvfetcher.html#joinFileName"><span class="hs-identifier hs-var hs-var">joinFileName</span></a></span></span><span> </span><span class="annot"><span class="annottext">String
-</span><span class="hs-string">&quot;&quot;</span></span><span>  </span><span id="local-6989586621679438430"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438430"><span class="hs-identifier hs-var">fname</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438430"><span class="hs-identifier hs-var">fname</span></a></span><span>
+</span><span class="hs-string">&quot;&quot;</span></span><span>  </span><span id="local-6989586621679446532"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679446532"><span class="hs-identifier hs-var">fname</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679446532"><span class="hs-identifier hs-var">fname</span></a></span><span>
 </span><span id="line-67"></span><span class="annot"><a href="Paths_nvfetcher.html#joinFileName"><span class="hs-identifier hs-var">joinFileName</span></a></span><span> </span><span class="annot"><span class="annottext">String
-</span><span class="hs-string">&quot;.&quot;</span></span><span> </span><span id="local-6989586621679438431"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438431"><span class="hs-identifier hs-var">fname</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438431"><span class="hs-identifier hs-var">fname</span></a></span><span>
-</span><span id="line-68"></span><span class="annot"><a href="Paths_nvfetcher.html#joinFileName"><span class="hs-identifier hs-var">joinFileName</span></a></span><span> </span><span id="local-6989586621679438432"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438432"><span class="hs-identifier hs-var">dir</span></a></span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;.&quot;</span></span><span> </span><span id="local-6989586621679446533"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679446533"><span class="hs-identifier hs-var">fname</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679446533"><span class="hs-identifier hs-var">fname</span></a></span><span>
+</span><span id="line-68"></span><span class="annot"><a href="Paths_nvfetcher.html#joinFileName"><span class="hs-identifier hs-var">joinFileName</span></a></span><span> </span><span id="local-6989586621679446534"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679446534"><span class="hs-identifier hs-var">dir</span></a></span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;&quot;</span></span><span>    </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438432"><span class="hs-identifier hs-var">dir</span></a></span><span>
-</span><span id="line-69"></span><span class="annot"><a href="Paths_nvfetcher.html#joinFileName"><span class="hs-identifier hs-var">joinFileName</span></a></span><span> </span><span id="local-6989586621679438433"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438433"><span class="hs-identifier hs-var">dir</span></a></span></span><span> </span><span id="local-6989586621679438434"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438434"><span class="hs-identifier hs-var">fname</span></a></span></span><span>
+</span><a href="#local-6989586621679446534"><span class="hs-identifier hs-var">dir</span></a></span><span>
+</span><span id="line-69"></span><span class="annot"><a href="Paths_nvfetcher.html#joinFileName"><span class="hs-identifier hs-var">joinFileName</span></a></span><span> </span><span id="local-6989586621679446535"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679446535"><span class="hs-identifier hs-var">dir</span></a></span></span><span> </span><span id="local-6989586621679446536"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679446536"><span class="hs-identifier hs-var">fname</span></a></span></span><span>
 </span><span id="line-70"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Bool
 </span><a href="Paths_nvfetcher.html#isPathSeparator"><span class="hs-identifier hs-var">isPathSeparator</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Char
 forall a. HasCallStack =&gt; [a] -&gt; a
 </span><span class="hs-identifier hs-var">List.last</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438433"><span class="hs-identifier hs-var">dir</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438433"><span class="hs-identifier hs-var">dir</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679446535"><span class="hs-identifier hs-var">dir</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679446535"><span class="hs-identifier hs-var">dir</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
 </span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438434"><span class="hs-identifier hs-var">fname</span></a></span><span>
+</span><a href="#local-6989586621679446536"><span class="hs-identifier hs-var">fname</span></a></span><span>
 </span><span id="line-71"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">otherwise</span></span><span>                       </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438433"><span class="hs-identifier hs-var">dir</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><a href="#local-6989586621679446535"><span class="hs-identifier hs-var">dir</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
 </span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Char
 </span><a href="Paths_nvfetcher.html#pathSeparator"><span class="hs-identifier hs-var">pathSeparator</span></a></span><span> </span><span class="annot"><span class="annottext">Char -&gt; String -&gt; String
 forall a. a -&gt; [a] -&gt; [a]
 </span><span class="hs-glyph hs-var">:</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679438434"><span class="hs-identifier hs-var">fname</span></a></span><span>
+</span><a href="#local-6989586621679446536"><span class="hs-identifier hs-var">fname</span></a></span><span>
 </span><span id="line-72"></span><span>
 </span><span id="line-73"></span><span class="annot"><a href="Paths_nvfetcher.html#pathSeparator"><span class="hs-identifier hs-type">pathSeparator</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Char</span></span><span>
 </span><span id="line-74"></span><span id="pathSeparator"><span class="annot"><span class="annottext">pathSeparator :: Char
@@ -196,9 +189,9 @@ forall a. a -&gt; [a] -&gt; [a]
 </span><span id="line-75"></span><span>
 </span><span id="line-76"></span><span class="annot"><a href="Paths_nvfetcher.html#isPathSeparator"><span class="hs-identifier hs-type">isPathSeparator</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Char</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span>
 </span><span id="line-77"></span><span id="isPathSeparator"><span class="annot"><span class="annottext">isPathSeparator :: Char -&gt; Bool
-</span><a href="Paths_nvfetcher.html#isPathSeparator"><span class="hs-identifier hs-var hs-var">isPathSeparator</span></a></span></span><span> </span><span id="local-6989586621679438438"><span class="annot"><span class="annottext">Char
-</span><a href="#local-6989586621679438438"><span class="hs-identifier hs-var">c</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Char
-</span><a href="#local-6989586621679438438"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">Char -&gt; Char -&gt; Bool
+</span><a href="Paths_nvfetcher.html#isPathSeparator"><span class="hs-identifier hs-var hs-var">isPathSeparator</span></a></span></span><span> </span><span id="local-6989586621679446540"><span class="annot"><span class="annottext">Char
+</span><a href="#local-6989586621679446540"><span class="hs-identifier hs-var">c</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Char
+</span><a href="#local-6989586621679446540"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">Char -&gt; Char -&gt; Bool
 forall a. Eq a =&gt; a -&gt; a -&gt; Bool
 </span><span class="hs-operator hs-var">==</span></span><span> </span><span class="annot"><span class="annottext">Char
 </span><span class="hs-char">'/'</span></span><span>

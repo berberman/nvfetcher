@@ -5,7 +5,7 @@
 </span><span id="line-5"></span><span class="hs-comment">-- Maintainer: berberman &lt;berberman@yandex.com&gt;</span><span>
 </span><span id="line-6"></span><span class="hs-comment">-- Stability: experimental</span><span>
 </span><span id="line-7"></span><span class="hs-comment">-- Portability: portable</span><span>
-</span><span id="line-8"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">NvFetcher.Utils</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="NvFetcher.Utils.html"><span class="hs-identifier">NvFetcher.Utils</span></a></span><span> </span><span class="hs-keyword">where</span><span>
 </span><span id="line-9"></span><span>
 </span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Binary</span></span><span>
 </span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteString</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">BS</span></span><span>
@@ -21,7 +21,7 @@
 </span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Aeson.Key</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">A</span></span><span class="hs-cpp">
 #endif
 </span><span>
-</span><span id="line-24"></span><span id="local-6989586621679436087"><span class="annot"><a href="NvFetcher.Utils.html#encode%27"><span class="hs-identifier hs-type">encode'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="annot"><a href="#local-6989586621679436087"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679436087"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span></span><span>
+</span><span id="line-24"></span><span id="local-6989586621679444178"><span class="annot"><a href="NvFetcher.Utils.html#encode%27"><span class="hs-identifier hs-type">encode'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="annot"><a href="#local-6989586621679444178"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679444178"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span></span><span>
 </span><span id="line-25"></span><span id="encode%27"><span class="annot"><span class="annottext">encode' :: forall a. Binary a =&gt; a -&gt; ByteString
 </span><a href="NvFetcher.Utils.html#encode%27"><span class="hs-identifier hs-var hs-var">encode'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS.concat</span></span><span> </span><span class="annot"><span class="annottext">([ByteString] -&gt; ByteString)
@@ -35,7 +35,7 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 forall a. Binary a =&gt; a -&gt; LazyByteString
 </span><span class="hs-identifier hs-var">encode</span></span><span>
 </span><span id="line-26"></span><span>
-</span><span id="line-27"></span><span id="local-6989586621679436096"><span class="annot"><a href="NvFetcher.Utils.html#decode%27"><span class="hs-identifier hs-type">decode'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="annot"><a href="#local-6989586621679436096"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679436096"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-27"></span><span id="local-6989586621679444187"><span class="annot"><a href="NvFetcher.Utils.html#decode%27"><span class="hs-identifier hs-type">decode'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="annot"><a href="#local-6989586621679444187"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679444187"><span class="hs-identifier hs-type">a</span></a></span></span><span>
 </span><span id="line-28"></span><span id="decode%27"><span class="annot"><span class="annottext">decode' :: forall a. Binary a =&gt; ByteString -&gt; a
 </span><a href="NvFetcher.Utils.html#decode%27"><span class="hs-identifier hs-var hs-var">decode'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">LazyByteString -&gt; a
 forall a. Binary a =&gt; LazyByteString -&gt; a
@@ -53,15 +53,15 @@ forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
 </span><span id="line-29"></span><span>
 </span><span id="line-30"></span><span class="annot"><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-type">quote</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
 </span><span id="line-31"></span><span id="quote"><span class="annot"><span class="annottext">quote :: Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var hs-var">quote</span></a></span></span><span> </span><span id="local-6989586621679436135"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679436135"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Text] -&gt; Text
+</span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var hs-var">quote</span></a></span></span><span> </span><span id="local-6989586621679444226"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679444226"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Text] -&gt; Text
 </span><span class="hs-identifier hs-var">T.concat</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679436137"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679436135"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679436137"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">]</span><span>
+</span><a href="#local-6989586621679444228"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679444226"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679444228"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-32"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-33"></span><span>    </span><span id="local-6989586621679436137"><span class="annot"><span class="annottext">q :: Text
-</span><a href="#local-6989586621679436137"><span class="hs-identifier hs-var hs-var">q</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; Text
+</span><span id="line-33"></span><span>    </span><span id="local-6989586621679444228"><span class="annot"><span class="annottext">q :: Text
+</span><a href="#local-6989586621679444228"><span class="hs-identifier hs-var hs-var">q</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; Text
 </span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;\&quot;&quot;</span></span><span>
 </span><span id="line-34"></span><span>
@@ -76,9 +76,9 @@ forall a. Show a =&gt; a -&gt; String
 </span><span id="line-37"></span><span>
 </span><span id="line-38"></span><span class="annot"><a href="NvFetcher.Utils.html#isLegalNixId"><span class="hs-identifier hs-type">isLegalNixId</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span>
 </span><span id="line-39"></span><span id="isLegalNixId"><span class="annot"><span class="annottext">isLegalNixId :: Text -&gt; Bool
-</span><a href="NvFetcher.Utils.html#isLegalNixId"><span class="hs-identifier hs-var hs-var">isLegalNixId</span></a></span></span><span> </span><span id="local-6989586621679436142"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679436142"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679436142"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String -&gt; Bool
+</span><a href="NvFetcher.Utils.html#isLegalNixId"><span class="hs-identifier hs-var hs-var">isLegalNixId</span></a></span></span><span> </span><span id="local-6989586621679444233"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679444233"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679444233"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Text -&gt; String -&gt; Bool
 forall source source1 target.
 (RegexMaker Regex CompOption ExecOption source,
  RegexContext Regex source1 target) =&gt;
@@ -88,16 +88,16 @@ source1 -&gt; source -&gt; target
 </span><span id="line-40"></span><span>
 </span><span id="line-41"></span><span class="annot"><a href="NvFetcher.Utils.html#quoteIfNeeds"><span class="hs-identifier hs-type">quoteIfNeeds</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
 </span><span id="line-42"></span><span id="quoteIfNeeds"><span class="annot"><span class="annottext">quoteIfNeeds :: Text -&gt; Text
-</span><a href="NvFetcher.Utils.html#quoteIfNeeds"><span class="hs-identifier hs-var hs-var">quoteIfNeeds</span></a></span></span><span> </span><span id="local-6989586621679436144"><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679436144"><span class="hs-identifier hs-var">x</span></a></span></span><span>
+</span><a href="NvFetcher.Utils.html#quoteIfNeeds"><span class="hs-identifier hs-var hs-var">quoteIfNeeds</span></a></span></span><span> </span><span id="local-6989586621679444235"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679444235"><span class="hs-identifier hs-var">x</span></a></span></span><span>
 </span><span id="line-43"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Bool
 </span><a href="NvFetcher.Utils.html#isLegalNixId"><span class="hs-identifier hs-var">isLegalNixId</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679436144"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679436144"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><a href="#local-6989586621679444235"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679444235"><span class="hs-identifier hs-var">x</span></a></span><span>
 </span><span id="line-44"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">otherwise</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text
 </span><a href="NvFetcher.Utils.html#quote"><span class="hs-identifier hs-var">quote</span></a></span><span> </span><span class="annot"><span class="annottext">Text
-</span><a href="#local-6989586621679436144"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><a href="#local-6989586621679444235"><span class="hs-identifier hs-var">x</span></a></span><span>
 </span><span id="line-45"></span><span>
 </span><span id="line-46"></span><span class="annot"><a href="NvFetcher.Utils.html#getDataDir"><span class="hs-identifier hs-type">getDataDir</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span>
 </span><span id="line-47"></span><span id="getDataDir"><span class="annot"><span class="annottext">getDataDir :: IO String
@@ -110,10 +110,10 @@ source1 -&gt; source -&gt; target
 </span><span id="line-50"></span><span class="hs-comment">-- See &lt;https://hackage.haskell.org/package/Glob/docs/System-FilePath-Glob.html#v:compile&gt; for details.</span><span>
 </span><span id="line-51"></span><span class="annot"><a href="NvFetcher.Utils.html#compileGlob"><span class="hs-identifier hs-type">compileGlob</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="NvFetcher.Types.html#Glob"><span class="hs-identifier hs-type">Glob</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Pattern</span></span><span>
 </span><span id="line-52"></span><span id="compileGlob"><span class="annot"><span class="annottext">compileGlob :: Glob -&gt; Pattern
-</span><a href="NvFetcher.Utils.html#compileGlob"><span class="hs-identifier hs-var hs-var">compileGlob</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#Glob"><span class="hs-identifier hs-type">Glob</span></a></span><span> </span><span id="local-6989586621679436150"><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679436150"><span class="hs-identifier hs-var">txt</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; Pattern
+</span><a href="NvFetcher.Utils.html#compileGlob"><span class="hs-identifier hs-var hs-var">compileGlob</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="NvFetcher.Types.html#Glob"><span class="hs-identifier hs-type">Glob</span></a></span><span> </span><span id="local-6989586621679444241"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679444241"><span class="hs-identifier hs-var">txt</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String -&gt; Pattern
 </span><span class="hs-identifier hs-var">compile</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679436150"><span class="hs-identifier hs-var">txt</span></a></span><span class="hs-cpp">
+</span><a href="#local-6989586621679444241"><span class="hs-identifier hs-var">txt</span></a></span><span class="hs-cpp">
 
 #if MIN_VERSION_aeson(2,0,0)
 </span><span class="annot"><a href="NvFetcher.Utils.html#aesonKey"><span class="hs-identifier hs-type">aesonKey</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">A.Key</span></span><span>

@@ -30,7 +30,7 @@ Config :: ShakeOptions -> FilePath -> Rules () -> Action () -> Action () -> Int 
 -- | When set to <a>True</a>, nvfetcher will keep going even if some
 --   packages failed to <i>fetch</i>
 [keepGoing] :: Config -> Bool
-instance Data.Default.Class.Default NvFetcher.Config.Config
+instance Data.Default.Internal.Default NvFetcher.Config.Config
 
 
 -- | Types used in this program.
@@ -83,6 +83,7 @@ Glob :: FilePath -> Glob
 data VersionSortMethod
 ParseVersion :: VersionSortMethod
 Vercmp :: VersionSortMethod
+AwesomeVersion :: VersionSortMethod
 
 -- | Filter-like configuration for some version sources. See
 --   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#list-options</a>
@@ -362,14 +363,14 @@ instance Data.Binary.Class.Binary NvFetcher.Types.Version
 instance Data.Binary.Class.Binary NvFetcher.Types.VersionSortMethod
 instance Data.Binary.Class.Binary NvFetcher.Types.VersionSource
 instance Data.Binary.Class.Binary k => Data.Binary.Class.Binary (NvFetcher.Types.WithPackageKey k)
-instance Data.Default.Class.Default NvFetcher.Types.Branch
-instance Data.Default.Class.Default NvFetcher.Types.ForceFetch
-instance Data.Default.Class.Default NvFetcher.Types.GitDateFormat
-instance Data.Default.Class.Default NvFetcher.Types.GitTimeZone
-instance Data.Default.Class.Default NvFetcher.Types.ListOptions
-instance Data.Default.Class.Default NvFetcher.Types.NvcheckerOptions
-instance Data.Default.Class.Default NvFetcher.Types.VersionSortMethod
-instance GHC.Enum.Enum NvFetcher.Types.VersionSortMethod
+instance Data.Default.Internal.Default NvFetcher.Types.Branch
+instance Data.Default.Internal.Default NvFetcher.Types.ForceFetch
+instance Data.Default.Internal.Default NvFetcher.Types.GitDateFormat
+instance Data.Default.Internal.Default NvFetcher.Types.GitTimeZone
+instance Data.Default.Internal.Default NvFetcher.Types.ListOptions
+instance Data.Default.Internal.Default NvFetcher.Types.NvcheckerOptions
+instance Data.Default.Internal.Default NvFetcher.Types.VersionSortMethod
+instance GHC.Internal.Enum.Enum NvFetcher.Types.VersionSortMethod
 instance GHC.Classes.Eq NvFetcher.Types.Branch
 instance GHC.Classes.Eq NvFetcher.Types.CheckVersion
 instance GHC.Classes.Eq NvFetcher.Types.Checksum
@@ -400,30 +401,30 @@ instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.Checksum
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.ContainerDigest
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.NvcheckerRaw
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.Types.Version
-instance GHC.Generics.Generic NvFetcher.Types.Branch
-instance GHC.Generics.Generic NvFetcher.Types.CheckVersion
-instance GHC.Generics.Generic NvFetcher.Types.Checksum
-instance GHC.Generics.Generic NvFetcher.Types.ContainerDigest
-instance GHC.Generics.Generic NvFetcher.Types.Core
-instance GHC.Generics.Generic NvFetcher.Types.ExtractSrcQ
-instance GHC.Generics.Generic NvFetcher.Types.FetchRustGitDepsQ
-instance GHC.Generics.Generic NvFetcher.Types.ForceFetch
-instance GHC.Generics.Generic NvFetcher.Types.GetGitCommitDate
-instance GHC.Generics.Generic NvFetcher.Types.GitDateFormat
-instance GHC.Generics.Generic NvFetcher.Types.GitTimeZone
-instance GHC.Generics.Generic NvFetcher.Types.Glob
-instance GHC.Generics.Generic NvFetcher.Types.ListOptions
-instance GHC.Generics.Generic (NvFetcher.Types.NixFetcher k)
-instance GHC.Generics.Generic NvFetcher.Types.NvcheckerOptions
-instance GHC.Generics.Generic NvFetcher.Types.NvcheckerRaw
-instance GHC.Generics.Generic NvFetcher.Types.NvcheckerResult
-instance GHC.Generics.Generic NvFetcher.Types.PackageKey
-instance GHC.Generics.Generic NvFetcher.Types.PackageResult
-instance GHC.Generics.Generic NvFetcher.Types.RunFetch
-instance GHC.Generics.Generic NvFetcher.Types.UseStaleVersion
-instance GHC.Generics.Generic NvFetcher.Types.Version
-instance GHC.Generics.Generic NvFetcher.Types.VersionSortMethod
-instance GHC.Generics.Generic NvFetcher.Types.VersionSource
+instance GHC.Internal.Generics.Generic NvFetcher.Types.Branch
+instance GHC.Internal.Generics.Generic NvFetcher.Types.CheckVersion
+instance GHC.Internal.Generics.Generic NvFetcher.Types.Checksum
+instance GHC.Internal.Generics.Generic NvFetcher.Types.ContainerDigest
+instance GHC.Internal.Generics.Generic NvFetcher.Types.Core
+instance GHC.Internal.Generics.Generic NvFetcher.Types.ExtractSrcQ
+instance GHC.Internal.Generics.Generic NvFetcher.Types.FetchRustGitDepsQ
+instance GHC.Internal.Generics.Generic NvFetcher.Types.ForceFetch
+instance GHC.Internal.Generics.Generic NvFetcher.Types.GetGitCommitDate
+instance GHC.Internal.Generics.Generic NvFetcher.Types.GitDateFormat
+instance GHC.Internal.Generics.Generic NvFetcher.Types.GitTimeZone
+instance GHC.Internal.Generics.Generic NvFetcher.Types.Glob
+instance GHC.Internal.Generics.Generic NvFetcher.Types.ListOptions
+instance GHC.Internal.Generics.Generic (NvFetcher.Types.NixFetcher k)
+instance GHC.Internal.Generics.Generic NvFetcher.Types.NvcheckerOptions
+instance GHC.Internal.Generics.Generic NvFetcher.Types.NvcheckerRaw
+instance GHC.Internal.Generics.Generic NvFetcher.Types.NvcheckerResult
+instance GHC.Internal.Generics.Generic NvFetcher.Types.PackageKey
+instance GHC.Internal.Generics.Generic NvFetcher.Types.PackageResult
+instance GHC.Internal.Generics.Generic NvFetcher.Types.RunFetch
+instance GHC.Internal.Generics.Generic NvFetcher.Types.UseStaleVersion
+instance GHC.Internal.Generics.Generic NvFetcher.Types.Version
+instance GHC.Internal.Generics.Generic NvFetcher.Types.VersionSortMethod
+instance GHC.Internal.Generics.Generic NvFetcher.Types.VersionSource
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Branch
 instance Data.Hashable.Class.Hashable NvFetcher.Types.CheckVersion
 instance Data.Hashable.Class.Hashable NvFetcher.Types.Checksum
@@ -447,10 +448,10 @@ instance Data.Hashable.Class.Hashable NvFetcher.Types.Version
 instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSortMethod
 instance Data.Hashable.Class.Hashable NvFetcher.Types.VersionSource
 instance Data.Hashable.Class.Hashable k => Data.Hashable.Class.Hashable (NvFetcher.Types.WithPackageKey k)
-instance Data.String.IsString NvFetcher.Types.Glob
-instance Data.String.IsString NvFetcher.Types.Version
-instance GHC.Base.Monoid NvFetcher.Types.PackagePassthru
-instance GHC.Base.Monoid NvFetcher.Types.Version
+instance GHC.Internal.Data.String.IsString NvFetcher.Types.Glob
+instance GHC.Internal.Data.String.IsString NvFetcher.Types.Version
+instance GHC.Internal.Base.Monoid NvFetcher.Types.PackagePassthru
+instance GHC.Internal.Base.Monoid NvFetcher.Types.Version
 instance Control.DeepSeq.NFData NvFetcher.Types.Branch
 instance Control.DeepSeq.NFData NvFetcher.Types.CheckVersion
 instance Control.DeepSeq.NFData NvFetcher.Types.Checksum
@@ -500,7 +501,7 @@ instance Prettyprinter.Internal.Pretty NvFetcher.Types.Branch
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.CheckVersion
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.Checksum
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ContainerDigest
-instance GHC.TypeLits.KnownSymbol d => Prettyprinter.Internal.Pretty (NvFetcher.Types.DefaultableText d)
+instance GHC.Internal.TypeLits.KnownSymbol d => Prettyprinter.Internal.Pretty (NvFetcher.Types.DefaultableText d)
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ExtractSrcQ
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.FetchRustGitDepsQ
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.ForceFetch
@@ -515,35 +516,35 @@ instance Prettyprinter.Internal.Pretty NvFetcher.Types.PackageKey
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.Version
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.VersionSortMethod
 instance Prettyprinter.Internal.Pretty NvFetcher.Types.VersionSource
-instance GHC.Base.Semigroup NvFetcher.Types.PackagePassthru
-instance GHC.Base.Semigroup NvFetcher.Types.Version
-instance GHC.Show.Show NvFetcher.Types.Branch
-instance GHC.Show.Show NvFetcher.Types.CheckVersion
-instance GHC.Show.Show NvFetcher.Types.Checksum
-instance GHC.Show.Show NvFetcher.Types.ContainerDigest
-instance GHC.Show.Show NvFetcher.Types.Core
-instance GHC.TypeLits.KnownSymbol d => GHC.Show.Show (NvFetcher.Types.DefaultableText d)
-instance GHC.Show.Show NvFetcher.Types.ExtractSrcQ
-instance GHC.Show.Show NvFetcher.Types.FetchRustGitDepsQ
-instance GHC.Show.Show NvFetcher.Types.ForceFetch
-instance GHC.Show.Show NvFetcher.Types.GetGitCommitDate
-instance GHC.Show.Show NvFetcher.Types.GitDateFormat
-instance GHC.Show.Show NvFetcher.Types.GitTimeZone
-instance GHC.Show.Show NvFetcher.Types.Glob
-instance GHC.Show.Show NvFetcher.Types.ListOptions
-instance NvFetcher.Types.ForFetchResult GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.NixFetcher k)
-instance GHC.Show.Show NvFetcher.Types.NvcheckerOptions
-instance GHC.Show.Show NvFetcher.Types.NvcheckerRaw
-instance GHC.Show.Show NvFetcher.Types.NvcheckerResult
-instance GHC.Show.Show NvFetcher.Types.PackageKey
-instance GHC.Show.Show NvFetcher.Types.PackageResult
-instance GHC.Show.Show NvFetcher.Types.RunFetch
-instance GHC.Show.Show NvFetcher.Types.UseStaleVersion
-instance GHC.Show.Show NvFetcher.Types.Version
-instance GHC.Show.Show NvFetcher.Types.VersionChange
-instance GHC.Show.Show NvFetcher.Types.VersionSortMethod
-instance GHC.Show.Show NvFetcher.Types.VersionSource
-instance GHC.Show.Show k => GHC.Show.Show (NvFetcher.Types.WithPackageKey k)
+instance GHC.Internal.Base.Semigroup NvFetcher.Types.PackagePassthru
+instance GHC.Internal.Base.Semigroup NvFetcher.Types.Version
+instance GHC.Internal.Show.Show NvFetcher.Types.Branch
+instance GHC.Internal.Show.Show NvFetcher.Types.CheckVersion
+instance GHC.Internal.Show.Show NvFetcher.Types.Checksum
+instance GHC.Internal.Show.Show NvFetcher.Types.ContainerDigest
+instance GHC.Internal.Show.Show NvFetcher.Types.Core
+instance GHC.Internal.TypeLits.KnownSymbol d => GHC.Internal.Show.Show (NvFetcher.Types.DefaultableText d)
+instance GHC.Internal.Show.Show NvFetcher.Types.ExtractSrcQ
+instance GHC.Internal.Show.Show NvFetcher.Types.FetchRustGitDepsQ
+instance GHC.Internal.Show.Show NvFetcher.Types.ForceFetch
+instance GHC.Internal.Show.Show NvFetcher.Types.GetGitCommitDate
+instance GHC.Internal.Show.Show NvFetcher.Types.GitDateFormat
+instance GHC.Internal.Show.Show NvFetcher.Types.GitTimeZone
+instance GHC.Internal.Show.Show NvFetcher.Types.Glob
+instance GHC.Internal.Show.Show NvFetcher.Types.ListOptions
+instance NvFetcher.Types.ForFetchResult GHC.Internal.Show.Show k => GHC.Internal.Show.Show (NvFetcher.Types.NixFetcher k)
+instance GHC.Internal.Show.Show NvFetcher.Types.NvcheckerOptions
+instance GHC.Internal.Show.Show NvFetcher.Types.NvcheckerRaw
+instance GHC.Internal.Show.Show NvFetcher.Types.NvcheckerResult
+instance GHC.Internal.Show.Show NvFetcher.Types.PackageKey
+instance GHC.Internal.Show.Show NvFetcher.Types.PackageResult
+instance GHC.Internal.Show.Show NvFetcher.Types.RunFetch
+instance GHC.Internal.Show.Show NvFetcher.Types.UseStaleVersion
+instance GHC.Internal.Show.Show NvFetcher.Types.Version
+instance GHC.Internal.Show.Show NvFetcher.Types.VersionChange
+instance GHC.Internal.Show.Show NvFetcher.Types.VersionSortMethod
+instance GHC.Internal.Show.Show NvFetcher.Types.VersionSource
+instance GHC.Internal.Show.Show k => GHC.Internal.Show.Show (NvFetcher.Types.WithPackageKey k)
 instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.Checksum
 instance Data.Aeson.Types.ToJSON.ToJSON NvFetcher.Types.ContainerDigest
 instance Data.Aeson.Types.ToJSON.ToJSON (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
@@ -807,10 +808,10 @@ vscodeMarketplaceFetcher :: (Text, Text) -> PackageFetcher
 tarballFetcher :: Text -> NixFetcher 'Fresh
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.NixFetcher.FetchedContainer
 instance Data.Aeson.Types.FromJSON.FromJSON NvFetcher.NixFetcher.FetchedGit
-instance GHC.Generics.Generic NvFetcher.NixFetcher.FetchedContainer
-instance GHC.Generics.Generic NvFetcher.NixFetcher.FetchedGit
-instance GHC.Show.Show NvFetcher.NixFetcher.FetchedContainer
-instance GHC.Show.Show NvFetcher.NixFetcher.FetchedGit
+instance GHC.Internal.Generics.Generic NvFetcher.NixFetcher.FetchedContainer
+instance GHC.Internal.Generics.Generic NvFetcher.NixFetcher.FetchedGit
+instance GHC.Internal.Show.Show NvFetcher.NixFetcher.FetchedContainer
+instance GHC.Internal.Show.Show NvFetcher.NixFetcher.FetchedGit
 
 
 -- | This module mainly contains two things: <a>PackageSet</a> and
@@ -1283,7 +1284,7 @@ infixl 8 ^.
 --   </pre>
 (?~) :: ASetter s t a (Maybe b) -> b -> s -> t
 infixr 4 ?~
-instance GHC.Base.Functor NvFetcher.PackageSet.PackageSetF
+instance GHC.Internal.Base.Functor NvFetcher.PackageSet.PackageSetF
 instance NvFetcher.PackageSet.NotElem x xs => NvFetcher.PackageSet.Member x (x : xs)
 instance NvFetcher.PackageSet.Member x xs => NvFetcher.PackageSet.Member x (_y : xs)
 instance (TypeError ...) => NvFetcher.PackageSet.Member x '[]
@@ -1309,6 +1310,7 @@ module NvFetcher.Nvchecker
 data VersionSortMethod
 ParseVersion :: VersionSortMethod
 Vercmp :: VersionSortMethod
+AwesomeVersion :: VersionSortMethod
 
 -- | Filter-like configuration for some version sources. See
 --   <a>https://nvchecker.readthedocs.io/en/latest/usage.html#list-options</a>
@@ -1417,9 +1419,9 @@ toNixExpr :: ToNixExpr a => a -> NixExpr
 fetcherToDrv :: NixFetcher 'Fetched -> Text -> NixExpr
 instance NvFetcher.NixExpr.ToNixExpr GHC.Types.Bool
 instance NvFetcher.NixExpr.ToNixExpr a => NvFetcher.NixExpr.ToNixExpr [a]
-instance NvFetcher.NixExpr.ToNixExpr GHC.Base.String
+instance NvFetcher.NixExpr.ToNixExpr GHC.Internal.Base.String
 instance NvFetcher.NixExpr.ToNixExpr (NvFetcher.Types.NixFetcher 'NvFetcher.Types.Fetched)
-instance NvFetcher.NixExpr.ToNixExpr a => NvFetcher.NixExpr.ToNixExpr (GHC.Base.NonEmpty a)
+instance NvFetcher.NixExpr.ToNixExpr a => NvFetcher.NixExpr.ToNixExpr (GHC.Internal.Base.NonEmpty a)
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.PackageResult
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.NixExpr
 instance NvFetcher.NixExpr.ToNixExpr NvFetcher.Types.Version
@@ -1472,8 +1474,8 @@ instance GHC.Classes.Eq NvFetcher.FetchRustGitDeps.ParsedGitSrc
 instance GHC.Classes.Eq NvFetcher.FetchRustGitDeps.RustDep
 instance GHC.Classes.Ord NvFetcher.FetchRustGitDeps.ParsedGitSrc
 instance GHC.Classes.Ord NvFetcher.FetchRustGitDeps.RustDep
-instance GHC.Show.Show NvFetcher.FetchRustGitDeps.ParsedGitSrc
-instance GHC.Show.Show NvFetcher.FetchRustGitDeps.RustDep
+instance GHC.Internal.Show.Show NvFetcher.FetchRustGitDeps.ParsedGitSrc
+instance GHC.Internal.Show.Show NvFetcher.FetchRustGitDeps.RustDep
 
 
 module NvFetcher.Core
@@ -1518,8 +1520,8 @@ cliOptionsParser :: Parser CLIOptions
 -- | Parse nvfetcher CLI options
 getCLIOptions :: Parser a -> IO a
 instance GHC.Classes.Eq NvFetcher.Options.Target
-instance GHC.Show.Show NvFetcher.Options.CLIOptions
-instance GHC.Show.Show NvFetcher.Options.Target
+instance GHC.Internal.Show.Show NvFetcher.Options.CLIOptions
+instance GHC.Internal.Show.Show NvFetcher.Options.Target
 
 
 -- | The main module of nvfetcher. If you want to create CLI program with
