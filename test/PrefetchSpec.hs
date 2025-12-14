@@ -47,10 +47,10 @@ spec = aroundShake $
     specifyChan "url with name" $
       runPrefetchRule
         ( urlFetcher'
-            "https://files.yande.re/image/3fc51f6a2fb10c96b73dd0fce6ddb9c8/yande.re%201048717%20dress%20garter%20lolita_fashion%20ruo_gan_zhua.jpg"
-            (Just "foo.jpg")
+            "https://whatthecommit.com/6f7a23353b95ca5981bf7b685c278d47.txt"
+            (Just "foo.txt")
         )
-        `shouldReturnJust` Checksum "sha256-wkiXDN6vPFtx88krcQ4szK6dJNjtrDxrsNa3ZvHlfMQ="
+        `shouldReturnJust` Checksum "sha256-jFxm3Zts3ZkgwEJmpHk3cocszzVm2umfhRJCFNam2GA="
 
 testDockerFetcher :: NixFetcher Fresh
 testDockerFetcher =
