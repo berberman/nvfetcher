@@ -49,6 +49,7 @@ import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
 import NvFetcher.Utils
 import Prettyprinter (pretty, (<+>))
+import Control.Monad (when)
 
 -- | Rules of nvchecker
 nvcheckerRule :: Rules ()
@@ -140,7 +141,9 @@ genNvConfig pkg options mKeyfile versionSource =
         "source" =: "github"
         "github" =: (_owner <> "/" <> _repo)
         "use_latest_release" =: "true"
-        "include_prereleases" =: if _prerelase then "true" else "false"
+        -- Even include_prereleases = false would require github token
+        -- So only set it if it's true
+        when _prerelase $ "include_prereleases" =: "true"
       GitHubTag {..} -> do
         "source" =: "github"
         "github" =: (_owner <> "/" <> _repo)
