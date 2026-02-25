@@ -185,6 +185,7 @@ For the format of this file, please refer to [nvchecker documentation](https://n
 Version source -- how do we track upstream version updates?
 
 - `src.github = owner/repo` - the latest github release
+  - `src.prerelase = true` - optional config: whether to include prereleases when tracking github releases. You need to set GitHub token in nvchecker keyfile to use this option.
 - `src.github_tag = owner/repo` - the max github tag, usually used with list options (see below)
 - `src.pypi = pypi_name` - the latest pypi release
 - `src.git = git_url` (and an optional `src.branch = git_branch`) - **the latest commit** of a repo

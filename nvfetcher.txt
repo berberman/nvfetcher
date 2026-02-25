@@ -97,9 +97,10 @@ ListOptions :: Maybe Text -> Maybe Text -> Maybe VersionSortMethod -> Maybe Text
 
 -- | Upstream version source for nvchecker to check
 data VersionSource
-GitHubRelease :: Text -> Text -> VersionSource
+GitHubRelease :: Text -> Text -> Bool -> VersionSource
 [_owner] :: VersionSource -> Text
 [_repo] :: VersionSource -> Text
+[_prerelase] :: VersionSource -> Bool
 GitHubTag :: Text -> Text -> ListOptions -> VersionSource
 [_owner] :: VersionSource -> Text
 [_repo] :: VersionSource -> Text
@@ -593,6 +594,7 @@ manual :: Traversal' VersionSource Text
 ovExtName :: Traversal' VersionSource Text
 ovPublisher :: Traversal' VersionSource Text
 owner :: Traversal' VersionSource Text
+prerelase :: Traversal' VersionSource Bool
 pypi :: Traversal' VersionSource Text
 regex :: Traversal' VersionSource Text
 repo :: Traversal' VersionSource Text
@@ -899,6 +901,10 @@ fromVscodeMarketplace :: AttachMany '[PackagePassthru, PackageFetcher, VersionSo
 
 -- | This package follows the latest github release
 sourceGitHub :: Attach VersionSource (Text, Text)
+
+-- | Similar to <a>sourceGitHub</a>, but allows to specify whether to
+--   include prereleases
+sourceGitHub' :: Attach VersionSource (Text, Text, Bool)
 
 -- | This package follows the a tag from github
 --   
@@ -1337,9 +1343,10 @@ NvcheckerOptions :: Maybe Text -> Maybe Text -> Maybe Text -> NvcheckerOptions
 
 -- | Upstream version source for nvchecker to check
 data VersionSource
-GitHubRelease :: Text -> Text -> VersionSource
+GitHubRelease :: Text -> Text -> Bool -> VersionSource
 [_owner] :: VersionSource -> Text
 [_repo] :: VersionSource -> Text
+[_prerelase] :: VersionSource -> Bool
 GitHubTag :: Text -> Text -> ListOptions -> VersionSource
 [_owner] :: VersionSource -> Text
 [_repo] :: VersionSource -> Text
