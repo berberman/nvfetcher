@@ -140,6 +140,7 @@ genNvConfig pkg options mKeyfile versionSource =
         "source" =: "github"
         "github" =: (_owner <> "/" <> _repo)
         "use_latest_release" =: "true"
+        "include_prereleases" =: if _prerelase then "true" else "false"
       GitHubTag {..} -> do
         "source" =: "github"
         "github" =: (_owner <> "/" <> _repo)

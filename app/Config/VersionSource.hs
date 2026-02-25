@@ -78,7 +78,13 @@ listOptionsDecoder =
 --------------------------------------------------------------------------------
 
 gitHubReleaseDecoder :: Decoder VersionSource
-gitHubReleaseDecoder = uncurry GitHubRelease <$> getFieldWith gitHubNameDecoder "github"
+gitHubReleaseDecoder =
+  uncurry GitHubRelease
+    <$> getFieldWith gitHubNameDecoder "github"
+    <*> ( getFieldOpt "prerelease" >>= \case
+            Just b -> pure b
+            Nothing -> pure False
+        )
 
 --------------------------------------------------------------------------------
 

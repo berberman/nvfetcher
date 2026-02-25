@@ -41,8 +41,12 @@ versionSourcesSpec = aroundShake $
         `shouldReturnJust` Version "ddd0f15ae83993f5cb66a927a28673882e99100b"
 
     specifyChan "github latest release" $
-      runNvcheckerRule (GitHubRelease "harry-sanabria" "ReleaseTestRepo")
+      runNvcheckerRule (GitHubRelease "harry-sanabria" "ReleaseTestRepo" False)
         `shouldReturnJust` Version "release3"
+
+    specifyChan "github latest release (including prerelease)" $
+      runNvcheckerRule (GitHubRelease "dpeukert" "ReleaseTestRepo" True)
+        `shouldReturnJust` Version "v0.0.1-pre"
 
     specifyChan "github max tag" $
       runNvcheckerRule (GitHubTag "harry-sanabria" "ReleaseTestRepo" def)

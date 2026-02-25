@@ -240,7 +240,7 @@ ppField s (Just x) = [s <> colon <+> pretty x]
 
 -- | Upstream version source for nvchecker to check
 data VersionSource
-  = GitHubRelease {_owner :: Text, _repo :: Text}
+  = GitHubRelease {_owner :: Text, _repo :: Text, _prerelase :: Bool}
   | GitHubTag {_owner :: Text, _repo :: Text, _listOptions :: ListOptions}
   | Git {_vurl :: Text, _vbranch :: Branch}
   | Pypi {_pypi :: Text}

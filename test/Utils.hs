@@ -22,6 +22,7 @@ import NvFetcher.Core (coreRules)
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
 import qualified System.Directory.Extra as Extra
+import System.Environment (lookupEnv)
 import qualified System.IO.Extra as Extra
 import System.Time.Extra
 import Test.Hspec
@@ -71,9 +72,12 @@ aroundShake :: SpecWith ActionQueue -> Spec
 aroundShake = aroundShake' mempty def
 
 aroundShake' :: Map PackageKey Package -> Config -> SpecWith ActionQueue -> Spec
-aroundShake' pkgs config = aroundAll $ \f ->
+aroundShake' pkgs config = aroundAll $ \f -> Extra.withTempFile $ \fp -> do
+  -- for CI
+  githubToken <- lookupEnv "GITHUB_TOKEN"
+  writeFile fp $ maybe "" (\token -> "[keys]\n" <> "github = \"" <> token <> "\"\n") githubToken
   bracket
-    (newAsyncActionQueue pkgs config)
+    (newAsyncActionQueue pkgs config {keyfile = Just fp})
     (\(_, runnerTask) -> cancel runnerTask)
     (\(chan, _) -> f chan)
 

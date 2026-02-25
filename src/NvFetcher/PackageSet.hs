@@ -52,6 +52,7 @@ module NvFetcher.PackageSet
 
     -- ** Version sources
     sourceGitHub,
+    sourceGitHub',
     sourceGitHubTag,
     sourceGit,
     sourceGit',
@@ -383,7 +384,11 @@ fromVscodeMarketplace e x@(publisher, extName) =
 
 -- | This package follows the latest github release
 sourceGitHub :: Attach VersionSource (Text, Text)
-sourceGitHub e (owner, repo) = src e $ GitHubRelease owner repo
+sourceGitHub e (owner, repo) = src e $ GitHubRelease owner repo False
+
+-- | Similar to 'sourceGitHub', but allows to specify whether to include prereleases
+sourceGitHub' :: Attach VersionSource (Text, Text, Bool)
+sourceGitHub' e (owner, repo, prerelease) = src e $ GitHubRelease owner repo prerelease
 
 -- | This package follows the a tag from github
 --
