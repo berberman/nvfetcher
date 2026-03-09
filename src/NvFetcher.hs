@@ -128,7 +128,7 @@ commitChanges commitSummary = do
   changes <- getVersionChanges
   let commitMsg = case changes of
         [x] -> Just $ show x
-        xs@(_ : _) -> Just $ commitSummary <> "\n" <> unlines (show <$> xs)
+        xs@(_ : _) -> Just $ commitSummary <> "\n\n" <> unlines (show <$> xs)
         [] -> Nothing
   whenJust commitMsg $ \msg -> do
     putInfo "Commiting changes"
