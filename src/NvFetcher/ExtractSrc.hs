@@ -2,38 +2,43 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
--- | Copyright: (c) 2021-2025 berberman
--- SPDX-License-Identifier: MIT
--- Maintainer: berberman <berberman@yandex.com>
--- Stability: experimental
--- Portability: portable
---
--- This module provides function that extracts files contents from package sources.
--- Because we use @nix-instantiate@ to build drv, so @<nixpkgs>@ (@NIX_PATH@) is required.
-module NvFetcher.ExtractSrc
-  ( -- * Types
-    ExtractSrcQ (..),
-    Glob (..),
+{- | Copyright: (c) 2021-2025 berberman
+SPDX-License-Identifier: MIT
+Maintainer: berberman <berberman@yandex.com>
+Stability: experimental
+Portability: portable
 
-    -- * Rules
-    extractSrcRule,
+This module provides function that extracts files contents from package sources.
+Because we use @nix-instantiate@ to build drv, so @<nixpkgs>@ (@NIX_PATH@) is required.
+-}
+module NvFetcher.ExtractSrc (
+  -- * Types
+  ExtractSrcQ (..),
+  Glob (..),
 
-    -- * Functions
-    extractSrc,
-    extractSrcs,
-  )
+  -- * Rules
+  extractSrcRule,
+
+  -- * Functions
+  extractSrc,
+  extractSrcs,
+)
 where
 
+import Control.Exception (ErrorCall)
 import Control.Monad (filterM, forM, join, void, when)
 import Control.Monad.Extra (unlessM)
 import Data.Binary.Instances ()
 import Data.Coerce (coerce)
+import Data.HashMap.Internal.Array (run)
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HM
 import Data.List (intercalate)
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Text as T
+import Data.Text.Internal.Read (IParser (runP))
 import Development.Shake
+import Development.Shake.Command (CmdArguments, IsCmdArgument)
 import Development.Shake.FilePath (makeRelative, (</>))
 import NvFetcher.NixExpr
 import NvFetcher.Types
@@ -76,7 +81,7 @@ extractSrcRule = void $
                     let dst = (T.unpack . T.replace "/" "_" . coerce $ _sha256 fetcher) </> file
                     copyFile' (out </> file) (buildDir </> dst)
                     pure (file, dst)
-                | glob <- NE.toList files
+              | glob <- NE.toList files
               ]
           )
 

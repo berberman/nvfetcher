@@ -39,66 +39,66 @@ parseConfig :: Text -> Either [PackageConfigValidateError] [Package]
 parseConfig raw = runExcept $ case decodeWith tableDecoder raw of
   Right (Map.toList -> x) -> mapM (uncurry eachP) x
   Left err -> throwE [TomlError err]
-  where
-    tableDecoder =
-      makeDecoder $ \case
-        (Table t) -> pure t
-        v -> typeMismatch v
-    eachP pkg v@(Table _) = do
-      let keys = myKeyToText <$> allKeys [] v
-      checkConflicts pkg keys
-      checkUnexpected pkg keys
-      case unDecodeM (runDecoder (packageConfigDecoder pkg) v) [] of
-        Left e -> throwE [TomlError $ uncurry DecodeError e]
-        Right x -> pure x
-    eachP pkg _ = throwE [KeyUnexpected pkg [pkg]]
-    allKeys prefix (Table t) =
-      mconcat
-        [ case x of
-            (Table _) -> []
-            _ -> [MyKey $ prefix <> [k]]
-          | (k, x) <- Map.toList t
-        ]
-        <> Map.foldrWithKey (\k v acc -> allKeys (prefix <> [k]) v <> acc) [] t
-    allKeys _ _ = []
-    checkConflicts pkg keys =
-      throwN
-        [ KeyConflicts pkg [intersection]
-          | k <-
-              [ ("src." <>) <$> versionSourceKeys,
-                ("fetch." <>) <$> fetcherKeys
-              ],
-            let intersection = keys `intersect` k,
-            length intersection > 1
-        ]
-    checkUnexpected pkg keys =
-      throwN $
-        -- git
-        [ KeyUnexpected pkg gk
-          | let gk = filter (T.isPrefixOf "git.") keys,
-            not $ null gk,
-            "fetch.git" `notElem` keys && "fetch.github" `notElem` keys
-        ]
-          <>
-          -- url
-          [KeyUnexpected pkg uk | let uk = filter ("url.name" ==) keys, not $ null uk, "fetch.url" `notElem` keys]
-          -- docker
-          <> [ KeyUnexpected pkg dk
-               | let dk = filter (T.isPrefixOf "docker.") keys,
-                 not $ null dk,
-                 "fetch.docker" `notElem` keys
-             ]
-          -- list options
-          <> [ KeyUnexpected pkg lk
-               | let lk = listOptionsKeys `intersect` keys,
-                 not $ null lk,
-                 "src.docker" `notElem` keys
-                   && "src.httpheader" `notElem` keys
-                   && "src.container" `notElem` keys
-                   && "src.github_tag" `notElem` keys
-             ]
-    throwN [] = pure ()
-    throwN xs = throwE xs
+ where
+  tableDecoder =
+    makeDecoder $ \case
+      (Table t) -> pure t
+      v -> typeMismatch v
+  eachP pkg v@(Table _) = do
+    let keys = myKeyToText <$> allKeys [] v
+    checkConflicts pkg keys
+    checkUnexpected pkg keys
+    case unDecodeM (runDecoder (packageConfigDecoder pkg) v) [] of
+      Left e -> throwE [TomlError $ uncurry DecodeError e]
+      Right x -> pure x
+  eachP pkg _ = throwE [KeyUnexpected pkg [pkg]]
+  allKeys prefix (Table t) =
+    mconcat
+      [ case x of
+          (Table _) -> []
+          _ -> [MyKey $ prefix <> [k]]
+      | (k, x) <- Map.toList t
+      ]
+      <> Map.foldrWithKey (\k v acc -> allKeys (prefix <> [k]) v <> acc) [] t
+  allKeys _ _ = []
+  checkConflicts pkg keys =
+    throwN
+      [ KeyConflicts pkg [intersection]
+      | k <-
+          [ ("src." <>) <$> versionSourceKeys
+          , ("fetch." <>) <$> fetcherKeys
+          ]
+      , let intersection = keys `intersect` k
+      , length intersection > 1
+      ]
+  checkUnexpected pkg keys =
+    throwN $
+      -- git
+      [ KeyUnexpected pkg gk
+      | let gk = filter (T.isPrefixOf "git.") keys
+      , not $ null gk
+      , "fetch.git" `notElem` keys && "fetch.github" `notElem` keys
+      ]
+        <>
+        -- url
+        [KeyUnexpected pkg uk | let uk = filter ("url.name" ==) keys, not $ null uk, "fetch.url" `notElem` keys]
+        -- docker
+        <> [ KeyUnexpected pkg dk
+           | let dk = filter (T.isPrefixOf "docker.") keys
+           , not $ null dk
+           , "fetch.docker" `notElem` keys
+           ]
+        -- list options
+        <> [ KeyUnexpected pkg lk
+           | let lk = listOptionsKeys `intersect` keys
+           , not $ null lk
+           , "src.docker" `notElem` keys
+               && "src.httpheader" `notElem` keys
+               && "src.container" `notElem` keys
+               && "src.github_tag" `notElem` keys
+           ]
+  throwN [] = pure ()
+  throwN xs = throwE xs
 
 --------------------------------------------------------------------------------
 
@@ -109,6 +109,7 @@ packageConfigDecoder name =
     <*> fetcherDecoder
     <*> extractFilesDecoder
     <*> cargoLockPathDecoder
+    <*> prefetchFilesDecoder
     <*> passthruDecoder
     <*> pinnedDecoder
     <*> ((,) <$> gitDateFormatDecoder <*> gitTimeZoneDecoder)
@@ -121,6 +122,29 @@ extractFilesDecoder = fmap (PackageExtractSrc . fmap Glob) <$> getFieldOpt @(NE.
 
 cargoLockPathDecoder :: Decoder (Maybe PackageCargoLockFiles)
 cargoLockPathDecoder = fmap (PackageCargoLockFiles . fmap Glob) <$> getFieldOpt @(NE.NonEmpty String) "cargo_lock"
+
+prefetchFilesDecoder :: Decoder (Maybe PackagePrefetchFiles)
+prefetchFilesDecoder =
+  getFieldOpt @Value "prefetch" >>= \case
+    Just (Table t) -> do
+      xs <-
+        sequenceA
+          [ case v of
+              String s -> pure (T.unpack k, pure $ Glob $ T.unpack s)
+              Array a -> do
+                strs <- traverse parseString a
+                case NE.nonEmpty strs of
+                  Just ne -> pure (T.unpack k, Glob <$> ne)
+                  Nothing -> makeDecoder $ \_ -> invalidValue "non-empty list of strings" v
+              _ -> makeDecoder $ \_ -> invalidValue "string or list of strings" v
+          | (k, v) <- Map.toList t
+          ]
+      pure $ Just $ PackagePreFetchFiles $ HMap.fromList xs
+    Just v -> makeDecoder $ \_ -> invalidValue "table" v
+    Nothing -> pure Nothing
+ where
+  parseString (String s) = pure (T.unpack s)
+  parseString v = makeDecoder $ \_ -> invalidValue "string" v
 
 nvcheckerOptionsDecoder :: Decoder NvcheckerOptions
 nvcheckerOptionsDecoder =
@@ -135,15 +159,15 @@ passthruDecoder =
     Just (Table t) -> go [] t >>= \(mconcat -> fs) -> pure $ PackagePassthru $ foldl' (flip ($)) HMap.empty fs
     Just _ -> makeDecoder typeMismatch
     Nothing -> pure $ PackagePassthru HMap.empty
-  where
-    go prefix x =
-      sequenceA
-        [ case v of
-            (String text) -> pure [HMap.insert (myKeyToText $ MyKey $ prefix <> [k]) text]
-            Table t -> mconcat <$> go (prefix <> [k]) t
-            _ -> makeDecoder (\_ -> invalidValue "passthru value must be string for now" v)
-          | (k, v) <- Map.toList x
-        ]
+ where
+  go prefix x =
+    sequenceA
+      [ case v of
+          (String text) -> pure [HMap.insert (myKeyToText $ MyKey $ prefix <> [k]) text]
+          Table t -> mconcat <$> go (prefix <> [k]) t
+          _ -> makeDecoder (\_ -> invalidValue "passthru value must be string for now" v)
+      | (k, v) <- Map.toList x
+      ]
 
 pinnedDecoder :: Decoder UseStaleVersion
 pinnedDecoder =
