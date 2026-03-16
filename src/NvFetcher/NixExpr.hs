@@ -168,6 +168,7 @@ fetcherToDrv (toNixExpr -> fetcherExpr) (quote -> drvName) =
       src = $fetcherExpr;
       nativeBuildInputs = [ unzip ];
       dontBuild = true;
+      dontCheckForBrokenSymlinks = true;
       installPhase = ''
         mkdir $$out
         cp -r * $$out
