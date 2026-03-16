@@ -68,6 +68,7 @@ library
     NvFetcher.Core
     NvFetcher.ExtractSrc
     NvFetcher.FetchRustGitDeps
+    NvFetcher.CustomPrefetcher
     NvFetcher.GetGitCommitDate
     NvFetcher.NixExpr
     NvFetcher.NixFetcher

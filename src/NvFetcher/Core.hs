@@ -3,22 +3,26 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
--- | Copyright: (c) 2021-2025 berberman
--- SPDX-License-Identifier: MIT
--- Maintainer: berberman <berberman@yandex.com>
--- Stability: experimental
--- Portability: portable
-module NvFetcher.Core
-  ( Core (..),
-    coreRules,
-    runPackage,
-  )
+{- | Copyright: (c) 2021-2025 berberman
+SPDX-License-Identifier: MIT
+Maintainer: berberman <berberman@yandex.com>
+Stability: experimental
+Portability: portable
+-}
+module NvFetcher.Core (
+  Core (..),
+  coreRules,
+  runPackage,
+)
 where
 
 import Data.Coerce (coerce)
 import qualified Data.HashMap.Strict as HMap
+import Data.Text.Prettyprint.Doc.Render.Tutorials.TreeRenderingTutorial (paragraph)
 import Development.Shake
 import Development.Shake.Rule
+import NvFetcher.CustomPrefetcher
+import NvFetcher.CustomPrefetcher (customPrefetcherRule)
 import NvFetcher.ExtractSrc
 import NvFetcher.FetchRustGitDeps
 import NvFetcher.GetGitCommitDate
@@ -27,14 +31,16 @@ import NvFetcher.Nvchecker
 import NvFetcher.Types
 import NvFetcher.Types.ShakeExtras
 
--- | The core rule of nvchecker.
--- all rules are wired here.
+{- | The core rule of nvchecker.
+all rules are wired here.
+-}
 coreRules :: Rules ()
 coreRules = do
   nvcheckerRule
   prefetchRule
   extractSrcRule
   fetchRustGitDepsRule
+  customPrefetcherRule
   getGitCommitDateRule
   addBuiltinRule noLint noIdentity $ \(WithPackageKey (Core, pkg)) _ _ -> do
     -- It's important to always rerun since the package definition is not tracked at all
@@ -44,9 +50,9 @@ coreRules = do
       Nothing -> fail $ "Unknown package key: " <> show pkg
       Just
         Package
-          { _pversion = CheckVersion versionSource options,
-            _ppassthru = (PackagePassthru passthru),
-            ..
+          { _pversion = CheckVersion versionSource options
+          , _ppassthru = (PackagePassthru passthru)
+          , ..
           } -> do
           _prversion@(NvcheckerResult version _mOldV _isStale) <- checkVersion versionSource options pkg
           _prfetched <- prefetch (_pfetcher version) _pforcefetch
@@ -60,6 +66,31 @@ coreRules = do
                     result <- extractSrcs _prfetched extract
                     pure $ Just result
                   _ -> pure Nothing
+              _prprefetchFiles <- case _pprefetchFiles of
+                Just (PackagePreFetchFiles prefetchFiles) -> do
+                  liftIO $ print prefetchFiles
+                  result <-
+                    parallel $
+                      flip fmap (HMap.toList prefetchFiles) $ \(command, glob) ->
+                        do
+                          sources <-
+                            HMap.toList
+                              <$> extractSrcs
+                                _prfetched
+                                glob
+                          parallel $
+                            flip fmap sources $
+                              \(srcPath, dstPath) -> do
+                                prefetchResult <- runCustomPrefetcher _prfetched command srcPath
+
+                                pure (srcPath, prefetchResult)
+                  pure
+                    . Just
+                    . HMap.fromList
+                    . concat
+                    $ result
+                _ -> pure Nothing
+
               -- cargo locks
               _prcargolock <-
                 case _pcargo of
@@ -74,7 +105,7 @@ coreRules = do
 
               -- Only git version source supports git commit date
               _prgitdate <- case versionSource of
-                Git {..} -> Just <$> getGitCommitDate _vurl (coerce version) _pgitdate
+                Git{..} -> Just <$> getGitCommitDate _vurl (coerce version) _pgitdate
                 _ -> pure Nothing
 
               -- update changelog
@@ -93,7 +124,7 @@ coreRules = do
                   _prpinned = _ppinned
               -- Since we don't save the previous result, we are not able to know if the result changes
               -- Depending on this rule leads to RunDependenciesChanged
-              pure $ RunResult ChangedRecomputeDiff mempty $ Just PackageResult {..}
+              pure $ RunResult ChangedRecomputeDiff mempty $ Just PackageResult{..}
             _ -> pure $ RunResult ChangedRecomputeDiff mempty Nothing
 
 -- | 'Core' rule take a 'PackageKey', find the corresponding 'Package', and run all needed rules to get 'PackageResult'

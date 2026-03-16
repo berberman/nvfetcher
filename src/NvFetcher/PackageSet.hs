@@ -13,105 +13,106 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 
--- | Copyright: (c) 2021-2025 berberman
--- SPDX-License-Identifier: MIT
--- Maintainer: berberman <berberman@yandex.com>
--- Stability: experimental
--- Portability: portable
---
--- This module mainly contains two things: 'PackageSet' and 'PkgDSL'.
--- NvFetcher accepts the former one -- a set of packages to produce nix sources expr;
--- the later one is used to construct a single package.
---
--- There are many combinators for defining packages. See the documentation of 'define' for example.
-module NvFetcher.PackageSet
-  ( -- * Package set
-    PackageSetF,
-    PackageSet,
-    newPackage,
-    purePackageSet,
-    runPackageSet,
+{- | Copyright: (c) 2021-2025 berberman
+SPDX-License-Identifier: MIT
+Maintainer: berberman <berberman@yandex.com>
+Stability: experimental
+Portability: portable
 
-    -- * Package DSL
+This module mainly contains two things: 'PackageSet' and 'PkgDSL'.
+NvFetcher accepts the former one -- a set of packages to produce nix sources expr;
+the later one is used to construct a single package.
 
-    -- ** Primitives
-    PkgDSL (..),
-    define,
-    package,
-    src,
-    fetch,
+There are many combinators for defining packages. See the documentation of 'define' for example.
+-}
+module NvFetcher.PackageSet (
+  -- * Package set
+  PackageSetF,
+  PackageSet,
+  newPackage,
+  purePackageSet,
+  runPackageSet,
 
-    -- ** Two-in-one functions
-    fromGitHub,
-    fromGitHub',
-    fromGitHubTag,
-    fromGitHubTag',
-    fromPypi,
-    fromOpenVsx,
-    fromVscodeMarketplace,
+  -- * Package DSL
 
-    -- ** Version sources
-    sourceGitHub,
-    sourceGitHub',
-    sourceGitHubTag,
-    sourceGit,
-    sourceGit',
-    sourcePypi,
-    sourceAur,
-    sourceArchLinux,
-    sourceManual,
-    sourceRepology,
-    sourceWebpage,
-    sourceHttpHeader,
-    sourceOpenVsx,
-    sourceVscodeMarketplace,
-    sourceCmd,
+  -- ** Primitives
+  PkgDSL (..),
+  define,
+  package,
+  src,
+  fetch,
 
-    -- ** Fetchers
-    fetchGitHub,
-    fetchGitHub',
-    fetchGitHubRelease,
-    fetchGitHubRelease',
-    fetchPypi,
-    fetchGit,
-    fetchGit',
-    fetchUrl,
-    fetchUrl',
-    fetchOpenVsx,
-    fetchVscodeMarketplace,
-    fetchTarball,
+  -- ** Two-in-one functions
+  fromGitHub,
+  fromGitHub',
+  fromGitHubTag,
+  fromGitHubTag',
+  fromPypi,
+  fromOpenVsx,
+  fromVscodeMarketplace,
 
-    -- * Addons
-    extractSource,
-    hasCargoLock,
-    tweakVersion,
-    passthru,
-    pinned,
-    gitDateFormat,
-    gitTimeZone,
-    forceFetch,
+  -- ** Version sources
+  sourceGitHub,
+  sourceGitHub',
+  sourceGitHubTag,
+  sourceGit,
+  sourceGit',
+  sourcePypi,
+  sourceAur,
+  sourceArchLinux,
+  sourceManual,
+  sourceRepology,
+  sourceWebpage,
+  sourceHttpHeader,
+  sourceOpenVsx,
+  sourceVscodeMarketplace,
+  sourceCmd,
 
-    -- ** Miscellaneous
-    Prod,
-    Append,
-    Member,
-    OptionalMember,
-    NotElem,
-    Members,
-    OptionalMembers,
-    Attach,
-    AttachMany,
-    coerce,
-    liftIO,
+  -- ** Fetchers
+  fetchGitHub,
+  fetchGitHub',
+  fetchGitHubRelease,
+  fetchGitHubRelease',
+  fetchPypi,
+  fetchGit,
+  fetchGit',
+  fetchUrl,
+  fetchUrl',
+  fetchOpenVsx,
+  fetchVscodeMarketplace,
+  fetchTarball,
 
-    -- * Lenses
-    (&),
-    (.~),
-    (%~),
-    (^.),
-    (?~),
-    module NvFetcher.Types.Lens,
-  )
+  -- * Addons
+  extractSource,
+  hasCargoLock,
+  tweakVersion,
+  passthru,
+  pinned,
+  gitDateFormat,
+  gitTimeZone,
+  forceFetch,
+
+  -- ** Miscellaneous
+  Prod,
+  Append,
+  Member,
+  OptionalMember,
+  NotElem,
+  Members,
+  OptionalMembers,
+  Attach,
+  AttachMany,
+  coerce,
+  liftIO,
+
+  -- * Lenses
+  (&),
+  (.~),
+  (%~),
+  (^.),
+  (?~),
+  module NvFetcher.Types.Lens,
+)
 where
 
 import Control.Monad.Free
@@ -141,13 +142,14 @@ instance Functor PackageSetF where
   fmap f (NewPackage p g) = NewPackage p $ f g
   fmap f (EmbedIO action g) = EmbedIO action $ f <$> g
 
--- | Package set is a monad equipped with two capabilities:
---
--- 1. Carry defined packages
--- 2. Run IO actions
---
--- Package set is evaluated before shake runs.
--- Use 'newPackage' to add a new package, 'liftIO' to run an IO action.
+{- | Package set is a monad equipped with two capabilities:
+
+1. Carry defined packages
+2. Run IO actions
+
+Package set is evaluated before shake runs.
+Use 'newPackage' to add a new package, 'liftIO' to run an IO action.
+-}
 type PackageSet = Free PackageSetF
 
 instance MonadIO PackageSet where
@@ -159,23 +161,25 @@ newPackage ::
   CheckVersion ->
   PackageFetcher ->
   Maybe PackageExtractSrc ->
+  Maybe PackagePrefetchFiles ->
   Maybe PackageCargoLockFiles ->
   PackagePassthru ->
   UseStaleVersion ->
   (GitDateFormat, GitTimeZone) ->
   ForceFetch ->
   PackageSet ()
-newPackage name source fetcher extract cargo pasthru useStale (format, tz) force =
-  liftF $ NewPackage (Package name source fetcher extract cargo pasthru useStale (format, tz) force) ()
+newPackage name source fetcher extract prefetch cargo pasthru useStale (format, tz) force =
+  liftF $ NewPackage (Package name source fetcher extract cargo prefetch pasthru useStale (format, tz) force) ()
 
 -- | Add a list of packages into package set
 purePackageSet :: [Package] -> PackageSet ()
 purePackageSet = mapM_ (liftF . flip NewPackage ())
 
--- | Run package set into a set of packages
---
--- Throws exception as more then one packages with the same name
--- are defined
+{- | Run package set into a set of packages
+
+Throws exception as more then one packages with the same name
+are defined
+-}
 runPackageSet :: PackageSet () -> IO (Map PackageKey Package)
 runPackageSet = \case
   Free (NewPackage p g) ->
@@ -254,20 +258,21 @@ class PkgDSL f where
   andThen :: f (Prod r) -> f a -> f (Prod (a ': r))
   end ::
     ( Members
-        '[ PackageName,
-           VersionSource,
-           PackageFetcher
+        '[ PackageName
+         , VersionSource
+         , PackageFetcher
          ]
-        r,
-      OptionalMembers
-        '[ PackageExtractSrc,
-           PackageCargoLockFiles,
-           NvcheckerOptions,
-           PackagePassthru,
-           UseStaleVersion,
-           GitDateFormat,
-           GitTimeZone,
-           ForceFetch
+        r
+    , OptionalMembers
+        '[ PackageExtractSrc
+         , PackageCargoLockFiles
+         , PackagePrefetchFiles
+         , NvcheckerOptions
+         , PackagePassthru
+         , UseStaleVersion
+         , GitDateFormat
+         , GitTimeZone
+         , ForceFetch
          ]
         r
     ) =>
@@ -290,34 +295,37 @@ instance PkgDSL PackageSet where
       (proj p)
       (projMaybe p)
       (projMaybe p)
+      (projMaybe p)
       (fromMaybe mempty (projMaybe p))
       (fromMaybe NoStale (projMaybe p))
       (fromMaybe (GitDateFormat Nothing) (projMaybe p), fromMaybe (GitTimeZone Nothing) (projMaybe p))
       (fromMaybe NoForceFetch (projMaybe p))
 
--- | 'PkgDSL' version of 'newPackage'
---
--- Example:
---
--- @
--- define $ package "nvfetcher-git" `sourceGit` "https://github.com/berberman/nvfetcher" `fetchGitHub` ("berberman", "nvfetcher")
--- @
+{- | 'PkgDSL' version of 'newPackage'
+
+Example:
+
+@
+define $ package "nvfetcher-git" `sourceGit` "https://github.com/berberman/nvfetcher" `fetchGitHub` ("berberman", "nvfetcher")
+@
+-}
 define ::
   ( Members
-      '[ PackageName,
-         VersionSource,
-         PackageFetcher
+      '[ PackageName
+       , VersionSource
+       , PackageFetcher
        ]
-      r,
-    OptionalMembers
-      '[ PackageExtractSrc,
-         PackageCargoLockFiles,
-         PackagePassthru,
-         NvcheckerOptions,
-         UseStaleVersion,
-         GitDateFormat,
-         GitTimeZone,
-         ForceFetch
+      r
+  , OptionalMembers
+      '[ PackageExtractSrc
+       , PackageCargoLockFiles
+       , PackagePrefetchFiles
+       , PackagePassthru
+       , NvcheckerOptions
+       , UseStaleVersion
+       , GitDateFormat
+       , GitTimeZone
+       , ForceFetch
        ]
       r
   ) =>
@@ -367,8 +375,8 @@ fromOpenVsx :: AttachMany '[PackagePassthru, PackageFetcher, VersionSource] (Tex
 fromOpenVsx e x@(publisher, extName) =
   passthru
     (fetchOpenVsx (sourceOpenVsx e x) x)
-    [ ("name", extName),
-      ("publisher", publisher)
+    [ ("name", extName)
+    , ("publisher", publisher)
     ]
 
 -- | A synonym of 'fetchVscodeMarketplace', 'sourceVscodeMarketplace', and 'passthru' extension's publisher with name
@@ -376,8 +384,8 @@ fromVscodeMarketplace :: AttachMany '[PackagePassthru, PackageFetcher, VersionSo
 fromVscodeMarketplace e x@(publisher, extName) =
   passthru
     (fetchVscodeMarketplace (sourceVscodeMarketplace e x) x)
-    [ ("name", extName),
-      ("publisher", publisher)
+    [ ("name", extName)
+    , ("publisher", publisher)
     ]
 
 --------------------------------------------------------------------------------
@@ -390,161 +398,186 @@ sourceGitHub e (owner, repo) = src e $ GitHubRelease owner repo False
 sourceGitHub' :: Attach VersionSource (Text, Text, Bool)
 sourceGitHub' e (owner, repo, prerelease) = src e $ GitHubRelease owner repo prerelease
 
--- | This package follows the a tag from github
---
--- Args are owner, repo, and nvchecker list options to find the target tag
+{- | This package follows the a tag from github
+
+Args are owner, repo, and nvchecker list options to find the target tag
+-}
 sourceGitHubTag :: Attach VersionSource (Text, Text, ListOptions -> ListOptions)
 sourceGitHubTag e (owner, repo, f) = src e $ GitHubTag owner repo $ f def
 
--- | This package follows the latest git commit
---
--- Arg is git url
+{- | This package follows the latest git commit
+
+Arg is git url
+-}
 sourceGit :: Attach VersionSource Text
 sourceGit e _vurl = src e $ Git _vurl def
 
--- | Similar to 'sourceGit', but allows to specify branch
---
--- Args are git url and branch
+{- | Similar to 'sourceGit', but allows to specify branch
+
+Args are git url and branch
+-}
 sourceGit' :: Attach VersionSource (Text, Text)
-sourceGit' e (_vurl, coerce . Just -> _vbranch) = src e $ Git {..}
+sourceGit' e (_vurl, coerce . Just -> _vbranch) = src e $ Git{..}
 
--- | This package follows the latest pypi release
---
--- Arg is pypi name
+{- | This package follows the latest pypi release
+
+Arg is pypi name
+-}
 sourcePypi :: Attach VersionSource Text
-sourcePypi e _pypi = src e Pypi {..}
+sourcePypi e _pypi = src e Pypi{..}
 
--- | This package follows the version of an Arch Linux package
---
--- Arg is package name in Arch Linux repo
+{- | This package follows the version of an Arch Linux package
+
+Arg is package name in Arch Linux repo
+-}
 sourceArchLinux :: Attach VersionSource Text
-sourceArchLinux e _archpkg = src e ArchLinux {..}
+sourceArchLinux e _archpkg = src e ArchLinux{..}
 
--- | This package follows the version of an Aur package
---
--- Arg is package name in Aur
+{- | This package follows the version of an Aur package
+
+Arg is package name in Aur
+-}
 sourceAur :: Attach VersionSource Text
-sourceAur e _aur = src e Aur {..}
+sourceAur e _aur = src e Aur{..}
 
--- | This package follows a pinned version
---
--- Arg is manual version
+{- | This package follows a pinned version
+
+Arg is manual version
+-}
 sourceManual :: Attach VersionSource Text
-sourceManual e _manual = src e Manual {..}
+sourceManual e _manual = src e Manual{..}
 
--- | This package follows the version of a repology package
---
--- Args are repology project name and repo
+{- | This package follows the version of a repology package
+
+Args are repology project name and repo
+-}
 sourceRepology :: Attach VersionSource (Text, Text)
 sourceRepology e (project, repo) = src e $ Repology project repo
 
--- | This package follows a version extracted from web page
---
--- Args are web page url, regex, and list options
+{- | This package follows a version extracted from web page
+
+Args are web page url, regex, and list options
+-}
 sourceWebpage :: Attach VersionSource (Text, Text, ListOptions -> ListOptions)
 sourceWebpage e (_vurl, _regex, f) = src e $ Webpage _vurl _regex $ f def
 
--- | This package follows a version extracted from http header
---
--- Args are the url of the http request, regex, and list options
+{- | This package follows a version extracted from http header
+
+Args are the url of the http request, regex, and list options
+-}
 sourceHttpHeader :: Attach VersionSource (Text, Text, ListOptions -> ListOptions)
 sourceHttpHeader e (_vurl, _regex, f) = src e $ HttpHeader _vurl _regex $ f def
 
--- | This package follows a version in Open VSX
---
--- Args are publisher and extension name
+{- | This package follows a version in Open VSX
+
+Args are publisher and extension name
+-}
 sourceOpenVsx :: Attach VersionSource (Text, Text)
-sourceOpenVsx e (_ovPublisher, _ovExtName) = src e OpenVsx {..}
+sourceOpenVsx e (_ovPublisher, _ovExtName) = src e OpenVsx{..}
 
--- | This package follows a version in Vscode Marketplace
---
--- Args are publisher and extension name
+{- | This package follows a version in Vscode Marketplace
+
+Args are publisher and extension name
+-}
 sourceVscodeMarketplace :: Attach VersionSource (Text, Text)
-sourceVscodeMarketplace e (_vsmPublisher, _vsmExtName) = src e VscodeMarketplace {..}
+sourceVscodeMarketplace e (_vsmPublisher, _vsmExtName) = src e VscodeMarketplace{..}
 
--- | This package follows a version from a shell command
---
--- Arg is the command to run
+{- | This package follows a version from a shell command
+
+Arg is the command to run
+-}
 sourceCmd :: Attach VersionSource Text
-sourceCmd e _vcmd = src e Cmd {..}
+sourceCmd e _vcmd = src e Cmd{..}
 
 --------------------------------------------------------------------------------
 
--- | This package is fetched from a github repo
---
--- Args are owner and repo
+{- | This package is fetched from a github repo
+
+Args are owner and repo
+-}
 fetchGitHub :: Attach PackageFetcher (Text, Text)
 fetchGitHub e (owner, repo) = fetchGitHub' e (owner, repo, id)
 
--- | This package is fetched from a github repo
---
--- Similar to 'fetchGitHub', but allows a modifier to the fetcher.
--- For example, you can enable fetch submodules like:
---
--- @
--- define $ package "qliveplayer" `sourceGitHub` ("THMonster", "QLivePlayer") `fetchGitHub'` ("THMonster", "QLivePlayer", fetchSubmodules .~ True)
--- @
+{- | This package is fetched from a github repo
+
+Similar to 'fetchGitHub', but allows a modifier to the fetcher.
+For example, you can enable fetch submodules like:
+
+@
+define $ package "qliveplayer" `sourceGitHub` ("THMonster", "QLivePlayer") `fetchGitHub'` ("THMonster", "QLivePlayer", fetchSubmodules .~ True)
+@
+-}
 fetchGitHub' :: Attach PackageFetcher (Text, Text, NixFetcher Fresh -> NixFetcher Fresh)
 fetchGitHub' e (owner, repo, f) = fetch e $ f . gitHubFetcher (owner, repo)
 
--- | This package is fetched from a file in github release
---
--- Args are owner, repo, and file name
+{- | This package is fetched from a file in github release
+
+Args are owner, repo, and file name
+-}
 fetchGitHubRelease :: Attach PackageFetcher (Text, Text, Text)
 fetchGitHubRelease e (owner, repo, fp) = fetch e $ gitHubReleaseFetcher (owner, repo) fp
 
--- | This package is fetched from a file in github release
---
--- Args are owner, repo, and file name computed from version
+{- | This package is fetched from a file in github release
+
+Args are owner, repo, and file name computed from version
+-}
 fetchGitHubRelease' :: Attach PackageFetcher (Text, Text, Version -> Text)
 fetchGitHubRelease' e (owner, repo, f) = fetch e $ gitHubReleaseFetcher' (owner, repo) f
 
--- | This package is fetched from pypi
---
--- Arg is pypi name
+{- | This package is fetched from pypi
+
+Arg is pypi name
+-}
 fetchPypi :: Attach PackageFetcher Text
 fetchPypi e = fetch e . pypiFetcher
 
--- | This package is fetched from git
---
--- Arg is git url
+{- | This package is fetched from git
+
+Arg is git url
+-}
 fetchGit :: Attach PackageFetcher Text
 fetchGit e u = fetchGit' e (u, id)
 
--- | This package is fetched from git
---
--- Similar to 'fetchGit', but allows a modifier to the fetcher.
--- See 'fetchGitHub'' for a concret example.
+{- | This package is fetched from git
+
+Similar to 'fetchGit', but allows a modifier to the fetcher.
+See 'fetchGitHub'' for a concret example.
+-}
 fetchGit' :: Attach PackageFetcher (Text, NixFetcher Fresh -> NixFetcher Fresh)
 fetchGit' e (u, f) = fetch e $ f . gitFetcher u
 
--- | This package is fetched from url
---
--- Arg is a function which constructs the url from a version
+{- | This package is fetched from url
+
+Arg is a function which constructs the url from a version
+-}
 fetchUrl :: Attach PackageFetcher (Version -> Text)
 fetchUrl e f = fetch e (urlFetcher . f)
 
--- | This package is fetched from url
---
--- Args are a function which constructs the url from a version and a file name
+{- | This package is fetched from url
+
+Args are a function which constructs the url from a version and a file name
+-}
 fetchUrl' :: Attach PackageFetcher (Text, Version -> Text)
 fetchUrl' e (name, f) = fetch e (\v -> FetchUrl (f v) (Just name) ())
 
--- | This package is fetched from Open VSX
---
--- Args are publisher and extension name
+{- | This package is fetched from Open VSX
+
+Args are publisher and extension name
+-}
 fetchOpenVsx :: Attach PackageFetcher (Text, Text)
 fetchOpenVsx e = fetch e . vscodeMarketplaceFetcher
 
--- | This package is fetched from Vscode Marketplace
---
--- Args are publisher and extension name
+{- | This package is fetched from Vscode Marketplace
+
+Args are publisher and extension name
+-}
 fetchVscodeMarketplace :: Attach PackageFetcher (Text, Text)
 fetchVscodeMarketplace e = fetch e . vscodeMarketplaceFetcher
 
--- | This package is a tarball, fetched from url
---
--- Arg is a function which constructs the url from a version
+{- | This package is a tarball, fetched from url
+
+Arg is a function which constructs the url from a version
+-}
 fetchTarball :: Attach PackageFetcher (Version -> Text)
 fetchTarball e f = fetch e (tarballFetcher . f)
 
@@ -554,9 +587,10 @@ fetchTarball e f = fetch e (tarballFetcher . f)
 extractSource :: Attach PackageExtractSrc [Glob]
 extractSource = (. pure . PackageExtractSrc . NE.fromList) . andThen
 
--- | Run 'FetchRustGitDependencies' given the path to @Cargo.lock@ files
---
--- The lock files will be extracted as well.
+{- | Run 'FetchRustGitDependencies' given the path to @Cargo.lock@ files
+
+The lock files will be extracted as well.
+-}
 hasCargoLock :: Attach PackageCargoLockFiles [Glob]
 hasCargoLock = (. pure . PackageCargoLockFiles . NE.fromList) . andThen
 
@@ -564,27 +598,31 @@ hasCargoLock = (. pure . PackageCargoLockFiles . NE.fromList) . andThen
 tweakVersion :: Attach NvcheckerOptions (NvcheckerOptions -> NvcheckerOptions)
 tweakVersion = (. pure . ($ def)) . andThen
 
--- | An attrs set to pass through
---
--- Arg is a list of kv pairs
+{- | An attrs set to pass through
+
+Arg is a list of kv pairs
+-}
 passthru :: Attach PackagePassthru [(Text, Text)]
 passthru = (. pure . PackagePassthru . HMap.fromList) . andThen
 
--- | Pin a package
---
--- new version won't be checked if we have a stale version
+{- | Pin a package
+
+new version won't be checked if we have a stale version
+-}
 pinned :: PackageSet (Prod r) -> PackageSet (Prod (UseStaleVersion : r))
 pinned = flip andThen . pure $ PermanentStale
 
--- | Specify the date format for getting git commit date
---
--- Available only for git version source
+{- | Specify the date format for getting git commit date
+
+Available only for git version source
+-}
 gitDateFormat :: Attach GitDateFormat (Maybe Text)
 gitDateFormat = (. pure . GitDateFormat) . andThen
 
--- | Specify the time zone for getting git commit date
---
--- Available only for git version source
+{- | Specify the time zone for getting git commit date
+
+Available only for git version source
+-}
 gitTimeZone :: Attach GitTimeZone (Maybe Text)
 gitTimeZone = (. pure . GitTimeZone) . andThen
 

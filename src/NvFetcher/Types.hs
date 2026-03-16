@@ -3,6 +3,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingVia #-}
+{-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -18,65 +19,70 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE UndecidableSuperClasses #-}
 
--- | Copyright: (c) 2021-2025 berberman
--- SPDX-License-Identifier: MIT
--- Maintainer: berberman <berberman@yandex.com>
--- Stability: experimental
--- Portability: portable
---
--- Types used in this program.
-module NvFetcher.Types
-  ( -- * Common types
-    Version (..),
-    Checksum (..),
-    ContainerDigest (..),
-    Branch (..),
-    NixExpr,
-    VersionChange (..),
-    WithPackageKey (..),
-    Glob (..),
+{- | Copyright: (c) 2021-2025 berberman
+SPDX-License-Identifier: MIT
+Maintainer: berberman <berberman@yandex.com>
+Stability: experimental
+Portability: portable
 
-    -- * Nvchecker types
-    VersionSortMethod (..),
-    ListOptions (..),
-    VersionSource (..),
-    NvcheckerResult (..),
-    NvcheckerRaw (..),
-    CheckVersion (..),
-    NvcheckerOptions (..),
-    UseStaleVersion (..),
+Types used in this program.
+-}
+module NvFetcher.Types (
+  -- * Common types
+  Version (..),
+  Checksum (..),
+  ContainerDigest (..),
+  Branch (..),
+  NixExpr,
+  VersionChange (..),
+  WithPackageKey (..),
+  Glob (..),
 
-    -- * Nix fetcher types
-    RunFetch (..),
-    ForceFetch (..),
-    NixFetcher (..),
-    FetchResult,
-    FetchStatus (..),
+  -- * Nvchecker types
+  VersionSortMethod (..),
+  ListOptions (..),
+  VersionSource (..),
+  NvcheckerResult (..),
+  NvcheckerRaw (..),
+  CheckVersion (..),
+  NvcheckerOptions (..),
+  UseStaleVersion (..),
 
-    -- * ExtractSrc Types
-    ExtractSrcQ (..),
+  -- * Nix fetcher types
+  RunFetch (..),
+  ForceFetch (..),
+  NixFetcher (..),
+  FetchResult,
+  FetchStatus (..),
 
-    -- * FetchRustGitDeps types
-    FetchRustGitDepsQ (..),
+  -- * ExtractSrc Types
+  ExtractSrcQ (..),
 
-    -- * GetGitCommitDate types
-    GitDateFormat (..),
-    GetGitCommitDate (..),
-    GitTimeZone (..),
+  -- * FetchRustGitDeps types
+  FetchRustGitDepsQ (..),
 
-    -- * Core types
-    Core (..),
+  -- * Custom Prefetcher types
+  FetchCustomFetcherQ (..),
 
-    -- * Package types
-    PackageName,
-    PackageFetcher,
-    PackageExtractSrc (..),
-    PackageCargoLockFiles (..),
-    PackagePassthru (..),
-    Package (..),
-    PackageKey (..),
-    PackageResult (..),
-  )
+  -- * GetGitCommitDate types
+  GitDateFormat (..),
+  GetGitCommitDate (..),
+  GitTimeZone (..),
+
+  -- * Core types
+  Core (..),
+
+  -- * Package types
+  PackageName,
+  PackageFetcher,
+  PackageExtractSrc (..),
+  PackageCargoLockFiles (..),
+  PackagePrefetchFiles (..),
+  PackagePassthru (..),
+  Package (..),
+  PackageKey (..),
+  PackageResult (..),
+)
 where
 
 import qualified Data.Aeson as A
@@ -91,14 +97,16 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Development.Shake
 import Development.Shake.Classes
+import Development.Shake.Command (IsCmdArgument)
 import GHC.Generics (Generic)
 import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
 import Prettyprinter
 
 --------------------------------------------------------------------------------
 
--- | Helper type for generating 'Show' and 'Pretty' instances
--- Type level string @d@ denotes the string used for the default value 'Nothing'
+{- | Helper type for generating 'Show' and 'Pretty' instances
+Type level string @d@ denotes the string used for the default value 'Nothing'
+-}
 newtype DefaultableText (d :: Symbol) = DefaultableText (Maybe Text)
 
 instance (KnownSymbol d) => Show (DefaultableText d) where
@@ -134,22 +142,23 @@ newtype Branch = Branch (Maybe Text)
   deriving anyclass (Hashable, Binary, NFData)
   deriving (Pretty, Show) via DefaultableText "master"
 
--- | Version change of a package
---
--- >>> VersionChange "foo" Nothing "2.3.3"
--- foo: ∅ → 2.3.3
---
--- >>> VersionChange "bar" (Just "2.2.2") "2.3.3"
--- bar: 2.2.2 → 2.3.3
+{- | Version change of a package
+
+>>> VersionChange "foo" Nothing "2.3.3"
+foo: ∅ → 2.3.3
+
+>>> VersionChange "bar" (Just "2.2.2") "2.3.3"
+bar: 2.2.2 → 2.3.3
+-}
 data VersionChange = VersionChange
-  { vcName :: PackageName,
-    vcOld :: Maybe Version,
-    vcNew :: Version
+  { vcName :: PackageName
+  , vcOld :: Maybe Version
+  , vcNew :: Version
   }
   deriving (Eq)
 
 instance Show VersionChange where
-  show VersionChange {..} =
+  show VersionChange{..} =
     T.unpack $ vcName <> ": " <> fromMaybe "∅" (coerce vcOld) <> " → " <> coerce vcNew
 
 -- | Nix expression
@@ -174,63 +183,65 @@ instance Pretty VersionSortMethod where
 instance Default VersionSortMethod where
   def = ParseVersion
 
--- | Filter-like configuration for some version sources.
--- See <https://nvchecker.readthedocs.io/en/latest/usage.html#list-options> for details.
+{- | Filter-like configuration for some version sources.
+See <https://nvchecker.readthedocs.io/en/latest/usage.html#list-options> for details.
+-}
 data ListOptions = ListOptions
-  { _includeRegex :: Maybe Text,
-    _excludeRegex :: Maybe Text,
-    _sortVersionKey :: Maybe VersionSortMethod,
-    _ignored :: Maybe Text
+  { _includeRegex :: Maybe Text
+  , _excludeRegex :: Maybe Text
+  , _sortVersionKey :: Maybe VersionSortMethod
+  , _ignored :: Maybe Text
   }
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData, Default)
 
 isEmptyListOptions :: ListOptions -> Bool
-isEmptyListOptions ListOptions {..} =
+isEmptyListOptions ListOptions{..} =
   isNothing _includeRegex
     && isNothing _excludeRegex
     && isNothing _sortVersionKey
     && isNothing _includeRegex
 
 instance Pretty ListOptions where
-  pretty ListOptions {..} =
+  pretty ListOptions{..} =
     "ListOptions"
       <> indent
         2
         ( vsep $
             concat
-              [ ppField "includeRegex" _includeRegex,
-                ppField "excludeRegex" _excludeRegex,
-                ppField "sortVersionKey" _sortVersionKey,
-                ppField "ignored" _includeRegex
+              [ ppField "includeRegex" _includeRegex
+              , ppField "excludeRegex" _excludeRegex
+              , ppField "sortVersionKey" _sortVersionKey
+              , ppField "ignored" _includeRegex
               ]
         )
 
--- | Configuration available for evey version sourece.
--- See <https://nvchecker.readthedocs.io/en/latest/usage.html#global-options> for details.
+{- | Configuration available for evey version sourece.
+See <https://nvchecker.readthedocs.io/en/latest/usage.html#global-options> for details.
+-}
 data NvcheckerOptions = NvcheckerOptions
-  { _stripPrefix :: Maybe Text,
-    _fromPattern :: Maybe Text,
-    _toPattern :: Maybe Text
+  { _stripPrefix :: Maybe Text
+  , _fromPattern :: Maybe Text
+  , _toPattern :: Maybe Text
   }
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData, Default)
 
 isEmptyNvcheckerOptions :: NvcheckerOptions -> Bool
-isEmptyNvcheckerOptions NvcheckerOptions {..} =
+isEmptyNvcheckerOptions NvcheckerOptions{..} =
   isNothing _stripPrefix
     && isNothing _fromPattern
     && isNothing _toPattern
 
 instance Pretty NvcheckerOptions where
-  pretty NvcheckerOptions {..} =
+  pretty NvcheckerOptions{..} =
     "NvcheckerOptions"
       <> line
       <> indent
         2
         ( vsep $
             concat
-              [ ppField "stripPrefix" _stripPrefix,
-                ppField "fromPattern" _fromPattern,
-                ppField "toPattern" _toPattern
+              [ ppField "stripPrefix" _stripPrefix
+              , ppField "fromPattern" _fromPattern
+              , ppField "toPattern" _toPattern
               ]
         )
 
@@ -257,100 +268,100 @@ data VersionSource
   deriving (Show, Typeable, Eq, Ord, Generic, Hashable, Binary, NFData)
 
 instance Pretty VersionSource where
-  pretty GitHubRelease {..} =
+  pretty GitHubRelease{..} =
     "CheckGitHubRelease"
       <> line
       <> indent
         2
         ( vsep
-            [ "owner" <> colon <+> pretty _owner,
-              "repo" <> colon <+> pretty _repo
+            [ "owner" <> colon <+> pretty _owner
+            , "repo" <> colon <+> pretty _repo
             ]
         )
-  pretty GitHubTag {..} =
+  pretty GitHubTag{..} =
     "CheckGitHubTag"
       <> line
       <> indent
         2
         ( vsep $
-            [ "owner" <> colon <+> pretty _owner,
-              "repo" <> colon <+> pretty _repo
+            [ "owner" <> colon <+> pretty _owner
+            , "repo" <> colon <+> pretty _repo
             ]
               <> ["listOptions" <> colon <+> pretty _listOptions | not $ isEmptyListOptions _listOptions]
         )
-  pretty Git {..} =
+  pretty Git{..} =
     "CheckGit"
       <> line
       <> indent
         2
         ( vsep
-            [ "url" <> colon <+> pretty _vurl,
-              "branch" <> colon <+> pretty _vbranch
+            [ "url" <> colon <+> pretty _vurl
+            , "branch" <> colon <+> pretty _vbranch
             ]
         )
-  pretty Pypi {..} =
+  pretty Pypi{..} =
     "CheckPypi" <> colon <+> pretty _pypi
-  pretty ArchLinux {..} =
+  pretty ArchLinux{..} =
     "CheckArchLinux" <> colon <+> pretty _archpkg
-  pretty Aur {..} =
+  pretty Aur{..} =
     "CheckAur" <> colon <+> pretty _aur
-  pretty Manual {..} =
+  pretty Manual{..} =
     "CheckManual" <> colon <+> pretty _manual
-  pretty Repology {..} =
+  pretty Repology{..} =
     "CheckRepology"
       <> line
       <> indent
         2
         ( vsep
-            [ "repology" <> colon <+> pretty _repology,
-              "repo" <> colon <+> pretty _repo
+            [ "repology" <> colon <+> pretty _repology
+            , "repo" <> colon <+> pretty _repo
             ]
         )
-  pretty Webpage {..} =
+  pretty Webpage{..} =
     "CheckWebpage"
       <> line
       <> indent
         2
         ( vsep $
-            [ "url" <> colon <+> pretty _vurl,
-              "regex" <> colon <+> pretty _regex
+            [ "url" <> colon <+> pretty _vurl
+            , "regex" <> colon <+> pretty _regex
             ]
               <> ["listOptions" <> colon <+> pretty _listOptions | not $ isEmptyListOptions _listOptions]
         )
-  pretty HttpHeader {..} =
+  pretty HttpHeader{..} =
     "CheckHttpHeader"
       <> line
       <> indent
         2
         ( vsep $
-            [ "url" <> colon <+> pretty _vurl,
-              "regex" <> colon <+> pretty _regex
+            [ "url" <> colon <+> pretty _vurl
+            , "regex" <> colon <+> pretty _regex
             ]
               <> ["listOptions" <> colon <+> pretty _listOptions | not $ isEmptyListOptions _listOptions]
         )
-  pretty OpenVsx {..} =
+  pretty OpenVsx{..} =
     "CheckOpenVsx"
       <> line
       <> indent
         2
         ( vsep
-            [ "publisher" <> colon <+> pretty _ovPublisher,
-              "extName" <> colon <+> pretty _ovExtName
+            [ "publisher" <> colon <+> pretty _ovPublisher
+            , "extName" <> colon <+> pretty _ovExtName
             ]
         )
-  pretty VscodeMarketplace {..} =
+  pretty VscodeMarketplace{..} =
     "CheckVscodeMarketplace"
       <> line
       <> indent
         2
         ( vsep
-            [ "publisher" <> colon <+> pretty _vsmPublisher,
-              "extName" <> colon <+> pretty _vsmExtName
+            [ "publisher" <> colon <+> pretty _vsmPublisher
+            , "extName" <> colon <+> pretty _vsmExtName
             ]
         )
-  pretty Cmd {..} =
+  pretty Cmd{..} =
     "CheckCmd" <> colon <+> pretty _vcmd
-  pretty Container {..} =
+  pretty Container{..} =
     "CheckContainer" <> colon <+> pretty _vcontainer
 
 -- | The input of nvchecker
@@ -362,13 +373,15 @@ instance Pretty CheckVersion where
 
 -- | The result of nvchecker rule
 data NvcheckerResult = NvcheckerResult
-  { nvNow :: Version,
-    -- | last result of this nvchecker rule
-    -- TODO: consider removing this field
-    nvOld :: Maybe Version,
-    -- | stale means even 'nvNow' comes from json file (last run)
-    -- and we actually didn't run nvchecker this time. 'nvOld' will be 'Nothing' in this case.
-    nvStale :: Bool
+  { nvNow :: Version
+  , nvOld :: Maybe Version
+  {- ^ last result of this nvchecker rule
+  TODO: consider removing this field
+  -}
+  , nvStale :: Bool
+  {- ^ stale means even 'nvNow' comes from json file (last run)
+  and we actually didn't run nvchecker this time. 'nvOld' will be 'Nothing' in this case.
+  -}
   }
   deriving (Show, Typeable, Eq, Generic, Hashable, Binary, NFData)
 
@@ -387,9 +400,10 @@ type instance RuleResult CheckVersion = NvcheckerResult
 
 --------------------------------------------------------------------------------
 
--- | Whether to cache the fetched sha256
---
--- @ForceFetch@ indicates @alwaysRerun@ the fetcher rule
+{- | Whether to cache the fetched sha256
+
+@ForceFetch@ indicates @alwaysRerun@ the fetcher rule
+-}
 data ForceFetch = ForceFetch | NoForceFetch
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
@@ -410,45 +424,45 @@ type instance RuleResult RunFetch = Maybe (NixFetcher Fetched)
 -- | If the package is prefetched, then we can obtain the SHA256
 data NixFetcher (k :: FetchStatus)
   = FetchGit
-      { _furl :: Text,
-        _rev :: Version,
-        _deepClone :: Bool,
-        _fetchSubmodules :: Bool,
-        _leaveDotGit :: Bool,
-        _sparseCheckout :: [Text],
-        _name :: Maybe Text,
-        _sha256 :: FetchResult Checksum k
+      { _furl :: Text
+      , _rev :: Version
+      , _deepClone :: Bool
+      , _fetchSubmodules :: Bool
+      , _leaveDotGit :: Bool
+      , _sparseCheckout :: [Text]
+      , _name :: Maybe Text
+      , _sha256 :: FetchResult Checksum k
       }
   | FetchGitHub
-      { _fowner :: Text,
-        _frepo :: Text,
-        _rev :: Version,
-        _deepClone :: Bool,
-        _fetchSubmodules :: Bool,
-        _leaveDotGit :: Bool,
-        _sparseCheckout :: [Text],
-        _name :: Maybe Text,
-        _sha256 :: FetchResult Checksum k
+      { _fowner :: Text
+      , _frepo :: Text
+      , _rev :: Version
+      , _deepClone :: Bool
+      , _fetchSubmodules :: Bool
+      , _leaveDotGit :: Bool
+      , _sparseCheckout :: [Text]
+      , _name :: Maybe Text
+      , _sha256 :: FetchResult Checksum k
       }
   | FetchUrl
-      { _furl :: Text,
-        _name :: Maybe Text,
-        _sha256 :: FetchResult Checksum k
+      { _furl :: Text
+      , _name :: Maybe Text
+      , _sha256 :: FetchResult Checksum k
       }
   | FetchTarball
-      { _furl :: Text,
-        _sha256 :: FetchResult Checksum k
+      { _furl :: Text
+      , _sha256 :: FetchResult Checksum k
       }
   | FetchDocker
-      { _imageName :: Text,
-        _imageTag :: Text,
-        _imageDigest :: FetchResult ContainerDigest k,
-        _sha256 :: FetchResult Checksum k,
-        _fos :: Maybe Text,
-        _farch :: Maybe Text,
-        _finalImageName :: Maybe Text,
-        _finalImageTag :: Maybe Text,
-        _tlsVerify :: Maybe Bool
+      { _imageName :: Text
+      , _imageTag :: Text
+      , _imageDigest :: FetchResult ContainerDigest k
+      , _sha256 :: FetchResult Checksum k
+      , _fos :: Maybe Text
+      , _farch :: Maybe Text
+      , _finalImageName :: Maybe Text
+      , _finalImageTag :: Maybe Text
+      , _tlsVerify :: Maybe Bool
       }
   deriving (Typeable, Generic)
 
@@ -477,90 +491,90 @@ type family FetchResult a (k :: FetchStatus) where
   FetchResult a Fetched = a
 
 instance A.ToJSON (NixFetcher Fetched) where
-  toJSON FetchGit {..} =
+  toJSON FetchGit{..} =
     A.object
-      [ "url" A..= _furl,
-        "rev" A..= _rev,
-        "deepClone" A..= _deepClone,
-        "fetchSubmodules" A..= _fetchSubmodules,
-        "leaveDotGit" A..= _leaveDotGit,
-        "sparseCheckout" A..= _sparseCheckout,
-        "name" A..= _name,
-        "sha256" A..= _sha256,
-        "type" A..= A.String "git"
+      [ "url" A..= _furl
+      , "rev" A..= _rev
+      , "deepClone" A..= _deepClone
+      , "fetchSubmodules" A..= _fetchSubmodules
+      , "leaveDotGit" A..= _leaveDotGit
+      , "sparseCheckout" A..= _sparseCheckout
+      , "name" A..= _name
+      , "sha256" A..= _sha256
+      , "type" A..= A.String "git"
       ]
-  toJSON FetchGitHub {..} =
+  toJSON FetchGitHub{..} =
     A.object
-      [ "owner" A..= _fowner,
-        "repo" A..= _frepo,
-        "rev" A..= _rev,
-        "deepClone" A..= _deepClone,
-        "fetchSubmodules" A..= _fetchSubmodules,
-        "leaveDotGit" A..= _leaveDotGit,
-        "sparseCheckout" A..= _sparseCheckout,
-        "name" A..= _name,
-        "sha256" A..= _sha256,
-        "type" A..= A.String "github"
+      [ "owner" A..= _fowner
+      , "repo" A..= _frepo
+      , "rev" A..= _rev
+      , "deepClone" A..= _deepClone
+      , "fetchSubmodules" A..= _fetchSubmodules
+      , "leaveDotGit" A..= _leaveDotGit
+      , "sparseCheckout" A..= _sparseCheckout
+      , "name" A..= _name
+      , "sha256" A..= _sha256
+      , "type" A..= A.String "github"
       ]
-  toJSON FetchUrl {..} =
+  toJSON FetchUrl{..} =
     A.object
-      [ "url" A..= _furl,
-        "name" A..= _name,
-        "sha256" A..= _sha256,
-        "type" A..= A.String "url"
+      [ "url" A..= _furl
+      , "name" A..= _name
+      , "sha256" A..= _sha256
+      , "type" A..= A.String "url"
       ]
-  toJSON FetchTarball {..} =
+  toJSON FetchTarball{..} =
     A.object
-      [ "url" A..= _furl,
-        "sha256" A..= _sha256,
-        "type" A..= A.String "tarball"
+      [ "url" A..= _furl
+      , "sha256" A..= _sha256
+      , "type" A..= A.String "tarball"
       ]
-  toJSON FetchDocker {..} =
+  toJSON FetchDocker{..} =
     A.object
-      [ "imageName" A..= _imageName,
-        "imageTag" A..= _imageTag,
-        "imageDigest" A..= _imageDigest,
-        "sha256" A..= _sha256,
-        "os" A..= _fos,
-        "arch" A..= _farch,
-        "finalImageName" A..= _finalImageName,
-        "finalImageTag" A..= _finalImageTag,
-        "tlsVerify" A..= _tlsVerify
+      [ "imageName" A..= _imageName
+      , "imageTag" A..= _imageTag
+      , "imageDigest" A..= _imageDigest
+      , "sha256" A..= _sha256
+      , "os" A..= _fos
+      , "arch" A..= _farch
+      , "finalImageName" A..= _finalImageName
+      , "finalImageTag" A..= _finalImageTag
+      , "tlsVerify" A..= _tlsVerify
       ]
 
 instance Pretty (NixFetcher k) where
-  pretty FetchGit {..} =
+  pretty FetchGit{..} =
     "FetchGit"
       <> line
       <> indent
         2
         ( vsep $
-            [ "url" <> colon <+> pretty _furl,
-              "rev" <> colon <+> pretty _rev,
-              "deepClone" <> colon <+> pretty _deepClone,
-              "fetchSubmodules" <> colon <+> pretty _fetchSubmodules,
-              "leaveDotGit" <> colon <+> pretty _leaveDotGit,
-              "sparseCheckout" <> colon <+> pretty _sparseCheckout
+            [ "url" <> colon <+> pretty _furl
+            , "rev" <> colon <+> pretty _rev
+            , "deepClone" <> colon <+> pretty _deepClone
+            , "fetchSubmodules" <> colon <+> pretty _fetchSubmodules
+            , "leaveDotGit" <> colon <+> pretty _leaveDotGit
+            , "sparseCheckout" <> colon <+> pretty _sparseCheckout
             ]
               <> ppField "name" _name
         )
-  pretty FetchGitHub {..} =
+  pretty FetchGitHub{..} =
     "FetchGitHub"
       <> line
       <> indent
         2
         ( vsep $
-            [ "owner" <> colon <+> pretty _fowner,
-              "repo" <> colon <+> pretty _frepo,
-              "rev" <> colon <+> pretty _rev,
-              "deepClone" <> colon <+> pretty _deepClone,
-              "fetchSubmodules" <> colon <+> pretty _fetchSubmodules,
-              "leaveDotGit" <> colon <+> pretty _leaveDotGit,
-              "sparseCheckout" <> colon <+> pretty _sparseCheckout
+            [ "owner" <> colon <+> pretty _fowner
+            , "repo" <> colon <+> pretty _frepo
+            , "rev" <> colon <+> pretty _rev
+            , "deepClone" <> colon <+> pretty _deepClone
+            , "fetchSubmodules" <> colon <+> pretty _fetchSubmodules
+            , "leaveDotGit" <> colon <+> pretty _leaveDotGit
+            , "sparseCheckout" <> colon <+> pretty _sparseCheckout
             ]
               <> ppField "name" _name
         )
-  pretty FetchUrl {..} =
+  pretty FetchUrl{..} =
     "FetchUrl"
       <> line
       <> indent
@@ -569,16 +583,16 @@ instance Pretty (NixFetcher k) where
             ["url" <> colon <+> pretty _furl]
               <> ppField "name" _name
         )
-  pretty FetchTarball {..} =
+  pretty FetchTarball{..} =
     "FetchTarball" <> colon <+> pretty _furl
-  pretty FetchDocker {..} =
+  pretty FetchDocker{..} =
     "FetchDocker"
       <> line
       <> indent
         2
         ( vsep $
-            [ "imageName" <> colon <+> pretty _imageName,
-              "imageTag" <> colon <+> pretty _finalImageTag
+            [ "imageName" <> colon <+> pretty _imageName
+            , "imageTag" <> colon <+> pretty _finalImageTag
             ]
               <> ppField "os" _fos
               <> ppField "arch" _farch
@@ -589,23 +603,26 @@ instance Pretty (NixFetcher k) where
 
 --------------------------------------------------------------------------------
 
--- | Zsh style glob pattern
--- Notably, recursive wildcards like @**/@ are supported.
+{- | Zsh style glob pattern
+Notably, recursive wildcards like @**/@ are supported.
+-}
 newtype Glob = Glob FilePath
   deriving newtype (Show, Eq, Ord, IsString, Pretty)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
--- | Extract file contents from package source
--- Matched files will be copied to build dir.
--- All matched directories are ignored. Only files will be processed.
+{- | Extract file contents from package source
+Matched files will be copied to build dir.
+All matched directories are ignored. Only files will be processed.
+-}
 data ExtractSrcQ = ExtractSrcQ (NixFetcher Fetched) (NE.NonEmpty Glob)
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
--- | Rule result for extracting source files. 'Text' is the file contents,
--- only available if the second element of the tuple in 'ExtractSrcQ' is @True@.
--- The key of the result map is the file path relative to the package source,
--- and the value is the file path relative to the build directory.
+{- | Rule result for extracting source files. 'Text' is the file contents,
+only available if the second element of the tuple in 'ExtractSrcQ' is @True@.
+The key of the result map is the file path relative to the package source,
+and the value is the file path relative to the build directory.
+-}
 type instance RuleResult ExtractSrcQ = HashMap FilePath FilePath
 
 instance Pretty ExtractSrcQ where
@@ -615,16 +632,17 @@ instance Pretty ExtractSrcQ where
       <> indent
         2
         ( vsep
-            [ "fetcher" <> colon <+> pretty f,
-              "files" <> colon <+> pretty n
+            [ "fetcher" <> colon <+> pretty f
+            , "files" <> colon <+> pretty n
             ]
         )
 
 --------------------------------------------------------------------------------
 
--- | Fetch @outputHashes@ for git dependencies in @Cargo.lock@.
--- See <https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file> for details.
--- We need fetched source and the file path to @Cargo.lock@.
+{- | Fetch @outputHashes@ for git dependencies in @Cargo.lock@.
+See <https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#importing-a-cargolock-file> for details.
+We need fetched source and the file path to @Cargo.lock@.
+-}
 data FetchRustGitDepsQ = FetchRustGitDepsQ (NixFetcher Fetched) FilePath
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
@@ -638,53 +656,74 @@ instance Pretty FetchRustGitDepsQ where
       <> indent
         2
         ( vsep
-            [ "fetcher" <> colon <+> pretty f,
-              "cargoLock" <> colon <+> pretty n
+            [ "fetcher" <> colon <+> pretty f
+            , "cargoLock" <> colon <+> pretty n
             ]
         )
 
 --------------------------------------------------------------------------------
 
--- | @strftime@ format
--- Defaults to @%Y-%m-%d@
+data FetchCustomFetcherQ = FetchCustomFetcherQ (NixFetcher Fetched) String FilePath
+  deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
+
+type instance RuleResult FetchCustomFetcherQ = Maybe T.Text
+
+instance Pretty FetchCustomFetcherQ where
+  pretty (FetchCustomFetcherQ f n p) =
+    "FetchCustomFetcher"
+      <> line
+      <> indent
+        2
+        ( vsep
+            [ "fetcher" <> colon <+> pretty f
+            , "name" <> colon <+> pretty n
+            , "filePath" <> colon <+> pretty p
+            ]
+        )
+
+{- | @strftime@ format
+Defaults to @%Y-%m-%d@
+-}
 newtype GitDateFormat = GitDateFormat (Maybe Text)
   deriving newtype (Eq, Ord, Default)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
   deriving (Pretty, Show) via DefaultableText "%Y-%m-%d"
 
--- | Defaults to commit's time zone.
--- When set to @local@, current local time zone is used.
--- Only used in 'GetGitCommitDate'.
+{- | Defaults to commit's time zone.
+When set to @local@, current local time zone is used.
+Only used in 'GetGitCommitDate'.
+-}
 newtype GitTimeZone = GitTimeZone (Maybe Text)
   deriving newtype (Eq, Ord, Default)
   deriving stock (Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
   deriving (Pretty, Show) via DefaultableText "commit's time zone"
 
--- | Get the commit date by using shallow clone
---
--- @_gformat@ is in.
--- Note: Requires git >= 2.5
+{- | Get the commit date by using shallow clone
+
+@_gformat@ is in.
+Note: Requires git >= 2.5
+-}
 data GetGitCommitDate = GetGitCommitDate
-  { _gurl :: Text,
-    _grev :: Text,
-    _gformat :: (GitDateFormat, GitTimeZone)
+  { _gurl :: Text
+  , _grev :: Text
+  , _gformat :: (GitDateFormat, GitTimeZone)
   }
   deriving (Show, Eq, Ord, Hashable, NFData, Binary, Typeable, Generic)
 
 type instance RuleResult GetGitCommitDate = Text
 
 instance Pretty GetGitCommitDate where
-  pretty GetGitCommitDate {..} =
+  pretty GetGitCommitDate{..} =
     "GetGitCommitDate"
       <> line
       <> indent
         2
         ( vsep
-            [ "url" <> colon <+> pretty _gurl,
-              "rev" <> colon <+> pretty _grev,
-              "format" <> colon <+> pretty _gformat
+            [ "url" <> colon <+> pretty _gurl
+            , "rev" <> colon <+> pretty _grev
+            , "format" <> colon <+> pretty _gformat
             ]
         )
 
@@ -698,15 +737,18 @@ type PackageFetcher = Version -> NixFetcher Fresh
 
 newtype PackageExtractSrc = PackageExtractSrc (NE.NonEmpty Glob)
 
+newtype PackagePrefetchFiles = PackagePreFetchFiles (HashMap String (NE.NonEmpty Glob))
+
 newtype PackageCargoLockFiles = PackageCargoLockFiles (NE.NonEmpty Glob)
 
 newtype PackagePassthru = PackagePassthru (HashMap Text Text)
   deriving newtype (Semigroup, Monoid)
 
--- | Using stale value indicates that we will /NOT/ check for new versions if
--- there is a known version recovered from json file or last use of the rule.
--- Normally you don't want a stale version
--- unless you need pin a package.
+{- | Using stale value indicates that we will /NOT/ check for new versions if
+there is a known version recovered from json file or last use of the rule.
+Normally you don't want a stale version
+unless you need pin a package.
+-}
 data UseStaleVersion
   = -- | Specified in configuration file
     PermanentStale
@@ -716,34 +758,37 @@ data UseStaleVersion
   deriving stock (Eq, Show, Ord, Typeable, Generic)
   deriving anyclass (Hashable, Binary, NFData)
 
--- | A package is defined with:
---
--- 1. its name
--- 2. how to track its version
--- 3. how to fetch it as we have the version
--- 4. optional file paths to extract (dump to build dir)
--- 5. optional @Cargo.lock@ paths (if it's a rust package)
--- 6. an optional pass through map
--- 7. if the package version was pinned
--- 8. optional git date format with time zone (if the version source is git)
--- 9. whether to always fetch a package regardless of the version changing
--- /INVARIANT: 'Version' passed to 'PackageFetcher' MUST be used textually,/
--- /i.e. can only be concatenated with other strings,/
--- /in case we can't check the equality between fetcher functions./
+{- | A package is defined with:
+
+1. its name
+2. how to track its version
+3. how to fetch it as we have the version
+4. optional file paths to extract (dump to build dir)
+5. optional @Cargo.lock@ paths (if it's a rust package)
+6. an optional pass through map
+7. if the package version was pinned
+8. optional git date format with time zone (if the version source is git)
+9. whether to always fetch a package regardless of the version changing
+/INVARIANT: 'Version' passed to 'PackageFetcher' MUST be used textually,/
+/i.e. can only be concatenated with other strings,/
+/in case we can't check the equality between fetcher functions./
+-}
 data Package = Package
-  { _pname :: PackageName,
-    _pversion :: CheckVersion,
-    _pfetcher :: PackageFetcher,
-    _pextract :: Maybe PackageExtractSrc,
-    _pcargo :: Maybe PackageCargoLockFiles,
-    _ppassthru :: PackagePassthru,
-    _ppinned :: UseStaleVersion,
-    _pgitdate :: (GitDateFormat, GitTimeZone),
-    _pforcefetch :: ForceFetch
+  { _pname :: PackageName
+  , _pversion :: CheckVersion
+  , _pfetcher :: PackageFetcher
+  , _pextract :: Maybe PackageExtractSrc
+  , _pcargo :: Maybe PackageCargoLockFiles
+  , _pprefetchFiles :: Maybe PackagePrefetchFiles
+  , _ppassthru :: PackagePassthru
+  , _ppinned :: UseStaleVersion
+  , _pgitdate :: (GitDateFormat, GitTimeZone)
+  , _pforcefetch :: ForceFetch
   }
 
--- | Package key is the name of a package.
--- We use this type to index packages.
+{- | Package key is the name of a package.
+We use this type to index packages.
+-}
 newtype PackageKey = PackageKey PackageName
   deriving newtype (Eq, Show, Ord, Pretty)
   deriving stock (Typeable, Generic)
@@ -769,30 +814,32 @@ type instance RuleResult (WithPackageKey k) = RuleResult k
 
 -- | Result type of 'Core'
 data PackageResult = PackageResult
-  { _prname :: PackageName,
-    _prversion :: NvcheckerResult,
-    _prfetched :: NixFetcher 'Fetched,
-    _prpassthru :: Maybe (HashMap Text Text),
-    -- | file path relative to package source -> file path relative to build dir
-    _prextract :: Maybe (HashMap FilePath FilePath),
-    -- | cargo lock file path relative to package source -> (lock file path relative to build dir, git dependencies)
-    _prcargolock :: Maybe (HashMap FilePath (FilePath, HashMap Text Checksum)),
-    _prpinned :: UseStaleVersion,
-    _prgitdate :: Maybe Text
+  { _prname :: PackageName
+  , _prversion :: NvcheckerResult
+  , _prfetched :: NixFetcher 'Fetched
+  , _prpassthru :: Maybe (HashMap Text Text)
+  , _prextract :: Maybe (HashMap FilePath FilePath)
+  -- ^ file path relative to package source -> file path relative to build dir
+  , _prcargolock :: Maybe (HashMap FilePath (FilePath, HashMap Text Checksum))
+  -- ^ cargo lock file path relative to package source -> (lock file path relative to build dir, git dependencies)
+  , _prprefetchFiles :: Maybe (HashMap FilePath (Maybe Text))
+  , _prpinned :: UseStaleVersion
+  , _prgitdate :: Maybe Text
   }
   deriving (Show, Typeable, Generic, NFData)
 
 instance A.ToJSON PackageResult where
-  toJSON PackageResult {..} =
+  toJSON PackageResult{..} =
     A.object
-      [ "name" A..= _prname,
-        "version" A..= nvNow _prversion,
-        "src" A..= _prfetched,
-        "extract" A..= _prextract,
-        "passthru" A..= _prpassthru,
-        "cargoLock" A..= _prcargolock,
-        "pinned" A..= case _prpinned of
+      [ "name" A..= _prname
+      , "version" A..= nvNow _prversion
+      , "src" A..= _prfetched
+      , "extract" A..= _prextract
+      , "passthru" A..= _prpassthru
+      , "prefetch" A..= _prprefetchFiles
+      , "cargoLock" A..= _prcargolock
+      , "pinned" A..= case _prpinned of
           PermanentStale -> True
-          _ -> False,
-        "date" A..= _prgitdate
+          _ -> False
+      , "date" A..= _prgitdate
       ]

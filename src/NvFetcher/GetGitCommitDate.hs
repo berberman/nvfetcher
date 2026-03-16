@@ -1,26 +1,27 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ViewPatterns #-}
 
--- | Copyright: (c) 2021-2025 berberman
--- SPDX-License-Identifier: MIT
--- Maintainer: berberman <berberman@yandex.com>
--- Stability: experimental
--- Portability: portable
---
--- This module provides mechanisms for obtaining the git commit date.
--- The cloned repo will not be preserved.
-module NvFetcher.GetGitCommitDate
-  ( -- * Types
-    GitDateFormat (..),
-    GetGitCommitDate (..),
-    GitTimeZone (..),
+{- | Copyright: (c) 2021-2025 berberman
+SPDX-License-Identifier: MIT
+Maintainer: berberman <berberman@yandex.com>
+Stability: experimental
+Portability: portable
 
-    -- * Rules
-    getGitCommitDateRule,
+This module provides mechanisms for obtaining the git commit date.
+The cloned repo will not be preserved.
+-}
+module NvFetcher.GetGitCommitDate (
+  -- * Types
+  GitDateFormat (..),
+  GetGitCommitDate (..),
+  GitTimeZone (..),
 
-    -- * Functions
-    getGitCommitDate,
-  )
+  -- * Rules
+  getGitCommitDateRule,
+
+  -- * Functions
+  getGitCommitDate,
+)
 where
 
 import Control.Monad (void)
