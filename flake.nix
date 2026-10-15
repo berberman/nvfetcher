@@ -14,7 +14,7 @@
       ...
     }:
     with flake-utils.lib;
-    eachDefaultSystem (
+    eachSystem [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ] (
       system:
       let
         pkgs = import nixpkgs {
