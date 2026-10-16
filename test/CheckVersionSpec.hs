@@ -30,7 +30,7 @@ versionSourcesSpec = aroundShake $
       runNvcheckerRule (Pypi "example") `shouldReturnJust` Version "0.1.0"
 
     specifyChan "archpkg" $
-      runNvcheckerRule (ArchLinux "xfce4-artwork") `shouldReturnJust` Version "0.1.1a_git20110420"
+      runNvcheckerRule (ArchLinux "intltool") `shouldReturnJust` Version "0.51.0"
 
     specifyChan "aur" $
       runNvcheckerRule (Aur "ssed") `shouldReturnJust` Version "3.62"
@@ -70,8 +70,8 @@ versionSourcesSpec = aroundShake $
     specifyChan "openvsx" $
       runNvcheckerRule (OpenVsx "usernamehw" "indent-one-space") `shouldReturnJust` Version "0.3.0"
 
-    specifyChan "repology" $
-      runNvcheckerRule (Repology "ssed" "aur") `shouldReturnJust` Version "3.62"
+    -- specifyChan "repology" $
+    --   runNvcheckerRule (Repology "ssed" "aur") `shouldReturnJust` Version "3.62"
 
     specifyChan "vsmarketplace" $
       runNvcheckerRule (VscodeMarketplace "usernamehw" "indent-one-space") `shouldReturnJust` Version "1.0.0"

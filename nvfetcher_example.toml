@@ -66,8 +66,8 @@ fetch.git = "https://github.com/githubtraining/example-dependency"
 git.fetchSubmodules = true
 
 [wallpaper]
-fetch.url = "https://files.yande.re/image/3fc51f6a2fb10c96b73dd0fce6ddb9c8/yande.re%201048717%20dress%20garter%20lolita_fashion%20ruo_gan_zhua.jpg"
 src.manual = "latest"
+fetch.url = "https://raw.githubusercontent.com/cat-milk/Anime-Girls-Holding-Programming-Books/refs/heads/master/Haskell/Kujou_Karen_Learns_Haskell.png"
 # Override the name of the file in the Nix store
 url.name = "wallpaper.jpg"
 
