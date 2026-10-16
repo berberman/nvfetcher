@@ -1,5 +1,10 @@
 # Revision history for nvfetcher
 
+## 0.8.1.0
+
+* Fix git commit message format by adding an empty line after summary
+* Add prerelease option for github version source
+
 ## 0.8.0.0
 
 There is a major rework on Source File Extract, which is a *breaking change* and requires users to update their configuration files and the usage of generated Nix expressions.
